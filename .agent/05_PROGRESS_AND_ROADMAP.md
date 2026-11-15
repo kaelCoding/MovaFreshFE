@@ -11,7 +11,7 @@
 | Hạng mục | Trạng thái | Đánh giá & Nhiệm vụ tiếp theo |
 |---|---|---|
 | **Hạ tầng Web Vue 3 + Vite** | ✅ **Đã hoàn thành** | Chạy mượt mà, build siêu nhanh, setup Pinia và Router hoàn chỉnh. |
-| **Deploy Netlify CI/CD** | ✅ **Đã hoàn thành** | Đã kết nối repo `kaelCoding/MovaFreshFE` sang `movafresh.netlify.app`. |
+| **Deploy Netlify CI/CD** | ✅ **Đã hoàn thành** | Đã kết nối repo `movafresh-vn/movafresh-web` sang `movafresh.netlify.app`. |
 | **Storefront Prototype** | ⚠️ **Cần Refactor (V1)** | Bản V1 hiện tại đang mang tư duy sàn TMĐT bán lẻ (chọn từng món, giỏ hàng lẻ, badge ngăn mát/đông trên thẻ món, thanh freeship 250k–600k). Cần chuyển dịch hoàn toàn sang V2. |
 | **Dashboard Prototype** | ⚠️ **Cần Cập nhật (V1)** | Đã có giao diện nạp tiền và lịch sử, nhưng cần chuẩn hóa tên gọi Fresh Credit (bỏ chữ "ví điện tử"), bổ sung cơ chế quản lý Subscription 4 tuần. |
 

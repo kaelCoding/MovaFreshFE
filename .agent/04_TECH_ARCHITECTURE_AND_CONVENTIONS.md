@@ -13,7 +13,7 @@
 - **Routing:** **Vue Router 4** (`createWebHistory`, các route chính: `/` cho StoreView và `/dashboard` cho DashboardView).
 - **Styling:** CSS thuần hiện đại (Modern Vanilla CSS) dựa trên hệ thống biến toàn cục `:root` đặt tại `src/assets/styles/main.css`. Không sử dụng Tailwind hay UI framework nặng nề bên thứ 3 nhằm đảm bảo tốc độ tải trang tức thì (< 1s).
 - **Deployment & CI/CD:**
-  - Kho lưu trữ: GitHub [`kaelCoding/MovaFreshFE`](https://github.com/kaelCoding/MovaFreshFE) (nhánh `main`).
+  - Kho lưu trữ: GitHub [`movafresh-vn/movafresh-web`](https://github.com/movafresh-vn/movafresh-web) (nhánh `main`).
   - Hosting tự động: **Netlify** liên kết CI/CD với GitHub, tự động build và deploy tại production URL: [https://movafresh.netlify.app](https://movafresh.netlify.app).
 
 ---
