@@ -1,16 +1,20 @@
 <template>
   <header class="hdr">
     <div class="wrap">
+      <!-- Logo + Nhãn TP.HCM tích hợp gọn -->
       <router-link to="/" class="logo" aria-label="MOVA FRESH, về đầu trang">
         <svg viewBox="0 0 40 40" aria-hidden="true">
           <rect width="40" height="40" rx="11" fill="#146C43"/>
           <path d="M10 27V14l6 8 4-6 4 6 6-8v13" fill="none" stroke="#FAF9F5" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
           <circle cx="30" cy="11" r="3.2" fill="#D9531E"/>
         </svg>
-        <b>MOVA <span>FRESH</span></b>
+        <div class="logo-text">
+          <b>MOVA <span>FRESH</span></b>
+          <span class="city-tag">TP.HCM</span>
+        </div>
       </router-link>
 
-      <!-- Chuyển đổi màn hình chính -->
+      <!-- Ở giữa: Segmented Tabs (Desktop) -->
       <nav class="nav-views" role="tablist" aria-label="Màn hình chính">
         <router-link
           to="/"
@@ -21,7 +25,7 @@
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
             <polyline points="9 22 9 12 15 12 15 22"/>
           </svg>
-          <span class="lbl">Cửa hàng & Thực đơn</span>
+          <span class="lbl">Cửa hàng</span>
         </router-link>
         <router-link
           to="/dashboard"
@@ -32,15 +36,14 @@
             <circle cx="12" cy="7" r="4"/>
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
           </svg>
-          <span class="lbl">Tài khoản & Đơn của tôi</span>
+          <span class="lbl">Đơn của tôi</span>
           <span v-if="store.activeOrder" class="badge-dot" title="Có đơn đang xử lý"></span>
         </router-link>
       </nav>
 
+      <!-- Bên phải: 3 cụm gọn gàng -->
       <div class="hdr-r">
-        <span class="area">Giao tại TP.HCM</span>
-
-        <!-- Nút Chuông Thông Báo -->
+        <!-- 1. Nút Chuông Thông Báo -->
         <button
           class="icon-btn"
           @click="store.notifDrawerOpen = true"
@@ -55,18 +58,26 @@
           </span>
         </button>
 
-        <!-- Nút Tài khoản & Số dư -->
+        <!-- 2. Nút Tài khoản -->
         <button
+          v-if="!store.user.isLoggedIn"
+          class="btn sm primary login-hdr-btn"
+          @click="store.openModal('login')"
+        >
+          Đăng nhập
+        </button>
+
+        <button
+          v-else
           class="user-btn"
           @click="store.openModal('login')"
           aria-label="Thông tin tài khoản"
         >
-          <span class="avatar">{{ store.user.name.charAt(0) }}</span>
-          <span class="uname">{{ store.user.name }}</span>
-          <span class="plan-pill num">{{ Math.round(store.user.prepaidBalance / 1000) }}k</span>
+          <span class="avatar">{{ userAvatar }}</span>
+          <span class="uname-line">{{ userLineText }}</span>
         </button>
 
-        <!-- Nút Giỏ Hàng -->
+        <!-- 3. Nút Giỏ Hàng (Ẩn trên mobile vì đã có Bottom Nav) -->
         <button class="cartbtn" @click="handleCartClick" aria-label="Mở giỏ hàng">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/>
@@ -89,9 +100,22 @@ const store = useMovaStore();
 const route = useRoute();
 const router = useRouter();
 
+const userAvatar = computed(() => {
+  return (store.user.name || 'U').charAt(0);
+});
+
+// Hiển thị gọn 1 dòng duy nhất: "Chị Lan • 850k" hoặc "Anh Minh • 30k"
+const userLineText = computed(() => {
+  const rawName = store.user.name.replace(/\(.*?\)/g, '').trim();
+  const balK = Math.round(store.user.prepaidBalance / 1000) + 'k';
+  return `${rawName} • ${balK}`;
+});
+
+// Giỏ hàng hiển thị 1 dòng nowrap: "0 bữa" hoặc "2 bữa • 307k"
 const cartText = computed(() => {
   const c = store.calcAll;
-  return c.meals ? `${c.meals} bữa, ${fmt(c.total)}` : '0 bữa';
+  if (!c.meals) return '0 bữa';
+  return `${c.meals} bữa • ${fmt(c.total)}`;
 });
 
 const handleCartClick = async () => {
@@ -123,8 +147,9 @@ const handleCartClick = async () => {
 .hdr .wrap {
   display: flex;
   align-items: center;
-  gap: 14px;
-  height: 70px;
+  justify-content: space-between;
+  gap: 12px;
+  height: 68px;
 }
 
 .logo {
@@ -140,6 +165,12 @@ const handleCartClick = async () => {
   height: 36px;
 }
 
+.logo-text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .logo b {
   font-weight: 800;
   font-size: 18px;
@@ -151,20 +182,31 @@ const handleCartClick = async () => {
   color: var(--orange);
 }
 
+.city-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--green);
+  background: var(--green-soft);
+  padding: 2px 6px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+/* Nav segmented tabs */
 .nav-views {
   display: flex;
   background: var(--line-2);
   border-radius: 12px;
   padding: 4px;
-  gap: 2px;
-  margin-left: 8px;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
 .nav-tab {
   border: 0;
   background: none;
   border-radius: 9px;
-  padding: 7px 13px;
+  padding: 7px 14px;
   font-size: 13.5px;
   font-weight: 600;
   color: var(--muted);
@@ -173,6 +215,7 @@ const handleCartClick = async () => {
   display: flex;
   align-items: center;
   gap: 6px;
+  white-space: nowrap;
 }
 
 .nav-tab.active {
@@ -186,29 +229,21 @@ const handleCartClick = async () => {
   height: 7px;
   border-radius: 50%;
   background: var(--orange);
+  flex-shrink: 0;
 }
 
+/* Header right */
 .hdr-r {
-  margin-left: auto;
   display: flex;
   align-items: center;
   gap: 8px;
-}
-
-.area {
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--green);
-  background: var(--green-soft);
-  border-radius: 999px;
-  padding: 5px 10px;
-  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .icon-btn {
   position: relative;
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: 11px;
   border: 1px solid var(--line);
   background: var(--card);
@@ -230,24 +265,31 @@ const handleCartClick = async () => {
   color: #fff;
   font-size: 11px;
   font-weight: 700;
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
   border-radius: 50%;
   display: grid;
   place-items: center;
   border: 2px solid var(--bg);
 }
 
+.login-hdr-btn {
+  padding: 7px 14px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
 .user-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   border: 1px solid var(--line);
   background: var(--card);
   border-radius: 12px;
   padding: 6px 11px;
   font-size: 13px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .user-btn:hover {
@@ -255,24 +297,21 @@ const handleCartClick = async () => {
 }
 
 .user-btn .avatar {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--green-soft);
   color: var(--green);
   display: grid;
   place-items: center;
   font-weight: 700;
-  font-size: 12px;
+  font-size: 11.5px;
+  flex-shrink: 0;
 }
 
-.user-btn .plan-pill {
-  background: var(--orange-soft);
-  color: var(--orange-ink);
-  font-size: 11.5px;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 6px;
+.uname-line {
+  white-space: nowrap;
+  font-size: 13px;
 }
 
 .cartbtn {
@@ -294,34 +333,25 @@ const handleCartClick = async () => {
 }
 
 .cartbtn svg {
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
 }
 
-@media (max-width: 980px) {
+/* Mobile responsive (<= 768px): clean App style */
+@media (max-width: 768px) {
   .hdr .wrap {
-    gap: 8px;
+    height: 60px;
+    padding: 0 14px;
   }
-  .nav-tab .lbl {
+  .nav-views {
     display: none;
   }
-  .nav-tab {
-    padding: 7px 9px;
-  }
-  .user-btn .plan-pill {
+  .cartbtn {
     display: none;
   }
-}
-
-@media (max-width: 640px) {
-  .area {
+  .city-tag {
     display: none;
-  }
-  .user-btn .uname {
-    display: none;
-  }
-  .user-btn {
-    padding: 6px;
   }
 }
 </style>

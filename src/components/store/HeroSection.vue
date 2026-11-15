@@ -33,6 +33,7 @@
                 :dish="byId[id]"
                 :uid="'h' + id"
                 :steam="index === 0"
+                :size="index === 0 ? 105 : 84"
               />
             </div>
             <div>

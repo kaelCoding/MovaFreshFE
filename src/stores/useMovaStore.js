@@ -1,8 +1,17 @@
 import { defineStore } from 'pinia';
-import { DISHES, byId, ADDONS, addonById, MAXM, DEFAULT_STATE } from '../data/mockData';
+import {
+  DISHES,
+  byId,
+  ADDONS,
+  addonById,
+  MAXM,
+  DEFAULT_STATE,
+  DEMO_LAN_DATA,
+  DEMO_MINH_DATA
+} from '../data/mockData';
 import { fmt } from '../utils/formatters';
 
-const STORAGE_KEY = 'mova_fresh_v3_state';
+const STORAGE_KEY = 'mova_fresh_v3_onboard_state';
 
 function loadState() {
   try {
@@ -33,7 +42,8 @@ export const useMovaStore = defineStore('mova', {
       activeModal: null, // 'dish' | 'login' | 'checkout' | 'success' | 'refund' | 'topup' | 'address'
       selectedDishId: null,
       lastPlacedOrder: null,
-      pendingTopup: { amount: 0, bonus: 0 }
+      pendingTopup: { amount: 0, bonus: 0 },
+      pendingCheckoutAfterLogin: false
     };
   },
 
@@ -157,6 +167,7 @@ export const useMovaStore = defineStore('mova', {
 
     closeModal() {
       this.activeModal = null;
+      this.pendingCheckoutAfterLogin = false;
     },
 
     setMode(m) {
@@ -702,77 +713,64 @@ export const useMovaStore = defineStore('mova', {
     },
 
     loginDemoLan() {
-      this.user.name = 'Chị Lan';
-      this.user.phone = '0908 123 456';
-      this.user.prepaidBalance = 850000;
-      this.user.addresses = [
-        {
-          id: 'addr-1',
-          label: 'Nhà riêng (Sunrise City)',
-          name: 'Chị Lan',
-          phone: '0908 123 456',
-          district: 'Quận 7',
-          detail: 'Căn hộ A12.04, Sunrise City, Nguyễn Hữu Thọ, P. Tân Hưng',
-          isDefault: true
-        },
-        {
-          id: 'addr-2',
-          label: 'Công ty (Bitexco Q1)',
-          name: 'Chị Lan',
-          phone: '0908 123 456',
-          district: 'Quận 1',
-          detail: 'Tầng 8, Tòa nhà Bitexco, 2 Hải Triều, P. Bến Nghé',
-          isDefault: false
-        }
-      ];
-      this.closeModal();
+      this.user = JSON.parse(JSON.stringify(DEMO_LAN_DATA.user));
+      this.activeOrder = JSON.parse(JSON.stringify(DEMO_LAN_DATA.activeOrder));
+      this.historyOrders = JSON.parse(JSON.stringify(DEMO_LAN_DATA.historyOrders));
+      this.ledger = JSON.parse(JSON.stringify(DEMO_LAN_DATA.ledger));
+      this.notifications = JSON.parse(JSON.stringify(DEMO_LAN_DATA.notifications));
+      this.pay = 'prepaid';
       this.toast('Đã chuyển sang tài khoản Demo: Chị Lan (850k Gói Đi Chợ)');
+      if (this.pendingCheckoutAfterLogin) {
+        this.pendingCheckoutAfterLogin = false;
+        this.openModal('checkout');
+      } else {
+        this.closeModal();
+      }
       this.persist();
     },
 
-    // BUG 5 FIX: Đồng bộ sạch dữ liệu khi chuyển sang "Demo Khách mới: Anh Minh"
     loginDemoNew() {
-      this.user.name = 'Anh Minh (Khách mới)';
-      this.user.phone = '0912 999 888';
-      this.user.prepaidBalance = 30000;
-      this.user.addresses = [
-        {
-          id: 'addr-minh-1',
-          label: 'Căn hộ (Vinhomes Central Park)',
-          name: 'Anh Minh',
-          phone: '0912 999 888',
-          district: 'Bình Thạnh',
-          detail: 'Căn hộ Landmark 4, Vinhomes Central Park, 208 Nguyễn Hữu Cảnh',
-          isDefault: true
-        }
-      ];
+      this.user = JSON.parse(JSON.stringify(DEMO_MINH_DATA.user));
       this.activeOrder = null;
-      this.ledger = [
-        {
-          date: 'Hôm nay',
-          desc: 'Quà tặng thành viên mới MOVA Fresh',
-          amount: 30000,
-          bal: 30000
-        }
-      ];
-      this.notifications.unshift({
-        id: 'notif-' + Date.now(),
-        time: 'Vừa xong',
-        title: 'Chào mừng Anh Minh đến với MOVA Fresh',
-        desc: 'MOVA tặng bạn 30.000đ vào Gói Đi Chợ cho đơn đầu tiên.',
-        unread: true
-      });
-      this.closeModal();
+      this.historyOrders = [];
+      this.ledger = JSON.parse(JSON.stringify(DEMO_MINH_DATA.ledger));
+      this.notifications = JSON.parse(JSON.stringify(DEMO_MINH_DATA.notifications));
+      this.pay = 'qr';
       this.toast('Đã đăng nhập tài khoản Khách Mới: Anh Minh (Tặng 30.000đ)!');
+      if (this.pendingCheckoutAfterLogin) {
+        this.pendingCheckoutAfterLogin = false;
+        this.openModal('checkout');
+      } else {
+        this.closeModal();
+      }
       this.persist();
     },
 
     loginCustom(phone) {
       if (!phone) return;
+      this.user.isLoggedIn = true;
       this.user.phone = phone;
       this.user.name = 'Khách hàng ' + phone.slice(-4);
-      this.closeModal();
+      if (!this.user.addresses || !this.user.addresses.length) {
+        this.user.addresses = [
+          {
+            id: 'addr-' + Date.now(),
+            label: 'Địa chỉ giao hàng',
+            name: this.user.name,
+            phone: phone,
+            district: 'Quận 1',
+            detail: 'Chưa cập nhật chi tiết số nhà, tên đường',
+            isDefault: true
+          }
+        ];
+      }
       this.toast('Đăng nhập thành công!');
+      if (this.pendingCheckoutAfterLogin) {
+        this.pendingCheckoutAfterLogin = false;
+        this.openModal('checkout');
+      } else {
+        this.closeModal();
+      }
       this.persist();
     },
 

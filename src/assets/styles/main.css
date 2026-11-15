@@ -239,6 +239,16 @@ a {
   color: var(--red);
 }
 
+/* dish image */
+.dimg {
+  height: 172px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
 /* toggle switches */
 .tog {
   display: flex;

@@ -333,7 +333,12 @@ const orderBtnText = computed(() => {
 
 const handleOrder = () => {
   store.mobileCartOpen = false;
-  store.openModal('checkout');
+  if (!store.user.isLoggedIn) {
+    store.pendingCheckoutAfterLogin = true;
+    store.openModal('login');
+  } else {
+    store.openModal('checkout');
+  }
 };
 </script>
 
@@ -359,6 +364,17 @@ const handleOrder = () => {
 .cart-head h2 {
   font-size: 19px;
   font-weight: 800;
+}
+
+.sheet-x {
+  display: none;
+  background: transparent;
+  border: 0;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0 4px;
 }
 
 .cut {
@@ -654,6 +670,12 @@ const handleOrder = () => {
 }
 
 @media (max-width: 980px) {
+  .sheet-x {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .cart {
     position: fixed;
     left: 0;

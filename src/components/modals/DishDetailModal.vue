@@ -4,7 +4,7 @@
       <button class="mclose" @click="store.closeModal" aria-label="Đóng">×</button>
       <div class="mhead">
         <div class="pic" :style="{ background: BG[dish.p] }">
-          <DishPlateSvg :dish="dish" :uid="'m' + dish.id" />
+          <DishPlateSvg :dish="dish" :uid="'m' + dish.id" :size="180" />
         </div>
         <div>
           <h3>{{ dish.name }}</h3>

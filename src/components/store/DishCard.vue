@@ -7,7 +7,7 @@
     <div class="dimg" :style="{ background: BG[dish.p] }">
       <span class="t">⏱ {{ dish.time }} phút</span>
       <span v-if="batchSave > 0" class="sv">Tiết kiệm {{ fmt(batchSave) }}</span>
-      <DishPlateSvg :dish="dish" :uid="'c' + dish.id" />
+      <DishPlateSvg :dish="dish" :uid="'c' + dish.id" :size="150" />
     </div>
 
     <div class="dbody">
@@ -131,9 +131,11 @@ const handleDec = () => {
 
 .dimg {
   position: relative;
-  height: 170px;
-  display: grid;
-  place-items: center;
+  height: 172px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .dimg .t {

@@ -262,23 +262,7 @@ export const BG = {
 
 export const MAXM = 10;
 
-export const DEFAULT_STATE = () => ({
-  mode: 'A', // 'A' | 'B'
-  cartA: { 'bo-luclac': 2, 'ga-sa': 2 },
-  cartB: {},
-  addonsA: { 'ad-trung': 1 },
-  addonsB: {},
-  budget: 1200000,
-  n: 4,
-  f: [],
-  pay: 'prepaid', // 'prepaid' | 'qr' | 'cod'
-  sauce: false,
-  carb: false,
-  firstDrop: 'sun', // 'sun' | 'wed'
-  msg: null,
-
-  cutoffPassed: false, // false: trước 20h, true: đã qua 20h
-
+export const DEMO_LAN_DATA = {
   user: {
     isLoggedIn: true,
     name: 'Chị Lan',
@@ -307,7 +291,6 @@ export const DEFAULT_STATE = () => ({
     pref: { ppl: 4, budget: 1200000, sauce: false, carb: false, f: [] },
     zaloRemind: true
   },
-
   activeOrder: {
     id: 'MV10298',
     createdAt: 'Hôm nay lúc 09:15',
@@ -337,7 +320,6 @@ export const DEFAULT_STATE = () => ({
     total: 998000,
     isSplit: true
   },
-
   historyOrders: [
     {
       id: 'MV08912',
@@ -365,7 +347,6 @@ export const DEFAULT_STATE = () => ({
       addons: [{ id: 'ad-rau', name: 'Combo rau củ Đà Lạt sạch thêm', qty: 1 }]
     }
   ],
-
   ledger: [
     { date: '01/11 14:20', desc: 'Đăng ký Gói Đi Chợ 1.000.000đ (Tặng 50.000đ)', amount: 1050000, bal: 1050000 },
     { date: '01/11 15:00', desc: 'Thanh toán đơn hàng #MV08405', amount: -618000, bal: 432000 },
@@ -373,10 +354,91 @@ export const DEFAULT_STATE = () => ({
     { date: '08/11 19:40', desc: 'Thanh toán đơn hàng #MV08912', amount: -745000, bal: 737000 },
     { date: '10/11 11:15', desc: 'Bảo hành bữa ăn #MV08912 (Rau dập xe lạnh)', amount: 113000, bal: 850000 }
   ],
-
   notifications: [
     { id: 'n1', time: '10:00 hôm nay', title: 'Đơn #MV10298 đã chuyển nhà máy Đắk Lắk', desc: 'Đơn của bạn đã được ghi nhận vào lịch sơ chế đêm nay.', unread: true },
     { id: 'n2', time: 'Hôm qua 19:30', title: 'Zalo OA: Nhắc lịch chốt đơn trước 20:00', desc: 'Xe lạnh chuẩn bị đóng chuyến đêm về TP.HCM.', unread: false },
     { id: 'n3', time: '10/11 11:15', title: 'Đã hoàn 113.000đ vào Gói Đi Chợ', desc: 'Hoàn tiền bảo đảm độ tươi cho sự cố rau dập đơn #MV08912.', unread: false }
+  ]
+};
+
+export const DEMO_MINH_DATA = {
+  user: {
+    isLoggedIn: true,
+    name: 'Anh Minh',
+    phone: '0912 999 888',
+    prepaidBalance: 30000,
+    addresses: [
+      {
+        id: 'addr-minh-1',
+        label: 'Căn hộ (Vinhomes Central Park)',
+        name: 'Anh Minh',
+        phone: '0912 999 888',
+        district: 'Bình Thạnh',
+        detail: 'Căn hộ Landmark 4, Vinhomes Central Park, 208 Nguyễn Hữu Cảnh',
+        isDefault: true
+      }
+    ],
+    pref: { ppl: 4, budget: 1200000, sauce: false, carb: false, f: [] },
+    zaloRemind: true
+  },
+  activeOrder: null,
+  historyOrders: [],
+  ledger: [
+    {
+      date: 'Hôm nay',
+      desc: 'Quà tặng thành viên mới MOVA Fresh',
+      amount: 30000,
+      bal: 30000
+    }
+  ],
+  notifications: [
+    {
+      id: 'notif-welcome',
+      time: 'Vừa xong',
+      title: 'Chào mừng Anh Minh đến với MOVA Fresh',
+      desc: 'MOVA tặng bạn 30.000đ vào Gói Đi Chợ cho đơn đầu tiên.',
+      unread: true
+    }
+  ]
+};
+
+export const DEFAULT_STATE = () => ({
+  mode: 'A', // 'A' | 'B'
+  cartA: {},
+  cartB: {},
+  addonsA: {},
+  addonsB: {},
+  budget: 1200000,
+  n: 4,
+  f: [],
+  pay: 'qr', // 'qr' | 'prepaid' | 'cod'
+  sauce: false,
+  carb: false,
+  firstDrop: 'sun', // 'sun' | 'wed'
+  msg: null,
+
+  cutoffPassed: false, // false: trước 20h, true: đã qua 20h
+
+  user: {
+    isLoggedIn: false,
+    name: 'Khách hàng',
+    phone: '',
+    prepaidBalance: 0,
+    addresses: [],
+    pref: { ppl: 4, budget: 1200000, sauce: false, carb: false, f: [] },
+    zaloRemind: true
+  },
+
+  activeOrder: null,
+  historyOrders: [],
+  ledger: [],
+  notifications: [
+    {
+      id: 'notif-init',
+      time: 'Hôm nay',
+      title: 'Chào mừng bạn đến với MOVA Fresh',
+      desc: 'Nguyên liệu tươi sơ chế sẵn Đắk Lắk đóng thùng xe lạnh giao tận cửa TP.HCM.',
+      unread: true
+    }
   ]
 });

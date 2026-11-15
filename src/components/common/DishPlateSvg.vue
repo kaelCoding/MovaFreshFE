@@ -1,5 +1,5 @@
 <template>
-  <div class="plate-wrapper">
+  <div class="plate-wrapper" :style="{ width: numSize + 'px', height: numSize + 'px' }">
     <div v-if="steam" class="steam" aria-hidden="true">
       <i></i><i></i><i></i>
     </div>
@@ -23,11 +23,18 @@ const props = defineProps({
   steam: {
     type: Boolean,
     default: false
+  },
+  size: {
+    type: [Number, String],
+    default: 150
   }
 });
 
+const numSize = computed(() => Number(props.size) || 150);
+
 const svgContent = computed(() => {
   const d = props.dish;
+  const sz = numSize.value;
   const R = rng(hash(d.id));
   const u = d.id + props.uid;
   const pos = (n, rad) =>
@@ -99,7 +106,7 @@ const svgContent = computed(() => {
     });
   }
 
-  return `<svg viewBox="0 0 200 200" role="img" aria-label="Minh họa món ${d.name}">
+  return `<svg viewBox="0 0 200 200" width="${sz}" height="${sz}" style="width:${sz}px;height:${sz}px;flex-shrink:0;display:block;" role="img" aria-label="Minh họa món ${d.name}">
     <defs>
       <radialGradient id="p${u}" cx="45%" cy="40%" r="65%">
         <stop offset="0" stop-color="#FFFFFF"/>
@@ -130,19 +137,19 @@ const svgContent = computed(() => {
 <style scoped>
 .plate-wrapper {
   position: relative;
-  width: 100%;
-  height: 100%;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 .svg-container {
-  width: 100%;
-  height: 100%;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 .svg-container :deep(svg) {
-  width: 100%;
-  height: 100%;
+  display: block;
+  flex-shrink: 0;
 }
 </style>
