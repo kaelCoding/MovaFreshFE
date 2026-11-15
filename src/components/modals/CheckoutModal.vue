@@ -85,6 +85,56 @@
           </div>
         </div>
 
+        <!-- Hình thức thanh toán -->
+        <div class="pay-section">
+          <label class="blabel" style="margin-bottom: 8px">Hình thức thanh toán:</label>
+          <div class="pays" role="radiogroup" aria-label="Hình thức thanh toán">
+            <button
+              type="button"
+              class="pay"
+              :class="{ active: store.pay === 'prepaid' }"
+              role="radio"
+              :aria-checked="store.pay === 'prepaid'"
+              @click="store.setPay('prepaid')"
+            >
+              <div>
+                <b>Trừ vào Gói Đi Chợ Trả Trước</b>
+                <small>Số dư khả dụng: {{ fmt(store.user.prepaidBalance) }}</small>
+              </div>
+              <span class="badge" style="background: var(--green)">Khuyên dùng</span>
+            </button>
+
+            <button
+              type="button"
+              class="pay"
+              :class="{ active: store.pay === 'qr' }"
+              role="radio"
+              :aria-checked="store.pay === 'qr'"
+              @click="store.setPay('qr')"
+            >
+              <div>
+                <b>Chuyển khoản VietQR</b>
+                <small>{{ c.canQR ? 'Đủ điều kiện: Giảm ngay 20.000đ' : 'Áp dụng khi tiền món ≥ 400.000đ' }}</small>
+              </div>
+              <span v-if="c.canQR" class="badge">Giảm 20.000đ</span>
+            </button>
+
+            <button
+              type="button"
+              class="pay"
+              :class="{ active: store.pay === 'cod' }"
+              role="radio"
+              :aria-checked="store.pay === 'cod'"
+              @click="store.setPay('cod')"
+            >
+              <div>
+                <b>Thanh toán khi nhận hàng (COD)</b>
+                <small>Giao tiền mặt cho shipper</small>
+              </div>
+            </button>
+          </div>
+        </div>
+
         <!-- Tóm tắt thanh toán theo phương thức -->
         <div class="checkout-summary-box">
           <div>
@@ -211,6 +261,60 @@ const submitCheckout = () => {
   margin-top: 6px;
   font-size: 13.5px;
   line-height: 1.5;
+}
+
+.pay-section {
+  margin-top: 4px;
+  margin-bottom: 6px;
+}
+
+.pays {
+  display: grid;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.pay {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: #fff;
+  text-align: left;
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: .15s;
+  cursor: pointer;
+}
+
+.pay:hover {
+  border-color: var(--green);
+}
+
+.pay.active {
+  border-color: var(--green);
+  background: var(--green-soft);
+}
+
+.pay small {
+  display: block;
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.pay .badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--orange);
+  border-radius: 999px;
+  padding: 3px 8px;
+  white-space: nowrap;
 }
 
 @media (max-width: 600px) {

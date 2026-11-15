@@ -412,6 +412,61 @@ a {
   font-size: 18px;
 }
 
+@media (min-width: 981px) {
+  .sheet-x {
+    display: none !important;
+  }
+}
+
+/* Payment selection radio cards */
+.pays {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.pay {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: var(--card);
+  text-align: left;
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: .15s;
+  cursor: pointer;
+}
+
+.pay:hover {
+  border-color: var(--green);
+}
+
+.pay.active {
+  border-color: var(--green);
+  background: var(--green-soft);
+}
+
+.pay small {
+  display: block;
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.pay .badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--orange);
+  border-radius: 999px;
+  padding: 3px 8px;
+  white-space: nowrap;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;

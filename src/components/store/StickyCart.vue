@@ -4,252 +4,221 @@
     :class="{ open: store.mobileCartOpen }"
     aria-label="Giỏ hàng tuần này"
   >
-    <div class="cart-head">
-      <h2>Giỏ tuần này</h2>
-      <button class="sheet-x" @click="store.mobileCartOpen = false" aria-label="Đóng giỏ">×</button>
-    </div>
+    <!-- PHẦN TRÊN: Cố định đỉnh (Header + Countdown + Tiến trình) -->
+    <div class="cart-top">
+      <div class="cart-head">
+        <h2>Giỏ tuần này</h2>
+        <button class="sheet-x" @click="store.mobileCartOpen = false" aria-label="Đóng giỏ">×</button>
+      </div>
 
-    <!-- Đồng hồ đếm ngược -->
-    <div class="cut">
-      Chốt đơn đợt {{ cutoffData.sunLbl }}: <b>{{ cutoffData.formatted }}</b>
-    </div>
+      <!-- Đồng hồ đếm ngược -->
+      <div class="cut">
+        Chốt đơn đợt {{ cutoffData.sunLbl }}: <b>{{ cutoffData.formatted }}</b>
+      </div>
 
-    <!-- Thanh tiến trình 3 mốc (MOV 250k -> VietQR 400k -> Freeship 600k) -->
-    <div class="progress-box">
-      <div class="p-header">
-        <span>Ưu đãi hành trình xe lạnh</span>
-        <span class="num">{{ fmt(c.netFood) }}</span>
-      </div>
-      <div class="p-bar-outer">
-        <div class="p-bar-inner" :style="{ width: progressPercent + '%' }"></div>
-      </div>
-      <div class="p-nodes">
-        <span :class="{ reached: c.netFood >= 250000 }">250k: Đủ đơn</span>
-        <span :class="{ reached: c.netFood >= 400000 }">400k: -20k QR</span>
-        <span :class="{ reached: c.netFood >= 600000 && c.meals >= 4 }">600k: Freeship</span>
-      </div>
-      <div class="p-hint" :class="hintStatusClass">
-        {{ progressHintText }}
-      </div>
-    </div>
-
-    <!-- Chọn đợt nhận hàng đầu tiên -->
-    <div class="first-drop-pick">
-      <span class="f-lbl">Đợt nhận hàng đầu tiên:</span>
-      <div class="drop-radios">
-        <label :class="{ checked: store.firstDrop === 'sun' }">
-          <input
-            type="radio"
-            name="firstDrop"
-            value="sun"
-            :checked="store.firstDrop === 'sun'"
-            @change="store.setFirstDrop('sun')"
-          />
-          <span>Sáng Chủ Nhật</span>
-        </label>
-        <label :class="{ checked: store.firstDrop === 'wed' }">
-          <input
-            type="radio"
-            name="firstDrop"
-            value="wed"
-            :checked="store.firstDrop === 'wed'"
-            @change="store.setFirstDrop('wed')"
-          />
-          <span>Sáng Thứ Tư</span>
-        </label>
+      <!-- Thanh tiến trình 3 mốc (MOV 250k -> VietQR 400k -> Freeship 600k) -->
+      <div class="progress-box">
+        <div class="p-header">
+          <span>Ưu đãi hành trình xe lạnh</span>
+          <span class="num">{{ fmt(c.netFood) }}</span>
+        </div>
+        <div class="p-bar-outer">
+          <div class="p-bar-inner" :style="{ width: progressPercent + '%' }"></div>
+        </div>
+        <div class="p-nodes">
+          <span :class="{ reached: c.netFood >= 250000 }">250k: Đủ đơn</span>
+          <span :class="{ reached: c.netFood >= 400000 }">400k: -20k QR</span>
+          <span :class="{ reached: c.netFood >= 600000 && c.meals >= 4 }">600k: Freeship</span>
+        </div>
+        <div class="p-hint" :class="hintStatusClass">
+          {{ progressHintText }}
+        </div>
       </div>
     </div>
 
-    <!-- Danh sách món theo đợt giao -->
-    <div v-if="!c.meals && !c.adTotal" class="cart-empty">
-      Giỏ đang trống. Hãy bấm “Thêm” món bạn thích, hoặc chuyển sang chế độ “Soạn thực đơn theo ngân sách”.
-    </div>
-    <div v-else>
-      <!-- Giao gộp 1 đợt -->
-      <div v-if="!c.isSplit && drop1Ids.length" class="drop">
-        <h3>
-          Giao gộp 1 đợt: Sáng {{ dLbl(drop1Date) }}
-          <span>{{ drop1Ids.length }} bữa</span>
-        </h3>
-        <p class="muted" style="font-size: 12px; margin-bottom: 6px">
-          Đơn dưới 600k (hoặc ≤ 3 bữa) giao gộp 1 chuyến xe lạnh. Phí giao: 25.000đ.
-        </p>
-        <ul>
-          <li v-for="id in drop1Ids" :key="id">
-            <span>{{ byId[id].name }} <span class="muted">× {{ currentCart[id] }}</span></span>
-            <span class="num">
-              {{ fmt((byId[id].price - byId[id].save) * currentCart[id]) }}
-              <button class="x" @click="store.tryChangeDish(id, 0)" aria-label="Bỏ món">✕</button>
-            </span>
-          </li>
-        </ul>
+    <!-- PHẦN GIỮA: Tự cuộn mượt khi danh sách món dài -->
+    <div class="cart-scroll-body">
+      <!-- Chọn đợt nhận hàng đầu tiên -->
+      <div class="first-drop-pick">
+        <span class="f-lbl">Đợt nhận hàng đầu tiên:</span>
+        <div class="drop-radios">
+          <label :class="{ checked: store.firstDrop === 'sun' }">
+            <input
+              type="radio"
+              name="firstDrop"
+              value="sun"
+              :checked="store.firstDrop === 'sun'"
+              @change="store.setFirstDrop('sun')"
+            />
+            <span>Sáng Chủ Nhật</span>
+          </label>
+          <label :class="{ checked: store.firstDrop === 'wed' }">
+            <input
+              type="radio"
+              name="firstDrop"
+              value="wed"
+              :checked="store.firstDrop === 'wed'"
+              @change="store.setFirstDrop('wed')"
+            />
+            <span>Sáng Thứ Tư</span>
+          </label>
+        </div>
       </div>
 
-      <!-- Tách 2 đợt -->
-      <div v-if="c.isSplit">
-        <div class="drop">
+      <!-- Danh sách món theo đợt giao -->
+      <div v-if="!c.meals && !c.adTotal" class="cart-empty">
+        Giỏ đang trống. Hãy bấm “Thêm” món bạn thích, hoặc chuyển sang chế độ “Soạn thực đơn theo ngân sách”.
+      </div>
+      <div v-else>
+        <!-- Giao gộp 1 đợt -->
+        <div v-if="!c.isSplit && drop1Ids.length" class="drop">
           <h3>
-            Đợt 1: Sáng {{ dLbl(drop1Date) }}
+            Giao gộp 1 đợt: Sáng {{ dLbl(drop1Date) }}
             <span>{{ drop1Ids.length }} bữa</span>
           </h3>
+          <p class="muted" style="font-size: 12px; margin-bottom: 6px">
+            Đơn dưới 600k (hoặc ≤ 3 bữa) giao gộp 1 chuyến xe lạnh. Phí giao: 25.000đ.
+          </p>
           <ul>
             <li v-for="id in drop1Ids" :key="id">
               <span>{{ byId[id].name }} <span class="muted">× {{ currentCart[id] }}</span></span>
               <span class="num">
                 {{ fmt((byId[id].price - byId[id].save) * currentCart[id]) }}
-                <button class="x" @click="store.tryChangeDish(id, 0)">✕</button>
+                <button class="x" @click="store.tryChangeDish(id, 0)" aria-label="Bỏ món">✕</button>
               </span>
             </li>
           </ul>
         </div>
-        <div class="drop">
-          <h3>
-            Đợt 2: Sáng {{ dLbl(drop2Date) }}
-            <span>{{ drop2Ids.length }} bữa</span>
-          </h3>
-          <ul>
-            <li v-for="id in drop2Ids" :key="id">
-              <span>{{ byId[id].name }} <span class="muted">× {{ currentCart[id] }}</span></span>
-              <span class="num">
-                {{ fmt((byId[id].price - byId[id].save) * currentCart[id]) }}
-                <button class="x" @click="store.tryChangeDish(id, 0)">✕</button>
-              </span>
-            </li>
-          </ul>
+
+        <!-- Tách 2 đợt -->
+        <div v-if="c.isSplit">
+          <div class="drop">
+            <h3>
+              Đợt 1: Sáng {{ dLbl(drop1Date) }}
+              <span>{{ drop1Ids.length }} bữa</span>
+            </h3>
+            <ul>
+              <li v-for="id in drop1Ids" :key="id">
+                <span>{{ byId[id].name }} <span class="muted">× {{ currentCart[id] }}</span></span>
+                <span class="num">
+                  {{ fmt((byId[id].price - byId[id].save) * currentCart[id]) }}
+                  <button class="x" @click="store.tryChangeDish(id, 0)">✕</button>
+                </span>
+              </li>
+            </ul>
+          </div>
+          <div class="drop">
+            <h3>
+              Đợt 2: Sáng {{ dLbl(drop2Date) }}
+              <span>{{ drop2Ids.length }} bữa</span>
+            </h3>
+            <ul>
+              <li v-for="id in drop2Ids" :key="id">
+                <span>{{ byId[id].name }} <span class="muted">× {{ currentCart[id] }}</span></span>
+                <span class="num">
+                  {{ fmt((byId[id].price - byId[id].save) * currentCart[id]) }}
+                  <button class="x" @click="store.tryChangeDish(id, 0)">✕</button>
+                </span>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Danh sách Addons trong giỏ -->
-    <div v-if="c.adTotal > 0" class="drop" style="margin-top: 10px">
-      <h3>Sản phẩm mua thêm cùng xe</h3>
-      <ul>
-        <li
-          v-for="(q, id) in currentAddons"
-          :key="id"
-          v-show="q > 0"
-        >
-          <span>{{ addonById[id].icon }} {{ addonById[id].name }} <span class="muted">× {{ q }}</span></span>
-          <span class="num">
-            {{ fmt(addonById[id].price * q) }}
-            <button class="x" @click="store.tryChangeAddon(id, 0)">✕</button>
-          </span>
-        </li>
-      </ul>
-    </div>
+      <!-- Danh sách Addons trong giỏ -->
+      <div v-if="c.adTotal > 0" class="drop" style="margin-top: 10px">
+        <h3>Sản phẩm mua thêm cùng xe</h3>
+        <ul>
+          <li
+            v-for="(q, id) in currentAddons"
+            :key="id"
+            v-show="q > 0"
+          >
+            <span>{{ addonById[id].icon }} {{ addonById[id].name }} <span class="muted">× {{ q }}</span></span>
+            <span class="num">
+              {{ fmt(addonById[id].price * q) }}
+              <button class="x" @click="store.tryChangeAddon(id, 0)">✕</button>
+            </span>
+          </li>
+        </ul>
+      </div>
 
-    <!-- Tinh chỉnh đóng gói -->
-    <div class="subh">Quy cách đóng gói nhà máy</div>
-    <label class="tog">
-      <input type="checkbox" v-model="store.sauce" @change="onSauceChange" />
-      <span>
-        Tách riêng gói sốt gia vị
-        <small>Nhà có người già, trẻ nhỏ ăn nhạt: tự nêm khi xào nấu.</small>
-      </span>
-    </label>
-    <label class="tog">
-      <input type="checkbox" v-model="store.carb" @change="onCarbChange" />
-      <span>
-        Giảm 50% lượng tinh bột (cơm, bún)
-        <small>Cho bữa tối nhẹ bụng. Nhà máy đóng bớt lượng tinh bột, giá không đổi.</small>
-      </span>
-    </label>
-
-    <!-- Bảng tổng tiền -->
-    <div class="sum">
-      <div class="r">
-        <span>Tổng giá trị món ăn</span>
-        <span class="num">{{ fmt(c.sub) }}</span>
-      </div>
-      <div v-if="c.save > 0" class="r">
-        <span>Tiết kiệm theo mẻ nấu</span>
-        <span class="num g">−{{ fmt(c.save) }}</span>
-      </div>
-      <div v-if="c.adTotal > 0" class="r">
-        <span>Sản phẩm mua thêm cùng xe</span>
-        <span class="num">{{ fmt(c.adTotal) }}</span>
-      </div>
-      <div class="r">
-        <span>Phí vận chuyển xe lạnh Đắk Lắk – TP.HCM</span>
-        <span class="num" :class="{ g: c.meals && !c.shipFee }">
-          {{ c.meals ? (c.shipFee ? fmt(c.shipFee) : 'Miễn phí') : '–' }}
+      <!-- Tinh chỉnh đóng gói (Rút gọn mô tả phụ 1 dòng ngắn gọn) -->
+      <div class="subh">Quy cách đóng gói nhà máy</div>
+      <label class="tog">
+        <input type="checkbox" v-model="store.sauce" @change="onSauceChange" />
+        <span>
+          Tách riêng gói sốt gia vị
+          <small>Đóng gói sốt rời để gia đình tự nêm nếm khi nấu.</small>
         </span>
-      </div>
-      <div v-if="c.qrDiscount > 0" class="r">
-        <span>Ưu đãi VietQR (đơn ≥ 400k)</span>
-        <span class="num g">−{{ fmt(c.qrDiscount) }}</span>
-      </div>
-      <div class="total">
-        <span>Tổng thanh toán</span>
-        <b>{{ fmt(c.total) }}</b>
-      </div>
+      </label>
+      <label class="tog">
+        <input type="checkbox" v-model="store.carb" @change="onCarbChange" />
+        <span>
+          Giảm 50% lượng tinh bột (cơm, bún)
+          <small>Bớt cơm/bún cho bữa tối nhẹ bụng (giá không đổi).</small>
+        </span>
+      </label>
     </div>
 
-    <!-- So sánh ngân sách Mode B -->
-    <div v-if="store.mode === 'B'" class="bbar" :class="{ over: c.total > store.budget }">
-      <div class="track">
-        <i :style="{ width: Math.min(100, (c.total / store.budget) * 100) + '%' }"></i>
+    <!-- PHẦN ĐÁY: Luôn ghim chặt ở đáy thẻ giỏ hàng -->
+    <div class="cart-bottom">
+      <!-- So sánh ngân sách Mode B -->
+      <div v-if="store.mode === 'B'" class="bbar" :class="{ over: c.total > store.budget }">
+        <div class="track">
+          <i :style="{ width: Math.min(100, (c.total / store.budget) * 100) + '%' }"></i>
+        </div>
+        <p v-if="c.total > store.budget">
+          Vượt <b class="num">{{ fmt(c.total - store.budget) }}</b> so với ngân sách {{ fmt(store.budget) }}
+        </p>
+        <p v-else>
+          Còn dư <b class="num">{{ fmt(store.budget - c.total) }}</b> so với ngân sách {{ fmt(store.budget) }}
+        </p>
       </div>
-      <p v-if="c.total > store.budget">
-        Vượt <b class="num">{{ fmt(c.total - store.budget) }}</b> so với ngân sách {{ fmt(store.budget) }}
+
+      <!-- Bảng tổng tiền -->
+      <div class="sum">
+        <div class="r">
+          <span>Tổng giá trị món ăn</span>
+          <span class="num">{{ fmt(c.sub) }}</span>
+        </div>
+        <div v-if="c.save > 0" class="r">
+          <span>Tiết kiệm theo mẻ nấu</span>
+          <span class="num g">−{{ fmt(c.save) }}</span>
+        </div>
+        <div v-if="c.adTotal > 0" class="r">
+          <span>Sản phẩm mua thêm cùng xe</span>
+          <span class="num">{{ fmt(c.adTotal) }}</span>
+        </div>
+        <div class="r">
+          <span>Phí vận chuyển xe lạnh</span>
+          <span class="num" :class="{ g: c.meals && !c.shipFee }">
+            {{ c.meals ? (c.shipFee ? fmt(c.shipFee) : 'Miễn phí') : '–' }}
+          </span>
+        </div>
+        <div v-if="c.qrDiscount > 0" class="r">
+          <span>Ưu đãi VietQR (đơn ≥ 400k)</span>
+          <span class="num g">−{{ fmt(c.qrDiscount) }}</span>
+        </div>
+        <div class="total">
+          <span>Tổng thanh toán</span>
+          <b>{{ fmt(c.total) }}</b>
+        </div>
+      </div>
+
+      <!-- Dòng ghi chú nhỏ gọn ưu đãi thanh toán VietQR -->
+      <p class="cart-pay-note">
+        💡 Ưu đãi giảm 20.000đ khi chọn VietQR ở bước thanh toán (đơn ≥ 400k)
       </p>
-      <p v-else>
-        Còn dư <b class="num">{{ fmt(store.budget - c.total) }}</b> so với ngân sách {{ fmt(store.budget) }}
-      </p>
-    </div>
-
-    <!-- Hình thức thanh toán -->
-    <div class="subh">Hình thức thanh toán</div>
-    <div class="pays" role="radiogroup" aria-label="Hình thức thanh toán">
-      <button
-        class="pay"
-        :class="{ active: store.pay === 'prepaid' }"
-        role="radio"
-        :aria-checked="store.pay === 'prepaid'"
-        @click="store.setPay('prepaid')"
-      >
-        <div>
-          <b>Trừ vào Gói Đi Chợ Trả Trước</b>
-          <small>Số dư khả dụng: {{ fmt(store.user.prepaidBalance) }}</small>
-        </div>
-        <span class="badge" style="background: var(--green)">Khuyên dùng</span>
-      </button>
 
       <button
-        class="pay"
-        :class="{ active: store.pay === 'qr' }"
-        role="radio"
-        :aria-checked="store.pay === 'qr'"
-        @click="store.setPay('qr')"
+        class="btn orange order"
+        :disabled="!c.meals || !c.meetsMOV"
+        @click="handleOrder"
       >
-        <div>
-          <b>Chuyển khoản VietQR</b>
-          <small>{{ c.canQR ? 'Đủ điều kiện: Giảm ngay 20.000đ' : 'Áp dụng khi tiền món ≥ 400.000đ' }}</small>
-        </div>
-        <span v-if="c.canQR" class="badge">Giảm 20.000đ</span>
-      </button>
-
-      <button
-        class="pay"
-        :class="{ active: store.pay === 'cod' }"
-        role="radio"
-        :aria-checked="store.pay === 'cod'"
-        @click="store.setPay('cod')"
-      >
-        <div>
-          <b>Thanh toán khi nhận hàng (COD)</b>
-          <small>Giao tiền mặt cho shipper</small>
-        </div>
+        {{ orderBtnText }}
       </button>
     </div>
-
-    <button
-      class="btn orange order"
-      :disabled="!c.meals || !c.meetsMOV"
-      @click="handleOrder"
-    >
-      {{ orderBtnText }}
-    </button>
   </aside>
 </template>
 
@@ -349,9 +318,20 @@ const handleOrder = () => {
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 20px;
-  padding: 18px;
-  max-height: calc(100vh - 100px);
-  overflow-y: auto;
+  max-height: calc(100vh - 96px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+/* Phần trên: Cố định đỉnh */
+.cart-top {
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+  background: var(--card);
 }
 
 .cart-head {
@@ -391,10 +371,10 @@ const handleOrder = () => {
 }
 
 .progress-box {
-  margin-top: 14px;
+  margin-top: 10px;
   border: 1px solid var(--line);
   border-radius: 14px;
-  padding: 12px;
+  padding: 11px 12px;
   background: var(--bg);
 }
 
@@ -419,77 +399,91 @@ const handleOrder = () => {
   height: 100%;
   background: linear-gradient(90deg, var(--orange), var(--green));
   border-radius: 6px;
-  transition: width .3s ease;
+  transition: width 0.3s ease;
 }
 
 .p-nodes {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 4px;
+  display: flex;
+  justify-content: space-between;
   font-size: 11px;
   color: var(--muted);
-  text-align: center;
-}
-
-.p-nodes span {
-  padding: 2px 4px;
-  border-radius: 6px;
-  background: var(--card);
-  border: 1px solid var(--line);
 }
 
 .p-nodes span.reached {
-  background: var(--green-soft);
-  color: var(--green-d);
-  border-color: var(--green);
+  color: var(--green);
   font-weight: 700;
 }
 
 .p-hint {
-  font-size: 12.5px;
-  font-weight: 600;
   margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 6px 8px;
+  border-radius: 8px;
 }
 
 .p-hint.warn {
-  color: var(--orange-ink);
+  background: #FFF4E5;
+  color: #B25E00;
 }
 
 .p-hint.ok {
+  background: var(--green-soft);
   color: var(--green);
+  font-weight: 600;
+}
+
+/* Phần giữa: Tự cuộn mượt khi danh sách dài */
+.cart-scroll-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 18px;
+}
+
+.cart-scroll-body::-webkit-scrollbar {
+  width: 5px;
+}
+.cart-scroll-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.cart-scroll-body::-webkit-scrollbar-thumb {
+  background: var(--line-2);
+  border-radius: 999px;
 }
 
 .first-drop-pick {
-  margin-top: 12px;
+  background: var(--bg);
   border: 1px solid var(--line);
   border-radius: 12px;
   padding: 10px 12px;
-  background: var(--card);
+  margin-bottom: 12px;
 }
 
-.first-drop-pick .f-lbl {
+.f-lbl {
   font-size: 12.5px;
   font-weight: 700;
-  margin-bottom: 6px;
   display: block;
+  margin-bottom: 8px;
 }
 
 .drop-radios {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6px;
+  gap: 8px;
 }
 
 .drop-radios label {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  border: 1px solid var(--line);
-  padding: 6px 8px;
+  padding: 7px 8px;
+  background: var(--card);
+  border: 1.5px solid var(--line);
   border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
   cursor: pointer;
+  transition: 0.15s;
 }
 
 .drop-radios label.checked {
@@ -501,97 +495,120 @@ const handleOrder = () => {
   accent-color: var(--green);
 }
 
+.cart-empty {
+  padding: 24px 12px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
 .drop {
-  margin-top: 14px;
+  margin-top: 10px;
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 10px 12px;
 }
 
 .drop h3 {
-  font-size: 13.5px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 6px;
   display: flex;
   justify-content: space-between;
-  gap: 8px;
+  align-items: center;
 }
 
 .drop h3 span {
-  color: var(--muted);
-  font-weight: 500;
+  font-size: 11.5px;
+  font-weight: 700;
+  background: var(--green);
+  color: #fff;
+  padding: 2px 7px;
+  border-radius: 999px;
 }
 
 .drop ul {
   list-style: none;
-  margin: 6px 0 0;
   padding: 0;
-  display: grid;
-  gap: 6px;
+  margin: 0;
 }
 
 .drop li {
   display: flex;
   justify-content: space-between;
-  gap: 8px;
-  font-size: 13.5px;
-  border-bottom: 1px dashed var(--line-2);
-  padding-bottom: 5px;
-}
-
-.drop li .x {
-  border: 0;
-  background: none;
-  color: var(--muted);
+  align-items: center;
   font-size: 13px;
-  padding: 0 0 0 6px;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--line);
 }
 
-.cart-empty {
-  margin-top: 14px;
-  padding: 16px;
-  border: 1.5px dashed var(--line);
-  border-radius: 14px;
-  font-size: 13.5px;
+.drop li:last-child {
+  border-bottom: 0;
+}
+
+.drop .x {
+  background: none;
+  border: 0;
   color: var(--muted);
-}
-
-.sum {
-  margin-top: 14px;
-  display: grid;
-  gap: 6px;
+  margin-left: 6px;
   font-size: 14px;
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 
-.sum .r {
+.drop .x:hover {
+  color: var(--orange);
+  background: var(--orange-soft);
+}
+
+.subh {
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: 14px;
+  margin-bottom: 4px;
+}
+
+.tog {
   display: flex;
-  justify-content: space-between;
-  gap: 10px;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--bg);
+  margin-top: 6px;
+  font-size: 13px;
+  cursor: pointer;
 }
 
-.sum .g {
-  color: var(--green);
+.tog input {
+  margin-top: 3px;
+  accent-color: var(--green);
 }
 
-.total {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
+.tog small {
+  display: block;
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* Phần đáy: Luôn ghim chặt ở đáy */
+.cart-bottom {
+  padding: 12px 18px 16px;
   border-top: 1px solid var(--line);
-  padding-top: 10px;
-  margin-top: 4px;
-}
-
-.total b {
-  font-size: 24px;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
+  background: var(--card);
+  flex-shrink: 0;
 }
 
 .bbar {
-  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .bbar .track {
-  height: 9px;
-  border-radius: 6px;
+  height: 6px;
   background: var(--line-2);
+  border-radius: 3px;
   overflow: hidden;
 }
 
@@ -599,8 +616,7 @@ const handleOrder = () => {
   display: block;
   height: 100%;
   background: var(--green);
-  border-radius: 6px;
-  transition: width .3s;
+  border-radius: 3px;
 }
 
 .bbar.over .track i {
@@ -608,67 +624,69 @@ const handleOrder = () => {
 }
 
 .bbar p {
-  font-size: 13px;
-  margin-top: 5px;
+  font-size: 12.5px;
+  margin-top: 4px;
 }
 
-.subh {
-  font-size: 13.5px;
-  font-weight: 700;
-  margin-top: 14px;
+.bbar.over p {
+  color: var(--orange-ink);
 }
 
-.pays {
-  display: grid;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.pay {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  border: 1.5px solid var(--line);
+.sum {
+  background: var(--bg);
   border-radius: 12px;
   padding: 10px 12px;
-  background: var(--card);
-  text-align: left;
-  font-size: 13.5px;
-  font-weight: 600;
-  transition: .15s;
 }
 
-.pay.active {
-  border-color: var(--green);
-  background: var(--green-soft);
-}
-
-.pay small {
-  display: block;
-  font-weight: 400;
-  font-size: 12px;
+.sum .r {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  margin-bottom: 5px;
   color: var(--muted);
 }
 
-.pay .badge {
-  font-size: 11px;
-  font-weight: 700;
-  color: #fff;
-  background: var(--orange);
-  border-radius: 999px;
-  padding: 3px 8px;
-  white-space: nowrap;
+.sum .g {
+  color: var(--green);
+  font-weight: 600;
+}
+
+.sum .total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 14.5px;
+  font-weight: 800;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.sum .total b {
+  font-size: 18px;
+  color: var(--green);
+}
+
+.cart-pay-note {
+  font-size: 11.5px;
+  color: var(--muted);
+  line-height: 1.35;
+  margin-top: 8px;
+  margin-bottom: 4px;
+  text-align: center;
 }
 
 .order {
   width: 100%;
   justify-content: center;
-  margin-top: 14px;
-  padding: 13px;
-  font-size: 15.5px;
+  margin-top: 8px;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-weight: 700;
 }
 
+/* Mobile responsive */
 @media (max-width: 980px) {
   .sheet-x {
     display: inline-flex;
@@ -687,12 +705,19 @@ const handleOrder = () => {
     max-height: 86vh;
     transform: translateY(105%);
     transition: transform .28s ease;
-    padding-bottom: 24px;
     box-shadow: 0 -12px 32px rgba(40, 30, 10, .18);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 0;
   }
 
   .cart.open {
     transform: none;
+  }
+
+  .cart-bottom {
+    padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
   }
 }
 </style>
