@@ -71,10 +71,11 @@
 
         <div class="form-row">
           <div>
-            <label class="blabel">Khung giờ nhận buổi sáng:</label>
+            <label class="blabel">Khung giờ nhận hàng tại TP.HCM:</label>
             <select v-model="form.timeSlot" class="select-box">
-              <option value="06:30–08:30">06:30 – 08:30 (Sớm trước khi đi làm)</option>
-              <option value="08:30–10:00">08:30 – 10:00 (Nhận thong thả)</option>
+              <option value="06:30–08:30">06:30 – 08:30 (Ca Sáng sớm — Trước giờ đi làm)</option>
+              <option value="08:30–10:00">08:30 – 10:00 (Ca Sáng — Giao lễ tân / tại nhà)</option>
+              <option value="17:30–20:00">17:30 – 20:00 (Ca Chiều Tối — Tăng cường đá gel cho khách đi làm về muộn)</option>
             </select>
           </div>
           <div>

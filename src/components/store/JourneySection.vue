@@ -22,13 +22,13 @@
           <span class="dot">3</span>
           <span class="when">22:00 – 05:00</span>
           <b>Xe lạnh xuyên đêm</b>
-          <p>Thùng giữ nhiệt với đá gel cấp đông −18°C chạy thẳng về cửa ngõ TP.HCM.</p>
+          <p>Thùng giữ nhiệt đá gel −18°C chạy 1 chuyến xuyên đêm về điểm tập kết TP.HCM lúc 05:00 sáng.</p>
         </li>
         <li>
           <span class="dot">4</span>
-          <span class="when">Trước 10:00 Sáng CN & T4</span>
-          <b>Giao tận bếp</b>
-          <p>Shipper giao tận cửa theo khung giờ bạn chọn: 06:30–08:30 hoặc 08:30–10:00.</p>
+          <span class="when">Giao 3 ca linh hoạt</span>
+          <b>Shipper giao tận cửa</b>
+          <p>Giao linh hoạt theo 3 khung giờ bạn chọn: Ca Sáng sớm (06:30–08:30), Ca Sáng (08:30–10:00), hoặc Ca Chiều Tối (17:30–20:00 tăng cường đá gel).</p>
         </li>
       </ol>
     </div>

@@ -39,37 +39,56 @@
             <!-- Box ngân sách -->
             <BudgetPlanner v-if="store.mode === 'B'" />
 
-            <!-- Bộ lọc khẩu vị -->
-            <div class="filters">
-              <span class="lbl">Khẩu vị:</span>
-              <button
-                class="chip no"
-                :class="{ active: store.f.includes('noBo') }"
-                @click="store.toggleFilter('noBo')"
-              >
-                Không ăn Bò
-              </button>
-              <button
-                class="chip no"
-                :class="{ active: store.f.includes('noHeo') }"
-                @click="store.toggleFilter('noHeo')"
-              >
-                Không ăn Heo
-              </button>
-              <button
-                class="chip no"
-                :class="{ active: store.f.includes('noCay') }"
-                @click="store.toggleFilter('noCay')"
-              >
-                Không cay
-              </button>
-              <button
-                class="chip"
-                :class="{ active: store.f.includes('lowOil') }"
-                @click="store.toggleFilter('lowOil')"
-              >
-                Ít dầu mỡ
-              </button>
+            <!-- Bộ lọc khẩu vị & Công tắc Dinh dưỡng -->
+            <div class="filters-bar">
+              <div class="filters">
+                <span class="lbl">Khẩu vị:</span>
+                <button
+                  class="chip no"
+                  :class="{ active: store.f.includes('noBo') }"
+                  @click="store.toggleFilter('noBo')"
+                >
+                  Không ăn Bò
+                </button>
+                <button
+                  class="chip no"
+                  :class="{ active: store.f.includes('noHeo') }"
+                  @click="store.toggleFilter('noHeo')"
+                >
+                  Không ăn Heo
+                </button>
+                <button
+                  class="chip no"
+                  :class="{ active: store.f.includes('noCay') }"
+                  @click="store.toggleFilter('noCay')"
+                >
+                  Không cay
+                </button>
+                <button
+                  class="chip"
+                  :class="{ active: store.f.includes('lowOil') }"
+                  @click="store.toggleFilter('lowOil')"
+                >
+                  Ít dầu mỡ
+                </button>
+                <button
+                  class="chip vegan-chip"
+                  :class="{ active: store.f.includes('chay') }"
+                  @click="store.toggleFilter('chay')"
+                >
+                  🌱 Thuần chay / Rằm
+                </button>
+              </div>
+
+              <!-- Công tắc Hiện chỉ số dinh dưỡng -->
+              <label class="nutrition-toggle" title="Bật/Tắt hiển thị Calo, Đạm, Tinh bột trên thẻ món">
+                <input
+                  type="checkbox"
+                  :checked="store.showNutrition"
+                  @change="store.toggleShowNutrition"
+                />
+                <span class="nt-lbl">🔥 Hiện chỉ số dinh dưỡng (Calo/Đạm)</span>
+              </label>
             </div>
 
             <!-- Lưới món ăn -->
@@ -187,11 +206,19 @@ const visibleDishesCount = computed(() => {
   box-shadow: 0 1px 3px rgba(60, 40, 10, .12);
 }
 
+.filters-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0 14px;
+}
+
 .filters {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin: 16px 0 14px;
   align-items: center;
 }
 
@@ -199,6 +226,49 @@ const visibleDishesCount = computed(() => {
   font-size: 13.5px;
   font-weight: 600;
   margin-right: 4px;
+}
+
+.chip.vegan-chip {
+  background: #F0FDF4;
+  border-color: #BBF7D0;
+  color: #166534;
+}
+
+.chip.vegan-chip.active {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+
+.nutrition-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: all .15s ease;
+}
+
+.nutrition-toggle:hover {
+  border-color: var(--orange);
+  background: var(--orange-soft);
+}
+
+.nutrition-toggle input {
+  accent-color: var(--orange);
+  cursor: pointer;
+  margin: 0;
+}
+
+.nutrition-toggle .nt-lbl {
+  color: var(--ink);
+  white-space: nowrap;
 }
 
 .grid {

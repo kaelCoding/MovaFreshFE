@@ -25,6 +25,15 @@
         </span>
       </div>
 
+      <!-- Dòng badge chỉ số dinh dưỡng khi bật toggle -->
+      <div v-if="store.showNutrition && dish.nutrition" class="nutrition-badge">
+        <span>🔥 {{ dish.nutrition.kcal }} kcal</span>
+        <span class="sep">•</span>
+        <span>🥩 {{ dish.nutrition.protein }}g Đạm</span>
+        <span class="sep">•</span>
+        <span>🍚 {{ dish.nutrition.carb }}g Carb</span>
+      </div>
+
       <div class="links">
         <button class="lnk" @click="store.openModal('dish', dish.id)">
           Chi tiết & Cách nấu
@@ -180,6 +189,27 @@ const handleDec = () => {
 .dbody .w {
   font-size: 13px;
   color: var(--muted);
+}
+
+.nutrition-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-top: 2px;
+  margin-bottom: 2px;
+  width: fit-content;
+}
+
+.nutrition-badge .sep {
+  color: var(--muted);
+  opacity: .5;
 }
 
 .links {

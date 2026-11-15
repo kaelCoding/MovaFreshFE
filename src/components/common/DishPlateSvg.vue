@@ -96,6 +96,52 @@ const svgContent = computed(() => {
     });
   }
 
+  if (d.p === 'canh') {
+    f += `<circle cx="100" cy="100" r="54" fill="#E2EFE0" stroke="#B8D8B2" stroke-width="2.5"/><circle cx="100" cy="100" r="48" fill="#F4E9C8" opacity=".88"/>`;
+    if (d.id === 'canh-bido-thitbam') {
+      pos(6, 32).forEach(([x, y, a]) => {
+        f += `<rect x="${x - 10}" y="${y - 8}" width="20" height="16" rx="4" fill="#E67E22" transform="rotate(${a} ${x} ${y})"/><circle cx="${x + 2}" cy="${y - 1}" r="3" fill="#F39C12"/>`;
+      });
+      pos(8, 38).forEach(([x, y]) => {
+        f += `<circle cx="${x}" cy="${y}" r="3.8" fill="#FDFEFE" stroke="#D5D8DC" stroke-width="1.2"/>`;
+      });
+    } else {
+      pos(5, 30).forEach(([x, y, a]) => {
+        f += `<ellipse cx="${x}" cy="${y}" rx="12" ry="8" fill="#F5CBA7" transform="rotate(${a} ${x} ${y})"/>`;
+      });
+      pos(8, 38).forEach(([x, y, a]) => {
+        f += `<ellipse cx="${x}" cy="${y}" rx="10" ry="4.5" fill="#27AE60" transform="rotate(${a} ${x} ${y})"/>`;
+      });
+    }
+    pos(12, 44).forEach(([x, y]) => {
+      f += `<circle cx="${x}" cy="${y}" r="2.2" fill="#2ECC71"/>`;
+    });
+  }
+
+  if (d.p === 'rau') {
+    pos(6, 38).forEach(([x, y, a]) => {
+      f += `<g transform="translate(${x} ${y}) rotate(${a})"><path d="M-14 0 C-10 -14 10 -14 14 0 C10 14 -10 14 -14 0" fill="#2E7D32"/><path d="M-6 0 C-4 -6 4 -6 6 0 C4 6 -4 6 -6 0" fill="#E8F8F5" opacity=".8"/></g>`;
+    });
+    pos(5, 32).forEach(([x, y, a]) => {
+      f += `<g transform="translate(${x} ${y}) rotate(${a})"><ellipse rx="13" ry="8" fill="#5D4037"/><ellipse rx="8" ry="4" fill="#8D6E63" opacity=".8"/></g>`;
+    });
+    pos(8, 44).forEach(([x, y]) => {
+      f += `<circle cx="${x}" cy="${y}" r="2" fill="#F9E79F"/>`;
+    });
+  }
+
+  if (d.p === 'chay') {
+    pos(5, 30).forEach(([x, y, a]) => {
+      f += `<rect x="${x - 11}" y="${y - 11}" width="22" height="22" rx="4" fill="#F9E79F" stroke="#D4AC0D" stroke-width="1.5" transform="rotate(${a} ${x} ${y})"/>`;
+    });
+    pos(5, 38).forEach(([x, y, a]) => {
+      f += `<g transform="translate(${x} ${y}) rotate(${a})"><ellipse rx="15" ry="9" fill="#EDBB99"/><ellipse rx="9" ry="5" fill="#D35400" opacity=".6"/></g>`;
+    });
+    pos(8, 42).forEach(([x, y]) => {
+      f += `<circle cx="${x}" cy="${y}" r="3" fill="#1E8449"/><circle cx="${x + 3}" cy="${y + 2}" r="2.4" fill="#27AE60"/>`;
+    });
+  }
+
   pos(5, 52).forEach(([x, y, a]) => {
     f += `<ellipse cx="${x}" cy="${y}" rx="8" ry="3.6" fill="#3F8F4F" transform="rotate(${a} ${x} ${y})"/>`;
   });

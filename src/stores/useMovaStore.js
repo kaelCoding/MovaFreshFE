@@ -11,7 +11,7 @@ import {
 } from '../data/mockData';
 import { fmt } from '../utils/formatters';
 
-const STORAGE_KEY = 'mova_fresh_v3_onboard_state';
+const STORAGE_KEY = 'mova_fresh_v3_onboard_v4';
 
 function loadState() {
   try {
@@ -60,6 +60,7 @@ export const useMovaStore = defineStore('mova', {
       if (f.has('noHeo') && (d.p === 'heo' || d.p === 'suon')) return false;
       if (f.has('noCay') && d.spicy) return false;
       if (f.has('lowOil') && !d.lowOil) return false;
+      if (f.has('chay') && !d.isVegan) return false;
       return true;
     },
     calcAll(state) {
@@ -210,6 +211,12 @@ export const useMovaStore = defineStore('mova', {
         if (n) this.toast(`Đã đổi ${n} món trong giỏ cho hợp khẩu vị`);
         else this.toast(`Đã cập nhật bộ lọc khẩu vị`);
       }
+      this.persist();
+    },
+
+    toggleShowNutrition() {
+      this.showNutrition = !this.showNutrition;
+      this.toast(this.showNutrition ? 'Đang hiện chỉ số dinh dưỡng (Calo/Đạm) trên món' : 'Đã ẩn chỉ số dinh dưỡng');
       this.persist();
     },
 

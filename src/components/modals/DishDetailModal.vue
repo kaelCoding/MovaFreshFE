@@ -26,6 +26,38 @@
       </div>
 
       <div class="mpart">
+        <!-- Bảng Thành phần dinh dưỡng ước tính / 1 suất -->
+        <div v-if="dish.nutrition" class="nutrition-card">
+          <div class="nt-header">
+            <h4>Thành phần dinh dưỡng ước tính / 1 suất</h4>
+            <span v-if="store.carb" class="carb-pill">Đang giảm 50% tinh bột</span>
+          </div>
+          <div class="nt-grid">
+            <div class="nt-item">
+              <span class="nt-label">Năng lượng</span>
+              <b class="nt-value num">{{ adjustedNutrition.kcal }} <small>kcal</small></b>
+            </div>
+            <div class="nt-item">
+              <span class="nt-label">Chất đạm</span>
+              <b class="nt-value num">{{ adjustedNutrition.protein }} <small>g</small></b>
+            </div>
+            <div class="nt-item">
+              <span class="nt-label">Tinh bột</span>
+              <b class="nt-value num">
+                {{ adjustedNutrition.carb }} <small>g</small>
+                <span v-if="store.carb" class="cut-tag">−50%</span>
+              </b>
+            </div>
+            <div class="nt-item">
+              <span class="nt-label">Chất béo</span>
+              <b class="nt-value num">{{ adjustedNutrition.fat }} <small>g</small></b>
+            </div>
+          </div>
+          <p v-if="store.carb" class="nt-subnote">
+            💡 Tùy chọn <b>Giảm 50% lượng tinh bột</b> đang bật: giảm {{ dish.nutrition.carb - adjustedNutrition.carb }}g tinh bột, giảm {{ (dish.nutrition.carb - adjustedNutrition.carb) * 4 }} kcal cho bữa tối nhẹ bụng.
+          </p>
+        </div>
+
         <h4>Trong hộp cho {{ servings }} suất</h4>
         <ul class="ing">
           <li>
@@ -102,6 +134,25 @@ const servings = computed(() => {
   return store.cart[dish.value.id] || (store.mode === 'B' ? store.n : 2);
 });
 
+const adjustedNutrition = computed(() => {
+  if (!dish.value || !dish.value.nutrition) {
+    return { kcal: 0, protein: 0, carb: 0, fat: 0 };
+  }
+  const raw = dish.value.nutrition;
+  if (store.carb) {
+    const adjCarb = Math.round(raw.carb * 0.5);
+    const carbCut = raw.carb - adjCarb;
+    const adjKcal = raw.kcal - carbCut * 4;
+    return {
+      kcal: adjKcal,
+      protein: raw.protein,
+      carb: adjCarb,
+      fat: raw.fat
+    };
+  }
+  return raw;
+});
+
 const scale = ([v, u]) => {
   if (u.startsWith('g')) return `${nf.format(v * servings.value)}${u}`;
   return `${v * servings.value}${u}`;
@@ -143,6 +194,87 @@ const handleSwap = () => {
 
 .mpart {
   padding: 0 22px 22px;
+}
+
+.nutrition-card {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+
+.nt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.nt-header h4 {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.carb-pill {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--orange);
+  padding: 2px 7px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.nt-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.nt-item {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 10px;
+  text-align: center;
+}
+
+.nt-label {
+  display: block;
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.nt-value {
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.nt-value small {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.cut-tag {
+  font-size: 10.5px;
+  color: var(--orange);
+  margin-left: 2px;
+}
+
+.nt-subnote {
+  font-size: 12px;
+  color: var(--orange-ink);
+  background: var(--orange-soft);
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-top: 10px;
+  line-height: 1.4;
 }
 
 .mpart h4 {
