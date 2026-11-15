@@ -51,12 +51,8 @@
 
 ```text
 mova-fresh-web/
-├── .github/
-│   └── workflows/
-│       └── deploy.yml              # GitHub Actions tự động build & deploy lên GitHub Pages
 ├── public/
-│   ├── favicon.svg                 # Icon logo MOVA Fresh
-│   └── 404.html                    # Fallback redirect cho Single Page App trên GitHub Pages
+│   └── favicon.svg                 # Icon logo MOVA Fresh
 ├── netlify.toml                    # Cấu hình redirect SPA chuẩn cho Netlify
 ├── src/
 │   ├── assets/
@@ -110,7 +106,7 @@ mova-fresh-web/
 │   ├── App.vue                     # Layout gốc kết nối Header, RouterView, Footer, Modals & Toast
 │   └── main.js                     # Khởi tạo Vue App, Pinia & Router
 ├── index.html                      # Nạp Google Font Be Vietnam Pro & mount #app
-├── vite.config.js                  # Cấu hình base: './' để tương thích hoàn toàn với GitHub Pages & Netlify
+├── vite.config.js                  # Cấu hình base: '/' tối ưu tuyệt đối cho Netlify SPA
 ├── .gitignore
 ├── package.json
 └── README.md
@@ -136,29 +132,17 @@ npm run preview
 
 ---
 
-## 🚢 Hướng Dẫn Đẩy Code Lên GitHub & Tự Động Deploy
+## 🚢 Hướng Dẫn Deploy Lên Netlify
 
-### Bước 1: Khởi tạo Git và Push lên GitHub
-Mở terminal tại thư mục dự án và chạy các lệnh:
-
-```bash
-git init
-git add .
-git commit -m "feat: refactor MOVA Fresh MVP to Vue 3 + Vite + Pinia architecture"
-git branch -M main
-git remote add origin git@github.com:kaelCoding/MovaFreshFE.git
-git push -u origin main
-```
-
-*(Nếu dùng HTTPS thay vì SSH: `git remote add origin https://github.com/kaelCoding/MovaFreshFE.git`)*
-
-### Bước 2: Kích hoạt GitHub Pages (Tự động qua GitHub Actions)
-1. Vào repository trên GitHub: `https://github.com/kaelCoding/MovaFreshFE`.
-2. Vào **Settings** $\rightarrow$ **Pages** (cột bên trái).
-3. Tại mục **Build and deployment** $\rightarrow$ **Source**, chọn **GitHub Actions**.
-4. GitHub Actions workflow `.github/workflows/deploy.yml` đã được thiết lập sẵn sẽ tự động kích hoạt, build và deploy lên đường dẫn:
-   `https://kaelcoding.github.io/MovaFreshFE/`
-
-### Bước 3: Deploy Lên Netlify (Tùy chọn)
-- File `netlify.toml` đã được tạo sẵn ở thư mục gốc.
-- Bạn chỉ cần liên kết repo `kaelCoding/MovaFreshFE` trên Netlify Dashboard, Netlify sẽ tự động nhận diện cấu hình build `npm run build` và thư mục `dist` với rewrite SPA chuẩn đẹp (`/`, `/dashboard`).
+1. Đẩy code lên GitHub:
+   ```bash
+   git add .
+   git commit -m "chore: configure project exclusively for Netlify deployment"
+   git push -u origin main
+   ```
+2. Trên **Netlify Dashboard**, bấm **"Add new site"** $\rightarrow$ **"Import an existing project"** $\rightarrow$ chọn repository `MovaFreshFE`.
+3. Netlify sẽ tự động nhận diện file `netlify.toml`:
+   - **Build command:** `npm run build`
+   - **Publish directory:** `dist`
+   - **Redirect rule:** `/* -> /index.html (200)` cho SPA
+4. Bấm **"Deploy site"** để nhận URL truy cập trực tiếp ngay lập tức!
