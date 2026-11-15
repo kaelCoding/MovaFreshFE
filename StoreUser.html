@@ -1,0 +1,2772 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light only">
+<title>MOVA FRESH – Thịt tươi Đắk Lắk sơ chế sẵn, giao tận bếp Sài Gòn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FAF9F5;--card:#FFFFFF;--line:#E6E2D6;--line-2:#EFEBE0;--ink:#1E241D;--muted:#626B60;
+  --green:#146C43;--green-d:#0F5534;--green-soft:#E4F0E8;--orange:#D9531E;--orange-soft:#FCEDE4;--orange-ink:#A33C12;
+  --wood:#E9D9BF;--butter:#FBF1D6;--red:#B3261E;--blue:#1D6FA5;--blue-soft:#E5F2FB;
+  --font:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  color-scheme:light;box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 84px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--font);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:rgba(250,249,245,.95)}
+h1,h2,h3,h4{margin:0;letter-spacing:-.015em;line-height:1.2}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2.5px solid var(--green);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+.muted{color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* header */
+.hdr{position:sticky;top:env(safe-area-inset-top,0px);z-index:25;background:rgba(250,249,245,.95);backdrop-filter:saturate(1.2) blur(8px);-webkit-backdrop-filter:saturate(1.2) blur(8px);border-bottom:1px solid var(--line)}
+.hdr .wrap{display:flex;align-items:center;gap:14px;height:70px}
+.logo{display:flex;align-items:center;gap:9px;text-decoration:none;flex-shrink:0}
+.logo svg{width:36px;height:36px}
+.logo b{font-weight:800;font-size:18px;letter-spacing:.01em;color:var(--green)}
+.logo b span{color:var(--orange)}
+.nav-views{display:flex;background:var(--line-2);border-radius:12px;padding:4px;gap:2px;margin-left:8px}
+.nav-views button{border:0;background:none;border-radius:9px;padding:7px 13px;font-size:13.5px;font-weight:600;color:var(--muted);transition:.15s;display:flex;align-items:center;gap:6px}
+.nav-views button.active{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(30,25,15,.1)}
+.nav-views button .badge-dot{width:7px;height:7px;border-radius:50%;background:var(--orange)}
+.hdr-r{margin-left:auto;display:flex;align-items:center;gap:8px}
+.area{font-size:12.5px;font-weight:600;color:var(--green);background:var(--green-soft);border-radius:999px;padding:5px 10px;white-space:nowrap}
+.icon-btn{position:relative;width:40px;height:40px;border-radius:11px;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;color:var(--ink);flex-shrink:0}
+.icon-btn:hover{background:var(--line-2)}
+.icon-btn .badge-num{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:11px;font-weight:700;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--bg)}
+.user-btn{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:6px 11px;font-size:13px;font-weight:600}
+.user-btn:hover{background:var(--line-2)}
+.user-btn .avatar{width:26px;height:26px;border-radius:50%;background:var(--green-soft);color:var(--green);display:grid;place-items:center;font-weight:700;font-size:12px}
+.user-btn .plan-pill{background:var(--orange-soft);color:var(--orange-ink);font-size:11.5px;font-weight:700;padding:2px 6px;border-radius:6px}
+.cartbtn{display:flex;align-items:center;gap:8px;border:0;background:var(--green);color:#fff;border-radius:12px;padding:8px 14px;font-weight:600;font-size:13.5px;white-space:nowrap}
+.cartbtn:hover{background:var(--green-d)}
+.cartbtn svg{width:18px;height:18px}
+
+@media (max-width:980px){
+  .hdr .wrap{gap:8px}
+  .nav-views button span.lbl{display:none}
+  .nav-views button{padding:7px 9px}
+  .user-btn .plan-pill{display:none}
+}
+@media (max-width:640px){
+  .area{display:none}
+  .user-btn .uname{display:none}
+  .user-btn{padding:6px}
+}
+
+/* common buttons */
+.btn{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:11px 18px;font-weight:600;font-size:14.5px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:.15s}
+.btn:hover{background:var(--line-2)}
+.btn.primary{background:var(--green);border-color:var(--green);color:#fff}
+.btn.primary:hover{background:var(--green-d)}
+.btn.orange{background:var(--orange);border-color:var(--orange);color:#fff}
+.btn.orange:hover{background:#BF4414}
+.btn.sm{padding:7px 12px;font-size:13px;border-radius:10px}
+.btn.ghost{background:none;border-color:transparent;color:var(--green);padding-left:4px;padding-right:4px}
+.btn.ghost:hover{background:none;text-decoration:underline}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* hero */
+.hero{padding:38px 0 32px}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:40px;align-items:center}
+@media (max-width:980px){.hero .wrap{grid-template-columns:minmax(0,1fr);gap:24px}}
+.kicker{display:inline-block;font-size:12px;font-weight:700;color:var(--orange-ink);background:var(--orange-soft);border-radius:999px;padding:5px 12px;margin-bottom:14px}
+.hero h1{font-size:clamp(28px,4.2vw,46px);font-weight:800;line-height:1.15;letter-spacing:-.025em}
+.anchor{margin-top:14px;font-size:16px;color:var(--muted)}
+.anchor b{color:var(--ink);font-weight:700;font-size:19px}
+.promises{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;padding:0;list-style:none}
+.promises li{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:7px 11px;font-size:13.5px;font-weight:500}
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+
+/* board & steam */
+.board{position:relative;border-radius:24px;padding:20px;background:
+  repeating-linear-gradient(97deg,rgba(150,110,60,.06) 0 2px,transparent 2px 19px),
+  repeating-linear-gradient(93deg,rgba(150,110,60,.05) 0 1px,transparent 1px 31px),
+  linear-gradient(160deg,#F2E5CE,#E5D2B3);box-shadow:inset 0 0 0 1px rgba(120,85,40,.12),0 16px 36px -20px rgba(90,60,20,.4)}
+.board-t{display:flex;justify-content:space-between;align-items:baseline;margin:0 4px 10px;font-size:13px;color:#6f5a3c;font-weight:700}
+.trio{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.trio .hd{background:rgba(255,255,255,.9);border-radius:16px;padding:12px;display:flex;gap:12px;align-items:center}
+.trio .hd:first-child{grid-column:1/-1;padding:12px 14px}
+.trio .plate{width:90px;height:90px;flex-shrink:0;position:relative}
+.trio .hd:first-child .plate{width:120px;height:120px}
+.trio .hd:not(:first-child){flex-direction:column;align-items:flex-start}
+.trio .hd:not(:first-child) .plate{align-self:center}
+.trio .hd b{display:block;font-size:14.5px;line-height:1.3}
+.trio .hd:first-child b{font-size:16.5px}
+.trio .meta{font-size:12.5px;color:var(--muted);margin:3px 0 6px}
+.trio .pr{font-weight:700;font-size:14.5px}
+@media (max-width:520px){.trio{grid-template-columns:minmax(0,1fr)}.trio .hd:first-child .plate{width:100px;height:100px}}
+.steam{position:absolute;inset:-14px 0 auto;height:40px;pointer-events:none}
+.steam i{position:absolute;bottom:0;width:6px;height:26px;border-radius:6px;background:linear-gradient(to top,rgba(255,255,255,0),rgba(255,255,255,.85));filter:blur(2px);opacity:0;animation:steam 3.2s ease-in-out infinite}
+.steam i:nth-child(1){left:38%}.steam i:nth-child(2){left:50%;animation-delay:1s}.steam i:nth-child(3){left:62%;animation-delay:2s}
+@keyframes steam{0%{opacity:0;transform:translateY(8px) scaleX(1)}35%{opacity:.9}100%{opacity:0;transform:translateY(-16px) scaleX(1.8)}}
+
+/* journey */
+.journey{padding:32px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--card)}
+.sec-h{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.sec-h h2{font-size:clamp(22px,2.8vw,30px);font-weight:800}
+.sec-h p{color:var(--muted);max-width:56ch;font-size:14.5px}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;position:relative}
+.steps::before{content:"";position:absolute;left:24px;right:24px;top:22px;height:2px;background:repeating-linear-gradient(90deg,var(--green) 0 8px,transparent 8px 14px);opacity:.5}
+.steps li{position:relative}
+.steps .dot{width:44px;height:44px;border-radius:50%;background:var(--card);border:2px solid var(--green);display:grid;place-items:center;font-weight:800;color:var(--green);position:relative;z-index:1}
+.steps li:last-child .dot{background:var(--green);color:#fff}
+.steps .when{display:block;margin-top:10px;font-size:12.5px;font-weight:700;color:var(--orange-ink)}
+.steps b{display:block;font-size:15.5px;margin-top:2px}
+.steps p{font-size:13.5px;color:var(--muted);margin-top:4px}
+@media (max-width:820px){
+  .steps{grid-template-columns:minmax(0,1fr);gap:18px}
+  .steps::before{left:21px;right:auto;top:20px;bottom:20px;width:2px;height:auto;background:repeating-linear-gradient(180deg,var(--green) 0 8px,transparent 8px 14px)}
+  .steps li{display:grid;grid-template-columns:44px minmax(0,1fr);column-gap:14px}
+  .steps .when{margin-top:0}.steps li>*:not(.dot){grid-column:2}.steps .dot{grid-row:1/span 3}
+}
+
+/* menu storefront */
+.menu{padding:40px 0}
+.layout{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:980px){.layout{grid-template-columns:minmax(0,1fr)}}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--line-2);border-radius:14px;padding:5px}
+.modes button{border:0;background:none;border-radius:10px;padding:10px 12px;font-weight:600;font-size:14px;color:var(--muted);text-align:left}
+.modes button small{display:block;font-weight:400;font-size:12px}
+.modes button[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(60,40,10,.12)}
+.budget{margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}
+.brow{display:grid;grid-template-columns:minmax(0,1fr) 200px;gap:16px;align-items:end}
+@media (max-width:600px){.brow{grid-template-columns:minmax(0,1fr)}}
+.blabel{font-size:13.5px;font-weight:600;margin-bottom:6px;display:block}
+input[type=range]{width:100%;accent-color:var(--green);height:28px}
+.rangeends{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.money{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);padding:0 12px}
+.money input{border:0;background:none;width:100%;padding:10px 0;font-size:19px;font-weight:700;font-variant-numeric:tabular-nums;outline:none;min-width:0}
+.money:focus-within{border-color:var(--green)}
+.money span{font-weight:700;color:var(--muted)}
+.quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:13.5px;font-weight:500;transition:.15s}
+.chip:hover{background:var(--line-2)}
+.chip[aria-pressed="true"]{background:var(--green-soft);border-color:var(--green);color:var(--green-d);font-weight:600}
+.chip.no[aria-pressed="true"]{background:var(--orange-soft);border-color:var(--orange);color:var(--orange-ink)}
+.people{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+.people .lbl{font-size:13.5px;font-weight:600;margin-right:4px}
+.bresult{margin-top:12px;border-radius:12px;padding:10px 14px;font-size:14px;background:var(--green-soft);color:var(--green-d)}
+.bresult.warn{background:var(--orange-soft);color:var(--orange-ink)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 14px;align-items:center}
+.filters .lbl{font-size:13.5px;font-weight:600;margin-right:4px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:640px){.grid{grid-template-columns:minmax(0,1fr)}}
+.dish{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:.15s}
+.dish.in{border-color:var(--green);box-shadow:0 0 0 1.5px var(--green)}
+.dish.flash{animation:flash 1.1s ease}
+@keyframes flash{0%{box-shadow:0 0 0 4px rgba(217,83,30,.35)}100%{box-shadow:0 0 0 0 rgba(217,83,30,0)}}
+.dimg{position:relative;height:170px;display:grid;place-items:center}
+.dimg svg{width:160px;height:160px}
+.dimg .t{position:absolute;left:12px;top:12px;background:rgba(255,255,255,.94);border-radius:999px;padding:4px 9px;font-size:12px;font-weight:700}
+.dimg .sv{position:absolute;right:12px;top:12px;background:var(--orange);color:#fff;border-radius:999px;padding:4px 9px;font-size:12px;font-weight:700}
+.dbody{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.dbody h3{font-size:16.5px;font-weight:700;line-height:1.3}
+.dbody .w{font-size:13px;color:var(--muted)}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:11.5px;font-weight:600;border-radius:999px;padding:3px 8px;background:var(--green-soft);color:var(--green-d)}
+.tag.spicy{background:#FBE5E2;color:var(--red)}
+.dfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:auto;padding-top:10px}
+.price{font-weight:800;font-size:17.5px}
+.price small{font-weight:500;font-size:12.5px;color:var(--muted)}
+.links{display:flex;gap:12px;flex-wrap:wrap}
+.lnk{border:0;background:none;padding:0;font-size:13px;font-weight:600;color:var(--green);text-decoration:underline;text-underline-offset:3px}
+.stepper{display:inline-flex;align-items:center;border:1.5px solid var(--green);border-radius:10px;overflow:hidden}
+.stepper button{width:34px;height:34px;border:0;background:var(--card);color:var(--green);font-size:17px;font-weight:700}
+.stepper button:hover{background:var(--green-soft)}
+.stepper b{min-width:54px;text-align:center;font-size:13px;font-variant-numeric:tabular-nums}
+.empty-grid{grid-column:1/-1;padding:24px;border:1.5px dashed var(--line);border-radius:16px;text-align:center;color:var(--muted)}
+
+/* addons section */
+.addons-sec{margin-top:28px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px}
+.addons-sec h3{font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px}
+.addons-sec p{font-size:13.5px;color:var(--muted);margin-top:2px;margin-bottom:14px}
+.addons-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:880px){.addons-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.addons-grid{grid-template-columns:minmax(0,1fr)}}
+.addon-card{border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--bg);transition:.15s}
+.addon-card.in{border-color:var(--green);background:var(--green-soft)}
+.addon-card .aic{display:flex;align-items:center;gap:10px}
+.addon-card .a-icon{width:46px;height:46px;border-radius:10px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;flex-shrink:0}
+.addon-card b{font-size:14px;line-height:1.25;display:block}
+.addon-card .apr{font-size:14px;font-weight:700;color:var(--green)}
+.addon-card .abtn{margin-top:auto}
+
+/* cart sidebar */
+.cart{position:sticky;top:calc(env(safe-area-inset-top,0px) + 84px);background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;max-height:calc(100vh - 100px);overflow-y:auto}
+.cart h2{font-size:19px;font-weight:800}
+.cut{font-size:13px;color:var(--orange-ink);background:var(--orange-soft);border-radius:10px;padding:7px 10px;margin-top:10px}
+.cut b{font-variant-numeric:tabular-nums}
+
+/* cart progress milestones */
+.progress-box{margin-top:14px;border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--bg)}
+.p-header{display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;margin-bottom:8px}
+.p-bar-outer{position:relative;height:10px;border-radius:6px;background:var(--line-2);overflow:hidden;margin-bottom:8px}
+.p-bar-inner{height:100%;background:linear-gradient(90deg,var(--orange),var(--green));border-radius:6px;transition:width .3s}
+.p-nodes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-size:11px;color:var(--muted);text-align:center}
+.p-nodes span{padding:2px 4px;border-radius:6px;background:var(--card);border:1px solid var(--line)}
+.p-nodes span.reached{background:var(--green-soft);color:var(--green-d);border-color:var(--green);font-weight:700}
+.p-hint{font-size:12.5px;font-weight:600;margin-top:8px}
+.p-hint.warn{color:var(--orange-ink)}
+.p-hint.ok{color:var(--green)}
+
+.first-drop-pick{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--card)}
+.first-drop-pick .f-lbl{font-size:12.5px;font-weight:700;margin-bottom:6px;display:block}
+.drop-radios{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.drop-radios label{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;border:1px solid var(--line);padding:6px 8px;border-radius:8px;cursor:pointer}
+.drop-radios label:has(input:checked){border-color:var(--green);background:var(--green-soft)}
+.drop-radios input{accent-color:var(--green)}
+
+.drop{margin-top:14px}
+.drop h3{font-size:13.5px;font-weight:700;display:flex;justify-content:space-between;gap:8px}
+.drop h3 span{color:var(--muted);font-weight:500}
+.drop ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:6px}
+.drop li{display:flex;justify-content:space-between;gap:8px;font-size:13.5px;border-bottom:1px dashed var(--line-2);padding-bottom:5px}
+.drop li .x{border:0;background:none;color:var(--muted);font-size:13px;padding:0 0 0 6px}
+.cart-empty{margin-top:14px;padding:16px;border:1.5px dashed var(--line);border-radius:14px;font-size:13.5px;color:var(--muted)}
+.tog{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:9px 11px;margin-top:8px;cursor:pointer;font-size:13.5px;font-weight:600}
+.tog input{margin-top:3px;accent-color:var(--green);width:16px;height:16px;flex-shrink:0}
+.tog small{display:block;font-weight:400;color:var(--muted);font-size:12px}
+.sum{margin-top:14px;display:grid;gap:6px;font-size:14px}
+.sum .r{display:flex;justify-content:space-between;gap:10px}
+.sum .g{color:var(--green)}
+.total{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);padding-top:10px;margin-top:4px}
+.total b{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums}
+.bbar{margin-top:10px}
+.bbar .track{height:9px;border-radius:6px;background:var(--line-2);overflow:hidden}
+.bbar .track i{display:block;height:100%;background:var(--green);border-radius:6px;transition:width .3s}
+.bbar.over .track i{background:var(--orange)}
+.bbar p{font-size:13px;margin-top:5px}
+.subh{font-size:13.5px;font-weight:700;margin-top:14px}
+.order{width:100%;justify-content:center;margin-top:14px;padding:13px;font-size:15.5px}
+
+/* mobile bottom sheet */
+.mbar{display:none}
+.scrim{display:none}
+@media (max-width:980px){
+  .cart{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:40;border-radius:22px 22px 0 0;max-height:86vh;transform:translateY(105%);transition:transform .28s ease;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 -12px 32px rgba(40,30,10,.18)}
+  .cart.open{transform:none}
+  .scrim.open{display:block;position:fixed;inset:0;background:rgba(30,25,15,.4);z-index:39}
+  .mbar{display:flex;position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:35;background:var(--ink);color:#fff;border-radius:16px;padding:9px 12px 9px 16px;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 10px 24px rgba(30,25,15,.3)}
+  .mbar .btn{background:var(--orange);border-color:var(--orange);color:#fff}
+  body{padding-bottom:84px}
+  .sheet-x{display:inline-flex!important}
+}
+.sheet-x{display:none;border:0;background:var(--line-2);border-radius:10px;width:34px;height:34px;align-items:center;justify-content:center;font-size:18px}
+
+/* user dashboard */
+.dash-view{padding:30px 0 60px}
+.dash-header{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px 24px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.dash-header .u-info{display:flex;align-items:center;gap:14px}
+.dash-header .u-avatar{width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,var(--green),var(--green-d));color:#fff;display:grid;place-items:center;font-weight:800;font-size:22px}
+.dash-header h2{font-size:22px;font-weight:800}
+.dash-header p{color:var(--muted);font-size:14px}
+.dash-header .u-stats{display:flex;gap:14px;flex-wrap:wrap}
+.dash-header .stat-chip{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:8px 14px;text-align:right}
+.dash-header .stat-chip small{display:block;font-size:11.5px;color:var(--muted);font-weight:600}
+.dash-header .stat-chip b{font-size:17px;font-weight:800;color:var(--green)}
+
+.dash-tabs{display:flex;gap:8px;border-bottom:1.5px solid var(--line);margin-bottom:24px;overflow-x:auto;padding-bottom:2px}
+.dash-tab-btn{border:0;background:none;padding:10px 16px;font-size:14.5px;font-weight:600;color:var(--muted);border-radius:12px 12px 0 0;white-space:nowrap;position:relative}
+.dash-tab-btn:hover{color:var(--ink)}
+.dash-tab-btn.active{color:var(--green);font-weight:700}
+.dash-tab-btn.active::after{content:"";position:absolute;left:0;right:0;bottom:-3.5px;height:3px;background:var(--green);border-radius:3px}
+
+/* tab 1: active order */
+.sim-bar{display:flex;justify-content:space-between;align-items:center;background:var(--butter);border:1px solid #E4D09A;border-radius:14px;padding:12px 16px;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.sim-bar .s-title{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:#6C4E0B}
+.sim-toggles{display:flex;gap:6px}
+.sim-toggles button{border:1px solid #D0B876;background:rgba(255,255,255,.8);border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:600;color:#5D4208}
+.sim-toggles button.active{background:var(--green);border-color:var(--green);color:#fff}
+
+.order-box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;margin-bottom:20px}
+.order-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:16px}
+.order-status-tag{padding:5px 12px;border-radius:999px;font-size:12.5px;font-weight:700;background:var(--green-soft);color:var(--green-d);display:inline-flex;align-items:center;gap:6px}
+.order-status-tag.locked{background:var(--orange-soft);color:var(--orange-ink)}
+
+/* tracking timeline */
+.tracker{margin:20px 0 24px;position:relative}
+.t-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;list-style:none;padding:0;margin:0;position:relative}
+.t-steps::before{content:"";position:absolute;left:20px;right:20px;top:18px;height:3px;background:var(--line-2);z-index:0}
+.t-step{position:relative;z-index:1;text-align:center}
+.t-icon{width:38px;height:38px;border-radius:50%;background:var(--card);border:2px solid var(--line);display:grid;place-items:center;margin:0 auto 8px;font-weight:700;font-size:13px;color:var(--muted)}
+.t-step.done .t-icon{background:var(--green);border-color:var(--green);color:#fff}
+.t-step.current .t-icon{background:var(--orange);border-color:var(--orange);color:#fff;box-shadow:0 0 0 4px var(--orange-soft)}
+.t-step b{display:block;font-size:13px;line-height:1.2}
+.t-step small{display:block;font-size:11.5px;color:var(--muted);margin-top:2px}
+@media (max-width:680px){
+  .t-steps{grid-template-columns:1fr;gap:14px;text-align:left}
+  .t-steps::before{display:none}
+  .t-step{display:flex;align-items:center;gap:12px;text-align:left}
+  .t-icon{margin:0}
+}
+
+/* storage guides */
+.storage-box{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:16px;margin:18px 0}
+.storage-box h4{font-size:14.5px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.storage-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.storage-grid{grid-template-columns:1fr}}
+.store-col{border-radius:12px;padding:12px;background:var(--card);border:1px solid var(--line)}
+.store-col.chill{border-left:4px solid var(--blue)}
+.store-col.freeze{border-left:4px solid var(--green)}
+.store-col .st-title{font-size:13.5px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.store-col.chill .st-title{color:var(--blue)}
+.store-col.freeze .st-title{color:var(--green)}
+.store-col ul{list-style:none;padding:0;margin:0;font-size:13px;display:grid;gap:4px}
+.store-col li{display:flex;align-items:center;gap:6px}
+
+/* order actions */
+.order-acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
+
+/* tab 2: history */
+.hist-item{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px}
+.hist-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.dish-rate-list{display:grid;gap:8px;margin:12px 0}
+.rate-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;background:var(--bg);font-size:13.5px}
+.rate-btns{display:flex;gap:4px}
+.rate-btn{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:4px 8px;font-size:12px;font-weight:600}
+.rate-btn:hover{background:var(--line-2)}
+.rate-btn.selected{background:var(--green-soft);border-color:var(--green);color:var(--green-d);font-weight:700}
+
+/* tab 3: prepaid meal plan */
+.prepaid-card{background:linear-gradient(135deg,#0E482D,#146C43 65%,#228B58);color:#fff;border-radius:24px;padding:26px;box-shadow:0 12px 30px rgba(14,72,45,.25);position:relative;overflow:hidden;margin-bottom:24px}
+.prepaid-card::after{content:"";position:absolute;right:-40px;bottom:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.06);pointer-events:none}
+.pcard-top{display:flex;justify-content:space-between;align-items:flex-start}
+.pcard-top .pcard-brand{font-size:17px;font-weight:800;letter-spacing:.02em}
+.pcard-top .pcard-badge{background:rgba(255,255,255,.2);padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:700}
+.pcard-mid{margin:20px 0 16px}
+.pcard-mid small{font-size:13px;opacity:.85;display:block}
+.pcard-mid .pcard-bal{font-size:36px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
+.pcard-bot{display:flex;justify-content:space-between;align-items:flex-end;font-size:12.5px;opacity:.9}
+
+.legal-notice{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:24px;font-size:13px;color:var(--muted);line-height:1.55}
+.legal-notice b{color:var(--ink)}
+
+.plan-tiers{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+@media (max-width:640px){.plan-tiers{grid-template-columns:1fr}}
+.tier-card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px;transition:.15s;position:relative}
+.tier-card:hover{border-color:var(--green)}
+.tier-card .t-pop{position:absolute;top:-10px;right:14px;background:var(--orange);color:#fff;border-radius:999px;font-size:11px;font-weight:700;padding:3px 9px}
+.tier-card h4{font-size:17px;font-weight:800}
+.tier-card .t-val{font-size:24px;font-weight:800;color:var(--green)}
+.tier-card .t-bonus{background:var(--green-soft);color:var(--green-d);font-size:12.5px;font-weight:700;padding:4px 8px;border-radius:8px;display:inline-block}
+
+.ledger-table-wrap{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.ledger-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.ledger-table th{background:var(--bg);text-align:left;padding:12px 14px;font-size:12.5px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--line)}
+.ledger-table td{padding:12px 14px;border-bottom:1px solid var(--line-2)}
+.ledger-table tr:last-child td{border-bottom:0}
+
+/* tab 4: profile, address, zalo oa */
+.prof-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media (max-width:880px){.prof-grid{grid-template-columns:1fr}}
+.prof-sec{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+.prof-sec h3{font-size:16px;font-weight:800;margin-bottom:12px}
+
+.addr-card{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;background:var(--bg);display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.addr-card.default{border-color:var(--green);background:var(--green-soft)}
+.addr-card b{font-size:14px}
+.addr-card p{font-size:13px;color:var(--muted);margin-top:2px}
+
+.zalo-mock{background:#F0F2F5;border:1px solid #D8DCE0;border-radius:16px;padding:16px;margin-top:12px}
+.zalo-bubble{background:#FFFFFF;border-radius:14px 14px 14px 4px;padding:12px;box-shadow:0 1px 2px rgba(0,0,0,.08);font-size:13px;color:#1C1E21}
+.zalo-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.zalo-logo{width:24px;height:24px;border-radius:50%;background:#0068FF;color:#fff;display:grid;place-items:center;font-weight:800;font-size:11px}
+
+/* floating help button */
+.float-help{position:fixed;right:20px;bottom:24px;z-index:32;display:flex;align-items:center;gap:8px;background:#0068FF;color:#fff;border-radius:999px;padding:10px 18px;font-size:13.5px;font-weight:700;border:0;box-shadow:0 8px 20px rgba(0,104,255,.3)}
+.float-help:hover{background:#0055D4}
+.float-help svg{width:18px;height:18px}
+@media (max-width:980px){.float-help{bottom:80px;right:14px;padding:9px 14px}}
+
+/* modals */
+.modal{position:fixed;inset:0;z-index:60;background:rgba(30,25,15,.5);display:grid;place-items:center;padding:16px}
+.modal[hidden]{display:none}
+.mbox{background:var(--card);border-radius:22px;max-width:680px;width:100%;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 20px 50px rgba(20,15,10,.25)}
+.mclose{position:absolute;right:14px;top:14px;width:36px;height:36px;border-radius:10px;border:0;background:rgba(240,238,230,.9);font-size:20px;z-index:2;display:grid;place-items:center}
+.mclose:hover{background:var(--line)}
+
+/* notifications drawer */
+.drawer{position:fixed;right:0;top:0;bottom:0;width:min(400px,92vw);background:var(--card);z-index:65;box-shadow:-10px 0 30px rgba(20,15,10,.15);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s ease}
+.drawer.open{transform:none}
+.drawer-hdr{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.drawer-body{padding:16px;overflow-y:auto;flex:1;display:grid;gap:10px}
+.notif-item{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--bg);font-size:13px}
+.notif-item.unread{background:var(--orange-soft);border-color:var(--orange)}
+.notif-item b{display:block;font-size:14px;margin-bottom:3px}
+.notif-item small{color:var(--muted);display:block;margin-top:6px}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);background:var(--ink);color:#fff;border-radius:12px;padding:10px 18px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:75;max-width:min(92vw,500px);text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (max-width:980px){.toast{bottom:calc(92px + env(safe-area-inset-bottom,0px))}}
+
+/* box & faq */
+.box{padding:40px 0;background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.boxgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+@media (max-width:900px){.boxgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.boxgrid{grid-template-columns:minmax(0,1fr)}}
+.bx{border:1px solid var(--line);border-radius:16px;padding:18px;background:var(--bg)}
+.bx svg{width:56px;height:56px;display:block;margin-bottom:12px}
+.bx b{display:block;font-size:15.5px}
+.bx p{font-size:13.5px;color:var(--muted);margin-top:6px}
+
+.faq{padding:40px 0 60px}
+.faq details{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-bottom:10px}
+.faq summary{list-style:none;cursor:pointer;padding:15px 18px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-size:20px;line-height:1;color:var(--green);font-weight:500}
+.faq details[open] summary::after{content:"−"}
+.faq details p{padding:0 18px 15px;color:var(--muted);max-width:72ch;font-size:14px}
+footer{padding:26px 0 36px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);text-align:center}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<!-- STICKY HEADER -->
+<header class="hdr">
+  <div class="wrap">
+    <a class="logo" href="#top" id="logoLink" aria-label="MOVA FRESH, về đầu trang">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#146C43"/><path d="M10 27V14l6 8 4-6 4 6 6-8v13" fill="none" stroke="#FAF9F5" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="30" cy="11" r="3.2" fill="#D9531E"/></svg>
+      <b>MOVA <span>FRESH</span></b>
+    </a>
+
+    <!-- Chuyển đổi màn hình chính -->
+    <div class="nav-views" role="tablist" aria-label="Màn hình chính">
+      <button class="active" id="navStore" role="tab" aria-selected="true">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span class="lbl">Cửa hàng & Thực đơn</span>
+      </button>
+      <button id="navDash" role="tab" aria-selected="false">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/></svg>
+        <span class="lbl">Tài khoản & Đơn của tôi</span>
+        <span class="badge-dot" id="dashDot" title="Có đơn đang xử lý"></span>
+      </button>
+    </div>
+
+    <div class="hdr-r">
+      <span class="area">Giao tại TP.HCM</span>
+
+      <!-- Nút Chuông Thông Báo -->
+      <button class="icon-btn" id="notifBtn" aria-label="Thông báo">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="badge-num" id="notifBadge">1</span>
+      </button>
+
+      <!-- Nút Tài khoản & Số dư -->
+      <button class="user-btn" id="userBtn" aria-label="Thông tin tài khoản">
+        <span class="avatar" id="uAvatarMini">L</span>
+        <span class="uname" id="uNameMini">Chị Lan</span>
+        <span class="plan-pill num" id="uPlanMini">850k</span>
+      </button>
+
+      <!-- Nút Giỏ Hàng -->
+      <button class="cartbtn" id="hdrCart" aria-label="Mở giỏ hàng">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+        <span id="hdrCartTxt" class="num">0 bữa</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN CONTAINER -->
+<main id="top">
+
+  <!-- ==================== VIEW 1: CỬA HÀNG & THỰC ĐƠN ==================== -->
+  <div id="viewStore">
+    <section class="hero">
+      <div class="wrap">
+        <div>
+          <span class="kicker">TƯƠI TỪ TRANG TRẠI ĐẮK LẮK • XE LẠNH XUYÊN ĐÊM GIAO SÁNG SỚM TP.HCM</span>
+          <h1>Thịt tươi Đắk Lắk sơ chế sẵn. Giao tận bếp Sài Gòn, 15 phút xong bữa cơm nhà.</h1>
+          <p class="anchor">Chỉ từ <b class="num">38.000đ</b> / người • Thu hoạch & sơ chế theo đơn, không trữ hàng tồn lâu ngày</p>
+          <ul class="promises">
+            <li>⏱ Chuẩn 15 phút – 1 chảo</li>
+            <li>❄️ Xe lạnh xuyên đêm Đắk Lắk – TP.HCM</li>
+            <li>🌿 Tách riêng gói sốt & giảm 50% tinh bột</li>
+          </ul>
+          <div class="cta">
+            <a class="btn primary" href="#thuc-don" id="ctaPick">Chọn món tuần này</a>
+            <button class="btn" id="ctaBudget">Xếp theo ngân sách của tôi</button>
+          </div>
+        </div>
+        <div class="board" aria-label="3 món bán chạy tuần này">
+          <div class="board-t"><span>Bán chạy tuần này</span><span>Giá mỗi suất</span></div>
+          <div class="trio" id="trio"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="journey" id="hanh-trinh">
+      <div class="wrap">
+        <div class="sec-h">
+          <h2>Hành trình tươi 16 giờ</h2>
+          <p>Mô hình thu hoạch và sơ chế theo đơn: thịt được cắt tại nhà máy Đắk Lắk và chạy xe lạnh thẳng về TP.HCM trong đêm, không qua kho trung chuyển.</p>
+        </div>
+        <ol class="steps">
+          <li><span class="dot">1</span><span class="when">Trước 20:00 T5 hoặc CN</span><b>Bạn chốt đơn</b><p>Không ép mua cả tuần. Chọn số bữa vừa túi tiền (đơn tối thiểu 250.000đ).</p></li>
+          <li><span class="dot">2</span><span class="when">Sáng sớm tại Đắk Lắk</span><b>Thu hoạch và sơ chế</b><p>Nhà máy cắt định lượng, ướp thảo mộc nền nhạt, đóng gói gia vị tươi băm trong ngày.</p></li>
+          <li><span class="dot">3</span><span class="when">22:00 – 05:00</span><b>Xe lạnh xuyên đêm</b><p>Thùng giữ nhiệt với đá gel cấp đông −18°C chạy thẳng về cửa ngõ TP.HCM.</p></li>
+          <li><span class="dot">4</span><span class="when">Trước 10:00 Sáng CN & T4</span><b>Giao tận bếp</b><p>Shipper giao tận cửa theo khung giờ bạn chọn: 06:30–08:30 hoặc 08:30–10:00.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="menu" id="thuc-don">
+      <div class="wrap">
+        <div class="sec-h">
+          <h2>Thực đơn tuần này</h2>
+          <p>Tự chọn món ngon, hoặc để MOVA tự động xếp chuẩn ngân sách. Mọi món nấu trong 15 phút với 1 chảo.</p>
+        </div>
+        <div class="layout">
+          <div>
+            <div class="modes" role="tablist" aria-label="Cách mua">
+              <button role="tab" id="tabA" aria-selected="true" data-mode="A">Tự chọn theo món ngon<small>Thêm, bớt món theo sở thích</small></button>
+              <button role="tab" id="tabB" aria-selected="false" data-mode="B">Soạn thực đơn theo ngân sách<small>Hệ thống xếp vừa số tiền bạn có</small></button>
+            </div>
+
+            <!-- Box ngân sách -->
+            <div class="budget" id="budgetBox" hidden>
+              <div class="brow">
+                <div>
+                  <label class="blabel" for="bRange">Ngân sách đi chợ tuần này</label>
+                  <input type="range" id="bRange" min="400000" max="3500000" step="100000" value="1200000">
+                  <div class="rangeends num"><span>400.000đ</span><span>3.500.000đ</span></div>
+                </div>
+                <div>
+                  <label class="blabel" for="bInput">Hoặc nhập số tiền</label>
+                  <div class="money"><input id="bInput" inputmode="numeric" autocomplete="off" value="1.200.000"><span>đ</span></div>
+                </div>
+              </div>
+              <div class="quick" id="quick">
+                <button class="chip" data-v="800000">800k</button>
+                <button class="chip" data-v="1200000">1,2 triệu</button>
+                <button class="chip" data-v="1500000">1,5 triệu</button>
+                <button class="chip" data-v="2000000">2 triệu</button>
+              </div>
+              <div class="people" id="people">
+                <span class="lbl">Số người ăn:</span>
+                <button class="chip" data-n="1">1 người</button>
+                <button class="chip" data-n="2">2 vợ chồng</button>
+                <button class="chip" data-n="4">Gia đình 4 người</button>
+              </div>
+              <div style="margin-top:14px">
+                <button class="btn primary" id="autoBtn">Tự động xếp thực đơn vừa túi tiền</button>
+              </div>
+              <div class="bresult" id="bResult" role="status"></div>
+            </div>
+
+            <!-- Bộ lọc khẩu vị -->
+            <div class="filters" id="filters">
+              <span class="lbl">Khẩu vị:</span>
+              <button class="chip no" data-f="noBo">Không ăn Bò</button>
+              <button class="chip no" data-f="noHeo">Không ăn Heo</button>
+              <button class="chip no" data-f="noCay">Không cay</button>
+              <button class="chip" data-f="lowOil">Ít dầu mỡ</button>
+            </div>
+
+            <!-- Lưới món ăn -->
+            <div class="grid" id="grid"></div>
+
+            <!-- Mua thêm đi cùng chuyến xe (Add-ons) -->
+            <div class="addons-sec">
+              <h3>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                Mua thêm đi cùng chuyến xe lạnh Đắk Lắk – TP.HCM
+              </h3>
+              <p>Thực phẩm phụ tươi ngon từ Tây Nguyên & Đà Lạt, tiện mua thêm để đạt mốc 400k (giảm 20k) hoặc 600k (Freeship & tách 2 đợt):</p>
+              <div class="addons-grid" id="addonsGrid"></div>
+            </div>
+          </div>
+
+          <!-- GIỎ HÀNG CỐ ĐỊNH -->
+          <aside class="cart" id="cart" aria-label="Giỏ hàng tuần này">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+              <h2>Giỏ tuần này</h2>
+              <button class="sheet-x" id="cartClose" aria-label="Đóng giỏ">×</button>
+            </div>
+
+            <div class="cut" id="cutoff"></div>
+
+            <!-- Thanh tiến trình 3 mốc (MOV 250k -> VietQR 400k -> Freeship 600k) -->
+            <div class="progress-box">
+              <div class="p-header">
+                <span>Ưu đãi hành trình xe lạnh</span>
+                <span id="pCurTotal" class="num">0đ</span>
+              </div>
+              <div class="p-bar-outer">
+                <div class="p-bar-inner" id="pBarInner" style="width:0%"></div>
+              </div>
+              <div class="p-nodes">
+                <span id="node250">250k: Đủ đơn</span>
+                <span id="node400">400k: -20k QR</span>
+                <span id="node600">600k: Freeship</span>
+              </div>
+              <div class="p-hint" id="pHint">Chưa đạt đơn tối thiểu 250.000đ để chạy xe lạnh.</div>
+            </div>
+
+            <!-- Chọn đợt nhận hàng đầu tiên -->
+            <div class="first-drop-pick">
+              <span class="f-lbl">Đợt nhận hàng đầu tiên:</span>
+              <div class="drop-radios">
+                <label><input type="radio" name="firstDrop" value="sun" checked id="fDropSun"> <span>Sáng Chủ Nhật</span></label>
+                <label><input type="radio" name="firstDrop" value="wed" id="fDropWed"> <span>Sáng Thứ Tư</span></label>
+              </div>
+            </div>
+
+            <!-- Danh sách món theo đợt giao -->
+            <div id="drops"></div>
+
+            <!-- Danh sách Addons trong giỏ -->
+            <div id="cartAddonsList"></div>
+
+            <div class="subh">Quy cách đóng gói nhà máy</div>
+            <label class="tog">
+              <input type="checkbox" id="optSauce">
+              <span>Tách riêng gói sốt gia vị
+                <small>Nhà có người già, trẻ nhỏ ăn nhạt: tự nêm khi xào nấu.</small>
+              </span>
+            </label>
+            <label class="tog">
+              <input type="checkbox" id="optCarb">
+              <span>Giảm 50% lượng tinh bột (cơm, bún)
+                <small>Cho bữa tối nhẹ bụng. Nhà máy đóng bớt lượng tinh bột, giá không đổi.</small>
+              </span>
+            </label>
+
+            <!-- Bảng tổng tiền -->
+            <div class="sum" id="sum"></div>
+
+            <!-- Thanh so sánh ngân sách chế độ B -->
+            <div class="bbar" id="bbar" hidden><div class="track"><i></i></div><p></p></div>
+
+            <div class="subh">Hình thức thanh toán</div>
+            <div class="pays" role="radiogroup" aria-label="Hình thức thanh toán" id="payRadioGroup">
+              <button class="pay" role="radio" aria-checked="true" data-pay="prepaid">
+                <div>
+                  <b>Trừ vào Gói Đi Chợ Trả Trước</b>
+                  <small id="payPrepaidHint">Số dư khả dụng: 850.000đ</small>
+                </div>
+                <span class="badge" style="background:var(--green)">Khuyên dùng</span>
+              </button>
+              <button class="pay" role="radio" aria-checked="false" data-pay="qr">
+                <div>
+                  <b>Chuyển khoản VietQR</b>
+                  <small id="payQrHint">Giảm ngay 20.000đ khi đơn ≥ 400k</small>
+                </div>
+                <span class="badge" id="payQrBadge">Giảm 20.000đ</span>
+              </button>
+              <button class="pay" role="radio" aria-checked="false" data-pay="cod">
+                <div>
+                  <b>Thanh toán khi nhận hàng (COD)</b>
+                  <small>Giao tiền mặt cho shipper</small>
+                </div>
+              </button>
+            </div>
+
+            <button class="btn orange order" id="orderBtn">Tiến hành đặt hàng</button>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bên trong hộp MOVA -->
+    <section class="box" id="ben-trong">
+      <div class="wrap">
+        <div class="sec-h"><h2>Bên trong hộp MOVA</h2><p>Mỗi bữa là một bộ đủ để nấu ngay. Bạn chỉ cần chảo, bếp và 15 phút.</p></div>
+        <div class="boxgrid">
+          <div class="bx">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="6" y="18" width="52" height="34" rx="8" fill="#F3EEE3" stroke="#D9CFB9" stroke-width="2"/><rect x="12" y="24" width="18" height="12" rx="5" fill="#8A3E24"/><rect x="33" y="24" width="18" height="12" rx="5" fill="#9E4A2C"/><rect x="18" y="37" width="20" height="10" rx="5" fill="#7B3520"/><path d="M14 18c4-6 32-6 36 0" fill="none" stroke="#146C43" stroke-width="2"/></svg>
+            <b>Khay thịt, trứng sơ chế sạch</b>
+            <p>Cắt miếng chuẩn cỡ, ướp nền thảo mộc tự nhiên. Mở hộp ra là nấu.</p>
+          </div>
+          <div class="bx">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M16 14h32l-3 40H19z" fill="#E4F0E8" stroke="#146C43" stroke-width="2"/><circle cx="26" cy="30" r="5" fill="#B87BB0"/><circle cx="38" cy="34" r="4" fill="#F4E9C8"/><rect x="24" y="40" width="16" height="4" rx="2" fill="#9DBB5B"/><path d="M33 22l6 4" stroke="#D3352B" stroke-width="3" stroke-linecap="round"/></svg>
+            <b>Túi gia vị tươi trong ngày</b>
+            <p>Hành tím, tỏi, sả, ớt tươi băm sẵn trong ngày để phi thơm dậy mùi bếp nhà.</p>
+          </div>
+          <div class="bx">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="14" y="12" width="36" height="42" rx="6" fill="#FCEDE4" stroke="#D9531E" stroke-width="2"/><path d="M14 22h36" stroke="#D9531E" stroke-width="2" stroke-dasharray="3 3"/><path d="M22 38c4-6 16-6 20 0-4 6-16 6-20 0z" fill="#B5542A"/></svg>
+            <b>Gói sốt gia vị đóng rời</b>
+            <p>Tách riêng hoàn toàn để người ăn đậm hay ăn nhạt tự gia giảm theo ý thích.</p>
+          </div>
+          <div class="bx">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="18" width="48" height="36" rx="6" fill="#FFFFFF" stroke="#8FB3C9" stroke-width="2"/><rect x="8" y="12" width="48" height="10" rx="4" fill="#DCEAF2" stroke="#8FB3C9" stroke-width="2"/><rect x="16" y="30" width="14" height="16" rx="4" fill="#BFE0F0"/><rect x="34" y="30" width="14" height="16" rx="4" fill="#BFE0F0"/><path d="M23 34v8M19 38h8M41 34v8M37 38h8" stroke="#5D93B3" stroke-width="1.6"/></svg>
+            <b>Thùng giữ nhiệt & đá gel -18°C</b>
+            <p>Đá gel cấp đông −18°C giữ thực phẩm trong khoảng 0–4°C suốt 16 giờ xuyên đêm.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hỏi đáp -->
+    <section class="faq" id="hoi-dap">
+      <div class="wrap" style="max-width:860px">
+        <div class="sec-h"><h2>Hỏi đáp thường gặp</h2></div>
+        <details><summary>Thịt sơ chế từ Đắk Lắk chở xuống Sài Gòn có đảm bảo tươi ngon?</summary><p>Thịt và rau được thu hoạch sơ chế vào sáng sớm, đóng thùng giữ nhiệt đá gel −18°C, lên xe lạnh lúc 22:00 và tới Sài Gòn lúc 05:00 sáng. Suốt hành trình nhiệt độ luôn giữ 0–4°C. Nếu thùng hàng tới tay không còn lạnh, MOVA bồi thường 100% bữa ăn đó vào Gói Đi Chợ Trả Trước.</p></details>
+        <details><summary>Đơn tối thiểu và quy tắc tách đợt giao như thế nào?</summary><p>Đơn tối thiểu là 250.000đ để bù chi phí xe lạnh. Đơn từ 250k đến dưới 600k (hoặc ≤ 3 bữa) sẽ giao gộp 1 đợt, phí ship 25.000đ. Đơn từ 600k trở lên VÀ từ 4 bữa trở lên sẽ được Freeship và tự động tách làm 2 đợt (Sáng Chủ Nhật & Sáng Thứ Tư) để nguyên liệu luôn tươi mới.</p></details>
+        <details><summary>"Gói Đi Chợ Trả Trước" là gì, có rút tiền mặt được không?</summary><p>Theo quy định tại Nghị định 52/2024, "Gói Đi Chợ Trả Trước" là giải pháp trả trước tiền nguyên liệu định kỳ cho gia đình để nhận ưu đãi tặng thêm (50.000đ – 120.000đ/gói). Giá trị gói chỉ dùng để đổi món ăn tại MOVA Fresh, không thể rút tiền mặt, có giá trị bảo lưu trong 60 ngày.</p></details>
+        <details><summary>Nếu bận đột xuất muốn hoãn đợt giao thì làm thế nào?</summary><p>Bạn hoàn toàn có thể vào mục "Tài khoản & Đơn của tôi" bấm "Hoãn đợt giao" trước 20:00 của ngày chốt sổ (trước 20:00 Thứ Năm cho đợt Chủ Nhật, trước 20:00 Chủ Nhật cho đợt Thứ Tư). Toàn bộ tiền suất ăn sẽ được bảo lưu sang đợt tiếp theo.</p></details>
+      </div>
+    </section>
+  </div>
+
+  <!-- ==================== VIEW 2: USER DASHBOARD ==================== -->
+  <div id="viewDash" class="dash-view" hidden>
+    <div class="wrap">
+      <!-- Profile Header -->
+      <div class="dash-header">
+        <div class="u-info">
+          <div class="u-avatar" id="dAvatar">L</div>
+          <div>
+            <h2 id="dName">Chị Lan</h2>
+            <p><span id="dPhone">0908 123 456</span> • <span class="muted">Khách hàng Gia đình TP.HCM</span></p>
+          </div>
+        </div>
+        <div class="u-stats">
+          <div class="stat-chip">
+            <small>Gói Đi Chợ Trả Trước</small>
+            <b class="num" id="dPrepaidBal">850.000đ</b>
+          </div>
+          <div class="stat-chip">
+            <small>Đơn đang chạy</small>
+            <b id="dActiveCount">1 đơn</b>
+          </div>
+          <div class="stat-chip">
+            <small>Bữa ăn đã nấu</small>
+            <b id="dMealsCount">24 bữa</b>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 Tabs -->
+      <div class="dash-tabs" role="tablist">
+        <button class="dash-tab-btn active" data-tab="active" role="tab">📦 Đơn hàng đang chạy & Lịch giao</button>
+        <button class="dash-tab-btn" data-tab="history" role="tab">🕒 Lịch sử đơn & Khẩu vị đã nấu</button>
+        <button class="dash-tab-btn" data-tab="prepaid" role="tab">💳 Gói Đi Chợ Trả Trước (Prepaid)</button>
+        <button class="dash-tab-btn" data-tab="profile" role="tab">⚙️ Hồ sơ, Sổ địa chỉ & Zalo OA</button>
+      </div>
+
+      <!-- TAB 1: ĐƠN HÀNG ĐANG CHẠY & LỊCH GIAO -->
+      <div id="tabContentActive">
+        <!-- Simulation Switcher -->
+        <div class="sim-bar">
+          <div class="s-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>Mô phỏng mốc thời gian thực tế:</span>
+          </div>
+          <div class="sim-toggles">
+            <button class="active" id="simBeforeCutoff">Trước giờ chốt sổ 20:00 (Sửa/Hoãn/Hủy)</button>
+            <button id="simAfterCutoff">Đã qua 20:00 (Đắk Lắk đang sơ chế - Khóa sửa)</button>
+          </div>
+        </div>
+
+        <!-- Chi tiết đơn đang chạy -->
+        <div id="activeOrderCard"></div>
+      </div>
+
+      <!-- TAB 2: LỊCH SỬ ĐƠN & ĐÁNH GIÁ KHẨU VỊ -->
+      <div id="tabContentHistory" hidden>
+        <div class="sec-h" style="margin-bottom:14px">
+          <div>
+            <h3>Lịch sử các bữa cơm đã giao</h3>
+            <p>Bấm “Đặt lại thực đơn này” để đưa toàn bộ món vào giỏ chỉ với 1 chạm.</p>
+          </div>
+        </div>
+        <div id="historyList"></div>
+      </div>
+
+      <!-- TAB 3: GÓI ĐI CHỢ TRẢ TRƯỚC -->
+      <div id="tabContentPrepaid" hidden>
+        <!-- Thẻ Prepaid sang trọng -->
+        <div class="prepaid-card">
+          <div class="pcard-top">
+            <span class="pcard-brand">MOVA FRESH • PREPAID MEAL PLAN</span>
+            <span class="pcard-badge">Thành viên TP.HCM</span>
+          </div>
+          <div class="pcard-mid">
+            <small>Giá trị bữa ăn tươi khả dụng</small>
+            <div class="pcard-bal num" id="pCardBal">850.000đ</div>
+          </div>
+          <div class="pcard-bot">
+            <span>Mã thẻ: <b>MV-8829-LAN</b></span>
+            <span>Hạn sử dụng: <b>Còn 52 ngày</b></span>
+          </div>
+        </div>
+
+        <!-- Quy định pháp lý Nghị định 52/2024 -->
+        <div class="legal-notice">
+          <b>⚖️ Minh bạch quyền lợi theo Nghị định 52/2024/NĐ-CP:</b>
+          <p style="margin-top:4px">“Gói Đi Chợ Trả Trước” là hình thức trả trước tiền nguyên liệu thực phẩm định kỳ, giúp tối ưu chi phí vận hành tuyến lạnh Đắk Lắk – TP.HCM và nhận giá trị tặng thêm (lên đến 120.000đ). Giá trị trong gói <b>chỉ dùng để đổi nguyên liệu sơ chế tại MOVA FRESH</b>, không phải ví điện tử và không hỗ trợ rút tiền mặt. Toàn bộ số dư được cam kết bảo lưu giá trị trong vòng 60 ngày.</p>
+        </div>
+
+        <!-- Mua thêm gói mới -->
+        <h3 style="font-size:17px;font-weight:800;margin-bottom:12px">Đăng ký thêm Gói Đi Chợ Trả Trước (Nhận thêm giá trị)</h3>
+        <div class="plan-tiers">
+          <div class="tier-card">
+            <span class="t-pop">Tặng 50.000đ</span>
+            <h4>Gói Gia Đình Nhỏ (1 Triệu)</h4>
+            <div class="t-val num">1.000.000đ</div>
+            <span class="t-bonus">Nhận giá trị thực nhận: 1.050.000đ</span>
+            <p class="muted" style="font-size:13px">Phù hợp vợ chồng trẻ nấu 2-3 tuần. Tự do đổi món, trừ dần theo từng đơn.</p>
+            <button class="btn primary sm" style="margin-top:auto" data-topup="1000000" data-bonus="50000">Đăng ký gói 1.000.000đ</button>
+          </div>
+
+          <div class="tier-card" style="border-color:var(--orange)">
+            <span class="t-pop" style="background:var(--green)">Tặng 120.000đ</span>
+            <h4>Gói Cả Tháng Thảnh Thơi (2 Triệu)</h4>
+            <div class="t-val num">2.000.000đ</div>
+            <span class="t-bonus" style="background:var(--orange-soft);color:var(--orange-ink)">Nhận giá trị thực nhận: 2.120.000đ</span>
+            <p class="muted" style="font-size:13px">Tiết kiệm nhiều nhất cho gia đình 4 người. Tặng kèm đá gel giữ nhiệt cao cấp.</p>
+            <button class="btn orange sm" style="margin-top:auto" data-topup="2000000" data-bonus="120000">Đăng ký gói 2.000.000đ</button>
+          </div>
+        </div>
+
+        <!-- Lịch sử biến động số dư -->
+        <h3 style="font-size:17px;font-weight:800;margin:24px 0 12px">Lịch sử biến động giá trị Gói Đi Chợ</h3>
+        <div class="ledger-table-wrap">
+          <table class="ledger-table">
+            <thead>
+              <tr>
+                <th>Thời gian</th>
+                <th>Mô tả biến động</th>
+                <th style="text-align:right">Biến động</th>
+                <th style="text-align:right">Số dư còn lại</th>
+              </tr>
+            </thead>
+            <tbody id="ledgerBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 4: HỒ SƠ, SỔ ĐỊA CHỈ & ZALO OA -->
+      <div id="tabContentProfile" hidden>
+        <div class="prof-grid">
+          <!-- Sổ địa chỉ -->
+          <div class="prof-sec">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+              <h3>Sổ địa chỉ nhận hàng TP.HCM</h3>
+              <button class="btn sm" id="addAddrBtn">+ Thêm địa chỉ</button>
+            </div>
+            <div id="addressList"></div>
+          </div>
+
+          <!-- Khẩu vị mặc định gia đình -->
+          <div class="prof-sec">
+            <h3>Khẩu vị & Quy cách mặc định</h3>
+            <p class="muted" style="font-size:13px;margin-bottom:12px">Cài đặt tại đây sẽ tự động đồng bộ sang bộ lọc thực đơn ngoài Cửa hàng.</p>
+            
+            <div style="display:grid;gap:10px">
+              <div>
+                <label class="blabel">Số người ăn mặc định:</label>
+                <div class="people" id="profPeople" style="margin-top:4px">
+                  <button class="chip" data-pn="1">1 người</button>
+                  <button class="chip" data-pn="2">2 vợ chồng</button>
+                  <button class="chip" data-pn="4">Gia đình 4 người</button>
+                </div>
+              </div>
+
+              <div>
+                <label class="blabel">Thói quen đóng gói mặc định:</label>
+                <label class="tog" style="margin-top:4px">
+                  <input type="checkbox" id="profSauce">
+                  <span>Mặc định: Tách riêng gói sốt gia vị</span>
+                </label>
+                <label class="tog">
+                  <input type="checkbox" id="profCarb">
+                  <span>Mặc định: Giảm 50% lượng tinh bột</span>
+                </label>
+              </div>
+
+              <div>
+                <label class="blabel">Loại trừ nguyên liệu dị ứng / ăn kiêng:</label>
+                <div class="filters" id="profFilters" style="margin:4px 0 0">
+                  <button class="chip no" data-pf="noBo">Không Bò</button>
+                  <button class="chip no" data-pf="noHeo">Không Heo</button>
+                  <button class="chip no" data-pf="noCay">Không Cay</button>
+                  <button class="chip" data-pf="lowOil">Ít dầu mỡ</button>
+                </div>
+              </div>
+
+              <div style="margin-top:8px">
+                <button class="btn primary sm" id="saveProfBtn">Lưu cài đặt khẩu vị</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kết nối Zalo OA -->
+        <div class="prof-sec" style="margin-top:20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+            <div>
+              <h3>Kết nối Zalo Official Account (Zalo OA)</h3>
+              <p class="muted" style="font-size:13.5px">Nhận thông báo lịch chốt sổ, cập nhật hành trình xe lạnh và báo cáo chất lượng 1 chạm qua Zalo.</p>
+            </div>
+            <label class="tog" style="margin:0;border:none;background:var(--bg)">
+              <input type="checkbox" id="zaloToggle" checked>
+              <span>Bật nhắc lịch chốt đơn trước 3 giờ</span>
+            </label>
+          </div>
+
+          <div class="zalo-mock">
+            <div class="zalo-hdr">
+              <div class="zalo-logo">Z</div>
+              <b>MOVA FRESH Official Account</b>
+              <span class="muted" style="font-size:11.5px;margin-left:auto">Vừa xong</span>
+            </div>
+            <div class="zalo-bubble">
+              <b>🔔 Chị Lan ơi, chuẩn bị chốt sổ đợt giao Chủ Nhật nhé!</b>
+              <p style="margin-top:6px">Chuyến xe lạnh Đắk Lắk – Sài Gòn sẽ chốt danh sách sơ chế lúc <b>20:00 tối nay</b>. Số dư Gói Đi Chợ của chị hiện còn <b>850.000đ</b>.</p>
+              <div style="margin-top:8px;padding-top:8px;border-top:1px dashed #ddd;display:flex;gap:10px">
+                <a href="#thuc-don" class="btn sm primary" style="font-size:12px;padding:5px 10px">Xác nhận thực đơn tuần này</a>
+                <button class="btn sm" id="zaloDelayDemo" style="font-size:12px;padding:5px 10px">Hoãn sang Thứ Tư</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nút đặt lại dữ liệu demo -->
+        <div style="margin-top:30px;padding:18px;border:1px dashed var(--line);border-radius:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+          <div>
+            <b>Trình diễn & Kiểm thử hệ thống</b>
+            <p class="muted" style="font-size:13px">Làm mới toàn bộ dữ liệu demo về trạng thái ban đầu để trình chiếu lại từ đầu.</p>
+          </div>
+          <button class="btn sm" id="resetDemoBtn" style="color:var(--red);border-color:#F5C2C0">Đặt lại dữ liệu Demo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <b>MOVA FRESH TP.HCM</b> • Nguyên liệu Ready-to-Cook từ Đắk Lắk & Tây Nguyên. Xe lạnh xuyên đêm giao sáng trước 10:00.
+    <div style="margin-top:4px;font-size:12px">Tuân thủ Nghị định 52/2024/NĐ-CP • Hotline hỗ trợ bếp: 1900 8899 (07:00 – 21:00)</div>
+  </div>
+</footer>
+
+<!-- FLOATING ZALO SUPPORT BUTTON -->
+<button class="float-help" id="zaloHelpBtn" aria-label="Hỗ trợ Zalo">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.03 2 11c0 2.87 1.5 5.43 3.86 7.03L5 22l4.28-1.42C10.15 20.81 11.06 21 12 21c5.52 0 10-4.03 10-9s-4.48-9-10-9zm1 14h-2v-2h2v2zm0-4h-2V7h2v5z"/></svg>
+  <span>Chat Zalo hỗ trợ</span>
+</button>
+
+<!-- MOBILE FLOATING CART BAR -->
+<div class="mbar" id="mbar">
+  <div>
+    <div style="font-size:12px;opacity:.8">Giỏ hàng tuần này</div>
+    <b class="num" id="mbarTxt">0 bữa</b>
+  </div>
+  <button class="btn sm" id="mbarBtn">Xem giỏ hàng</button>
+</div>
+<div class="scrim" id="scrim"></div>
+
+<!-- NOTIFICATION DRAWER -->
+<div class="drawer" id="notifDrawer" aria-label="Thông báo thời gian thực">
+  <div class="drawer-hdr">
+    <h3 style="font-size:16px;font-weight:800">Thông báo từ bếp MOVA</h3>
+    <button class="sheet-x" id="notifClose" style="display:inline-flex">×</button>
+  </div>
+  <div class="drawer-body" id="notifList"></div>
+  <div style="padding:12px 16px;border-top:1px solid var(--line);text-align:center">
+    <button class="btn ghost sm" id="markAllReadBtn">Đánh dấu tất cả đã đọc</button>
+  </div>
+</div>
+
+<!-- ==================== MODALS ==================== -->
+
+<!-- 1. Modal Chi Tiết Món -->
+<div class="modal" id="dishModal" hidden role="dialog" aria-modal="true" aria-labelledby="dmTitle">
+  <div class="mbox" id="dmBox"></div>
+</div>
+
+<!-- 2. Modal Đăng nhập / Chuyển Demo User -->
+<div class="modal" id="loginModal" hidden role="dialog" aria-modal="true">
+  <div class="mbox" style="max-width:440px;padding:24px">
+    <button class="mclose" data-close aria-label="Đóng">×</button>
+    <h3 style="font-size:20px;font-weight:800;margin-bottom:6px">Tài khoản MOVA Fresh</h3>
+    <p class="muted" style="font-size:13.5px;margin-bottom:18px">Đăng nhập bằng SĐT để quản lý lịch giao và Gói Đi Chợ Trả Trước.</p>
+
+    <div style="background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:16px">
+      <b style="font-size:13px;color:var(--green)">⚡ Chọn nhanh tài khoản để trải nghiệm Demo:</b>
+      <div style="display:grid;gap:8px;margin-top:10px">
+        <button class="btn sm" id="btnDemoLan" style="text-align:left;justify-content:flex-start">
+          <div>
+            <b>Demo Khách cũ: Chị Lan</b>
+            <small style="display:block;color:var(--muted)">Có sẵn 850.000đ Gói Đi Chợ & 2 địa chỉ TP.HCM</small>
+          </div>
+        </button>
+        <button class="btn sm" id="btnDemoNew" style="text-align:left;justify-content:flex-start">
+          <div>
+            <b>Demo Khách mới: SĐT mới</b>
+            <small style="display:block;color:var(--muted)">Tặng ngay 30.000đ cho đơn hàng đầu tiên</small>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <form id="loginForm" onsubmit="return false">
+      <label class="blabel" for="loginPhone">Số điện thoại:</label>
+      <div class="money" style="background:#fff;margin-bottom:12px">
+        <input id="loginPhone" type="tel" placeholder="09xx xxx xxx" value="0908 123 456">
+      </div>
+      <label class="blabel" for="loginOtp">Mã xác thực OTP (4 số):</label>
+      <div class="money" style="background:#fff;margin-bottom:16px">
+        <input id="loginOtp" type="text" maxlength="4" placeholder="Nhập 1234" value="1234">
+      </div>
+      <button class="btn primary" id="doLoginBtn" style="width:100%;justify-content:center">Đăng nhập tài khoản</button>
+    </form>
+  </div>
+</div>
+
+<!-- 3. Modal Đặt hàng & Checkout -->
+<div class="modal" id="checkoutModal" hidden role="dialog" aria-modal="true">
+  <div class="mbox" style="max-width:600px;padding:24px">
+    <button class="mclose" data-close aria-label="Đóng">×</button>
+    <h3 style="font-size:20px;font-weight:800;margin-bottom:4px">Thông tin nhận hàng tại TP.HCM</h3>
+    <p class="muted" style="font-size:13px;margin-bottom:16px">Xe lạnh xuất phát từ Đắk Lắk lúc 22:00, giao tận cửa buổi sáng trước 10:00.</p>
+
+    <!-- Nút chọn nhanh địa chỉ đã lưu -->
+    <div id="quickAddrBox" style="margin-bottom:14px">
+      <span style="font-size:12.5px;font-weight:700;display:block;margin-bottom:6px">Chọn nhanh từ sổ địa chỉ:</span>
+      <div id="checkoutAddrChips" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+    </div>
+
+    <form id="checkoutForm" onsubmit="return false" style="display:grid;gap:12px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <label class="blabel" for="ckName">Họ tên người nhận:</label>
+          <div class="money" style="background:#fff"><input id="ckName" required value="Chị Lan"></div>
+        </div>
+        <div>
+          <label class="blabel" for="ckPhone">Số điện thoại:</label>
+          <div class="money" style="background:#fff"><input id="ckPhone" required type="tel" value="0908 123 456"></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1.2fr 1.8fr;gap:12px">
+        <div>
+          <label class="blabel" for="ckDistrict">Quận/Huyện TP.HCM:</label>
+          <select id="ckDistrict" style="width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-size:14px;outline:none">
+            <option value="Quận 7">Quận 7</option>
+            <option value="Quận 1">Quận 1</option>
+            <option value="Quận 3">Quận 3</option>
+            <option value="Bình Thạnh">Bình Thạnh</option>
+            <option value="Phú Nhuận">Phú Nhuận</option>
+            <option value="Tân Bình">Tân Bình</option>
+            <option value="TP. Thủ Đức">TP. Thủ Đức</option>
+            <option value="Quận 2 (Thủ Đức)">Quận 2 (Thủ Đức)</option>
+            <option value="Quận 9 (Thủ Đức)">Quận 9 (Thủ Đức)</option>
+            <option value="Quận 4">Quận 4</option>
+            <option value="Quận 5">Quận 5</option>
+            <option value="Quận 10">Quận 10</option>
+          </select>
+        </div>
+        <div>
+          <label class="blabel" for="ckAddress">Địa chỉ chi tiết (số nhà, tòa nhà):</label>
+          <div class="money" style="background:#fff"><input id="ckAddress" required value="Căn hộ A12.04, Sunrise City, Nguyễn Hữu Thọ"></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <label class="blabel">Khung giờ nhận buổi sáng:</label>
+          <select id="ckTimeSlot" style="width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-size:14px;outline:none">
+            <option value="06:30–08:30">06:30 – 08:30 (Sớm trước khi đi làm)</option>
+            <option value="08:30–10:00">08:30 – 10:00 (Nhận thong thả)</option>
+          </select>
+        </div>
+        <div>
+          <label class="blabel" for="ckNote">Ghi chú cho shipper:</label>
+          <div class="money" style="background:#fff"><input id="ckNote" placeholder="VD: Gửi lễ tân / Gọi trước khi đến" value="Giao lễ tân nếu chưa xuống kịp"></div>
+        </div>
+      </div>
+
+      <!-- Tóm tắt thanh toán theo phương thức -->
+      <div id="checkoutSummaryBox" style="background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:6px"></div>
+
+      <button class="btn orange" id="confirmOrderBtn" style="width:100%;justify-content:center;padding:13px;font-size:16px;margin-top:6px">Hoàn tất đặt hàng</button>
+    </form>
+  </div>
+</div>
+
+<!-- 4. Modal Đặt Hàng Thành Công -->
+<div class="modal" id="okModal" hidden role="dialog" aria-modal="true" aria-labelledby="okTitle">
+  <div class="mbox" id="okBox"></div>
+</div>
+
+<!-- 5. Modal Báo Cáo Độ Tươi & Hoàn Tiền Bữa Ăn -->
+<div class="modal" id="refundModal" hidden role="dialog" aria-modal="true">
+  <div class="mbox" style="max-width:500px;padding:24px">
+    <button class="mclose" data-close aria-label="Đóng">×</button>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+      <div style="width:36px;height:36px;border-radius:10px;background:var(--orange-soft);color:var(--orange-ink);display:grid;place-items:center;font-size:18px">🛡️</div>
+      <h3 style="font-size:18px;font-weight:800">Cam kết độ tươi 100% MOVA</h3>
+    </div>
+    <p class="muted" style="font-size:13px;margin-bottom:14px">Nếu thùng hàng mất lạnh, thịt không đạt chuẩn hoặc rau dập trong chuyến xe, MOVA hoàn tiền 100% ngay vào Gói Đi Chợ Trả Trước.</p>
+
+    <form id="refundForm" onsubmit="return false" style="display:grid;gap:12px">
+      <div>
+        <label class="blabel">Loại sự cố gặp phải:</label>
+        <select id="rfReason" style="width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-size:14px;outline:none">
+          <option value="Hộp mất lạnh, đá gel tan hoàn toàn">Hộp mất lạnh, đá gel tan hoàn toàn</option>
+          <option value="Rau củ dập nát do va đập">Rau củ dập nát do va đập</option>
+          <option value="Thiếu gói sốt hoặc túi gia vị tươi">Thiếu gói sốt hoặc túi gia vị tươi</option>
+          <option value="Thịt không đúng định lượng / quy cách">Thịt không đúng định lượng / quy cách</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="blabel">Chọn món bị ảnh hưởng:</label>
+        <select id="rfDish" style="width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-size:14px;outline:none"></select>
+      </div>
+
+      <div>
+        <label class="blabel">Mô phỏng hình chụp thực tế:</label>
+        <div id="fakePhotoPreview" style="border:1.5px dashed var(--line);border-radius:12px;padding:14px;text-align:center;cursor:pointer;background:var(--bg)">
+          <span style="font-size:24px">📸</span>
+          <span style="display:block;font-size:13px;font-weight:600;margin-top:4px" id="fakePhotoTxt">Bấm để tải ảnh chụp thùng/món lên</span>
+        </div>
+      </div>
+
+      <button class="btn primary" id="submitRefundBtn" style="width:100%;justify-content:center;padding:12px;margin-top:6px">Gửi yêu cầu & Nhận hoàn tiền ngay</button>
+    </form>
+  </div>
+</div>
+
+<!-- 6. Modal Nạp Gói Đi Chợ Trả Trước (VietQR) -->
+<div class="modal" id="topupModal" hidden role="dialog" aria-modal="true">
+  <div class="mbox" style="max-width:480px;padding:24px">
+    <button class="mclose" data-close aria-label="Đóng">×</button>
+    <h3 style="font-size:20px;font-weight:800;margin-bottom:4px" id="topupTitle">Đăng ký Gói Đi Chợ Trả Trước</h3>
+    <p class="muted" style="font-size:13px;margin-bottom:14px" id="topupDesc">Quét mã VietQR để hoàn tất nạp giá trị vào tài khoản.</p>
+
+    <div style="background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:16px;text-align:center">
+      <div id="topupQrBox" style="width:180px;height:180px;margin:0 auto;background:#fff;padding:8px;border-radius:12px;border:1px solid var(--line)"></div>
+      <div style="margin-top:10px;font-size:13.5px">
+        <div>Số tiền chuyển khoản: <b class="num" id="topupAmountTxt" style="color:var(--green);font-size:18px">1.000.000đ</b></div>
+        <div>Giá trị nhận được: <b class="num" id="topupBonusTxt" style="color:var(--orange);font-size:16px">1.050.000đ</b></div>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px">Nội dung chuyển khoản: <b id="topupCodeTxt">NAP1TR 0908123456</b></div>
+      </div>
+    </div>
+
+    <button class="btn primary" id="confirmTopupBtn" style="width:100%;justify-content:center;padding:12px;font-size:15px;margin-top:14px">Xác nhận đã chuyển khoản thành công</button>
+  </div>
+</div>
+
+<!-- 7. Modal Thêm / Sửa Địa Chỉ -->
+<div class="modal" id="addrModal" hidden role="dialog" aria-modal="true">
+  <div class="mbox" style="max-width:440px;padding:24px">
+    <button class="mclose" data-close aria-label="Đóng">×</button>
+    <h3 style="font-size:18px;font-weight:800;margin-bottom:12px">Thêm địa chỉ giao hàng tại TP.HCM</h3>
+    <form id="addrForm" onsubmit="return false" style="display:grid;gap:12px">
+      <div>
+        <label class="blabel" for="adLabel">Tên nhãn (Nhà riêng, Công ty...):</label>
+        <div class="money" style="background:#fff"><input id="adLabel" placeholder="VD: Nhà riêng / Căn hộ" value="Nhà ba mẹ"></div>
+      </div>
+      <div>
+        <label class="blabel" for="adDistrict">Quận/Huyện TP.HCM:</label>
+        <select id="adDistrict" style="width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-size:14px;outline:none">
+          <option value="Quận 1">Quận 1</option>
+          <option value="Quận 3">Quận 3</option>
+          <option value="Quận 7">Quận 7</option>
+          <option value="Bình Thạnh">Bình Thạnh</option>
+          <option value="Phú Nhuận">Phú Nhuận</option>
+          <option value="Tân Bình">Tân Bình</option>
+          <option value="TP. Thủ Đức">TP. Thủ Đức</option>
+        </select>
+      </div>
+      <div>
+        <label class="blabel" for="adDetail">Địa chỉ chi tiết:</label>
+        <div class="money" style="background:#fff"><input id="adDetail" placeholder="Số nhà, tên đường, phường..." value="45 Lê Văn Lương, P. Tân Kiểng"></div>
+      </div>
+      <label class="tog" style="margin-top:4px">
+        <input type="checkbox" id="adDefault">
+        <span>Đặt làm địa chỉ mặc định</span>
+      </label>
+      <button class="btn primary" id="saveAddrBtn" style="width:100%;justify-content:center;padding:11px;margin-top:6px">Lưu địa chỉ</button>
+    </form>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- ==================== JAVASCRIPT ==================== -->
+<script>
+/* ---------- TIỆN ÍCH ---------- */
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const nf=new Intl.NumberFormat('vi-VN');
+const fmt=n=>nf.format(Math.round(n))+'đ';
+const pad=n=>String(n).padStart(2,'0');
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2800)}
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const hash=s=>[...s].reduce((h,c)=>(h*31+c.charCodeAt(0))|0,7);
+
+/* ---------- DỮ LIỆU MÓN ĂN CHÍNH ---------- */
+const DISHES=[
+  {id:'bo-luclac',name:'Thăn bò Đắk Lắk lúc lắc tiêu xanh',p:'bo',meat:[150,'g thăn bò Đắk Lắk'],veg:[120,'g ớt chuông, hành tây Đà Lạt'],time:15,price:79000,save:5000,pop:10,spicy:false,lowOil:false,storage:'chill',tags:['Ít đường'],
+   steps:['Phi thơm túi tỏi băm với 1 thìa dầu, lửa lớn.','Cho bò vào áp chảo 2 phút mỗi mặt, thêm ớt chuông và hành tây đảo 2 phút.','Rưới gói sốt tiêu xanh, đảo 30 giây rồi tắt bếp.']},
+  {id:'ga-sa',name:'Gà đồi nướng sả mật ong',p:'ga',meat:[180,'g đùi gà đồi rút xương'],veg:[100,'g dưa leo, cà chua'],time:15,price:52000,save:4000,pop:9,spicy:false,lowOil:true,storage:'chill',tags:['Ít dầu mỡ'],
+   steps:['Đặt chảo chống dính, cho gà mặt da xuống, không cần dầu.','Áp chảo lửa vừa 6 phút mỗi mặt đến khi da vàng giòn.','Thêm gói sốt sả mật ong, rim 1 phút cho bóng rồi cắt miếng.']},
+  {id:'heo-gung',name:'Ba chỉ heo thảo mộc ram gừng',p:'heo',meat:[150,'g ba chỉ heo thảo mộc'],veg:[120,'g cải ngọt Đắk Lắk'],time:15,price:49000,save:4000,pop:9,spicy:false,lowOil:false,storage:'freeze',tags:['Vị đậm đà'],
+   steps:['Cho ba chỉ vào chảo nóng, để thịt tự ra mỡ trong 5 phút.','Thêm túi gừng, hành tím băm, đảo thơm rồi đổ gói nước ram, rim 5 phút.','Đẩy thịt sang một bên, xào nhanh cải ngọt 2 phút trong cùng chảo.']},
+  {id:'bo-lalot',name:'Bò cuốn lá lốt áp chảo',p:'bo',meat:[140,'g bò xay Đắk Lắk đã cuốn sẵn'],veg:[80,'g rau sống, dưa leo'],time:15,price:65000,save:0,pop:7,spicy:false,lowOil:true,storage:'chill',tags:['Ít dầu mỡ'],
+   steps:['Quét một lớp dầu mỏng lên chảo chống dính.','Xếp các cuốn bò, áp chảo lửa vừa 8 phút, lật đều tay.','Pha gói mắm nêm đóng rời, ăn kèm rau sống.']},
+  {id:'suon-toi',name:'Sườn non heo rim mắm tỏi',p:'suon',meat:[200,'g sườn non heo thảo mộc'],veg:[100,'g dưa leo, cà chua'],time:15,price:58000,save:4000,pop:8,spicy:false,lowOil:false,storage:'freeze',tags:['Vị đậm đà'],
+   steps:['Chiên sườn với ít dầu 6 phút đến khi vàng các mặt.','Thêm túi tỏi băm, đảo thơm, đổ gói mắm rim và 3 thìa nước.','Rim lửa nhỏ 5 phút đến khi nước sệt bám đều sườn.']},
+  {id:'ga-saot',name:'Gà đồi xào sả ớt',p:'ga',meat:[170,'g đùi gà đồi cắt miếng'],veg:[80,'g sả, ớt, hành tây'],time:12,price:48000,save:0,pop:7,spicy:true,lowOil:false,storage:'chill',tags:['Cay nhẹ'],
+   steps:['Phi thơm túi sả ớt băm với 1 thìa dầu.','Cho gà vào xào lửa lớn 7 phút đến khi săn.','Thêm hành tây và gói sốt, đảo 2 phút.']},
+  {id:'trung-nam',name:'Trứng gà đồi chưng nấm đông cô',p:'trung',meat:[2,' quả trứng gà đồi'],veg:[50,'g nấm đông cô, hành lá'],time:12,price:38000,save:0,pop:6,spicy:false,lowOil:true,storage:'chill',tags:['Vị thanh nhẹ','Ít dầu mỡ'],
+   steps:['Đánh tan trứng với gói nước dùng nấm và 3 thìa nước.','Cho nấm vào bát, đổ trứng lên, đặt bát vào chảo có nước sôi, đậy nắp.','Hấp lửa nhỏ 10 phút, rắc hành lá.']},
+  {id:'bo-raucu',name:'Bò xào rau củ Đà Lạt',p:'bo',meat:[130,'g thăn vai bò Đắk Lắk'],veg:[180,'g súp lơ, cà rốt, đậu Hà Lan'],time:12,price:69000,save:5000,pop:8,spicy:false,lowOil:true,storage:'chill',tags:['Ít dầu mỡ','Vị thanh nhẹ'],
+   steps:['Xào rau củ với 3 thìa nước 3 phút cho chín tới, trút ra.','Áp chảo bò lửa lớn 2 phút.','Cho rau củ vào lại, thêm gói sốt, đảo 1 phút.']},
+  {id:'heo-cai',name:'Heo nạc vai xào cải ngồng',p:'heo',meat:[130,'g nạc vai heo thảo mộc'],veg:[200,'g cải ngồng Đà Lạt'],time:12,price:45000,save:3000,pop:6,spicy:false,lowOil:true,storage:'freeze',tags:['Ít dầu mỡ'],
+   steps:['Phi tỏi với ít dầu, cho thịt vào xào 4 phút.','Thêm cải ngồng và 2 thìa nước, đảo lửa lớn 3 phút.','Nêm gói sốt, đảo đều rồi tắt bếp.']},
+  {id:'ga-xe',name:'Gà luộc xé trộn bắp cải rau răm',p:'ga',meat:[160,'g ức gà đồi'],veg:[150,'g bắp cải tím, rau răm'],time:15,price:44000,save:3000,pop:6,spicy:false,lowOil:true,storage:'chill',tags:['Ít dầu mỡ','Ít đường'],
+   steps:['Luộc ức gà trong chảo nước có gừng 12 phút, để nguội.','Xé nhỏ gà, trộn với bắp cải và rau răm.','Rưới gói nước trộn chanh tỏi.']},
+  {id:'bo-tieu',name:'Bắp bò áp chảo sốt tiêu đen',p:'bo',meat:[150,'g bắp bò Đắk Lắk thái lát'],veg:[120,'g khoai tây, đậu que'],time:15,price:72000,save:0,pop:7,spicy:true,lowOil:false,storage:'chill',tags:['Cay nhẹ'],
+   steps:['Áp chảo khoai tây và đậu que 6 phút, trút ra.','Áp chảo bò lửa lớn 2 phút.','Đổ gói sốt tiêu đen, cho rau củ vào đảo 1 phút.']},
+  {id:'heo-dua',name:'Thịt heo rim nước dừa',p:'heo',meat:[150,'g nạc dăm heo thảo mộc'],veg:[1,' quả trứng gà đồi luộc, dưa chua'],time:15,price:47000,save:3000,pop:7,spicy:false,lowOil:false,storage:'freeze',tags:['Vị đậm đà'],
+   steps:['Đảo thịt với túi hành tỏi đến khi săn, 4 phút.','Đổ gói nước dừa và nước màu, rim lửa vừa 8 phút.','Thêm trứng luộc, rim thêm 2 phút.']}
+];
+const byId=Object.fromEntries(DISHES.map(d=>[d.id,d]));
+const BG={bo:'#F6E5DA',ga:'#FBEFD5',heo:'#F8E6DF',suon:'#F4E2D6',trung:'#FBF3D2'};
+const MAXM=10;
+
+/* ---------- SẢN PHẨM PHỤ (ADD-ONS) ---------- */
+const ADDONS=[
+  {id:'ad-trung',name:'Vỉ 10 trứng gà đồi Đắk Lắk',unit:'vỉ 10 quả',price:38000,icon:'🥚',storage:'chill'},
+  {id:'ad-rau',name:'Combo rau củ Đà Lạt sạch thêm',unit:'túi 500g',price:35000,icon:'🥦',storage:'chill'},
+  {id:'ad-bo',name:'Bơ sáp Đắk Lắk loại 1',unit:'túi 1kg',price:55000,icon:'🥑',storage:'chill'},
+  {id:'ad-chanh',name:'Chanh dây tươi Tây Nguyên',unit:'túi 1kg',price:30000,icon:'🍋',storage:'chill'}
+];
+const addonById=Object.fromEntries(ADDONS.map(a=>[a.id,a]));
+
+/* ---------- TỰ VẼ SVG ĐĨA MÓN ĂN ---------- */
+function plate(d,uid){
+  const R=rng(hash(d.id)),u=d.id+uid;
+  const pos=(n,rad)=>Array.from({length:n},(_,i)=>{const a=i/n*Math.PI*2+R()*.6,r=rad*(.35+R()*.65);return [100+Math.cos(a)*r,100+Math.sin(a)*r,R()*180]});
+  let f='';
+  if(d.p==='bo'){
+    pos(9,40).forEach(([x,y,a])=>f+=`<g transform="translate(${x} ${y}) rotate(${a})"><rect x="-13" y="-10" width="26" height="20" rx="6" fill="url(#b${u})"/><rect x="-9" y="-7" width="13" height="5" rx="2.5" fill="#B4664A" opacity=".7"/><path d="M-8 4h14" stroke="#4A1F12" stroke-width="1.6" opacity=".5"/></g>`);
+    pos(10,46).forEach(([x,y])=>f+=`<circle cx="${x}" cy="${y}" r="3.2" fill="#6A9A3E"/><circle cx="${x+4}" cy="${y+2}" r="2.6" fill="#7DAE4C"/>`);
+    if(d.id!=='bo-lalot')pos(4,44).forEach(([x,y,a])=>f+=`<path d="M${x-9} ${y} a9 6 ${a} 0 1 18 0" fill="none" stroke="#E9D3EC" stroke-width="3.2"/>`);
+  }
+  if(d.p==='ga'){
+    pos(7,38).forEach(([x,y,a])=>f+=`<g transform="translate(${x} ${y}) rotate(${a})"><ellipse rx="17" ry="12" fill="url(#c${u})"/><ellipse cx="-3" cy="-3" rx="9" ry="5" fill="#F2C06A" opacity=".75"/><path d="M-9 4l14-6M-6 8l14-6" stroke="#7A3D14" stroke-width="1.8" opacity=".55"/></g>`);
+    pos(9,46).forEach(([x,y])=>f+=`<circle cx="${x}" cy="${y}" r="3.4" fill="none" stroke="#B9CC7A" stroke-width="2"/>`);
+  }
+  if(d.p==='heo'){
+    pos(6,36).forEach(([x,y,a])=>f+=`<g transform="translate(${x} ${y}) rotate(${a})"><rect x="-17" y="-9" width="34" height="18" rx="4" fill="#F3DCC4"/><rect x="-17" y="-2" width="34" height="6" fill="#C46A45"/><rect x="-17" y="-9" width="34" height="4" rx="2" fill="#8A4321"/></g>`);
+    pos(8,46).forEach(([x,y,a])=>f+=`<rect x="${x}" y="${y}" width="12" height="2.4" rx="1.2" fill="#E5C25E" transform="rotate(${a} ${x} ${y})"/>`);
+  }
+  if(d.p==='suon'){
+    pos(7,36).forEach(([x,y,a])=>f+=`<g transform="translate(${x} ${y}) rotate(${a})"><rect x="-13" y="-8" width="26" height="16" rx="7" fill="url(#s${u})"/><circle cx="14" cy="0" r="4.2" fill="#F2E6CF"/></g>`);
+    pos(10,44).forEach(([x,y])=>f+=`<circle cx="${x}" cy="${y}" r="2.6" fill="#F3E7C2"/>`);
+  }
+  if(d.p==='trung'){
+    f+=`<circle cx="100" cy="100" r="54" fill="#F2C94C"/><circle cx="96" cy="95" r="40" fill="#F6D86E" opacity=".7"/>`;
+    pos(5,30).forEach(([x,y,a])=>f+=`<g transform="translate(${x} ${y}) rotate(${a})"><ellipse rx="11" ry="7" fill="#7B4B2A"/><ellipse rx="6" ry="3" fill="#A87050"/></g>`);
+    pos(12,44).forEach(([x,y])=>f+=`<circle cx="${x}" cy="${y}" r="2.8" fill="none" stroke="#4F9A4A" stroke-width="1.8"/>`);
+  }
+  pos(5,52).forEach(([x,y,a])=>f+=`<ellipse cx="${x}" cy="${y}" rx="8" ry="3.6" fill="#3F8F4F" transform="rotate(${a} ${x} ${y})"/>`);
+  if(d.spicy)pos(5,48).forEach(([x,y,a])=>f+=`<rect x="${x}" y="${y}" width="9" height="3" rx="1.5" fill="#D3352B" transform="rotate(${a} ${x} ${y})"/>`);
+  return `<svg viewBox="0 0 200 200" role="img" aria-label="Minh họa món ${d.name}"><defs>
+   <radialGradient id="p${u}" cx="45%" cy="40%" r="65%"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".78" stop-color="#F5F1E8"/><stop offset="1" stop-color="#E4DCCB"/></radialGradient>
+   <linearGradient id="b${u}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8E4430"/><stop offset="1" stop-color="#5E2717"/></linearGradient>
+   <linearGradient id="c${u}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E3A24B"/><stop offset="1" stop-color="#B9661F"/></linearGradient>
+   <linearGradient id="s${u}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9A4A22"/><stop offset="1" stop-color="#6B2E14"/></linearGradient></defs>
+   <ellipse cx="104" cy="110" rx="86" ry="84" fill="rgba(90,60,20,.16)"/><circle cx="100" cy="100" r="86" fill="url(#p${u})"/><circle cx="100" cy="100" r="66" fill="none" stroke="#E8E0CF" stroke-width="1.5"/>${f}</svg>`;
+}
+
+/* ---------- TRẠNG THÁI TOÀN BỘ ỨNG DỤNG (STATE) ---------- */
+const DEFAULT_STATE = () => ({
+  view: 'store', // 'store' | 'dash'
+  dashTab: 'active', // 'active' | 'history' | 'prepaid' | 'profile'
+  mode: 'A',
+  cartA: new Map([['bo-luclac',2],['ga-sa',2]]),
+  cartB: new Map(),
+  addonsA: new Map([['ad-trung',1]]),
+  addonsB: new Map(),
+  budget: 1200000,
+  n: 4,
+  f: new Set(),
+  pay: 'prepaid', // 'prepaid' | 'qr' | 'cod'
+  sauce: false,
+  carb: false,
+  firstDrop: 'sun', // 'sun' | 'wed'
+  msg: null,
+
+  cutoffPassed: false, // false: trước 20h, true: đã qua 20h
+
+  user: {
+    isLoggedIn: true,
+    name: 'Chị Lan',
+    phone: '0908 123 456',
+    prepaidBalance: 850000,
+    addresses: [
+      { id: 'addr-1', label: 'Nhà riêng (Sunrise City)', name: 'Chị Lan', phone: '0908 123 456', district: 'Quận 7', detail: 'Căn hộ A12.04, Sunrise City, Nguyễn Hữu Thọ, P. Tân Hưng', isDefault: true },
+      { id: 'addr-2', label: 'Công ty (Bitexco Q1)', name: 'Chị Lan', phone: '0908 123 456', district: 'Quận 1', detail: 'Tầng 8, Tòa nhà Bitexco, 2 Hải Triều, P. Bến Nghé', isDefault: false }
+    ],
+    pref: { ppl: 4, budget: 1200000, sauce: false, carb: false, f: [] },
+    zaloRemind: true
+  },
+
+  activeOrder: {
+    id: 'MV10298',
+    createdAt: 'Hôm nay lúc 09:15',
+    status: 'preparing', // 'confirmed' | 'daklak_prep' | 'on_truck' | 'delivering'
+    firstDrop: 'sun',
+    deliveryTimeSlot: '06:30–08:30',
+    address: 'Căn hộ A12.04, Sunrise City, Nguyễn Hữu Thọ, P. Tân Hưng, Quận 7',
+    receiver: 'Chị Lan - 0908 123 456',
+    note: 'Giao lễ tân nếu chưa xuống kịp',
+    sauce: true,
+    carb: false,
+    items: [
+      { id: 'bo-luclac', qty: 4, name: 'Thăn bò Đắk Lắk lúc lắc tiêu xanh', price: 79000, save: 5000, storage: 'chill' },
+      { id: 'ga-sa', qty: 4, name: 'Gà đồi nướng sả mật ong', price: 52000, save: 4000, storage: 'chill' },
+      { id: 'suon-toi', qty: 4, name: 'Sườn non heo rim mắm tỏi', price: 58000, save: 4000, storage: 'freeze' },
+      { id: 'bo-raucu', qty: 4, name: 'Bò xào rau củ Đà Lạt', price: 69000, save: 5000, storage: 'chill' }
+    ],
+    addons: [{ id: 'ad-trung', qty: 1, name: 'Vỉ 10 trứng gà đồi Đắk Lắk', price: 38000, storage: 'chill' }],
+    payMethod: 'prepaid',
+    subTotal: 1070000,
+    saveBatch: 72000,
+    netFood: 998000,
+    shipFee: 0,
+    qrDiscount: 0,
+    total: 998000,
+    isSplit: true
+  },
+
+  historyOrders: [
+    {
+      id: 'MV08912',
+      date: 'Chủ Nhật tuần trước (08/11)',
+      total: 745000,
+      meals: 4,
+      items: [
+        { id: 'bo-luclac', name: 'Thăn bò Đắk Lắk lúc lắc tiêu xanh', qty: 4, rate: 'good' },
+        { id: 'heo-gung', name: 'Ba chỉ heo thảo mộc ram gừng', qty: 4, rate: 'salty' },
+        { id: 'ga-sa', name: 'Gà đồi nướng sả mật ong', qty: 4, rate: null },
+        { id: 'trung-nam', name: 'Trứng gà đồi chưng nấm đông cô', qty: 4, rate: null }
+      ],
+      addons: [{ id: 'ad-trung', name: 'Vỉ 10 trứng gà đồi Đắk Lắk', qty: 1 }]
+    },
+    {
+      id: 'MV08405',
+      date: 'Thứ Tư 2 tuần trước (01/11)',
+      total: 618000,
+      meals: 3,
+      items: [
+        { id: 'suon-toi', name: 'Sườn non heo rim mắm tỏi', qty: 4, rate: 'good' },
+        { id: 'bo-lalot', name: 'Bò cuốn lá lốt áp chảo', qty: 4, rate: 'good' },
+        { id: 'ga-xe', name: 'Gà luộc xé trộn bắp cải rau răm', qty: 4, rate: null }
+      ],
+      addons: [{ id: 'ad-rau', name: 'Combo rau củ Đà Lạt sạch thêm', qty: 1 }]
+    }
+  ],
+
+  ledger: [
+    { date: '01/11 14:20', desc: 'Đăng ký Gói Đi Chợ 1.000.000đ (Tặng 50.000đ)', amount: +1050000, bal: 1050000 },
+    { date: '01/11 15:00', desc: 'Thanh toán đơn hàng #MV08405', amount: -618000, bal: 432000 },
+    { date: '06/11 09:30', desc: 'Đăng ký Gói Đi Chợ 1.000.000đ (Tặng 50.000đ)', amount: +1050000, bal: 1482000 },
+    { date: '08/11 19:40', desc: 'Thanh toán đơn hàng #MV08912', amount: -745000, bal: 737000 },
+    { date: '10/11 11:15', desc: 'Bảo hành bữa ăn #MV08912 (Rau dập xe lạnh)', amount: +113000, bal: 850000 }
+  ],
+
+  notifications: [
+    { id: 'n1', time: '10:00 hôm nay', title: 'Đơn #MV10298 đã chuyển nhà máy Đắk Lắk', desc: 'Đơn của bạn đã được ghi nhận vào lịch sơ chế đêm nay.', unread: true },
+    { id: 'n2', time: 'Hôm qua 19:30', title: 'Zalo OA: Nhắc lịch chốt đơn trước 20:00', desc: 'Xe lạnh chuẩn bị đóng chuyến đêm về TP.HCM.', unread: false },
+    { id: 'n3', time: '10/11 11:15', title: 'Đã hoàn 113.000đ vào Gói Đi Chợ', desc: 'Hoàn tiền bảo đảm độ tươi cho sự cố rau dập đơn #MV08912.', unread: false }
+  ]
+});
+
+let S = DEFAULT_STATE();
+
+const cartMap=()=>S.mode==='A'?S.cartA:S.cartB;
+const addonsMap=()=>S.mode==='A'?S.addonsA:S.addonsB;
+const allowed=d=>!(S.f.has('noBo')&&d.p==='bo')&&!(S.f.has('noHeo')&&(d.p==='heo'||d.p==='suon'))&&!(S.f.has('noCay')&&d.spicy)&&!(S.f.has('lowOil')&&!d.lowOil);
+
+/* ---------- TÍNH TOÁN NGHIỆP VỤ GIỎ HÀNG ---------- */
+function calcAll(){
+  const dishes=cartMap(),ads=addonsMap();
+  let sub=0,save=0,meals=0,serv=0;
+  dishes.forEach((q,id)=>{
+    const d=byId[id];
+    sub+=d.price*q;
+    save+=d.save*q;
+    meals++;
+    serv+=q;
+  });
+
+  let adTotal=0;
+  ads.forEach((q,id)=>{
+    const a=addonById[id];
+    if(a&&q>0) adTotal+=a.price*q;
+  });
+
+  const netFood=sub-save+adTotal; // tiền sau tiết kiệm mẻ + đồ mua thêm
+
+  // Quy tắc tách đợt & Phí vận chuyển:
+  // Đơn 250k - dưới 600k (hoặc <= 3 bữa): Giao gộp 1 đợt, phí ship 25k
+  // Đơn >= 600k AND >= 4 bữa: Tách 2 đợt, Freeship
+  const isSplit=(netFood>=600000 && meals>=4);
+  const shipFee=meals?(isSplit?0:25000):0;
+
+  // Điều kiện VietQR: giảm 20k CHỈ ÁP DỤNG KHI netFood >= 400k
+  const canQR=(netFood>=400000);
+  const qrDiscount=(S.pay==='qr' && canQR)?20000:0;
+
+  const total=Math.max(0, netFood+shipFee-qrDiscount);
+  const meetsMOV=(netFood>=250000);
+
+  return {sub,save,adTotal,netFood,isSplit,shipFee,canQR,qrDiscount,total,meals,serv,meetsMOV};
+}
+
+/* ---------- THUẬT TOÁN TỐI ƯU NGÂN SÁCH (CHẾ ĐỘ B) ---------- */
+function setScore(ids){let s=0;const c={};ids.forEach(id=>{const d=byId[id];s+=d.pop;c[d.p]=(c[d.p]||0)+1});s+=4*Object.keys(c).length;Object.values(c).forEach(v=>{if(v>2)s-=3*(v-2)});return s}
+function payable(ids,n){
+  const m=new Map(ids.map(id=>[id,n]));
+  let sub=0,save=0;
+  m.forEach((q,id)=>{const d=byId[id];sub+=d.price*q;save+=d.save*q});
+  const net=sub-save;
+  const isSplit=(net>=600000 && ids.length>=4);
+  const ship=isSplit?0:25000;
+  const qr=(S.pay==='qr'&&net>=400000)?20000:0;
+  return net+ship-qr;
+}
+function optimize(){
+  const B=S.budget,n=S.n,pool=DISHES.filter(allowed);
+  const byCost=[...pool].sort((a,b)=>(a.price-a.save)-(b.price-b.save));
+  let k=0;for(let i=1;i<=Math.min(MAXM,byCost.length);i++)if(payable(byCost.slice(0,i).map(d=>d.id),n)<=B)k=i;
+  if(!k){
+    S.cartB=new Map();
+    const need=payable([byCost[0]?.id].filter(Boolean),n);
+    S.msg=byCost.length?{warn:true,t:`Ngân sách chưa đủ 1 bữa cho ${n} người. Cần tối thiểu ${fmt(need)}.`}:{warn:true,t:'Không còn món phù hợp bộ lọc. Vui lòng bỏ bớt một bộ lọc khẩu vị.'};
+    return;
+  }
+  let sel=byCost.slice(0,k).map(d=>d.id);
+  for(let it=0;it<40;it++){
+    let best=null,bs=setScore(sel);
+    for(let i=0;i<sel.length;i++)for(const d of pool){
+      if(sel.includes(d.id))continue;
+      const t=sel.slice();t[i]=d.id;
+      if(payable(t,n)>B)continue;
+      const sc=setScore(t);if(sc>bs){bs=sc;best=t}
+    }
+    if(!best)break;sel=best;
+  }
+  sel.sort((a,b)=>byId[b].pop-byId[a].pop);
+  S.cartB=new Map(sel.map(id=>[id,n]));
+  const tot=payable(sel,n),ppl=n===1?'1 người':n===2?'2 người':'4 người';
+  S.msg={warn:false,t:`Đã tối ưu ${k} bữa cho ${ppl}. Tổng ${fmt(tot)}, nằm gọn trong ngân sách ${fmt(B)} của bạn.`};
+}
+
+/* ---------- LỊCH GIAO HÀNG (CN & T4) ---------- */
+const DAYN=['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];
+function schedule(now=new Date()){
+  const sun=new Date(now.getFullYear(),now.getMonth(),now.getDate()+((7-now.getDay())%7||7),8,0,0);
+  let cut=new Date(sun.getFullYear(),sun.getMonth(),sun.getDate()-3,20,0,0);
+  if(now>=cut){sun.setDate(sun.getDate()+7);cut=new Date(sun.getFullYear(),sun.getMonth(),sun.getDate()-3,20,0,0)}
+  const wed=new Date(sun.getFullYear(),sun.getMonth(),sun.getDate()+3,8,0,0);
+  return {sun,wed,cut};
+}
+const dLbl=d=>`${DAYN[d.getDay()]} ${pad(d.getDate())}/${pad(d.getMonth()+1)}`;
+
+function splitDropsList(map, isSplit, firstDrop){
+  const ids=[...map.keys()];
+  if(!isSplit){
+    // 1 đợt duy nhất
+    return [ids, []];
+  }
+  const mid=Math.ceil(ids.length/2);
+  return [ids.slice(0,mid), ids.slice(mid)];
+}
+
+/* ---------- RENDER TRANG CỬA HÀNG ---------- */
+function renderTrio(){
+  $('#trio').innerHTML=['bo-luclac','ga-sa','heo-gung'].map((id,i)=>{
+    const d=byId[id];
+    return `<div class="hd"><div class="plate">${i===0?'<div class="steam" aria-hidden="true"><i></i><i></i><i></i></div>':''}${plate(d,'h')}</div><div><b>${d.name}</b><div class="meta">⏱ ${d.time}p, ${d.meat[0]}${d.meat[1]}</div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="pr num">${fmt(d.price)}</span><button class="btn sm" data-quick="${id}">+ Thêm</button></div></div></div>`;
+  }).join('');
+}
+
+function cardHTML(d){
+  const map=cartMap(),q=map.get(d.id)||0,n=S.mode==='B'?S.n:2,shown=q||n;
+  const save=d.save*shown,ok=allowed(d);
+  return `<article class="dish ${q?'in':''}" data-id="${d.id}" ${ok?'':'hidden'}>
+   <div class="dimg" style="background:${BG[d.p]}"><span class="t">⏱ ${d.time} phút</span>${save?`<span class="sv">Tiết kiệm ${fmt(save)}</span>`:''}${plate(d,'g')}</div>
+   <div class="dbody"><h3>${d.name}</h3><div class="w">${d.meat[0]}${d.meat[1]}, ${d.veg[0]}${d.veg[1]}</div>
+    <div class="tags">${d.tags.map(t=>`<span class="tag ${t==='Cay nhẹ'?'spicy':''}">${t}</span>`).join('')}</div>
+    <div class="links"><button class="lnk" data-act="detail">Chi tiết & Cách nấu</button>${q?'<button class="lnk" data-act="swap">Đổi món khác</button>':''}</div>
+    <div class="dfoot"><div class="price num">${fmt(d.price)} <small>/ suất</small></div>
+     ${q?`<div class="stepper"><button data-act="dec" aria-label="Bớt 1 suất">−</button><b class="num">${q} suất</b><button data-act="inc" aria-label="Thêm 1 suất">+</button></div>`:`<button class="btn sm primary" data-act="add">+ Thêm ${n} suất</button>`}</div></div></article>`;
+}
+
+function renderGrid(flashId){
+  const vis=DISHES.filter(allowed);
+  $('#grid').innerHTML=DISHES.map(cardHTML).join('')+(vis.length?'':'<div class="empty-grid">Không có món nào khớp mọi bộ lọc. Hãy bỏ bớt một bộ lọc khẩu vị.</div>');
+  if(flashId){const el=$(`.dish[data-id="${flashId}"]`);if(el)el.classList.add('flash')}
+}
+
+function renderAddons(){
+  const map=addonsMap();
+  $('#addonsGrid').innerHTML=ADDONS.map(a=>{
+    const q=map.get(a.id)||0;
+    return `<div class="addon-card ${q?'in':''}">
+      <div class="aic">
+        <div class="a-icon" style="font-size:24px">${a.icon}</div>
+        <div>
+          <b>${a.name}</b>
+          <div class="muted" style="font-size:12px">${a.unit}</div>
+        </div>
+      </div>
+      <div class="apr num">${fmt(a.price)}</div>
+      <div class="abtn">
+        ${q?`<div class="stepper"><button data-addon-act="dec" data-id="${a.id}">−</button><b class="num">${q}</b><button data-addon-act="inc" data-id="${a.id}">+</button></div>`:`<button class="btn sm primary" data-addon-act="add" data-id="${a.id}">+ Mua thêm</button>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderCart(){
+  const c=calcAll(),{sun,wed,cut}=schedule();
+  const [d1,d2]=splitDropsList(cartMap(), c.isSplit, S.firstDrop);
+  const ads=addonsMap();
+
+  const line=id=>{
+    const d=byId[id],q=cartMap().get(id);
+    return `<li><span>${d.name} <span class="muted">× ${q}</span></span><span class="num">${fmt((d.price-d.save)*q)}<button class="x" data-rm="${id}" aria-label="Bỏ món">✕</button></span></li>`;
+  };
+
+  // Ngày đợt 1 và đợt 2 theo lựa chọn
+  const drop1Date = S.firstDrop==='sun'?sun:wed;
+  const drop2Date = S.firstDrop==='sun'?wed:sun;
+
+  if(!c.meals && !c.adTotal){
+    $('#drops').innerHTML=`<div class="cart-empty">Giỏ đang trống. Hãy bấm “Thêm” món bạn thích, hoặc chuyển sang chế độ “Soạn thực đơn theo ngân sách”.</div>`;
+  } else if(!c.isSplit){
+    $('#drops').innerHTML=`<div class="drop">
+      <h3>Giao gộp 1 đợt: Sáng ${dLbl(drop1Date)} <span>${d1.length} bữa</span></h3>
+      <p class="muted" style="font-size:12px;margin-bottom:6px">Đơn dưới 600k (hoặc ≤ 3 bữa) giao gộp 1 chuyến xe lạnh. Phí giao: 25.000đ.</p>
+      <ul>${d1.map(line).join('')}</ul>
+    </div>`;
+  } else {
+    $('#drops').innerHTML=`<div class="drop">
+      <h3>Đợt 1: Sáng ${dLbl(drop1Date)} <span>${d1.length} bữa</span></h3>
+      <ul>${d1.map(line).join('')}</ul>
+    </div>
+    <div class="drop">
+      <h3>Đợt 2: Sáng ${dLbl(drop2Date)} <span>${d2.length} bữa</span></h3>
+      <ul>${d2.map(line).join('')}</ul>
+    </div>`;
+  }
+
+  // Danh sách Addons trong giỏ
+  let adHtml='';
+  if(c.adTotal>0){
+    adHtml+=`<div class="drop" style="margin-top:10px"><h3>Sản phẩm mua thêm cùng xe</h3><ul>`;
+    ads.forEach((q,id)=>{
+      if(q>0){
+        const a=addonById[id];
+        adHtml+=`<li><span>${a.icon} ${a.name} <span class="muted">× ${q}</span></span><span class="num">${fmt(a.price*q)}<button class="x" data-addon-rm="${id}">✕</button></span></li>`;
+      }
+    });
+    adHtml+=`</ul></div>`;
+  }
+  $('#cartAddonsList').innerHTML=adHtml;
+
+  // Thanh tiến trình 3 mốc
+  const net=c.netFood;
+  $('#pCurTotal').textContent=fmt(net);
+  let pct=0;
+  if(net<250000) pct=(net/250000)*33;
+  else if(net<400000) pct=33+((net-250000)/150000)*33;
+  else if(net<600000) pct=66+((net-400000)/200000)*34;
+  else pct=100;
+  $('#pBarInner').style.width=Math.min(100,Math.max(0,pct))+'%';
+
+  $('#node250').classList.toggle('reached', net>=250000);
+  $('#node400').classList.toggle('reached', net>=400000);
+  $('#node600').classList.toggle('reached', net>=600000 && c.meals>=4);
+
+  const ph=$('#pHint');
+  if(!net){
+    ph.className='p-hint warn';
+    ph.textContent='Giỏ chưa có món. Chọn món để bắt đầu.';
+  } else if(net<250000){
+    ph.className='p-hint warn';
+    ph.textContent=`Cần thêm ${fmt(250000-net)} để đạt đơn tối thiểu 250.000đ.`;
+  } else if(net<400000){
+    ph.className='p-hint ok';
+    ph.textContent=`Đã đủ đơn tối thiểu! Thêm ${fmt(400000-net)} để được giảm ngay 20.000đ VietQR.`;
+  } else if(net<600000 || c.meals<4){
+    ph.className='p-hint ok';
+    const needMoney=Math.max(0,600000-net);
+    const needMeals=Math.max(0,4-c.meals);
+    if(needMoney && needMeals) ph.textContent=`Thêm ${fmt(needMoney)} & ${needMeals} bữa nữa để Freeship và Tách 2 đợt.`;
+    else if(needMoney) ph.textContent=`Thêm ${fmt(needMoney)} để được Miễn phí giao hàng & Tách 2 đợt.`;
+    else ph.textContent=`Thêm ${needMeals} bữa nữa để đủ điều kiện tách 2 đợt & Freeship.`;
+  } else {
+    ph.className='p-hint ok';
+    ph.textContent='🎉 Đạt mốc tối đa: Miễn phí giao hàng & Tự động tách 2 đợt giữ trọn độ tươi!';
+  }
+
+  // Tóm tắt dòng tiền
+  const rows=[['Tổng giá trị món ăn',fmt(c.sub)]];
+  if(c.save) rows.push(['Tiết kiệm theo mẻ nấu','−'+fmt(c.save),'g']);
+  if(c.adTotal) rows.push(['Sản phẩm mua thêm cùng xe',fmt(c.adTotal)]);
+  rows.push(['Phí vận chuyển xe lạnh Đắk Lắk – TP.HCM',c.meals?(c.shipFee?fmt(c.shipFee):'Miễn phí'):'–',c.shipFee?'':'g']);
+  if(c.qrDiscount) rows.push(['Ưu đãi VietQR (đơn ≥ 400k)','−'+fmt(c.qrDiscount),'g']);
+
+  $('#sum').innerHTML=rows.map(([a,b,g])=>`<div class="r"><span>${a}</span><span class="num ${g||''}">${b}</span></div>`).join('')
+    +`<div class="total"><span>Tổng thanh toán</span><b>${fmt(c.total)}</b></div>`;
+
+  // So sánh ngân sách chế độ B
+  const bb=$('#bbar');bb.hidden=S.mode!=='B';
+  if(S.mode==='B'){
+    const over=c.total>S.budget,p=Math.min(100,c.total/S.budget*100);
+    bb.classList.toggle('over',over);
+    bb.querySelector('i').style.width=p+'%';
+    bb.querySelector('p').innerHTML=over?`Vượt <b class="num">${fmt(c.total-S.budget)}</b> so với ngân sách ${fmt(S.budget)}`:`Còn dư <b class="num">${fmt(S.budget-c.total)}</b> so với ngân sách ${fmt(S.budget)}`;
+  }
+
+  // Cập nhật nút đặt hàng
+  const canOrder = c.meals>0 && c.meetsMOV;
+  $('#orderBtn').disabled=!canOrder;
+  if(!c.meals) $('#orderBtn').textContent='Chưa chọn món';
+  else if(!c.meetsMOV) $('#orderBtn').textContent=`Cần thêm ${fmt(250000-net)} để đặt hàng`;
+  else $('#orderBtn').textContent=`Tiến hành đặt hàng • ${fmt(c.total)}`;
+
+  // Header cart text
+  const txt=c.meals?`${c.meals} bữa, ${fmt(c.total)}`:'0 bữa';
+  $('#hdrCartTxt').textContent=txt;$('#mbarTxt').textContent=txt;
+
+  // Cập nhật trạng thái payment radio
+  $$('.pay').forEach(b=>b.setAttribute('aria-checked',b.dataset.pay===S.pay?'true':'false'));
+  $('#payPrepaidHint').textContent=`Số dư khả dụng: ${fmt(S.user.prepaidBalance)}`;
+  $('#payQrBadge').style.display=c.canQR?'inline-block':'none';
+  $('#payQrHint').textContent=c.canQR?'Đủ điều kiện: Giảm ngay 20.000đ':'Áp dụng khi tiền món ≥ 400.000đ';
+}
+
+function renderBudget(){
+  $('#budgetBox').hidden=S.mode!=='B';
+  $$('.modes button').forEach(b=>b.setAttribute('aria-selected',b.dataset.mode===S.mode?'true':'false'));
+  $('#bRange').value=Math.min(3500000,Math.max(400000,S.budget));
+  if(document.activeElement!==$('#bInput'))$('#bInput').value=nf.format(S.budget);
+  $$('#quick .chip').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===S.budget?'true':'false'));
+  $$('#people .chip').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.n===S.n?'true':'false'));
+  const r=$('#bResult');r.textContent=S.msg?S.msg.t:'';r.hidden=!S.msg;r.classList.toggle('warn',!!(S.msg&&S.msg.warn));
+}
+
+function renderAllStore(flashId){
+  renderBudget();
+  renderGrid(flashId);
+  renderAddons();
+  renderCart();
+}
+
+/* ---------- RENDER PHÂN HỆ USER DASHBOARD ---------- */
+function renderDashboard(){
+  // Profile top
+  $('#dName').textContent=S.user.name;
+  $('#dPhone').textContent=S.user.phone;
+  $('#dAvatar').textContent=S.user.name.charAt(0);
+  $('#uNameMini').textContent=S.user.name;
+  $('#uAvatarMini').textContent=S.user.name.charAt(0);
+  const balTxt=Math.round(S.user.prepaidBalance/1000)+'k';
+  $('#uPlanMini').textContent=balTxt;
+  $('#dPrepaidBal').textContent=fmt(S.user.prepaidBalance);
+  $('#pCardBal').textContent=fmt(S.user.prepaidBalance);
+  $('#dActiveCount').textContent=S.activeOrder?'1 đơn':'0 đơn';
+  $('#dashDot').style.display=S.activeOrder?'inline-block':'none';
+
+  // Tab 1: Active Order Card
+  renderActiveOrderCard();
+
+  // Tab 2: History List
+  renderHistoryList();
+
+  // Tab 3: Ledger Table
+  renderLedgerTable();
+
+  // Tab 4: Address Book & Preferences
+  renderAddressBook();
+  renderPreferences();
+}
+
+function renderActiveOrderCard(){
+  const box=$('#activeOrderCard');
+  const ord=S.activeOrder;
+  if(!ord){
+    box.innerHTML=`<div class="order-box" style="text-align:center;padding:40px 20px">
+      <div style="font-size:36px;margin-bottom:8px">🧺</div>
+      <h3 style="font-size:18px;font-weight:800">Hiện bạn không có đơn hàng nào đang chạy</h3>
+      <p class="muted" style="font-size:14px;margin-top:4px">Hãy chuyển sang Cửa hàng để chọn thực đơn tươi ngon cho tuần này.</p>
+      <button class="btn primary sm" id="goStoreFromDash" style="margin-top:16px">Đặt món tuần này ngay</button>
+    </div>`;
+    return;
+  }
+
+  const isLocked=S.cutoffPassed;
+  const statusLabel=isLocked?'Đã qua giờ chốt 20:00 (Đắk Lắk đang sơ chế)':'Trước giờ chốt sổ 20:00 (Cho phép chỉnh sửa/hoãn/hủy)';
+
+  // 4 bước hành trình
+  // 1: Đã chốt đơn -> 2: Thu hoạch Đắk Lắk -> 3: Xe lạnh xuyên đêm -> 4: Đang giao tới bếp
+  let step1Class='done', step2Class=isLocked?'current':'', step3Class='', step4Class='';
+
+  // Phân loại bảo quản các món trong đơn
+  const chillItems=[], freezeItems=[];
+  ord.items.forEach(it=>{
+    if(it.storage==='freeze') freezeItems.push(it);
+    else chillItems.push(it);
+  });
+  if(ord.addons) ord.addons.forEach(a=>chillItems.push(a));
+
+  box.innerHTML=`<div class="order-box">
+    <div class="order-top">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <h3 style="font-size:18px;font-weight:800">Đơn hàng #${ord.id}</h3>
+          <span class="order-status-tag ${isLocked?'locked':''}">${statusLabel}</span>
+        </div>
+        <p class="muted" style="font-size:13px;margin-top:4px">Tạo lúc: ${ord.createdAt} • Khung giờ nhận: <b>${ord.deliveryTimeSlot}</b></p>
+      </div>
+      <div style="text-align:right">
+        <span class="muted" style="font-size:12.5px">Tổng thanh toán:</span>
+        <div class="num" style="font-size:20px;font-weight:800;color:var(--green)">${fmt(ord.total)}</div>
+        <small class="muted" style="font-size:12px">${ord.payMethod==='prepaid'?'Trừ vào Gói Đi Chợ':(ord.payMethod==='qr'?'Đã quét VietQR':'COD khi nhận')}</small>
+      </div>
+    </div>
+
+    <!-- Thanh theo dõi hành trình 4 bước -->
+    <div class="tracker">
+      <ol class="t-steps">
+        <li class="t-step done">
+          <div class="t-icon">✓</div>
+          <div><b>1. Chốt đơn</b><small>Trước 20:00</small></div>
+        </li>
+        <li class="t-step ${isLocked?'current':''}">
+          <div class="t-icon">${isLocked?'⚙':'2'}</div>
+          <div><b>2. Đắk Lắk sơ chế</b><small>Ướp thảo mộc nền</small></div>
+        </li>
+        <li class="t-step">
+          <div class="t-icon">❄️</div>
+          <div><b>3. Xe lạnh xuyên đêm</b><small>22:00 – 05:00</small></div>
+        </li>
+        <li class="t-step">
+          <div class="t-icon">🛵</div>
+          <div><b>4. Giao tận bếp</b><small>Trước 10:00 sáng</small></div>
+        </li>
+      </ol>
+    </div>
+
+    <!-- Thông tin đợt giao & địa chỉ -->
+    <div style="background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:13.5px;display:grid;gap:6px">
+      <div>📍 <b>Địa chỉ nhận hàng:</b> ${ord.address} (${ord.receiver})</div>
+      <div>📦 <b>Quy cách đơn:</b> ${ord.isSplit?'Tách làm 2 đợt giao (Chủ Nhật & Thứ Tư)':'Giao gộp 1 đợt duy nhất'}${ord.sauce?' • Tách riêng gói sốt':''}${ord.carb?' • Giảm 50% tinh bột':''}</div>
+      ${ord.note?`<div>📝 <b>Ghi chú shipper:</b> ${ord.note}</div>`:''}
+    </div>
+
+    <!-- Hướng dẫn bảo quản khi mở thùng hàng -->
+    <div class="storage-box">
+      <h4>❄️ Hướng dẫn bảo quản ngay khi nhận thùng đá gel:</h4>
+      <div class="storage-grid">
+        <div class="store-col chill">
+          <div class="st-title">🥬 Cất Ngăn Mát (0 – 2°C) • Nấu trong 2–3 ngày</div>
+          <ul>
+            ${chillItems.map(it=>`<li>• <b>${it.name}</b> (${it.qty} suất)</li>`).join('')}
+          </ul>
+        </div>
+        <div class="store-col freeze">
+          <div class="st-title">🧊 Cất Ngăn Đông (−18°C) • Rã đông trước khi nấu</div>
+          <ul>
+            ${freezeItems.length?freezeItems.map(it=>`<li>• <b>${it.name}</b> (${it.qty} suất)</li>`).join(''):'<li>• Không có món cần cấp đông sâu.</li>'}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Các nút thao tác thực tế -->
+    <div class="order-acts">
+      ${!isLocked?`
+        <button class="btn primary sm" id="actEditOrder">✏️ Sửa món / Thêm món</button>
+        <button class="btn sm" id="actDelayOrder">⏳ Hoãn đợt giao này</button>
+        <button class="btn sm" id="actCancelOrder" style="color:var(--red);border-color:#F5C2C0">✕ Hủy đơn (Hoàn tiền vào Gói)</button>
+      `:`
+        <span class="muted" style="font-size:13px;align-self:center">🔒 Đơn hàng đã khóa chỉnh sửa vì nhà máy Đắk Lắk đang cắt thịt theo đơn.</span>
+      `}
+      <button class="btn sm" id="actReportFresh" style="margin-left:auto;border-color:var(--orange);color:var(--orange-ink)">🛡️ Báo cáo độ tươi / Hoàn tiền</button>
+    </div>
+  </div>`;
+}
+
+function renderHistoryList(){
+  const box=$('#historyList');
+  box.innerHTML=S.historyOrders.map(ord=>{
+    return `<div class="hist-item">
+      <div class="hist-top">
+        <div>
+          <b style="font-size:15.5px">Đơn #${ord.id}</b>
+          <span class="muted" style="font-size:13px"> • ${ord.date} • ${ord.meals} bữa</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="num" style="font-weight:800;color:var(--green)">${fmt(ord.total)}</span>
+          <button class="btn primary sm" data-reorder="${ord.id}">🔁 Đặt lại thực đơn này (1 chạm)</button>
+        </div>
+      </div>
+
+      <div style="font-size:13px;color:var(--muted);margin-bottom:6px">Đánh giá nhanh khẩu vị để MOVA nêm gia vị chuẩn hơn lần sau:</div>
+      <div class="dish-rate-list">
+        ${ord.items.map(it=>`
+          <div class="rate-row">
+            <span><b>${it.name}</b> (${it.qty} suất)</span>
+            <div class="rate-btns" data-oid="${ord.id}" data-did="${it.id}">
+              <button class="rate-btn ${it.rate==='good'?'selected':''}" data-rate="good">👍 Vừa miệng</button>
+              <button class="rate-btn ${it.rate==='salty'?'selected':''}" data-rate="salty">🧂 Hơi mặn</button>
+              <button class="rate-btn ${it.rate==='bland'?'selected':''}" data-rate="bland">💧 Hơi nhạt</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderLedgerTable(){
+  $('#ledgerBody').innerHTML=S.ledger.map(row=>{
+    const isPlus=row.amount>0;
+    return `<tr>
+      <td>${row.date}</td>
+      <td>${row.desc}</td>
+      <td style="text-align:right;font-weight:700;color:${isPlus?'var(--green)':'var(--orange-ink)'}">${isPlus?'+':''}${fmt(row.amount)}</td>
+      <td style="text-align:right" class="num">${fmt(row.bal)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderAddressBook(){
+  const box=$('#addressList');
+  box.innerHTML=S.user.addresses.map(a=>{
+    return `<div class="addr-card ${a.isDefault?'default':''}">
+      <div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <b>${a.label}</b>
+          ${a.isDefault?'<span class="tag">Mặc định</span>':''}
+        </div>
+        <p>${a.detail}, ${a.district}</p>
+        <small class="muted">${a.name} • ${a.phone}</small>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        ${!a.isDefault?`<button class="btn sm ghost" data-set-def="${a.id}">Đặt mặc định</button>`:''}
+        <button class="btn sm ghost" data-del-addr="${a.id}" style="color:var(--red)">Xóa</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderPreferences(){
+  $$('#profPeople .chip').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.pn===S.user.pref.ppl?'true':'false'));
+  $('#profSauce').checked=S.user.pref.sauce;
+  $('#profCarb').checked=S.user.pref.carb;
+  $$('#profFilters .chip').forEach(b=>{
+    const f=b.dataset.pf;
+    b.setAttribute('aria-pressed', S.user.pref.f.includes(f)?'true':'false');
+  });
+}
+
+function renderNotifications(){
+  const unread=S.notifications.filter(n=>n.unread).length;
+  $('#notifBadge').textContent=unread;
+  $('#notifBadge').style.display=unread?'grid':'none';
+  $('#notifList').innerHTML=S.notifications.map(n=>{
+    return `<div class="notif-item ${n.unread?'unread':''}">
+      <b>${n.title}</b>
+      <p>${n.desc}</p>
+      <small>${n.time}</small>
+    </div>`;
+  }).join('');
+}
+
+/* ---------- TƯƠNG TÁC THÊM/BỚT GIỎ HÀNG ---------- */
+function tryChangeDish(id, q){
+  const map=cartMap(), next=new Map(map);
+  if(q<=0) next.delete(id); else next.set(id, q);
+
+  if(S.mode==='B' && q>(map.get(id)||0)){
+    // Kiểm tra vượt ngân sách
+    const c=calcAll();
+    // Tạo giả lập Map
+    const oldM=S.cartB;
+    S.cartB=next;
+    const testC=calcAll();
+    S.cartB=oldM;
+    if(testC.total>S.budget){
+      toast(`Món này làm vượt ngân sách ${fmt(testC.total-S.budget)}. Bỏ bớt món hoặc tăng ngân sách.`);
+      return false;
+    }
+  }
+
+  if(next.size>MAXM && !map.has(id)){
+    toast('Mỗi tuần tối đa 10 bữa ăn tươi.');
+    return false;
+  }
+
+  if(S.mode==='A') S.cartA=next;
+  else { S.cartB=next; S.msg=null; }
+  return true;
+}
+
+function tryChangeAddon(id, q){
+  const map=addonsMap(), next=new Map(map);
+  if(q<=0) next.delete(id); else next.set(id, q);
+  if(S.mode==='A') S.addonsA=next;
+  else S.addonsB=next;
+  renderAddons();
+  renderCart();
+  return true;
+}
+
+function swapDish(id){
+  const map=cartMap(), d=byId[id], q=map.get(id);
+  const cands=DISHES.filter(x=>x.id!==id && !map.has(x.id) && allowed(x)).sort((a,b)=>Math.abs((a.price-a.save)-(d.price-d.save))-Math.abs((b.price-b.save)-(d.price-d.save)));
+  for(const c of cands){
+    const next=new Map([...map].map(([k,v])=>k===id?[c.id,q]:[k,v]));
+    if(S.mode==='A') S.cartA=next;
+    else { S.cartB=next; S.msg=null; }
+    renderAllStore(c.id);
+    const diff=(c.price-c.save)-(d.price-d.save);
+    toast(`Đã đổi sang ${c.name}${diff?` (${diff>0?'+':'−'}${fmt(Math.abs(diff)*q)})`:''}`);
+    return;
+  }
+  toast('Chưa có món tương đương giá còn trống để đổi.');
+}
+
+function cleanFiltered(){
+  const map=cartMap(); let changed=0;
+  [...map.keys()].forEach(id=>{
+    if(allowed(byId[id])) return;
+    const q=map.get(id), d=byId[id];
+    const c=DISHES.filter(x=>allowed(x)&&!map.has(x.id)).sort((a,b)=>Math.abs(a.price-d.price)-Math.abs(b.price-d.price))[0];
+    map.delete(id);
+    if(c) map.set(c.id,q);
+    changed++;
+  });
+  return changed;
+}
+
+/* ---------- CÁC HÀM XỬ LÝ CHECKOUT & ĐẶT HÀNG ---------- */
+function openCheckoutModal(){
+  const c=calcAll();
+  if(!c.meals){ toast('Giỏ hàng chưa có món nào.'); return; }
+  if(!c.meetsMOV){ toast(`Đơn chưa đạt mức tối thiểu 250.000đ để chạy xe lạnh. Cần thêm ${fmt(250000-c.netFood)}.`); return; }
+
+  // Điền địa chỉ mặc định
+  const defAddr=S.user.addresses.find(a=>a.isDefault)||S.user.addresses[0];
+  if(defAddr){
+    $('#ckName').value=defAddr.name;
+    $('#ckPhone').value=defAddr.phone;
+    $('#ckDistrict').value=defAddr.district;
+    $('#ckAddress').value=defAddr.detail;
+  }
+
+  // Render các chip chọn nhanh địa chỉ
+  $('#checkoutAddrChips').innerHTML=S.user.addresses.map(a=>{
+    return `<button type="button" class="chip" data-addr-sel="${a.id}">${a.label}</button>`;
+  }).join('');
+
+  // Tóm tắt tiền theo phương thức thanh toán
+  updateCheckoutSummary();
+
+  openModal('#checkoutModal');
+}
+
+function updateCheckoutSummary(){
+  const c=calcAll();
+  const box=$('#checkoutSummaryBox');
+  const bal=S.user.prepaidBalance;
+
+  let methodTxt='', diffNotice='';
+  if(S.pay==='prepaid'){
+    if(bal>=c.total){
+      methodTxt=`Trừ trực tiếp <b>${fmt(c.total)}</b> vào Gói Đi Chợ Trả Trước (Số dư còn lại sau đặt: <b>${fmt(bal-c.total)}</b>).`;
+    } else {
+      const diff=c.total-bal;
+      methodTxt=`Trừ hết <b>${fmt(bal)}</b> từ Gói Trả Trước. Còn thiếu <b>${fmt(diff)}</b> sẽ thanh toán thêm qua mã VietQR khi xác nhận.`;
+    }
+  } else if(S.pay==='qr'){
+    methodTxt=`Thanh toán <b>${fmt(c.total)}</b> qua VietQR chuyển khoản nhanh${c.qrDiscount?' (đã giảm 20.000đ ưu đãi)':''}.`;
+  } else {
+    methodTxt=`Thanh toán tiền mặt <b>${fmt(c.total)}</b> khi nhận thùng hàng từ shipper.`;
+  }
+
+  box.innerHTML=`<div style="font-size:13.5px;line-height:1.5">
+    <div>Tổng tiền đơn hàng: <b class="num" style="font-size:16px;color:var(--green)">${fmt(c.total)}</b></div>
+    <div style="margin-top:4px;color:var(--ink)">${methodTxt}</div>
+  </div>`;
+}
+
+function executeOrder(){
+  const c=calcAll();
+  const name=$('#ckName').value.trim();
+  const phone=$('#ckPhone').value.trim();
+  const district=$('#ckDistrict').value;
+  const address=$('#ckAddress').value.trim();
+  const slot=$('#ckTimeSlot').value;
+  const note=$('#ckNote').value.trim();
+
+  if(!name || !phone || !address){
+    toast('Vui lòng điền đầy đủ tên, số điện thoại và địa chỉ nhận hàng.');
+    return;
+  }
+
+  const code='MV'+(Date.now()%1e7).toString().padStart(7,'0');
+  const nowStr=new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+
+  // Tính trừ số dư Prepaid nếu chọn hình thức này
+  let paidPrepaid=0, needQrDiff=0;
+  if(S.pay==='prepaid'){
+    if(S.user.prepaidBalance>=c.total){
+      paidPrepaid=c.total;
+      S.user.prepaidBalance-=c.total;
+    } else {
+      paidPrepaid=S.user.prepaidBalance;
+      needQrDiff=c.total-paidPrepaid;
+      S.user.prepaidBalance=0;
+    }
+
+    if(paidPrepaid>0){
+      S.ledger.unshift({
+        date:'Hôm nay '+nowStr,
+        desc:`Thanh toán đơn hàng #${code}`,
+        amount:-paidPrepaid,
+        bal:S.user.prepaidBalance
+      });
+    }
+  }
+
+  // Tạo đối tượng Active Order mới
+  const newOrderItems=[];
+  cartMap().forEach((q,id)=>{
+    const d=byId[id];
+    newOrderItems.push({id:d.id, qty:q, name:d.name, price:d.price, save:d.save, storage:d.storage});
+  });
+
+  const newOrderAddons=[];
+  addonsMap().forEach((q,id)=>{
+    const a=addonById[id];
+    newOrderAddons.push({id:a.id, qty:q, name:a.name, price:a.price, storage:a.storage});
+  });
+
+  S.activeOrder={
+    id:code,
+    createdAt:'Hôm nay lúc '+nowStr,
+    status:'confirmed',
+    firstDrop:S.firstDrop,
+    deliveryTimeSlot:slot,
+    address:`${address}, ${district}`,
+    receiver:`${name} - ${phone}`,
+    note:note,
+    sauce:S.sauce,
+    carb:S.carb,
+    items:newOrderItems,
+    addons:newOrderAddons,
+    payMethod:S.pay,
+    subTotal:c.sub,
+    saveBatch:c.save,
+    netFood:c.netFood,
+    shipFee:c.shipFee,
+    qrDiscount:c.qrDiscount,
+    total:c.total,
+    isSplit:c.isSplit
+  };
+
+  // Thêm thông báo thời gian thực
+  S.notifications.unshift({
+    id:'notif-'+Date.now(),
+    time:'Vừa xong',
+    title:`Đặt thành công đơn #${code}`,
+    desc:`Đơn gồm ${c.meals} bữa ăn tươi đã lên lịch chuyển xe lạnh từ Đắk Lắk.`,
+    unread:true
+  });
+
+  // Làm sạch giỏ hàng
+  if(S.mode==='A'){ S.cartA.clear(); S.addonsA.clear(); }
+  else { S.cartB.clear(); S.addonsB.clear(); }
+
+  closeModal('#checkoutModal');
+  renderAllStore();
+  renderDashboard();
+  renderNotifications();
+
+  // Mở modal xác nhận thành công
+  showOrderSuccessModal(code, c, needQrDiff);
+}
+
+function showOrderSuccessModal(code, c, needQrDiff){
+  const {sun,wed}=schedule();
+  const drop1Date = S.firstDrop==='sun'?sun:wed;
+  const drop2Date = S.firstDrop==='sun'?wed:sun;
+
+  let payInfoHtml='';
+  if(S.pay==='qr' || needQrDiff>0){
+    const qrAmt = S.pay==='qr'?c.total:needQrDiff;
+    payInfoHtml=`<div style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center;margin-top:12px">
+      <b>Mã VietQR thanh toán ${fmt(qrAmt)}</b>
+      <div style="width:160px;height:160px;margin:8px auto;background:#fff">${qrSVG(qrAmt)}</div>
+      <p class="muted" style="font-size:12px">Nội dung chuyển khoản: <b>${code}</b></p>
+    </div>`;
+  } else if(S.pay==='prepaid'){
+    payInfoHtml=`<div style="background:var(--green-soft);color:var(--green-d);padding:10px 14px;border-radius:12px;font-size:13.5px;margin-top:12px">
+      ✓ Đã trừ đủ <b>${fmt(c.total)}</b> vào Gói Đi Chợ Trả Trước. Bạn không cần thanh toán thêm gì khi nhận hàng.
+    </div>`;
+  } else {
+    payInfoHtml=`<div style="background:var(--orange-soft);color:var(--orange-ink);padding:10px 14px;border-radius:12px;font-size:13.5px;margin-top:12px">
+      Thanh toán tiền mặt <b>${fmt(c.total)}</b> cho shipper khi nhận đợt hàng đầu tiên.
+    </div>`;
+  }
+
+  $('#okBox').innerHTML=`<button class="mclose" data-close aria-label="Đóng" style="background:rgba(255,255,255,.2);color:#fff">×</button>
+   <div class="okhead">
+     <h3 id="okTitle">Đã nhận đơn hàng #${code}</h3>
+     <p>${c.meals} bữa, ${c.serv} suất. Xe lạnh khởi hành từ Đắk Lắk lúc 22:00.</p>
+   </div>
+   <div style="padding:22px">
+     <h4 style="font-size:15px;margin-bottom:8px">Lịch nhận hàng tại TP.HCM:</h4>
+     <ul style="list-style:none;padding:0;margin:0;display:grid;gap:8px;font-size:14px">
+       <li style="border-left:3px solid var(--green);padding-left:10px">
+         <b>Đợt 1: Sáng ${dLbl(drop1Date)}</b> • Trước 10:00 (${$('#ckTimeSlot').value})
+       </li>
+       ${c.isSplit?`<li style="border-left:3px solid var(--orange);padding-left:10px">
+         <b>Đợt 2: Sáng ${dLbl(drop2Date)}</b> • Trước 10:00 (${$('#ckTimeSlot').value})
+       </li>`:''}
+     </ul>
+
+     ${payInfoHtml}
+
+     <div style="margin-top:20px;display:flex;gap:10px;justify-content:flex-end">
+       <button class="btn primary" id="btnGoToOrderView">Xem đơn hàng trong Tài khoản của tôi →</button>
+     </div>
+   </div>`;
+
+  openModal('#okModal');
+}
+
+/* ---------- SVG VIETQR MINH HỌA ---------- */
+function qrSVG(seed){
+  const R=rng(seed),n=25;let r='';
+  for(let y=0;y<n;y++)for(let x=0;x<n;x++){
+    const f=(x<7&&y<7)||(x>=n-7&&y<7)||(x<7&&y>=n-7);let on;
+    if(f){
+      const fx=x>=n-7?x-n+7:x,fy=y>=n-7?y-n+7:y;
+      on=fx===0||fx===6||fy===0||fy===6||(fx>=2&&fx<=4&&fy>=2&&fy<=4);
+    } else on=R()>.52;
+    if(on)r+=`<rect x="${x}" y="${y}" width="1" height="1"/>`;
+  }
+  return `<svg viewBox="0 0 25 25" fill="#1E241D" style="width:100%;height:100%" aria-label="Mã VietQR">${r}</svg>`;
+}
+
+/* ---------- QUẢN LÝ MODALS & SHEET ---------- */
+let lastFocus=null;
+function openModal(id){lastFocus=document.activeElement;$(id).hidden=false;const c=$(id).querySelector('.mclose');if(c)c.focus()}
+function closeModal(id){$(id).hidden=true;if(lastFocus)lastFocus.focus()}
+
+function openDishModal(id){
+  const d=byId[id],map=cartMap(),q=map.get(id)||(S.mode==='B'?S.n:2);
+  const scale=([v,u])=>u.startsWith('g')?`${nf.format(v*q)}${u}`:`${v*q}${u}`;
+  $('#dmBox').innerHTML=`<button class="mclose" data-close aria-label="Đóng">×</button>
+   <div class="mhead" style="display:grid;grid-template-columns:200px minmax(0,1fr);gap:18px;padding:22px">
+     <div class="pic" style="background:${BG[d.p]};border-radius:16px;display:grid;place-items:center;height:200px">${plate(d,'m')}</div>
+     <div>
+       <h3 id="dmTitle" style="font-size:20px;font-weight:800;padding-right:36px">${d.name}</h3>
+       <p class="muted" style="margin-top:6px;font-size:13.5px">⏱ ${d.time} phút, 1 chảo. ${fmt(d.price)}/suất${d.save?`, tiết kiệm ${fmt(d.save*q)} khi nấu mẻ`:''}.</p>
+       <div class="tags" style="margin-top:10px">${d.tags.map(t=>`<span class="tag ${t==='Cay nhẹ'?'spicy':''}">${t}</span>`).join('')}</div>
+     </div>
+   </div>
+   <div class="mpart" style="padding:0 22px 22px">
+     <h4 style="font-size:14.5px;margin:12px 0 6px">Trong hộp cho ${q} suất</h4>
+     <ul class="ing" style="list-style:none;margin:0;padding:0;display:grid;gap:5px;font-size:13.5px">
+       <li style="display:flex;justify-content:space-between;border-bottom:1px dashed var(--line-2);padding-bottom:5px"><span>Thịt sơ chế, ướp thảo mộc</span><b class="num">${scale(d.meat)}</b></li>
+       <li style="display:flex;justify-content:space-between;border-bottom:1px dashed var(--line-2);padding-bottom:5px"><span>Rau củ Đà Lạt</span><b class="num">${scale(d.veg)}</b></li>
+       <li style="display:flex;justify-content:space-between;border-bottom:1px dashed var(--line-2);padding-bottom:5px"><span>Túi gia vị tươi trong ngày (hành, tỏi, sả, ớt)</span><b>1 túi</b></li>
+       <li style="display:flex;justify-content:space-between;border-bottom:1px dashed var(--line-2);padding-bottom:5px"><span>Gói sốt đóng rời</span><b>${S.sauce?q+' gói nhỏ':'1 gói'}</b></li>
+       <li style="display:flex;justify-content:space-between;border-bottom:1px dashed var(--line-2);padding-bottom:5px"><span>Tinh bột (gạo/bún)</span><b class="num">${nf.format((S.carb?60:120)*q)}g</b></li>
+     </ul>
+     <h4 style="font-size:14.5px;margin:16px 0 6px">Cách nấu 15 phút – 1 chảo</h4>
+     <ol class="cook" style="padding-left:18px;margin:0;display:grid;gap:6px;font-size:13.5px">${d.steps.map(s=>`<li>${s}</li>`).join('')}</ol>
+     <div style="display:flex;gap:10px;margin-top:18px">
+       ${map.has(id)?`<button class="btn" data-swap="${id}">Đổi món khác</button>`:`<button class="btn primary" data-addm="${id}">+ Thêm ${q} suất</button>`}
+       <button class="btn ghost" data-close>Đóng</button>
+     </div>
+   </div>`;
+  openModal('#dishModal');
+}
+
+/* ---------- ĐIỀU HƯỚNG VIEW & TABS ---------- */
+function setView(v){
+  S.view=v;
+  $('#navStore').classList.toggle('active', v==='store');
+  $('#navDash').classList.toggle('active', v==='dash');
+  $('#navStore').setAttribute('aria-selected', v==='store');
+  $('#navDash').setAttribute('aria-selected', v==='dash');
+  $('#viewStore').hidden=(v!=='store');
+  $('#viewDash').hidden=(v!=='dash');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(v==='dash') renderDashboard();
+}
+
+function setDashTab(t){
+  S.dashTab=t;
+  $$('.dash-tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===t));
+  $('#tabContentActive').hidden=(t!=='active');
+  $('#tabContentHistory').hidden=(t!=='history');
+  $('#tabContentPrepaid').hidden=(t!=='prepaid');
+  $('#tabContentProfile').hidden=(t!=='profile');
+}
+
+/* ---------- LẮNG NGHE SỰ KIỆN ---------- */
+$('#navStore').addEventListener('click',()=>setView('store'));
+$('#navDash').addEventListener('click',()=>setView('dash'));
+$('#logoLink').addEventListener('click',e=>{e.preventDefault();setView('store')});
+
+$$('.dash-tab-btn').forEach(b=>b.addEventListener('click',()=>setDashTab(b.dataset.tab)));
+
+// Chuông thông báo Drawer
+$('#notifBtn').addEventListener('click',()=>{
+  $('#notifDrawer').classList.toggle('open');
+  $('#scrim').classList.toggle('open');
+});
+$('#notifClose').addEventListener('click',()=>{
+  $('#notifDrawer').classList.remove('open');
+  $('#scrim').classList.remove('open');
+});
+$('#markAllReadBtn').addEventListener('click',()=>{
+  S.notifications.forEach(n=>n.unread=false);
+  renderNotifications();
+  toast('Đã đánh dấu đọc toàn bộ thông báo.');
+});
+
+// Nút Tài khoản mở Modal Login/Demo
+$('#userBtn').addEventListener('click',()=>{
+  openModal('#loginModal');
+});
+
+// Demo Buttons trong Modal Login
+$('#btnDemoLan').addEventListener('click',()=>{
+  S.user.name='Chị Lan';
+  S.user.phone='0908 123 456';
+  S.user.prepaidBalance=850000;
+  closeModal('#loginModal');
+  renderDashboard();
+  renderCart();
+  toast('Đã chuyển sang tài khoản Demo: Chị Lan (850k Gói Đi Chợ)');
+});
+
+$('#btnDemoNew').addEventListener('click',()=>{
+  S.user.name='Anh Minh (Khách mới)';
+  S.user.phone='0912 999 888';
+  S.user.prepaidBalance=30000; // quà tặng khách mới
+  closeModal('#loginModal');
+  renderDashboard();
+  renderCart();
+  toast('Đã đăng nhập tài khoản Khách Mới: Tặng 30.000đ!');
+});
+
+$('#doLoginBtn').addEventListener('click',()=>{
+  const p=$('#loginPhone').value.trim();
+  if(!p){ toast('Vui lòng nhập số điện thoại'); return; }
+  S.user.phone=p;
+  S.user.name='Chị '+p.slice(-3);
+  closeModal('#loginModal');
+  renderDashboard();
+  toast('Đăng nhập thành công!');
+});
+
+// Giỏ hàng trên Mobile
+const mq=matchMedia('(max-width:980px)');
+function openMobileCart(o){
+  $('#cart').classList.toggle('open',o);
+  $('#scrim').classList.toggle('open',o);
+  if(o)$('#cartClose').focus();
+}
+$('#hdrCart').addEventListener('click',()=>{
+  if(mq.matches) openMobileCart(true);
+  else {
+    setView('store');
+    $('#thuc-don').scrollIntoView({behavior:'smooth'});
+  }
+});
+$('#mbarBtn').addEventListener('click',()=>openMobileCart(true));
+$('#cartClose').addEventListener('click',()=>openMobileCart(false));
+$('#scrim').addEventListener('click',()=>{
+  openMobileCart(false);
+  $('#notifDrawer').classList.remove('open');
+});
+
+// Lựa chọn đợt nhận hàng đầu tiên
+$('#fDropSun').addEventListener('change',e=>{ if(e.target.checked){ S.firstDrop='sun'; renderCart(); toast('Đợt nhận đầu tiên: Sáng Chủ Nhật tới'); } });
+$('#fDropWed').addEventListener('change',e=>{ if(e.target.checked){ S.firstDrop='wed'; renderCart(); toast('Đợt nhận đầu tiên: Sáng Thứ Tư tới'); } });
+
+// Món ăn trong Grid Storefront
+$('#grid').addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;
+  const id=b.closest('.dish').dataset.id,d=byId[id],map=cartMap(),q=map.get(id)||0,n=S.mode==='B'?S.n:2;
+  const a=b.dataset.act;
+  if(a==='detail') return openDishModal(id);
+  if(a==='swap') return swapDish(id);
+  if(a==='add'){if(tryChangeDish(id,n)){renderAllStore(id);toast(`Đã thêm ${d.name}, ${n} suất`)}}
+  if(a==='inc'){if(tryChangeDish(id,q+1)){renderAllStore();toast(`${d.name}: ${q+1} suất`)}}
+  if(a==='dec'){tryChangeDish(id,q-1);renderAllStore();toast(q-1?`${d.name}: ${q-1} suất`:`Đã bỏ ${d.name}`)}
+});
+
+// Trio bán chạy
+$('#trio').addEventListener('click',e=>{
+  const b=e.target.closest('[data-quick]');if(!b)return;
+  const id=b.dataset.quick,d=byId[id],n=S.mode==='B'?S.n:2,q=cartMap().get(id)||0;
+  if(tryChangeDish(id,q?q+1:n)){renderAllStore(id);toast(`Đã thêm ${d.name}`)}
+});
+
+// Bỏ món trong giỏ
+$('#drops').addEventListener('click',e=>{
+  const b=e.target.closest('[data-rm]');if(!b)return;
+  const id=b.dataset.rm;tryChangeDish(id,0);renderAllStore();toast(`Đã bỏ ${byId[id].name}`);
+});
+
+// Addons Grid tương tác
+$('#addonsGrid').addEventListener('click',e=>{
+  const b=e.target.closest('[data-addon-act]');if(!b)return;
+  const id=b.dataset.id, a=addonById[id], cur=addonsMap().get(id)||0;
+  const act=b.dataset.addonAct;
+  if(act==='add' || act==='inc'){ tryChangeAddon(id, cur+1); toast(`Đã thêm ${a.name}`); }
+  if(act==='dec'){ tryChangeAddon(id, cur-1); toast(cur-1?`${a.name}: ${cur-1}`:`Đã bỏ ${a.name}`); }
+});
+
+// Bỏ addon trong giỏ
+$('#cartAddonsList').addEventListener('click',e=>{
+  const b=e.target.closest('[data-addon-rm]');if(!b)return;
+  const id=b.dataset.addonRm;
+  tryChangeAddon(id,0);
+  toast(`Đã bỏ ${addonById[id].name}`);
+});
+
+// Chuyển Mode A / B
+function setMode(m){
+  S.mode=m;
+  if(m==='B'&&!S.cartB.size) optimize();
+  renderAllStore();
+  if(m==='B') toast('Chế độ ngân sách: giỏ riêng, không làm mất giỏ tự chọn.');
+}
+$$('.modes button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
+$('#ctaBudget').addEventListener('click',()=>{
+  setView('store');
+  setMode('B');
+  $('#thuc-don').scrollIntoView({behavior:'smooth'});
+});
+$('#ctaPick').addEventListener('click',()=>setView('store'));
+
+// Budget input & slider
+let deb;
+function setBudget(v,now){
+  S.budget=Math.max(100000,Math.round(v/1000)*1000);
+  clearTimeout(deb);
+  const run=()=>{optimize();renderAllStore();toast(S.msg.t)};
+  if(now) run(); else {renderBudget();deb=setTimeout(run,180)}
+}
+$('#bRange').addEventListener('input',e=>setBudget(+e.target.value));
+$('#bInput').addEventListener('input',e=>{const v=+e.target.value.replace(/\D/g,'');if(v)setBudget(v)});
+$('#bInput').addEventListener('blur',e=>{e.target.value=nf.format(S.budget)});
+$('#quick').addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(b)setBudget(+b.dataset.v,true)});
+$('#people').addEventListener('click',e=>{const b=e.target.closest('[data-n]');if(!b)return;S.n=+b.dataset.n;optimize();renderAllStore();toast(S.msg.t)});
+$('#autoBtn').addEventListener('click',()=>{optimize();renderAllStore();toast(S.msg.t)});
+
+// Bộ lọc khẩu vị
+$('#filters').addEventListener('click',e=>{
+  const b=e.target.closest('[data-f]');if(!b)return;
+  const f=b.dataset.f;
+  S.f.has(f)?S.f.delete(f):S.f.add(f);
+  b.setAttribute('aria-pressed',S.f.has(f));
+  if(S.mode==='B'){ optimize(); renderAllStore(); toast(S.msg.t); }
+  else { const n=cleanFiltered(); renderAllStore(); toast(n?`Đã đổi ${n} món trong giỏ cho hợp khẩu vị`:`Đã lọc: ${b.textContent.toLowerCase()}`); }
+});
+
+// Chọn hình thức thanh toán trong giỏ
+$('#payRadioGroup').addEventListener('click',e=>{
+  const b=e.target.closest('[data-pay]');if(!b)return;
+  S.pay=b.dataset.pay;
+  if(S.pay==='qr'){
+    const c=calcAll();
+    toast(c.canQR?'Đã chọn VietQR: Giảm trực tiếp 20.000đ!':'Đã chọn VietQR (cần đơn ≥ 400k để nhận giảm 20.000đ)');
+  } else if(S.pay==='prepaid'){
+    toast(`Đã chọn trừ vào Gói Đi Chợ (Số dư: ${fmt(S.user.prepaidBalance)})`);
+  } else {
+    toast('Đã chọn thanh toán tiền mặt khi nhận hàng (COD)');
+  }
+  renderCart();
+});
+
+// Toggle sốt & carb
+$('#optSauce').addEventListener('change',e=>{S.sauce=e.target.checked;toast(S.sauce?'Gói sốt được đóng rời riêng biệt cho mọi món':'Gói sốt theo đóng gói tiêu chuẩn')});
+$('#optCarb').addEventListener('change',e=>{S.carb=e.target.checked;toast(S.carb?'Đã giảm 50% tinh bột, giá không đổi':'Lượng tinh bột về mức chuẩn')});
+
+// Nút mở Checkout
+$('#orderBtn').addEventListener('click',()=>{
+  openCheckoutModal();
+});
+
+// Checkout quick address chips
+$('#checkoutAddrChips').addEventListener('click',e=>{
+  const b=e.target.closest('[data-addr-sel]');if(!b)return;
+  const a=S.user.addresses.find(x=>x.id===b.dataset.addrSel);
+  if(a){
+    $('#ckName').value=a.name;
+    $('#ckPhone').value=a.phone;
+    $('#ckDistrict').value=a.district;
+    $('#ckAddress').value=a.detail;
+    toast(`Đã áp dụng địa chỉ: ${a.label}`);
+  }
+});
+
+// Hoàn tất đặt hàng
+$('#confirmOrderBtn').addEventListener('click', executeOrder);
+
+// Nút "Xem đơn hàng trong Tài khoản của tôi" ở Modal Success
+$('#okBox').addEventListener('click',e=>{
+  if(e.target.id==='btnGoToOrderView'){
+    closeModal('#okModal');
+    setView('dash');
+    setDashTab('active');
+  }
+});
+
+// Tab 1: Công tắc mô phỏng Trước / Sau giờ chốt
+$('#simBeforeCutoff').addEventListener('click',()=>{
+  S.cutoffPassed=false;
+  $('#simBeforeCutoff').classList.add('active');
+  $('#simAfterCutoff').classList.remove('active');
+  renderActiveOrderCard();
+  toast('Đã chuyển mốc: TRƯỚC 20:00 (Cho phép sửa, hoãn, hủy)');
+});
+$('#simAfterCutoff').addEventListener('click',()=>{
+  S.cutoffPassed=true;
+  $('#simAfterCutoff').classList.add('active');
+  $('#simBeforeCutoff').classList.remove('active');
+  renderActiveOrderCard();
+  toast('Đã chuyển mốc: SAU 20:00 (Nhà máy Đắk Lắk đã đóng thùng - Khóa sửa)');
+});
+
+// Tab 1 Actions: Sửa món / Hoãn / Hủy / Báo độ tươi
+$('#activeOrderCard').addEventListener('click',e=>{
+  if(e.target.id==='actEditOrder'){
+    // Nạp lại món vào giỏ hàng
+    if(S.activeOrder){
+      S.cartA.clear();
+      S.activeOrder.items.forEach(it=>S.cartA.set(it.id, it.qty));
+      if(S.activeOrder.addons) S.activeOrder.addons.forEach(a=>S.addonsA.set(a.id, a.qty));
+      S.sauce=S.activeOrder.sauce;
+      S.carb=S.activeOrder.carb;
+      $('#optSauce').checked=S.sauce;
+      $('#optCarb').checked=S.carb;
+      setView('store');
+      renderAllStore();
+      toast('Đã nạp lại đơn vào giỏ hàng để bạn chỉnh sửa.');
+    }
+  } else if(e.target.id==='actDelayOrder'){
+    if(confirm('Bạn có chắc muốn hoãn đợt giao này sang đợt tiếp theo?')){
+      toast('Đã hoãn đợt giao thành công. MOVA sẽ dời lịch sang chuyến xe tiếp theo.');
+    }
+  } else if(e.target.id==='actCancelOrder'){
+    if(confirm('Bạn muốn hủy đơn hàng này? Toàn bộ số tiền sẽ được hoàn 100% vào Gói Đi Chợ Trả Trước.')){
+      const refundAmt=S.activeOrder.total;
+      S.user.prepaidBalance+=refundAmt;
+      S.ledger.unshift({
+        date:'Hôm nay '+new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}),
+        desc:`Hoàn tiền hủy đơn #${S.activeOrder.id}`,
+        amount:+refundAmt,
+        bal:S.user.prepaidBalance
+      });
+      S.activeOrder=null;
+      renderDashboard();
+      toast(`Đã hủy đơn và hoàn ${fmt(refundAmt)} vào Gói Đi Chợ Trả Trước.`);
+    }
+  } else if(e.target.id==='actReportFresh'){
+    // Mở modal hoàn tiền bữa ăn
+    const sel=$('#rfDish');
+    sel.innerHTML=S.activeOrder.items.map(it=>`<option value="${it.id}">${it.name} (${it.qty} suất)</option>`).join('');
+    openModal('#refundModal');
+  } else if(e.target.id==='goStoreFromDash'){
+    setView('store');
+  }
+});
+
+// Giả lập chụp ảnh trong Refund Modal
+let fakeUploaded=false;
+$('#fakePhotoPreview').addEventListener('click',()=>{
+  fakeUploaded=!fakeUploaded;
+  $('#fakePhotoTxt').textContent=fakeUploaded?'✓ Đã đính kèm ảnh chụp: "hop_mat_lanh_01.jpg" (Chạm để đổi)':'Bấm để tải ảnh chụp thùng/món lên';
+  $('#fakePhotoPreview').style.borderColor=fakeUploaded?'var(--green)':'var(--line)';
+  $('#fakePhotoPreview').style.background=fakeUploaded?'var(--green-soft)':'var(--bg)';
+});
+
+$('#submitRefundBtn').addEventListener('click',()=>{
+  const dishId=$('#rfDish').value;
+  const d=byId[dishId];
+  const refundAmount=d?d.price*2:110000; // hoàn tiền 2 suất
+  S.user.prepaidBalance+=refundAmount;
+  S.ledger.unshift({
+    date:'Hôm nay '+new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}),
+    desc:`Bồi thường chất lượng (${$('#rfReason').value.slice(0,25)}...)`,
+    amount:+refundAmount,
+    bal:S.user.prepaidBalance
+  });
+  S.notifications.unshift({
+    id:'notif-'+Date.now(),
+    time:'Vừa xong',
+    title:'Đã hoàn tiền bồi thường chất lượng',
+    desc:`MOVA đã cộng ${fmt(refundAmount)} vào Gói Đi Chợ cho món ${d?d.name:'bữa ăn'}.`,
+    unread:true
+  });
+  closeModal('#refundModal');
+  renderDashboard();
+  renderNotifications();
+  toast(`🎉 Đã duyệt hoàn ${fmt(refundAmount)} ngay vào Gói Đi Chợ Trả Trước của bạn.`);
+});
+
+// Tab 2: Đặt lại thực đơn 1 chạm & Đánh giá khẩu vị
+$('#historyList').addEventListener('click',e=>{
+  const rb=e.target.closest('[data-reorder]');
+  if(rb){
+    const oid=rb.dataset.reorder;
+    const ord=S.historyOrders.find(x=>x.id===oid);
+    if(ord){
+      S.cartA.clear();
+      ord.items.forEach(it=>S.cartA.set(it.id, it.qty));
+      if(ord.addons) ord.addons.forEach(a=>S.addonsA.set(a.id, a.qty));
+      setView('store');
+      renderAllStore();
+      toast(`Đã nạp toàn bộ thực đơn của đơn #${oid} vào giỏ hàng!`);
+    }
+    return;
+  }
+
+  const rateB=e.target.closest('.rate-btn');
+  if(rateB){
+    const parent=rateB.closest('.rate-btns');
+    const oid=parent.dataset.oid, did=parent.dataset.did;
+    const ord=S.historyOrders.find(x=>x.id===oid);
+    const it=ord?.items.find(x=>x.id===did);
+    if(it){
+      const val=rateB.dataset.rate;
+      it.rate=val;
+      parent.querySelectorAll('.rate-btn').forEach(b=>b.classList.remove('selected'));
+      rateB.classList.add('selected');
+
+      if(val==='salty'){
+        toast('Đã ghi nhận! MOVA sẽ tự động bật "Tách riêng gói sốt" cho đơn tiếp theo của bạn.');
+        S.user.pref.sauce=true;
+        S.sauce=true;
+        $('#profSauce').checked=true;
+        $('#optSauce').checked=true;
+      } else if(val==='good'){
+        toast('Cảm ơn bạn! Bếp Đắk Lắk sẽ giữ vững công thức này.');
+      } else {
+        toast('Đã ghi nhận khẩu vị thanh nhẹ của bạn.');
+      }
+    }
+  }
+});
+
+// Tab 3: Mua thêm Gói Trả Trước
+let pendingTopupAmount=0, pendingBonus=0;
+$$('[data-topup]').forEach(b=>b.addEventListener('click',()=>{
+  pendingTopupAmount=+b.dataset.topup;
+  pendingBonus=+b.dataset.bonus;
+  $('#topupAmountTxt').textContent=fmt(pendingTopupAmount);
+  $('#topupBonusTxt').textContent=fmt(pendingTopupAmount+pendingBonus);
+  $('#topupCodeTxt').textContent=`NAP${Math.round(pendingTopupAmount/1e6)}TR ${S.user.phone.replace(/\s/g,'')}`;
+  $('#topupQrBox').innerHTML=qrSVG(pendingTopupAmount);
+  openModal('#topupModal');
+}));
+
+$('#confirmTopupBtn').addEventListener('click',()=>{
+  const totalVal=pendingTopupAmount+pendingBonus;
+  S.user.prepaidBalance+=totalVal;
+  S.ledger.unshift({
+    date:'Hôm nay '+new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}),
+    desc:`Nạp Gói Đi Chợ ${fmt(pendingTopupAmount)} (Tặng ${fmt(pendingBonus)})`,
+    amount:+totalVal,
+    bal:S.user.prepaidBalance
+  });
+  S.notifications.unshift({
+    id:'notif-'+Date.now(),
+    time:'Vừa xong',
+    title:'Nạp Gói Đi Chợ thành công',
+    desc:`Đã cộng ${fmt(totalVal)} vào số dư gói bữa ăn tươi.`,
+    unread:true
+  });
+  closeModal('#topupModal');
+  renderDashboard();
+  renderCart();
+  renderNotifications();
+  toast(`🎉 Đã nạp thành công! Số dư Gói Đi Chợ hiện tại: ${fmt(S.user.prepaidBalance)}`);
+});
+
+// Tab 4: Thêm / Xóa / Mặc định Sổ địa chỉ
+$('#addAddrBtn').addEventListener('click',()=>openModal('#addrModal'));
+$('#saveAddrBtn').addEventListener('click',()=>{
+  const lbl=$('#adLabel').value.trim()||'Địa chỉ mới';
+  const dist=$('#adDistrict').value;
+  const detail=$('#adDetail').value.trim()||'Đang cập nhật';
+  const isDef=$('#adDefault').checked;
+
+  const newId='addr-'+Date.now();
+  if(isDef) S.user.addresses.forEach(a=>a.isDefault=false);
+  S.user.addresses.push({
+    id:newId,
+    label:lbl,
+    name:S.user.name,
+    phone:S.user.phone,
+    district:dist,
+    detail:detail,
+    isDefault:isDef||S.user.addresses.length===0
+  });
+
+  closeModal('#addrModal');
+  renderAddressBook();
+  toast('Đã lưu địa chỉ mới thành công.');
+});
+
+$('#addressList').addEventListener('click',e=>{
+  const defB=e.target.closest('[data-set-def]');
+  if(defB){
+    const id=defB.dataset.setDef;
+    S.user.addresses.forEach(a=>a.isDefault=(a.id===id));
+    renderAddressBook();
+    toast('Đã đổi địa chỉ nhận hàng mặc định.');
+    return;
+  }
+  const delB=e.target.closest('[data-del-addr]');
+  if(delB){
+    const id=delB.dataset.delAddr;
+    if(S.user.addresses.length<=1){ toast('Cần giữ ít nhất 1 địa chỉ để giao hàng.'); return; }
+    S.user.addresses=S.user.addresses.filter(a=>a.id!==id);
+    if(!S.user.addresses.some(a=>a.isDefault)) S.user.addresses[0].isDefault=true;
+    renderAddressBook();
+    toast('Đã xóa địa chỉ.');
+  }
+});
+
+// Tab 4: Khẩu vị & Đồng bộ sang Cửa hàng
+$('#profPeople').addEventListener('click',e=>{
+  const b=e.target.closest('[data-pn]');if(!b)return;
+  S.user.pref.ppl=+b.dataset.pn;
+  renderPreferences();
+});
+$('#profFilters').addEventListener('click',e=>{
+  const b=e.target.closest('[data-pf]');if(!b)return;
+  const f=b.dataset.pf;
+  const idx=S.user.pref.f.indexOf(f);
+  if(idx>=0) S.user.pref.f.splice(idx,1);
+  else S.user.pref.f.push(f);
+  renderPreferences();
+});
+$('#saveProfBtn').addEventListener('click',()=>{
+  S.user.pref.sauce=$('#profSauce').checked;
+  S.user.pref.carb=$('#profCarb').checked;
+
+  // Đồng bộ sang Store state
+  S.n=S.user.pref.ppl;
+  S.sauce=S.user.pref.sauce;
+  S.carb=S.user.pref.carb;
+  $('#optSauce').checked=S.sauce;
+  $('#optCarb').checked=S.carb;
+
+  S.f=new Set(S.user.pref.f);
+  $$('#filters .chip').forEach(b=>b.setAttribute('aria-pressed', S.f.has(b.dataset.f)?'true':'false'));
+
+  renderAllStore();
+  toast('Đã lưu và đồng bộ cài đặt khẩu vị vào Cửa hàng!');
+});
+
+// Zalo OA Mock Buttons
+$('#zaloToggle').addEventListener('change',e=>{
+  S.user.zaloRemind=e.target.checked;
+  toast(S.user.zaloRemind?'Đã bật nhắc lịch chốt đơn Zalo OA trước 3 tiếng':'Đã tắt nhắc lịch chốt đơn');
+});
+$('#zaloDelayDemo').addEventListener('click',()=>{
+  toast('Zalo OA: Đã chuyển lịch nhận sang Thứ Tư tuần sau.');
+});
+$('#zaloHelpBtn').addEventListener('click',()=>{
+  toast('Đang kết nối Zalo OA Chăm sóc Khách hàng MOVA (Hotline: 1900 8899)...');
+});
+
+// Đặt lại dữ liệu Demo
+$('#resetDemoBtn').addEventListener('click',()=>{
+  if(confirm('Đặt lại toàn bộ dữ liệu demo về trạng thái ban đầu?')){
+    S=DEFAULT_STATE();
+    renderAllStore();
+    renderDashboard();
+    renderNotifications();
+    setView('store');
+    toast('Đã khôi phục dữ liệu Demo gốc.');
+  }
+});
+
+// Generic Modal Close
+$$('.modal').forEach(m=>m.addEventListener('click',e=>{
+  if(e.target===m || e.target.closest('[data-close]')) closeModal('#'+m.id);
+  const a=e.target.closest('[data-addm]');
+  if(a){
+    const id=a.dataset.addm,n=S.mode==='B'?S.n:2;
+    if(tryChangeDish(id,n)){ closeModal('#dishModal'); renderAllStore(id); toast(`Đã thêm ${byId[id].name}`); }
+  }
+  const s=e.target.closest('[data-swap]');
+  if(s){ closeModal('#dishModal'); swapDish(s.dataset.swap); }
+}));
+
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape') return;
+  $$('.modal').forEach(m=>{ if(!m.hidden) closeModal('#'+m.id); });
+  if($('#cart').classList.contains('open')) openMobileCart(false);
+  if($('#notifDrawer').classList.contains('open')) $('#notifDrawer').classList.remove('open');
+});
+
+// Cập nhật đồng hồ đếm ngược chốt đơn
+function renderCartCutoff(){
+  const {sun,cut}=schedule(),left=cut-new Date();
+  const dd=Math.floor(left/864e5),hh=Math.floor(left%864e5/36e5),mm=Math.floor(left%36e5/6e4),ss=Math.floor(left%6e4/1e3);
+  const el=$('#cutoff');
+  if(el) el.innerHTML=`Chốt đơn đợt ${dLbl(sun)}: còn <b>${dd} ngày ${pad(hh)}:${pad(mm)}:${pad(ss)}</b>`;
+}
+
+/* ---------- KHỞI TẠO ---------- */
+renderTrio();
+optimize();
+renderAllStore();
+renderDashboard();
+renderNotifications();
+setInterval(renderCartCutoff,1000);
+renderCartCutoff();
+</script>
+</body>
+</html>

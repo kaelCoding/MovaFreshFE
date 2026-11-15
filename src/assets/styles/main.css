@@ -1,0 +1,413 @@
+:root {
+  --bg: #FAF9F5;
+  --card: #FFFFFF;
+  --line: #E6E2D6;
+  --line-2: #EFEBE0;
+  --ink: #1E241D;
+  --muted: #626B60;
+  --green: #146C43;
+  --green-d: #0F5534;
+  --green-soft: #E4F0E8;
+  --orange: #D9531E;
+  --orange-soft: #FCEDE4;
+  --orange-ink: #A33C12;
+  --wood: #E9D9BF;
+  --butter: #FBF1D6;
+  --red: #B3261E;
+  --blue: #1D6FA5;
+  --blue-soft: #E5F2FB;
+  --font: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  color-scheme: light;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 84px;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.55 var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  margin: 0;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+
+p {
+  margin: 0;
+}
+
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2.5px solid var(--green);
+  outline-offset: 2px;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* common buttons */
+.btn {
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: 12px;
+  padding: 11px 18px;
+  font-weight: 600;
+  font-size: 14.5px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: .15s;
+}
+
+.btn:hover {
+  background: var(--line-2);
+}
+
+.btn.primary {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+
+.btn.primary:hover {
+  background: var(--green-d);
+}
+
+.btn.orange {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: #fff;
+}
+
+.btn.orange:hover {
+  background: #BF4414;
+}
+
+.btn.sm {
+  padding: 7px 12px;
+  font-size: 13px;
+  border-radius: 10px;
+}
+
+.btn.ghost {
+  background: none;
+  border-color: transparent;
+  color: var(--green);
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.btn.ghost:hover {
+  background: none;
+  text-decoration: underline;
+}
+
+.btn:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+/* input & money fields */
+.blabel {
+  font-size: 13.5px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.money {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+  padding: 0 12px;
+}
+
+.money input {
+  border: 0;
+  background: none;
+  width: 100%;
+  padding: 10px 0;
+  font-size: 19px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  outline: none;
+  min-width: 0;
+}
+
+.money:focus-within {
+  border-color: var(--green);
+}
+
+.money span {
+  font-weight: 700;
+  color: var(--muted);
+}
+
+/* chip selector */
+.chip {
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: .15s;
+}
+
+.chip:hover {
+  background: var(--line-2);
+}
+
+.chip[aria-pressed="true"], .chip.active {
+  background: var(--green-soft);
+  border-color: var(--green);
+  color: var(--green-d);
+  font-weight: 600;
+}
+
+.chip.no[aria-pressed="true"], .chip.no.active {
+  background: var(--orange-soft);
+  border-color: var(--orange);
+  color: var(--orange-ink);
+}
+
+/* tags */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  font-size: 11.5px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 3px 8px;
+  background: var(--green-soft);
+  color: var(--green-d);
+}
+
+.tag.spicy {
+  background: #FBE5E2;
+  color: var(--red);
+}
+
+/* toggle switches */
+.tog {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 9px 11px;
+  margin-top: 8px;
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.tog input {
+  margin-top: 3px;
+  accent-color: var(--green);
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.tog small {
+  display: block;
+  font-weight: 400;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* stepper */
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1.5px solid var(--green);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.stepper button {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  background: var(--card);
+  color: var(--green);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.stepper button:hover {
+  background: var(--green-soft);
+}
+
+.stepper b {
+  min-width: 54px;
+  text-align: center;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* steam animation */
+.steam {
+  position: absolute;
+  inset: -14px 0 auto;
+  height: 40px;
+  pointer-events: none;
+}
+
+.steam i {
+  position: absolute;
+  bottom: 0;
+  width: 6px;
+  height: 26px;
+  border-radius: 6px;
+  background: linear-gradient(to top, rgba(255, 255, 255, 0), rgba(255, 255, 255, .85));
+  filter: blur(2px);
+  opacity: 0;
+  animation: steam 3.2s ease-in-out infinite;
+}
+
+.steam i:nth-child(1) { left: 38%; }
+.steam i:nth-child(2) { left: 50%; animation-delay: 1s; }
+.steam i:nth-child(3) { left: 62%; animation-delay: 2s; }
+
+@keyframes steam {
+  0% { opacity: 0; transform: translateY(8px) scaleX(1); }
+  35% { opacity: .9; }
+  100% { opacity: 0; transform: translateY(-16px) scaleX(1.8); }
+}
+
+/* modals */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(30, 25, 15, .5);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+
+.mbox {
+  background: var(--card);
+  border-radius: 22px;
+  max-width: 680px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 50px rgba(20, 15, 10, .25);
+}
+
+.mclose {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 0;
+  background: rgba(240, 238, 230, .9);
+  font-size: 20px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+}
+
+.mclose:hover {
+  background: var(--line);
+}
+
+/* OKHEAD CSS CHO MODAL THÀNH CÔNG (BUG 1 FIX) */
+.okhead {
+  background: var(--green);
+  color: #fff;
+  padding: 22px 24px;
+  border-radius: 22px 22px 0 0;
+  position: relative;
+}
+
+.okhead h3 {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.okhead p {
+  opacity: .9;
+  margin-top: 4px;
+  font-size: 13.5px;
+}
+
+/* sheet close button */
+.sheet-x {
+  border: 0;
+  background: var(--line-2);
+  border-radius: 10px;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}

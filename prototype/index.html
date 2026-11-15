@@ -1,0 +1,1431 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light only">
+<title>MOVA FRESH V6 – Final Presentation Prototype</title>
+<style>
+:root{
+  --bg:#fafaf7;--surface:#ffffff;--surface-2:#f4f2eb;--surface-3:#fbf6ee;--ink:#1d211b;--muted:#5f675c;--line:#e6e2d6;
+  --green:#146c43;--green-2:#1f8a57;--on-green:#ffffff;--green-soft:#e3f1e8;
+  --orange:#d9531e;--orange-soft:#fdeee5;--orange-line:#f3c4ab;
+  --red:#b3261e;--red-soft:#fbe9e7;--gold:#b7860b;--gold-soft:#fbf3d9;
+  --shadow:0 1px 2px rgba(60,50,20,.05),0 8px 22px rgba(60,50,20,.05);
+  color-scheme:light;box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,Roboto,"Segoe UI",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+h1,h2,h3{margin:0;line-height:1.25;letter-spacing:-.01em}
+h1{font-size:clamp(22px,3.2vw,30px);font-weight:700}
+h2{font-size:18px;font-weight:650}
+.h3{font-size:13.5px;font-weight:600;color:var(--muted);margin:16px 0 8px}
+p{margin:0}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.num,.kpi b,.price,td.n{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}.small{font-size:13px}.tiny{font-size:12px}
+.row{display:flex;align-items:center}.between{justify-content:space-between}.wrap{flex-wrap:wrap}.gap{gap:10px}
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.brandrow{max-width:1220px;margin:0 auto;padding:10px 16px 6px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:36px;height:36px;border-radius:11px;background:var(--green);color:var(--on-green);display:grid;place-items:center;font-weight:800;font-size:18px}
+.brand strong{display:block;font-size:15px;letter-spacing:.02em}
+.brand small{display:block;color:var(--muted);font-size:12px}
+.hdr-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.dropsw{display:inline-flex;gap:4px;background:var(--surface-2);border-radius:12px;padding:3px}
+.dropsw button{border:0;background:none;border-radius:9px;padding:5px 10px;text-align:left;font-size:12px;color:var(--muted);line-height:1.3}
+.dropsw button b{display:block;font-size:13.5px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.dropsw button[aria-pressed="true"]{background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.12);color:var(--ink)}
+.dropsw button[aria-pressed="true"] b{color:var(--orange)}
+.present{background:var(--orange);color:#fff;border:0;border-radius:10px;padding:9px 14px;font-weight:650;font-size:13.5px}
+.tabs{max-width:1220px;margin:0 auto;display:flex;gap:2px;padding:0 10px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{border:0;background:none;padding:10px 12px 11px;font-size:14px;color:var(--muted);border-bottom:2.5px solid transparent;white-space:nowrap}
+.tab span{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;background:var(--surface-2);font-size:11.5px;margin-right:6px;font-weight:700}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--green);font-weight:600}
+.tab[aria-selected="true"] span{background:var(--green);color:var(--on-green)}
+main{max-width:1220px;margin:0 auto;padding:20px 16px 60px}
+body.touring main{padding-bottom:220px}
+.lead{margin-bottom:16px;max-width:780px}.lead p{color:var(--muted);margin-top:6px}
+.grid{display:grid;gap:16px}
+.g-main{grid-template-columns:minmax(0,1fr) 370px;align-items:start}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.col{display:grid;gap:16px;min-width:0}
+@media (max-width:980px){.g-main,.g2{grid-template-columns:minmax(0,1fr)}.g3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.sm-only{display:none}
+@media (max-width:560px){.g3{grid-template-columns:minmax(0,1fr)}.lg-only{display:none}.sm-only{display:inline}.brand small{display:none}.logo{width:30px;height:30px;font-size:15px}.brandrow{padding:8px 12px 4px;gap:8px}.hdr-right{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto}.dropsw button{flex:1}.present{padding:8px 10px}.tour{padding-top:10px}.tour-dots button{width:22px;height:22px}.tour-text p{font-size:13px}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;min-width:0;box-shadow:var(--shadow);scroll-margin-top:150px}
+.sticky{position:sticky;top:calc(env(safe-area-inset-top,0px) + 116px)}
+@media (max-width:980px){.sticky{position:static}}
+.spot{outline:3px solid var(--orange);outline-offset:4px;animation:spot 1.4s ease 2}
+@keyframes spot{50%{outline-color:rgba(217,83,30,.25)}}
+/* controls */
+.seg{display:inline-flex;background:var(--surface-2);border-radius:10px;padding:3px;gap:2px;flex-wrap:wrap}
+.seg button{border:0;background:none;padding:7px 12px;border-radius:8px;font-size:13.5px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13.5px;text-align:left}
+.chip small{display:block;color:var(--muted);font-size:11.5px}
+.chip[aria-pressed="true"]{background:var(--green-soft);border-color:var(--green)}
+.chip.no[aria-pressed="true"]{background:var(--red-soft);border-color:var(--red)}
+.chip:disabled{opacity:.45;cursor:not-allowed}
+.goal-chip{border-radius:12px;padding:8px 12px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px;font-weight:600;font-size:14px}
+.btn.primary{background:var(--green);border-color:var(--green);color:var(--on-green)}
+.btn.orange{background:var(--orange-soft);border-color:var(--orange-line);color:#9a3412}
+.btn.ghost{border-color:transparent;background:none}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.block{width:100%}.btn.sm{padding:6px 10px;font-size:13px}
+.stepper{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--muted)}
+.stepper button{width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:var(--surface)}
+.stepper b{color:var(--ink);min-width:14px;text-align:center}
+.slider{display:grid;gap:4px;margin:12px 0}
+.slider .row{justify-content:space-between;font-size:13.5px;gap:8px}
+.slider output{font-weight:650;font-variant-numeric:tabular-nums;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--green)}
+input[type=tel],input[type=number],select{box-sizing:border-box;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);width:100%;min-width:0}
+.tag{display:inline-block;font-size:11.5px;padding:2px 8px;border-radius:999px;background:var(--surface-2);color:var(--muted);margin:0 4px 2px 0}
+.tag.orange{background:var(--orange-soft);color:#a8410f;font-weight:600}
+.tag.green{background:var(--green-soft);color:var(--green);font-weight:600}
+.tag.red{background:var(--red-soft);color:var(--red);font-weight:600}
+.tag.gold{background:var(--gold-soft);color:var(--gold);font-weight:600}
+.note{border-left:3px solid var(--line);padding:8px 12px;background:var(--surface-2);border-radius:0 10px 10px 0;font-size:13.5px;margin-top:12px}
+.note.warn{border-color:var(--red);background:var(--red-soft)}
+.note.ok{border-color:var(--green);background:var(--green-soft)}
+.note.orange{border-color:var(--orange);background:var(--orange-soft)}
+.note b{font-weight:650}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:12px}
+.kpi{background:var(--surface-2);border-radius:11px;padding:10px 12px}
+.kpi span{display:block;font-size:12.5px;color:var(--muted)}
+.kpi b{display:block;font-size:20px;font-weight:700;margin-top:2px;line-height:1.2}
+.kpi.good b{color:var(--green)}.kpi.bad b{color:var(--red)}.kpi.hot b{color:var(--orange)}
+/* journey */
+.journey{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center}
+@media (max-width:820px){.journey{grid-template-columns:minmax(0,1fr)}}
+.streak{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.flame{font-size:26px;line-height:1}
+.streak b{font-size:17px}
+.weeks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;position:relative}
+@media (max-width:560px){.weeks{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.wk{border:1.5px solid var(--line);border-radius:12px;padding:9px 11px;background:var(--surface);min-height:74px}
+.wk .wn{font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+.wk b{display:block;font-size:14px;margin-top:3px;line-height:1.3}
+.wk.done{background:var(--green-soft);border-color:var(--green)}
+.wk.now{border-color:var(--orange);background:var(--orange-soft);box-shadow:0 0 0 3px rgba(217,83,30,.12)}
+.wk.locked{opacity:.6}
+.wk.gold{background:var(--gold-soft);border-color:var(--gold)}
+/* hub */
+.hubbar{position:relative;height:14px;border-radius:8px;background:var(--surface-2);margin:14px 0 22px}
+.hubbar i{position:absolute;inset:0 auto 0 0;border-radius:8px;background:linear-gradient(90deg,var(--green),var(--green-2));transition:width .35s}
+.hubbar .mk{position:absolute;top:-4px;width:2px;height:22px;background:var(--ink);opacity:.35}
+.hubbar .ml{position:absolute;top:22px;font-size:11px;color:var(--muted);transform:translateX(-50%);white-space:nowrap}
+.hubmsg{font-size:14px}
+.hubmsg b{color:var(--orange)}
+.pill{display:inline-flex;align-items:center;gap:6px;background:var(--surface-2);border-radius:999px;padding:4px 10px;font-size:12.5px}
+/* menu */
+.rtc{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.drops{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:12px}
+@media (max-width:720px){.drops{grid-template-columns:minmax(0,1fr)}}
+.drop h3{font-size:14.5px}.drop .muted{font-size:12.5px}
+.dishes{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:8px}
+.dish{display:flex;gap:10px;border:1px solid var(--line);border-radius:14px;padding:10px;background:var(--surface)}
+.dish.sel{border-color:var(--green);box-shadow:inset 3px 0 0 var(--green)}
+.dish.flash{animation:flash 1s ease}
+@keyframes flash{from{background:var(--orange-soft)}to{background:var(--surface)}}
+.thumb{width:52px;height:52px;border-radius:12px;display:grid;place-items:center;font-size:27px;flex-shrink:0;background:radial-gradient(circle at 30% 30%,#fff7e6,#fde3c8)}
+.thumb.sea{background:radial-gradient(circle at 30% 30%,#f0fbff,#cfeaf3)}
+.thumb.veg{background:radial-gradient(circle at 30% 30%,#f5fbef,#d7ecc6)}
+.dish-body{flex:1;min-width:0}
+.dish-name{border:0;background:none;padding:0;font-weight:650;text-align:left;font-size:14.5px}
+.dish-meta{font-size:12.5px;color:var(--muted);margin:2px 0 4px}
+.dish-side{display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;gap:6px;flex-shrink:0}
+.price{font-weight:650;font-size:14px}
+.acts{display:flex;gap:6px}
+.icon{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:var(--surface);font-size:15px;line-height:1}
+.icon.like[aria-pressed="true"]{color:#d4365c;border-color:#d4365c;background:rgba(212,54,92,.08)}
+/* family */
+.members{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (max-width:620px){.members{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.member{border:1px solid var(--line);border-radius:12px;padding:9px 10px;background:var(--surface);text-align:left}
+.member b{display:block;font-size:14px}.member small{color:var(--muted);font-size:12px}
+.member[aria-pressed="true"]{border-color:var(--green);background:var(--green-soft)}
+.flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px;counter-reset:st}
+@media (max-width:720px){.flow{grid-template-columns:minmax(0,1fr)}}
+.fstep{border-radius:12px;padding:12px;border:1.5px solid var(--line);position:relative}
+.fstep::before{counter-increment:st;content:"Bước " counter(st);display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px}
+.fstep b{display:block;font-size:14.5px;margin-bottom:4px}
+.fstep.s1{border-color:var(--green);background:var(--green-soft)}
+.fstep.s2{border-color:#3f6fb5;background:#eaf1fb}
+.fstep.s3{border-color:var(--orange);background:var(--orange-soft)}
+.fstep ul{margin:6px 0 0;padding-left:16px;font-size:13px}
+.bags{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:12px}
+.bag{border:1px dashed var(--line);border-radius:12px;padding:10px;font-size:13px;background:var(--surface-3)}
+.bag b{display:block;font-size:13.5px}
+.bag .sw{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+/* nutrition */
+details.nut{padding:0}
+details.nut>summary{list-style:none;padding:16px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px}
+details.nut>summary::-webkit-details-marker{display:none}
+details.nut>summary::after{content:"Mở";font-size:12.5px;color:var(--green);font-weight:600;border:1px solid var(--green);border-radius:999px;padding:3px 10px}
+details.nut[open]>summary::after{content:"Thu gọn"}
+.nutbody{padding:0 18px 18px}
+.formgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:10px}
+@media (max-width:760px){.formgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.formgrid label{font-size:12.5px;color:var(--muted);display:grid;grid-template-columns:minmax(0,1fr);gap:3px;min-width:0}
+.formgrid label>*{min-width:0;width:100%}
+.st{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:650}
+.st.ok{background:var(--green-soft);color:var(--green)}.st.mid{background:var(--gold-soft);color:var(--gold)}.st.bad{background:var(--red-soft);color:var(--red)}
+/* bag */
+.bagrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+@media (max-width:560px){.bagrow{grid-template-columns:minmax(0,1fr)}}
+.mystery{border:1.5px dashed var(--orange-line);background:var(--orange-soft);border-radius:12px;padding:14px;min-height:96px;display:flex;flex-direction:column;justify-content:center;text-align:center}
+.mystery .q{font-size:28px;font-weight:800;color:var(--orange)}
+.mystery.open{border-style:solid;background:var(--surface);text-align:left;animation:pop .45s ease}
+@keyframes pop{from{transform:scale(.96)}to{transform:none}}
+/* cart */
+.lines{display:grid;gap:6px;font-size:13.5px;margin:10px 0}
+.lines .row{justify-content:space-between;gap:10px}
+.lines .minus{color:var(--green)}
+.lines .gift{color:var(--gold)}
+.total{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line);padding-top:10px;margin-top:6px}
+.total b{font-size:24px;font-variant-numeric:tabular-nums}
+.addons{display:grid;gap:6px}
+.addon{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13.5px;border:1px solid var(--line);border-radius:10px;padding:7px 10px}
+.addon small{display:block;color:var(--muted);font-size:11.5px}
+.toggle{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:13.5px;cursor:pointer}
+.toggle input{margin-top:3px;accent-color:var(--green)}
+.toggle small{display:block;color:var(--muted);font-size:12px}
+.paygrid{display:grid;gap:8px;margin-top:8px}
+.pay{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surface);text-align:left}
+.pay b{display:block;font-size:14px}.pay small{color:var(--muted);font-size:12.5px;display:block}
+.pay[aria-pressed="true"]{border-color:var(--green);background:var(--green-soft)}
+.paydetail{margin-top:10px;font-size:13.5px}
+.qr{display:flex;gap:12px;align-items:center}
+.qr svg{width:88px;height:88px;flex-shrink:0;background:#fff;border-radius:6px;padding:4px;border:1px solid var(--line)}
+.phone{display:flex;gap:8px;margin-top:6px}.phone .btn{flex-shrink:0}
+details.internal{margin-top:12px;border-top:1px dashed var(--line);padding-top:10px;font-size:13px}
+details.internal summary{cursor:pointer;color:var(--muted);font-weight:600}
+/* tables */
+.tablewrap{overflow-x:auto;margin-top:10px}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:12.5px;color:var(--muted);font-weight:600;background:var(--surface-2)}
+td.n,th.n{text-align:right;white-space:nowrap}
+tr.hl td{background:var(--orange-soft)}
+.bar{height:6px;background:var(--surface-2);border-radius:4px;overflow:hidden;margin-top:4px;min-width:60px}
+.bar i{display:block;height:100%;background:var(--green)}
+.chart{width:100%;height:auto;display:block;margin-top:8px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12.5px;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:16px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+/* factory */
+.timeline{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center}
+.timeline .ends{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;grid-column:2}
+.play{width:44px;height:44px;border-radius:12px;border:0;background:var(--green);color:var(--on-green);font-size:16px}
+.clock{font-size:26px;font-weight:750;font-variant-numeric:tabular-nums}
+.gauge{height:12px;border-radius:7px;background:var(--surface-2);overflow:hidden;margin-top:6px}
+.gauge i{display:block;height:100%;background:var(--green);transition:width .25s}
+.gauge.hot i{background:var(--orange)}
+.stream{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px;max-height:440px;overflow:auto}
+.order{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px;background:var(--surface)}
+.order.new{animation:slidein .5s ease}
+@keyframes slidein{from{transform:translateY(-6px);background:var(--green-soft)}to{transform:none;background:var(--surface)}}
+.order .row{justify-content:space-between;gap:8px}
+.status{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12.5px;font-weight:600}
+.status.open{background:var(--green-soft);color:var(--green)}
+.status.closed{background:var(--orange-soft);color:#a8410f}
+/* express */
+.near{display:grid;gap:8px;margin-top:10px}
+.nearrow{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:13.5px}
+.nearrow.done{opacity:.55}
+.timer{font-size:34px;font-weight:750;font-variant-numeric:tabular-nums;color:var(--green)}
+.stages{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}
+.stage{font-size:12px;padding:6px 8px;border-radius:8px;background:var(--surface-2);color:var(--muted)}
+.stage.on{background:var(--green);color:var(--on-green);font-weight:600}
+.stage.done{background:var(--green-soft);color:var(--green)}
+/* modal & tour */
+.modal{position:fixed;inset:0;background:rgba(30,25,15,.45);display:grid;place-items:center;padding:16px;z-index:50}
+.modal[hidden]{display:none}
+.sheet{background:var(--surface);border-radius:16px;max-width:1000px;width:100%;max-height:86vh;overflow:auto;padding:20px;border:1px solid var(--line)}
+.tour{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--ink);color:#f7f5ee;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 24px rgba(0,0,0,.18)}
+.tour-in{max-width:1220px;margin:0 auto;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px;align-items:center}
+@media (max-width:760px){.tour-in{grid-template-columns:minmax(0,1fr)}}
+.tour-dots{display:flex;gap:5px}
+.tour-dots button{width:26px;height:26px;border-radius:8px;border:1px solid rgba(255,255,255,.25);background:none;color:#f7f5ee;font-size:12px;font-weight:700}
+.tour-dots button[aria-current="step"]{background:var(--orange);border-color:var(--orange)}
+.tour-text b{display:block;font-size:15px}
+.tour-text p{font-size:13.5px;opacity:.85;margin-top:2px}
+.tour-btns{display:flex;gap:8px}
+.tour .btn{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2);color:#f7f5ee}
+.tour .btn.primary{background:var(--orange);border-color:var(--orange)}
+/* strategy */
+.decisions{counter-reset:d;display:grid;gap:10px;margin-top:10px}
+.decision{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;border:1px solid var(--line);border-radius:12px;padding:12px}
+.decision::before{counter-increment:d;content:counter(d);width:26px;height:26px;border-radius:8px;background:var(--green);color:var(--on-green);display:grid;place-items:center;font-weight:700;font-size:13px}
+.decision b{display:block}
+.decision p{font-size:13.5px;color:var(--muted);margin-top:3px}
+.decision .rec{color:var(--ink);margin-top:5px}
+.src{font-size:12px;color:var(--muted);margin-top:12px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:60;max-width:90vw}
+body.touring .toast{bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+/* V6: tổng quan */
+.chain{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:24px;margin-top:14px}
+@media (max-width:980px){.chain{grid-template-columns:minmax(0,1fr);gap:20px}}
+.link{position:relative;border:1.5px solid var(--line);border-radius:14px;padding:12px;background:var(--surface);text-align:left;display:flex;flex-direction:column;gap:4px;min-height:160px}
+.link:hover{border-color:var(--green);background:var(--surface-3)}
+.link .no{width:24px;height:24px;border-radius:7px;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:700;font-size:12.5px}
+.link b{font-size:14.5px;line-height:1.3}
+.link .d{font-size:12.5px;color:var(--muted)}
+.link .m{margin-top:auto;font-size:13.5px;font-weight:700;color:var(--orange)}
+.link:not(:last-child)::after{content:"";position:absolute;right:-18px;top:50%;width:11px;height:11px;border-top:2.5px solid var(--green);border-right:2.5px solid var(--green);transform:translateY(-50%) rotate(45deg)}
+@media (max-width:980px){.link{min-height:0}.link:not(:last-child)::after{right:auto;left:50%;top:auto;bottom:-15px;transform:translateX(-50%) rotate(135deg)}}
+.loop{font-size:12.5px;color:var(--muted);margin-top:12px}
+.featlink{color:var(--green);font-weight:650;border:0;background:none;padding:0;text-align:left;cursor:pointer;font-size:13.5px}
+.featlink:hover{text-decoration:underline}
+button.kpi{border:1px solid transparent;text-align:left;cursor:pointer;font:inherit;color:inherit}
+button.kpi:hover{border-color:var(--green)}
+.zalo{background:#eef4ff;border:1px solid #cfe0ff;border-radius:14px;padding:12px;font-size:13.5px;max-width:560px}
+.zalo .zh{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#2b5fb4;font-weight:650;margin-bottom:6px}
+.zalo .zh i{min-width:34px;height:22px;border-radius:6px;background:#0068ff;color:#fff;font-style:normal;display:grid;place-items:center;font-size:11px;padding:0 4px}
+.zalo .zb{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.sticker{display:inline-block;font-weight:800;font-size:13px;padding:5px 9px;border-radius:8px;border:2px solid currentColor;margin:6px 6px 0 0;background:#fff}
+.store{font-size:11.5px;font-weight:650;padding:2px 8px;border-radius:999px;margin:0 4px 2px 0;display:inline-block}
+.store.cool{background:#e6f2fb;color:#1f5f8b}.store.iqf{background:#ece8fb;color:#4b3a9c}
+.giftbox{border:1.5px dashed var(--gold);background:var(--gold-soft);border-radius:12px;padding:10px 12px;margin:6px 0 10px}
+.dots{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}.dots i{width:12px;height:12px;border-radius:4px;background:var(--green)}.dots i.free{background:var(--gold)}
+select{max-width:100%}
+#featTable .tag{white-space:nowrap}
+.giftbox,#payGrid,#payDetail,#addons,#phoneBox{scroll-margin-top:150px}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brandrow">
+    <div class="brand"><span class="logo" aria-hidden="true">M</span><div><strong>MOVA FRESH</strong><small>V6 – bản trình diễn cuối: bữa nhà nấu 15 phút, vận hành theo mẻ</small></div></div>
+    <div class="hdr-right">
+      <div class="dropsw" id="dropSw" role="group" aria-label="Chọn đợt giao">
+        <button data-drop="1" aria-pressed="true"><span class="lg-only">Đợt 1: chốt T5 20:00, giao CN</span><span class="sm-only">Đợt 1, giao CN</span><b id="cd1">--</b></button>
+        <button data-drop="2" aria-pressed="false"><span class="lg-only">Đợt 2: chốt CN 20:00, giao T4</span><span class="sm-only">Đợt 2, giao T4</span><b id="cd2">--</b></button>
+      </div>
+      <button class="present" id="presentBtn"><span class="lg-only">Bắt đầu trình bày (10 bước)</span><span class="sm-only">Trình bày</span></button>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Các phân hệ">
+    <button class="tab" role="tab" data-tab="tong-quan"><span>0</span>Tổng quan</button>
+    <button class="tab" role="tab" data-tab="khach-hang"><span>1</span>Khách hàng & Gia đình</button>
+    <button class="tab" role="tab" data-tab="giao-van"><span>2</span>Giao vận 2 chặng</button>
+    <button class="tab" role="tab" data-tab="nha-may"><span>3</span>Nhà máy & Sổ đơn</button>
+    <button class="tab" role="tab" data-tab="tai-chinh"><span>4</span>Tài chính & Dòng tiền</button>
+    <button class="tab" role="tab" data-tab="chien-luoc"><span>5</span>Chiến lược & Benchmark</button>
+  </nav>
+</header>
+
+<main>
+<!-- ================= TAB 0 ================= -->
+<section class="view" id="v-tong-quan">
+  <div class="lead">
+    <h1>Bữa nhà nấu 15 phút, vận hành theo mẻ</h1>
+    <p>Khách đặt trước theo tuần, bếp trung tâm sơ chế theo mẻ, xe giao theo cụm tòa nhà. Trang này gom chuỗi giá trị, chỉ số chính và toàn bộ tính năng; bấm vào mục bất kỳ để đi tới đúng chỗ.</p>
+  </div>
+  <div class="panel" id="chainPanel">
+    <h2>Chuỗi giá trị khép kín</h2>
+    <div class="chain" id="chain"></div>
+    <p class="loop">Vòng phản hồi: ♡/✕, tỷ lệ bỏ qua tuần và khoảng trống R&D quay về mắt xích 1 và 2 để chỉnh thực đơn tuần sau.</p>
+  </div>
+  <div class="panel" id="snapPanel" style="margin-top:16px">
+    <div class="row between wrap gap"><h2>Chỉ số hệ thống</h2><span class="small muted">Tính trực tiếp từ sổ đơn Tab 3 và giả định Tab 4. Bấm vào chỉ số để xem chi tiết.</span></div>
+    <div class="kpis" id="snapKpis"></div>
+  </div>
+  <div class="panel" id="featPanel" style="margin-top:16px">
+    <div class="row between wrap gap"><h2>Tính năng đầy đủ</h2>
+      <div class="seg" id="featFilter"><button data-f="all" aria-pressed="true">Tất cả</button><button data-f="real" aria-pressed="false">Tính thật</button><button data-f="pilot" aria-pressed="false">Giả định cần Pilot</button></div></div>
+    <div class="tablewrap"><table id="featTable"></table></div>
+  </div>
+</section>
+
+<!-- ================= TAB 1 ================= -->
+<section class="view" id="v-khach-hang" hidden>
+  <div class="lead">
+    <h1>Bữa nhà nấu 15 phút, giao 2 đợt mỗi tuần</h1>
+    <p>Gói tuần là hàng sơ chế sống, ướp nền nhạt, nấu tại nhà. Chọn mục tiêu, món cần tránh; hệ thống tính dinh dưỡng và xếp món theo mẻ nấu chung.</p>
+  </div>
+
+  <div class="panel" id="journeyPanel">
+    <div class="journey">
+      <div>
+        <div class="streak"><span class="flame" aria-hidden="true">🔥</span><div><b id="streakTxt"></b><div class="tiny muted" id="streakSub"></div></div></div>
+        <div class="weeks" id="weeks"></div>
+      </div>
+      <div style="display:grid;gap:8px;justify-items:start">
+        <span class="small muted">Cách phát ưu đãi cho tài khoản mới</span>
+        <div class="seg" id="promoSeg"><button data-p="spread" aria-pressed="true">Rải 4 tuần</button><button data-p="front" aria-pressed="false">Dồn 50% tuần 1</button></div>
+        <div class="row gap"><button class="btn primary sm" id="weekDone">Đã nấu xong tuần này</button><button class="btn ghost sm" id="weekReset">Đặt lại</button></div>
+        <a href="#tai-chinh" class="tiny" style="color:var(--green)">Xem tác động lên hoàn vốn ở Tab 4</a>
+      </div>
+    </div>
+    <div id="journeyNote"></div>
+  </div>
+
+  <div class="grid g-main" style="margin-top:16px">
+    <div class="col">
+      <div class="panel" id="renewPanel">
+        <div class="row between wrap gap"><h2>Tự động gia hạn, bỏ qua bằng 1 chạm</h2><label class="row gap small"><input type="checkbox" id="renewChk" checked style="accent-color:var(--green)">Gia hạn mặc định</label></div>
+        <p class="muted small" style="margin-top:4px">Không làm gì thì giỏ tuần sau tự xác nhận. Zalo OA nhắc 3 giờ trước giờ chốt kèm nút bỏ qua. Đây là cơ sở của khoảng 40% suất gia hạn tự động ở Tab 3.</p>
+        <div id="renewBody" style="margin-top:10px"></div>
+      </div>
+
+      <div class="panel" id="hubPanel">
+        <div class="row between wrap gap">
+          <h2>Mua chung theo tòa, theo cụm</h2>
+          <select id="buildingSel" style="width:auto" aria-label="Chọn tòa nhà"></select>
+        </div>
+        <div class="hubbar" id="hubBar"><i></i></div>
+        <p class="hubmsg" id="hubMsg"></p>
+        <div class="row gap wrap" style="margin-top:12px"><span class="small muted">Cách nhận hàng</span><div class="seg" id="delivSeg"><button data-v="door" aria-pressed="true">Giao tận cửa</button><button data-v="amb" aria-pressed="false">Nhận qua Đại sứ cụm / Tủ mát cư dân</button></div></div>
+        <div id="ambNote"></div>
+        <div class="row gap wrap" style="margin-top:10px"><button class="btn orange" id="hubPlus">+1 hàng xóm cùng tòa đặt đơn</button><button class="btn ghost sm" id="hubReset">Đặt lại tòa</button><span class="pill" id="hubFee"></span></div>
+      </div>
+
+      <div class="panel">
+        <div class="row between wrap gap">
+          <div class="seg" id="modeSeg"><button data-mode="solo" aria-pressed="true">Khách cá nhân</button><button data-mode="family" aria-pressed="false">Bữa ăn gia đình</button></div>
+          <div class="stepper" id="perDishWrap">Suất mỗi món <button data-step="-1" aria-label="Giảm suất">−</button><b id="perDish">1</b><button data-step="1" aria-label="Tăng suất">+</button></div>
+        </div>
+        <div id="goalWrap"><h3 class="h3">Mục tiêu tháng (chạm 1 lần)</h3><div class="chips" id="goalChips"></div></div>
+        <div id="familyBox" hidden><h3 class="h3">Thành viên trong giỏ – mỗi người một mục tiêu</h3><div class="members" id="memberToggles"></div></div>
+        <h3 class="h3">Không ăn hoặc dị ứng</h3>
+        <div class="chips" id="blackChips"></div>
+      </div>
+
+      <div class="panel" id="menuPanel">
+        <div class="row between wrap gap"><h2>Thực đơn tuần</h2><span class="muted small" id="menuNote"></span></div>
+        <div class="rtc"><span class="tag green">Gói tuần = RTC: sơ chế sống, cắt ướp sẵn, nấu 10–15 phút</span><span class="tag">Bữa trưa văn phòng và Express = RTH ở Tab 2</span></div>
+        <div class="drops" id="menuDrops"></div>
+        <div class="note" id="storeNote">Thịt Đợt 2 về cùng chuyến xe lạnh gộp tuần và nằm kho đệm 0–2°C trước khi giao. Thịt ướp không muối không nên để mát quá 4 ngày, nên món ăn T7–CN được cấp đông IQF tại bếp; khách chuyển xuống ngăn mát 12 giờ trước khi nấu. Thời hạn cần kiểm nghiệm vi sinh.</div>
+      </div>
+
+      <div class="panel" id="familySplit" hidden>
+        <h2>Nấu chung một nền, sốt trộn bát riêng</h2>
+        <p class="muted small" style="margin-top:4px">Đạm cả nhà chung một khay, ướp nền nhạt không muối. Vị mặn nằm hết trong gói sốt nhỏ in tên từng người, trộn trong bát riêng; sốt không bao giờ vào chảo chung. Chạm tên món để đổi món minh họa.</p>
+        <div id="splitBody"></div>
+      </div>
+
+      <details class="panel nut" id="nutPanel">
+        <summary><div><h2>Cá nhân hóa chính xác</h2><span class="small muted">BMI, TDEE theo Mifflin-St Jeor và 8 chỉ tiêu của thực đơn tuần</span></div></summary>
+        <div class="nutbody" id="nutBody"></div>
+      </details>
+
+      <div class="panel" id="bagPanel">
+        <div class="row between wrap gap">
+          <div><h2>Túi mù có kiểm soát</h2><p class="muted small">3 món bí mật đúng mục tiêu, tránh món trong danh sách của bạn, nấu từ nguyên liệu đang dư trong kho. Giảm 10%.</p></div>
+          <div class="row gap"><button class="btn orange" id="bagAdd">Thêm túi mù</button><button class="btn" id="bagReveal" disabled>Hé lộ món bí mật</button></div>
+        </div>
+        <div class="bagrow" id="bagRow"></div>
+      </div>
+    </div>
+
+    <aside class="col">
+      <div class="panel sticky" id="cartPanel">
+        <h2>Giỏ tuần này</h2>
+        <div class="giftbox" id="giftBox"><label class="row gap" style="font-weight:650"><input type="checkbox" id="giftChk" style="accent-color:var(--gold)">Đặt tặng Bố Mẹ / Người thân ở xa</label><div id="giftBody" class="small" style="margin-top:6px"></div></div>
+        <div class="lines" id="cartLines"></div>
+        <div class="total"><span>Thanh toán tuần</span><b id="cartTotal">0đ</b></div>
+        <h3 class="h3">Mua thêm đi cùng chuyến xe</h3>
+        <div class="addons" id="addons"></div>
+        <label class="toggle" style="margin-top:8px"><input type="checkbox" id="swapChk"><span>Trả túi giữ nhiệt tái sử dụng<small>Trả túi sạch đợt trước, nhận 1.500 điểm tích lũy mỗi đợt. Túi dùng 15 vòng thay thùng xốp.</small></span></label>
+        <h3 class="h3" id="phoneBox">Tài khoản mới</h3>
+        <div class="phone"><input type="tel" id="phoneIn" placeholder="Số điện thoại, ví dụ 0905 xxx xxx" inputmode="tel" autocomplete="tel"><button class="btn" id="phoneBtn">Kiểm tra</button></div>
+        <div id="phoneMsg" class="tiny muted" style="margin-top:6px">Số đã có tài khoản để thử: 0905123456</div>
+        <h3 class="h3">Cách trả tiền</h3>
+        <div class="paygrid" id="payGrid">
+          <button class="pay" data-pay="qr" aria-pressed="true"><b>Trả từng tuần qua VietQR</b><small>Không phí, trả khi đặt</small></button>
+          <button class="pay" data-pay="card" aria-pressed="false"><b>Gói tháng, tự trừ thẻ</b><small>Khách chịu phí 3%</small></button>
+          <button class="pay" data-pay="pass" aria-pressed="false"><b>Thẻ Suất Ăn 24 + 2</b><small>Trả trước 24 suất, tặng 2 suất, tráng miệng mỗi tuần</small></button>
+        </div>
+        <div class="paydetail" id="payDetail"></div>
+        <button class="btn primary block" id="orderBtn" style="margin-top:12px">Đặt thực đơn tuần</button>
+        <details class="internal"><summary>Góc nhìn nội bộ MOVA cho đơn này</summary><div class="lines" id="internal"></div></details>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ================= TAB 2 ================= -->
+<section class="view" id="v-giao-van" hidden>
+  <div class="lead">
+    <h1>Hai chặng giao vận và bếp RTH 20 phút</h1>
+    <p>Chặng 1 đưa nguyên liệu thô về bếp trung tâm; chặng 2 đưa hộp đến khách. Chi phí thực sự nằm ở mật độ chặng 2 và bao bì giữ lạnh.</p>
+  </div>
+  <div class="grid g2">
+    <div class="panel" id="leg1Panel">
+      <div class="row between wrap gap"><h2>Chặng 1 – Nguồn nguyên liệu về bếp</h2>
+        <div class="seg" id="kitchenSeg"><button data-k="dn" aria-pressed="true">Bếp Đà Nẵng</button><button data-k="hcm" aria-pressed="false">Bếp TP.HCM</button></div></div>
+      <div class="seg" id="stageSeg" style="margin-top:10px"><button data-st="pilot" aria-pressed="true">Pilot 30–50 hộ: mua tại chỗ</button><button data-st="scale" aria-pressed="false">Scale trên 300 hộ: xe lạnh Đắk Lắk, miền Tây</button></div>
+      <svg class="chart" id="routeSvg" viewBox="0 0 420 300" role="img" aria-label="Sơ đồ tuyến nguyên liệu"></svg>
+      <div class="slider" id="rateWrap"><div class="row"><label for="l1Rate">Cước xe lạnh nguyên chuyến (đ/kg/100 km)</label><output id="l1RateO"></output></div><input type="range" id="l1Rate" min="300" max="2000" step="50" value="800"></div>
+      <div class="slider"><div class="row"><label for="l1Serv">Sản lượng tuần (suất)</label><output id="l1ServO"></output></div><input type="range" id="l1Serv" min="500" max="12000" step="100" value="2400"></div>
+      <div class="kpis" id="l1Kpis"></div>
+      <div id="l1Note"></div>
+    </div>
+    <div class="panel" id="leg2Panel">
+      <h2>Chặng 2 – Gom đơn theo cụm tòa nhà</h2>
+      <p class="muted small">Giao Chủ Nhật và Thứ Tư. Mục tiêu tổng chi phí giao và bao bì dưới 15.000đ/hộp.</p>
+      <div class="slider"><div class="row"><label for="l2Box">Số hộp mỗi điểm dừng (cụm)</label><output id="l2BoxO"></output></div><input type="range" id="l2Box" min="1" max="40" value="6"></div>
+      <div class="slider"><div class="row"><label for="l2Stops">Điểm dừng mỗi chuyến</label><output id="l2StopsO"></output></div><input type="range" id="l2Stops" min="4" max="20" value="12"></div>
+      <div class="slider"><div class="row"><label for="l2Trip">Chi phí 1 chuyến xe</label><output id="l2TripO"></output></div><input type="range" id="l2Trip" min="200000" max="800000" step="10000" value="450000"></div>
+      <div class="slider"><div class="row"><label for="l2Pack">Thùng xốp + đá gel dùng 1 lần/hộp</label><output id="l2PackO"></output></div><input type="range" id="l2Pack" min="1500" max="10000" step="500" value="2500"></div>
+      <label class="toggle"><input type="checkbox" id="swapChk2"><span>Túi giữ nhiệt tái sử dụng 15 vòng (Milkman Swap)<small>Khấu hao 1.200đ/lượt, rửa 300đ, thưởng 1.500 điểm khi trả túi sạch. Giả định: 85% khách trả túi, 80% điểm được dùng, mất túi 2%/vòng.</small></span></label>
+      <label class="toggle" style="margin-top:8px"><input type="checkbox" id="ambChk2"><span>Giao qua Đại sứ cụm / Tủ mát cư dân<small>Một lần dừng cho cả cụm, thù lao đại sứ 2.000đ/hộp. Giả định: giao không thành giảm từ 8% xuống 1%.</small></span></label>
+      <div class="kpis" id="l2Kpis"></div>
+      <svg class="chart" id="l2Chart" viewBox="0 0 640 220" role="img" aria-label="Phí giao mỗi hộp theo mật độ cụm"></svg>
+      <div class="legend"><span><i style="background:var(--green)"></i>Giao + bao bì mỗi hộp</span><span><i style="background:var(--red)"></i>Ngưỡng 15.000đ</span></div>
+      <div id="l2Note"></div>
+    </div>
+  </div>
+  <div class="panel" id="expressPanel" style="margin-top:16px">
+    <div class="row between wrap gap">
+      <div><h2>MOVA Express 20 phút – dòng RTH</h2>
+      <p class="muted small">RTH: nấu chín và thanh trùng tại bếp trung tâm, khách quay vi sóng 3 phút. Dùng cho bữa trưa văn phòng và để xả nguyên liệu cận hạn.</p></div>
+      <div class="seg" id="speedSeg"><button data-s="1" aria-pressed="false">Tốc độ thật</button><button data-s="30" aria-pressed="true">Tua nhanh ×30</button></div>
+    </div>
+    <div class="grid g3" style="margin-top:12px">
+      <div><h3 class="h3" style="margin-top:0">1. Nguyên liệu cận hạn trong kho</h3><div class="near" id="nearList"></div></div>
+      <div><h3 class="h3" style="margin-top:0">2. Khay RTH đã thanh trùng</h3><div class="near" id="trayList"></div></div>
+      <div><h3 class="h3" style="margin-top:0">3. Đơn hỏa tốc</h3><div id="expressBox"></div></div>
+    </div>
+    <div class="kpis" id="exKpis"></div>
+    <div class="note warn"><b>Điều kiện bắt buộc:</b> chỉ dùng nguyên liệu còn trong hạn, có nhật ký thanh trùng và nhiệt độ cho từng khay. Thiếu dữ liệu lô thì khóa bán. Hạn dùng 5 ngày ở 0–4 °C là giả định, cần kiểm nghiệm.</div>
+  </div>
+</section>
+
+<!-- ================= TAB 3 ================= -->
+<section class="view" id="v-nha-may" hidden>
+  <div class="lead">
+    <h1>Sổ đơn sống, mẻ nấu và đặt hàng trước giờ chốt</h1>
+    <p>Mỗi đợt giao có giờ chốt riêng. Kéo thanh thời gian để thấy sổ đơn đầy dần, nguyên liệu phải đặt khi nào và xưởng cắt bao nhiêu dòng.</p>
+  </div>
+  <div class="panel" id="facTop">
+    <div class="row between wrap gap" style="margin-bottom:12px">
+      <div class="seg" id="facDrop"><button data-drop="1" aria-pressed="true">Đợt 1: chốt T5 20:00, giao CN</button><button data-drop="2" aria-pressed="false">Đợt 2: chốt CN 20:00, giao T4</button></div>
+      <span class="small muted" id="winTxt"></span>
+    </div>
+    <div class="timeline">
+      <button class="play" id="playBtn" aria-label="Chạy mô phỏng">▶</button>
+      <input type="range" id="tl" min="0" max="96" step="0.5" value="40" aria-label="Thời gian mô phỏng">
+      <div style="text-align:right"><div class="clock" id="simClock">--</div><span class="status open" id="simStatus">Đang nhận đơn</span></div>
+      <div class="ends"><span id="tlStart"></span><span id="tlEnd"></span></div>
+    </div>
+    <div class="kpis" id="facKpis"></div>
+    <div style="margin-top:12px"><div class="row between small"><span>Công suất bếp mỗi đợt (1.500 suất)</span><b id="capTxt"></b></div><div class="gauge" id="capGauge"><i></i></div></div>
+  </div>
+
+  <div class="panel" id="nvPanel" style="margin-top:16px">
+    <h2>Đặt hàng trước giờ chốt – P90, gộp chuyến tuần cho Đợt 2</h2>
+    <p class="muted small" style="margin-top:4px">Thịt và hải sản có thời gian giao dài nên phải đặt khi sổ đơn chưa đầy. Dự báo = đã chốt ÷ tỷ lệ sổ đơn kỳ vọng tại thời điểm đó. Mức đặt theo tỷ lệ tới hạn Cu/(Cu+Co): thiếu hàng đắt hơn dư hàng cấp đông.</p>
+    <div class="tablewrap"><table id="nvTable"></table></div>
+    <div id="nvNote"></div>
+  </div>
+
+  <div class="grid g-main" style="margin-top:16px">
+    <div class="panel" id="bomPanel">
+      <div class="row between wrap gap"><h2>Định mức nguyên liệu theo mẻ (BOM)</h2><button class="btn primary" id="ticketBtn">Xuất phiếu sản xuất</button></div>
+      <div class="tablewrap"><table id="bomTable"></table></div>
+    </div>
+    <div class="panel"><h2>Dòng đơn trực tiếp</h2><ul class="stream" id="stream"></ul></div>
+  </div>
+
+  <div class="grid g2" style="margin-top:16px">
+    <div class="panel" id="prepPanel">
+      <div class="row between wrap gap">
+        <div><h2>Chế độ sơ chế</h2><p class="muted small">Tinh: 20 bậc khẩu phần (100–290 g). Gọn: 3 cỡ khay S 120 g, M 170 g, L 220 g; khác biệt bù bằng 2 nhóm túi tinh bột, rau.</p></div>
+        <div class="seg" id="prepSeg"><button data-p="fine" aria-pressed="false">Chế độ Tinh</button><button data-p="lean" aria-pressed="true">Chế độ Gọn</button></div>
+      </div>
+      <div class="kpis" id="prepKpis"></div>
+      <div id="prepNote"></div>
+    </div>
+    <div class="panel" id="gapPanel">
+      <h2>Khoảng trống thực đơn cho R&D</h2>
+      <p class="muted small" style="margin-top:4px">Tỷ trọng suất theo nhóm khách so với số món đạt đủ tiêu chí của nhóm đó. Chỉ số càng cao, nhóm khách càng thiếu món.</p>
+      <div class="tablewrap"><table id="gapTable"></table></div>
+      <div id="gapNote"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TAB 4 ================= -->
+<section class="view" id="v-tai-chinh" hidden>
+  <div class="lead">
+    <h1>Kinh tế đơn vị, hoàn vốn, phao nổi và vốn lưu động</h1>
+    <p>Mọi số mặc định là giả định để thử, chưa phải dữ liệu vận hành. Kéo thanh trượt để thấy kết luận đổi ở đâu.</p>
+  </div>
+  <div class="grid g-main">
+    <div class="col">
+      <div class="panel" id="uePanel"><h2>Kinh tế mỗi hộ</h2><div class="kpis" id="ueKpis"></div><div id="ueNote"></div></div>
+      <div class="panel" id="cacPanel">
+        <div class="row between wrap gap"><h2>Hoàn vốn CAC: dồn 50% hay rải 4 tuần</h2>
+          <div class="seg" id="promoSeg4"><button data-p="spread" aria-pressed="true">Rải 4 tuần</button><button data-p="front" aria-pressed="false">Dồn 50% tuần 1</button></div></div>
+        <p class="muted small" style="margin-top:4px">Đóng góp lũy kế của một hộ mới sau mọi ưu đãi. Đường đậm là cách đang chọn.</p>
+        <svg class="chart" id="cacChart" viewBox="0 0 640 260" role="img" aria-label="Đường hoàn vốn CAC"></svg>
+        <div class="legend" id="cacLegend"></div>
+        <div class="kpis" id="cacKpis"></div>
+        <div id="cacNote"></div>
+      </div>
+      <div class="panel" id="wcPanel">
+        <h2>Vốn lưu động trong tuần và đỉnh ứng vốn</h2>
+        <p class="muted small" style="margin-top:4px">Số dư tiền mặt theo ngày trong 5 tuần, chỉ tính dòng tiền theo đơn (không gồm chi phí cố định). Thịt đặt T3 và T6, hải sản T5 và CN, rau T7 và T3.</p>
+        <div class="row gap wrap" style="margin-top:10px">
+          <div><div class="tiny muted">Trả nhà cung cấp</div><div class="seg" id="termSeg"><button data-t="0" aria-pressed="true">Trả ngay khi đặt</button><button data-t="7" aria-pressed="false">Công nợ 7 ngày</button><button data-t="14" aria-pressed="false">Công nợ 14 ngày</button></div></div>
+          <div><div class="tiny muted">Thu tiền khách</div><div class="seg" id="colSeg"><button data-c="order" aria-pressed="true">Khi đặt (VietQR, trả trước)</button><button data-c="delivery" aria-pressed="false">Khi giao</button></div></div>
+        </div>
+        <div class="slider"><div class="row"><label for="wcServ">Sản lượng tuần (suất)</label><output id="wcServO"></output></div><input type="range" id="wcServ" min="500" max="10000" step="100" value="2100"></div>
+        <svg class="chart" id="wcChart" viewBox="0 0 640 250" role="img" aria-label="Số dư tiền mặt theo ngày"></svg>
+        <div class="kpis" id="wcKpis"></div>
+        <div id="wcNote"></div>
+      </div>
+      <div class="panel" id="floatPanel">
+        <h2>Phao nổi từ Thẻ Suất Ăn 24 + 2</h2>
+        <p class="muted small" style="margin-top:4px">Giá trị suất đã trả trước nhưng chưa dùng × số hộ dùng thẻ, so với chi phí 2 suất tặng và quà tráng miệng.</p>
+        <svg class="chart" id="floatChart" viewBox="0 0 640 260" role="img" aria-label="Phao nổi dòng tiền"></svg>
+        <div class="legend"><span><i style="background:var(--green)"></i>Giá trị suất chưa dùng</span><span><i style="background:var(--red)"></i>Chi phí 2 suất tặng + quà (lũy kế)</span><span><i style="background:var(--gold)"></i>Lãi tiền gửi trên phao (lũy kế, 4%/năm)</span></div>
+        <div class="kpis" id="floatKpis"></div>
+        <div class="note warn"><b>Bản chất kế toán:</b> suất chưa dùng là doanh thu chưa thực hiện (nợ phải trả). Thẻ ghi nhận bằng số suất, không lưu giá trị tiền, không quy đổi tiền mặt; cấu trúc này nhằm tránh mô hình tiền điện tử theo Nghị định 52/2024 và cần luật sư xác nhận.</div>
+      </div>
+    </div>
+    <aside class="col"><div class="panel sticky" id="finSliders"></div></aside>
+  </div>
+</section>
+
+<!-- ================= TAB 5 ================= -->
+<section class="view" id="v-chien-luoc" hidden>
+  <div class="lead">
+    <h1>Bài học quốc tế và 7 quyết định cần chốt</h1>
+    <p>Benchmark chỉ có ích khi chỉ ra điều MOVA nên làm khác đi. Cột cuối là phản biện chính ý tưởng của MOVA.</p>
+  </div>
+  <div class="panel" id="benchPanel">
+    <h2>Benchmark</h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Mô hình</th><th>Dữ kiện chính</th><th>Bài học cho MOVA</th><th>Phản biện</th></tr></thead>
+      <tbody>
+        <tr><td><b>HelloFresh</b><br><span class="tiny muted">Đức/Mỹ, meal kit + Factor ăn liền</span></td><td>Doanh thu 2025 khoảng 6,76 tỷ euro, giảm 9% theo tỷ giá cố định; khách hoạt động giảm từ ~7,3 triệu xuống ~6,9 triệu do chủ động cắt khách kém chất lượng. Khách trên 50 đơn chiếm 51% đơn meal kit. <span class="tag green">đã xác minh</span></td><td>Hai động lực giữ chân mạnh nhất theo chính HelloFresh là chất lượng món và độ rộng thực đơn.</td><td>Mảng ăn liền của HelloFresh lỗ năm 2025 vì sự cố chất lượng. Dòng RTH của MOVA cần kiểm nghiệm trước khi mở rộng.</td></tr>
+        <tr><td><b>Blue Apron</b><br><span class="tiny muted">Mỹ, meal kit</span></td><td>Không phá sản: Wonder Group mua năm 2023 với ~103 triệu USD, so với định giá ~1,9 tỷ USD khi IPO; số khách còn 267.000 ở quý 2/2023. <span class="tag green">đã xác minh</span></td><td>Ưu đãi lớn lúc đăng ký, khách hủy khi hết ưu đãi.</td><td>MOVA đã chuyển sang rải ưu đãi 4 tuần; hiệu ứng giữ chân phải đo, 30–50 hộ chưa đủ để kết luận thống kê.</td></tr>
+        <tr><td><b>Nosh</b>, <b>Watami Takushoku</b><br><span class="tiny muted">Nhật Bản</span></td><td>Nosh: bữa đông lạnh ít đường đặt định kỳ. Watami: giao bữa hằng ngày cho người cao tuổi qua mạng lưới nhân viên giao địa phương. <span class="tag">theo hiểu biết, chưa cập nhật số liệu 2026</span></td><td>Người cao tuổi và bệnh mạn tính trả tiền cho sự đều đặn.</td><td>Gói Ông bà nên có chuẩn dinh dưỡng riêng, không chỉ là biến thể trong giỏ.</td></tr>
+        <tr><td><b>Picnic</b><br><span class="tiny muted">Hà Lan</span></td><td>Xe điện chạy tuyến cố định, mỗi địa chỉ ghé một lần/ngày như tuyến xe buýt; giao miễn phí với đơn tối thiểu 35 euro; có lãi vận hành ở Hà Lan. <span class="tag green">đã xác minh</span></td><td>Mật độ tuyến quyết định kinh tế giao hàng.</td><td>Mua chung theo tòa là bản Việt của logic này; Express 20 phút đi ngược nên giữ nhỏ.</td></tr>
+        <tr><td><b>Cooky</b><br><span class="tiny muted">Việt Nam</span></td><td>Công thức nấu ăn kết hợp giao nguyên liệu theo công thức tại TP.HCM. <span class="tag red">chưa xác minh hiện trạng 2026</span></td><td>Khách Việt quen mua lẻ theo bữa.</td><td>Cần đo tỷ lệ khách chấp nhận chốt đơn trước 3 ngày.</td></tr>
+      </tbody>
+    </table></div>
+    <p class="src">Nguồn: báo cáo năm 2025 của HelloFresh; hồ sơ SEC và Fortune về thương vụ Blue Apron – Wonder (2023); ESM Magazine, Trademagazin về Picnic.</p>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="panel" id="decPanel">
+      <h2>7 quyết định cần chốt</h2>
+      <div class="decisions">
+        <div class="decision"><div><b>Nguồn thịt theo giai đoạn</b><p>Pilot mua tại chỗ; chỉ mở tuyến Đắk Lắk khi đủ đơn tối thiểu nhà cung cấp, khoảng 300 hộ. <span class="tag green">đã mô hình hóa ở Tab 2</span></p><p class="rec">Cần chốt: bếp đầu tiên ở Đà Nẵng hay TP.HCM.</p></div></div>
+        <div class="decision"><div><b>RTC là sản phẩm chính, RTH là kênh phụ</b><p>Hai dòng có hạn dùng và quy trình an toàn khác nhau. <span class="tag green">đã tách</span></p><p class="rec">Cần chốt: RTH chỉ cho bữa trưa văn phòng và xả kho trong 6 tháng đầu.</p></div></div>
+        <div class="decision"><div><b>Chế độ Gọn và sốt trộn bát riêng</b><p>Chế độ Tinh nhân số dòng cắt khoảng 4 lần; sốt in tên loại bỏ lỗi nêm nhầm. <span class="tag green">mặc định</span></p><p class="rec">Cần chốt: nhà cung cấp bao bì in tên theo đơn.</p></div></div>
+        <div class="decision"><div><b>Thẻ Suất Ăn thay số dư tiền</b><p>Ghi nhận bằng số suất, không lưu giá trị VND. <span class="tag green">đã chuyển trong V6</span></p><p class="rec">Cần chốt: luật sư duyệt hợp đồng mua trước và điều khoản hoàn, hủy.</p></div></div>
+        <div class="decision"><div><b>Ưu đãi rải 4 tuần, tự gia hạn mặc định</b><p>Hiệu ứng giữ chân và tỷ lệ bỏ qua tuần đều là giả định.</p><p class="rec">Cần chốt: chỉ số đo trong pilot (đặt lại tuần 2, tuần 4, tỷ lệ bỏ qua).</p></div></div>
+        <div class="decision"><div><b>Đợt 2: gộp chuyến tuần, kho đệm 0–2°C, IQF cho món T7–CN</b><p>Tránh đặt thịt khi sổ đơn mới 44%. <span class="tag green">đã mô hình hóa ở Tab 3</span></p><p class="rec">Cần chốt: kiểm nghiệm hạn dùng thịt ướp không muối.</p></div></div>
+        <div class="decision"><div><b>Túi tái sử dụng và Đại sứ cụm</b><p>Túi tái sử dụng chỉ rẻ hơn khi thùng xốp + đá gel đắt hơn khoảng 2.900đ/hộp.</p><p class="rec">Cần chốt: báo giá bao bì thật; thù lao đại sứ.</p></div></div>
+      </div>
+    </div>
+    <div class="panel" id="riskPanel">
+      <h2>Rủi ro vận hành và giải pháp</h2>
+      <div class="tablewrap"><table>
+        <thead><tr><th>Rủi ro</th><th>Giải pháp công nghệ, quy trình</th></tr></thead>
+        <tbody>
+          <tr><td><b>Đứt chuỗi lạnh</b> chặng 1</td><td>Cảm biến nhiệt độ theo lô; từ chối nhập kho khi vượt ngưỡng.</td></tr>
+          <tr><td><b>Dự báo sai</b> trước giờ chốt</td><td>Đặt theo P90 cho thịt, hải sản; rau đặt sau chốt; túi mù và RTH xả phần dư.</td></tr>
+          <tr><td><b>Khách nêm nhầm</b> cho người ăn nhạt</td><td>Sốt trộn bát riêng in tên từng người; sốt không vào chảo chung; vạch định lượng trên khay; video 60 giây qua mã QR.</td></tr>
+          <tr><td><b>Lễ tân từ chối, khách vắng nhà</b></td><td>Nhận qua Đại sứ cụm hoặc tủ mát cư dân; khách tự lấy trong 12 giờ.</td></tr>
+          <tr><td><b>Lạm dụng ưu đãi</b></td><td>Kiểm tra số điện thoại, thiết bị, địa chỉ giao; ưu đãi trải 4 tuần.</td></tr>
+          <tr><td><b>Khách rời sau tuần đầu</b></td><td>Đo chất lượng món sau mỗi đơn; nút ♡ và ✕; mở rộng thực đơn theo khoảng trống R&D.</td></tr>
+          <tr><td><b>Nhãn dinh dưỡng y khoa</b> sai</td><td>Số liệu món phải qua kiểm nghiệm; chuyên gia dinh dưỡng duyệt ngưỡng trước khi gắn nhãn.</td></tr>
+          <tr><td><b>An toàn thực phẩm</b> ở RTH cận hạn</td><td>Truy xuất lô, nhật ký thanh trùng, khóa bán khi thiếu dữ liệu.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="modal" id="ticketModal" hidden role="dialog" aria-modal="true" aria-labelledby="ticketTitle">
+  <div class="sheet">
+    <div class="row between wrap gap"><h2 id="ticketTitle">Phiếu yêu cầu sản xuất</h2>
+      <div class="row gap"><button class="btn" id="copyTicket">Sao chép phiếu</button><button class="btn primary" id="closeTicket">Đóng</button></div></div>
+    <p class="muted small" id="ticketSub"></p>
+    <div class="tablewrap"><table id="ticketTable"></table></div>
+  </div>
+</div>
+
+<div class="tour" id="tour" hidden role="region" aria-label="Chế độ thuyết trình">
+  <div class="tour-in">
+    <div class="tour-dots" id="tourDots"></div>
+    <div class="tour-text"><b id="tourTitle"></b><p id="tourBody"></p></div>
+    <div class="tour-btns"><button class="btn" id="tourPrev">Trước</button><button class="btn primary" id="tourNext">Tiếp</button><button class="btn" id="tourExit">Thoát</button></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ================= Tiện ích ================= */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const nf=new Intl.NumberFormat('vi-VN'), nf1=new Intl.NumberFormat('vi-VN',{maximumFractionDigits:1});
+const fmt=n=>(n<0?'−':'')+nf.format(Math.abs(Math.round(n)))+'đ';
+const fmtN=n=>nf.format(Math.round(n));
+const fmtTr=n=>(n<0?'−':'')+nf1.format(Math.abs(n)/1e6)+' tr';
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const pad=n=>String(n).padStart(2,'0');
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2800)}
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function setPressed(sel,attr,val){$$(sel).forEach(b=>b.setAttribute('aria-pressed',String(b.dataset[attr])===String(val)?'true':'false'))}
+
+/* ================= Dữ liệu ================= */
+/* n = [đạm g, tinh bột g, béo g, béo bão hòa g, natri nền mg, natri sốt định vị mg, chất xơ g, purin mg, GI] – ước tính nội bộ cho suất chuẩn kèm tinh bột nhóm Chuẩn */
+const DISHES=[
+{id:'ga-sa',name:'Gà nướng sả mật ong',emo:'🍗',k:'meat',al:['ga'],src:'Gà thả vườn Đắk Lắk',goals:['van-phong','tang-co','giam-can'],soft:false,price:79000,protG:160,vegG:120,base:'Sả, tỏi, tiêu, không muối – 4 giờ',finish:'Sốt sả mật ong 25 ml',cut:'Đùi rút xương, miếng 40 g',batch:8,pop:9,n:[34,55,14,4,280,520,4,220,70]},
+{id:'uc-ga',name:'Ức gà áp chảo sốt chanh dây',emo:'🍋',k:'meat',al:['ga'],src:'Gà Đắk Lắk',goals:['giam-can','tang-co','tieu-duong'],soft:false,price:75000,protG:170,vegG:150,base:'Tiêu, thảo mộc, dầu ô liu – 2 giờ',finish:'Sốt chanh dây 25 ml',cut:'Lạng phi lê dày 1,5 cm',batch:8,pop:8,n:[38,45,9,2,240,380,5,240,65]},
+{id:'ga-hap',name:'Gà hấp lá chanh',emo:'🍗',k:'meat',al:['ga'],src:'Gà Đắk Lắk',goals:['giam-can','tim-mach','tang-co','tieu-duong'],soft:true,price:79000,protG:160,vegG:100,base:'Gừng, hành, lá chanh – 1 giờ',finish:'Muối tiêu chanh 8 g',cut:'Chặt miếng, rút xương phần mềm',batch:4,pop:6,n:[35,45,12,3.5,220,300,4,210,68]},
+{id:'bo-luclac',name:'Bò lúc lắc tiêu xanh',emo:'🥩',k:'meat',al:['bo','cay'],src:'Bò Đắk Lắk',goals:['tang-co','van-phong'],soft:false,price:98000,protG:150,vegG:110,base:'Tỏi, tiêu xanh, dầu – 2 giờ',finish:'Sốt dầu hào tiêu xanh 30 ml',cut:'Thăn ngoại, hạt lựu 2,5 cm',batch:4,pop:7,n:[36,55,20,7.5,300,620,4,190,72]},
+{id:'bo-ham',name:'Bò hầm rau củ',emo:'🍲',k:'meat',al:['bo'],src:'Bắp bò Đắk Lắk',goals:['tim-mach','van-phong','tang-co'],soft:true,price:92000,protG:150,vegG:160,base:'Hồi, quế, gừng – 3 giờ',finish:'Gói nêm hầm 20 ml',cut:'Bắp bò khối 3 cm',batch:8,pop:7,n:[34,50,15,6,320,480,7,200,60]},
+{id:'heo-gung',name:'Thịt heo ram gừng',emo:'🥓',k:'meat',al:['heo'],src:'Heo đen Đắk Lắk',goals:['van-phong'],soft:false,price:72000,protG:150,vegG:100,base:'Gừng, hành tím – 3 giờ',finish:'Nước ram gừng 30 ml',cut:'Ba chỉ thái 0,5 cm',batch:4,pop:8,n:[28,55,24,8.5,260,650,3,170,72]},
+{id:'heo-nuong',name:'Bún thịt heo nướng rau sống',emo:'🥢',k:'meat',al:['heo'],src:'Heo đen Đắk Lắk',goals:['van-phong'],soft:false,price:69000,protG:140,vegG:140,base:'Sả, tỏi, mật ong – 6 giờ',finish:'Nước mắm chua ngọt 50 ml',cut:'Nạc vai thái mỏng',batch:0,pop:6,n:[30,70,18,6,300,700,5,160,60]},
+{id:'tom-dua',name:'Tôm rim nước dừa',emo:'🦐',k:'sea',al:['hai-san'],src:'Tôm Kiên Giang',goals:['van-phong','giam-can'],soft:true,price:99000,protG:140,vegG:110,base:'Tỏi, tiêu – 30 phút',finish:'Nước dừa rim 40 ml',cut:'Bóc vỏ chừa đuôi, rút chỉ',batch:4,pop:7,n:[30,52,13,7,380,450,4,230,70]},
+{id:'muc-sate',name:'Mực xào sa tế',emo:'🦑',k:'sea',al:['hai-san','cay'],src:'Mực ống Kiên Giang',goals:['giam-can','tang-co'],soft:false,price:95000,protG:150,vegG:130,base:'Gừng, rượu trắng – 20 phút',finish:'Sa tế 20 ml',cut:'Khứa vảy rồng, khoanh 3 cm',batch:0,pop:4,n:[30,48,12,2.5,420,560,5,260,70]},
+{id:'ca-loc',name:'Cá lóc kho tộ',emo:'🐟',k:'sea',al:['ca'],src:'Cá lóc An Giang',goals:['tim-mach','van-phong'],soft:true,price:82000,protG:160,vegG:90,base:'Tiêu, hành tím – 1 giờ',finish:'Nước kho nước màu 40 ml',cut:'Cắt khúc 3 cm',batch:4,pop:6,n:[33,45,13,3,260,520,4,180,70]},
+{id:'ca-thu',name:'Cá thu sốt cà chua',emo:'🐟',k:'sea',al:['ca'],src:'Cá thu Kiên Giang',goals:['tim-mach','tang-co','tieu-duong'],soft:true,price:89000,protG:150,vegG:110,base:'Gừng, tiêu – 30 phút',finish:'Sốt cà chua 60 ml',cut:'Lát 2 cm, bỏ xương giữa',batch:0,pop:5,n:[33,45,18,4.5,280,420,5,280,68]},
+{id:'chao-ca',name:'Cháo cá lóc bí đỏ',emo:'🥣',k:'sea',al:['ca'],src:'Cá lóc An Giang',goals:['tim-mach'],soft:true,price:65000,protG:110,vegG:120,base:'Gừng – 20 phút',finish:'Hành phi, tiêu 6 g',cut:'Phi lê, miếng 2 cm',batch:0,pop:3,n:[24,55,7,1.5,300,200,5,140,78]},
+{id:'dau-hu',name:'Đậu hũ non sốt nấm đông cô',emo:'🍄',k:'veg',al:['dau-nanh'],src:'Đậu hũ đối tác Đà Nẵng',goals:['giam-can','tim-mach','tieu-duong'],soft:true,price:59000,protG:200,vegG:140,base:'Không ướp',finish:'Sốt nấm 40 ml',cut:'Khối 3 cm',batch:4,pop:4,n:[20,45,14,2,200,380,6,90,60]}
+];
+const byId=Object.fromEntries(DISHES.map(d=>[d.id,d]));
+const GOALS=[['giam-can','Giảm cân','Ít tinh bột, no lâu'],['van-phong','Văn phòng','Đủ năng lượng, nấu nhanh'],['tang-co','Tăng cơ','Đạm cao mỗi bữa'],['tim-mach','Tim mạch / Huyết áp','Natri thấp, ít béo bão hòa'],['tieu-duong','Tiểu đường','Tải lượng đường huyết thấp']];
+const GOAL_LABEL=Object.fromEntries(GOALS.map(g=>[g[0],g[1]]));GOAL_LABEL['tre-em']='Trẻ em';
+const BLACK=[['bo','Bò'],['heo','Heo'],['ga','Gà'],['hai-san','Tôm, mực'],['ca','Cá'],['dau-nanh','Đậu nành'],['cay','Món cay']];
+const MEMBERS={
+ bo:{name:'Bố',tag:'BỐ',goal:'tang-co',goalTxt:'Tăng cơ',k:1.4,pk:1.2,carb:'chuan',sauce:1,sv:'',col:'#9a3412'},
+ me:{name:'Mẹ',tag:'MẸ',goal:'giam-can',goalTxt:'Giảm cân',k:1.0,pk:.95,carb:'nhe',sauce:.6,sv:'bản nhẹ',col:'#146c43'},
+ con:{name:'Con',tag:'CON',goal:'tre-em',goalTxt:'Năng lượng cao',k:.8,pk:.85,carb:'chuan',sauce:.3,sv:'ngọt dịu, không cay',col:'#2b5fb4'},
+ ongba:{name:'Ông bà',tag:'ÔNG BÀ',goal:'tim-mach',goalTxt:'Mềm, ít muối',k:.8,pk:.9,carb:'nhe',sauce:0,sv:'',col:'#5f675c'}
+};
+const SURPLUS=[{ing:'Ức gà',kg:38,dishes:['uc-ga','ga-hap']},{ing:'Cá lóc',kg:26,dishes:['ca-loc','chao-ca']},{ing:'Bắp bò',kg:22,dishes:['bo-ham']},{ing:'Đậu hũ non',kg:18,dishes:['dau-hu']},{ing:'Mực ống',kg:9,dishes:['muc-sate']},{ing:'Tôm thẻ',kg:7,dishes:['tom-dua']}];
+const ADDONS=[{id:'yog',name:'Sữa chua hạt',price:25000,m:.55},{id:'juice',name:'Nước ép lạnh 330 ml',price:35000,m:.6},{id:'fruit',name:'Trái cây cắt sẵn 300 g',price:39000,m:.45},{id:'gift',name:'Hộp quà biếu',price:299000,m:.4}];
+const BUILDINGS=[{id:'monarchy',name:'Chung cư Monarchy, Đà Nẵng'},{id:'vinhomes',name:'Vinhomes Grand Park, TP.HCM'},{id:'fhome',name:'Tòa FHome, Đà Nẵng'},{id:'hc',name:'Cụm nhà phố Hải Châu (bán kính 300 m), Đà Nẵng'}];
+const HUB_TARGET=6;
+const DROPS={1:{name:'Chủ Nhật',cut:'T5 20:00',eat:'Ăn Thứ Hai – Thứ Tư'},2:{name:'Thứ Tư',cut:'CN 20:00',eat:'Ăn Thứ Năm – Thứ Bảy'}};
+const G={drop:1,promo:'spread',swap:false,amb:false,stage:'pilot',pack:2500,ret:.85,amort:1200,wash:300,reward:1500,redeem:.8,loss:.02,bagPrice:18000,stops:12,trip:450000};
+
+/* ================= Bộ máy dinh dưỡng ================= */
+function serve(d,p){
+  const [P0,C0,F0,s0,nb,ns,fb,pu,gi]=d.n, k=p.k;
+  const P=P0*k, F=F0*(.5+.5*k), sat=s0*(.5+.5*k), C=C0*(p.carb==='nhe'?.45:1)*(p.cm||1), GI=p.carb==='nhe'?gi-10:gi;
+  const kcal=4*P+4*C+9*F;
+  return {kcal,P,C,F,sat,na:nb*(.7+.3*k)+ns*p.sauce,fib:fb+(p.carb==='nhe'?3:0),pur:pu*k,gl:GI*C/100,cp:4*C/kcal*100,sp:9*sat/kcal*100};
+}
+function anthro(pr){
+  const bmi=pr.w/Math.pow(pr.h/100,2);
+  const bmiTxt=bmi<18.5?'Thiếu cân':bmi<23?'Bình thường':bmi<25?'Thừa cân':'Béo phì';
+  if(pr.age<18)return {bmi,bmiTxt,bmr:null,tdee:1800,child:true};
+  const bmr=10*pr.w+6.25*pr.h-5*pr.age+(pr.sex==='nam'?5:-161);
+  return {bmi,bmiTxt,bmr,tdee:bmr*pr.act,child:false};
+}
+function targets(pr,goal){
+  const a=anthro(pr);
+  const mult={'giam-can':.8,'tang-co':1.1}[goal]||1;
+  const kcal=a.tdee*mult, meal=kcal*.30;
+  const gkg={'giam-can':1.6,'tang-co':1.8,'van-phong':1.2,'tim-mach':1.0,'tieu-duong':1.0,'tre-em':1.0}[goal]||1.2;
+  return {...a,kcal,meal,prot:gkg*pr.w/3,carbCap:{'giam-can':40,'tieu-duong':40,'tang-co':55}[goal]||60,
+    naMax:goal==='tim-mach'?500:650,fibMin:goal==='tre-em'?6:8,satMax:goal==='tim-mach'?7:10,purMax:250,glMax:goal==='tieu-duong'?15:20};
+}
+const SEG={
+ 'giam-can':{prof:{k:1,carb:'nhe',sauce:1},test:n=>n.kcal<=380&&n.P>=28&&n.cp<=35&&n.sp<=10,crit:'≤380 kcal, ≥28 g đạm, tinh bột ≤35%',rd:'2 món ≤380 kcal no lâu: salad ức gà ngũ cốc, tôm hấp rau củ.'},
+ 'tang-co':{prof:{k:1.3,carb:'chuan',sauce:1},test:n=>n.P>=42&&n.kcal>=450&&n.kcal<=750,crit:'≥42 g đạm, 450–750 kcal',rd:'Đạm cao, ít béo bão hòa: bò nạc áp chảo, gà nướng sốt sữa chua.'},
+ 'tim-mach':{prof:{k:1,carb:'chuan',sauce:.5},test:n=>n.na<=500&&n.sp<=7&&n.fib>=5,crit:'Natri ≤500 mg kể cả sốt, béo bão hòa ≤7%, xơ ≥5 g',rd:'3 món natri ≤500 mg: cá hấp gừng xì dầu giảm muối, gà luộc lá chanh, canh rau củ hầm tách mỡ.'},
+ 'tieu-duong':{prof:{k:1,carb:'nhe',sauce:.5},test:n=>n.gl<=11&&n.fib>=7&&n.cp<=35&&n.sp<=8,crit:'GL ≤11, xơ ≥7 g, tinh bột ≤35%',rd:'3 món GL thấp: cá hấp với gạo lứt trộn đậu, gà xé trộn rau, đậu phụ áp chảo nấm; tinh bột GI thấp.'},
+ 'van-phong':{prof:{k:1,carb:'chuan',sauce:1},test:n=>n.kcal>=420&&n.kcal<=650&&n.na<=1000,crit:'420–650 kcal, natri ≤1.000 mg',rd:'Đủ món; ưu tiên rút thời gian nấu xuống ≤10 phút.'}
+};
+
+/* ================= Trạng thái Tab 1 ================= */
+const S={mode:'solo',goal:'van-phong',perDish:1,liked:new Set(),removed:new Set(),menu:[],members:{bo:true,me:true,con:true,ongba:true},black:new Set(),
+  bag:{added:false,revealed:false,picks:[],trial:false},pay:'qr',phoneOk:false,focus:null,streak:0,hub:{1:4,2:3},building:'monarchy',addons:{yog:0,juice:0,fruit:0,gift:0},
+  prof:'solo',profiles:{solo:{sex:'nam',age:32,h:170,w:72,act:1.375},bo:{sex:'nam',age:42,h:172,w:76,act:1.55},me:{sex:'nu',age:38,h:158,w:60,act:1.375},con:{sex:'nam',age:10,h:140,w:34,act:1.55},ongba:{sex:'nu',age:68,h:155,w:55,act:1.2}}};
+Object.assign(S,{gift:{on:false,payer:'hcm',prev:null},renew:true,skipped:false});
+const claimed=new Set(['0905123456','0935111222','0987654321','0912345678']);
+const blocked=d=>d.al.some(a=>S.black.has(a));
+const activeMembers=()=>Object.keys(MEMBERS).filter(k=>S.members[k]);
+const week=()=>Math.min(4,S.streak+1);
+function soloProf(){
+  const t=targets(S.profiles.solo,S.goal);
+  const avgP=S.menu.length?S.menu.reduce((s,id)=>s+byId[id].n[0],0)/S.menu.length:33;
+  const k=clamp(Math.round(t.prot/avgP*10)/10,.8,1.6);
+  return {k,carb:(S.goal==='giam-can'||S.goal==='tieu-duong')?'nhe':'chuan',sauce:S.goal==='tim-mach'?.5:1,goal:S.goal};
+}
+function withCarb(sp,pr,goal){
+  const t=targets(pr,goal),ids=S.menu.length?S.menu:DISHES.slice(0,6).map(d=>d.id);
+  let pf=0,c=0;ids.forEach(id=>{const n=serve(byId[id],{...sp,cm:1});pf+=4*n.P+9*n.F;c+=n.C});pf/=ids.length;c/=ids.length;
+  const cm=clamp(Math.round((t.meal-pf)/(4*c)*10)/10,.6,sp.carb==='nhe'?1.2:1.8);return {...sp,cm};
+}
+function profFor(key){return key==='solo'?withCarb(soloProf(),S.profiles.solo,S.goal):withCarb({...MEMBERS[key]},S.profiles[key],MEMBERS[key].goal)}
+function score(d){
+  const fam=S.mode==='family';
+  return (S.liked.has(d.id)?100:0)+(S.gift.on&&d.soft?10:0)+(fam?d.goals.length*3+((S.members.ongba&&d.soft)?6:0):(d.goals.includes(S.goal)?20:0))+d.batch+d.pop*.5;
+}
+function buildMenu(){
+  const pool=DISHES.filter(d=>!blocked(d)&&!S.removed.has(d.id)).sort((a,b)=>score(b)-score(a));
+  S.menu=pool.slice(0,6).map(d=>d.id);
+  if(!S.menu.includes(S.focus))S.focus=S.menu[0]||null;
+}
+function swapDish(id){
+  S.removed.add(id);S.liked.delete(id);
+  const pool=DISHES.filter(d=>!blocked(d)&&!S.removed.has(d.id)&&!S.menu.includes(d.id)).sort((a,b)=>score(b)-score(a));
+  if(!pool.length){S.removed.delete(id);toast('Hết món phù hợp để đổi. Bỏ bớt món trong danh sách tránh.');return null}
+  S.menu[S.menu.indexOf(id)]=pool[0].id;if(S.focus===id)S.focus=pool[0].id;return pool[0].id;
+}
+const lineGross=d=>S.mode==='solo'?d.price*S.perDish:activeMembers().reduce((s,k)=>s+d.price*MEMBERS[k].pk,0);
+const portions=()=>S.mode==='solo'?S.perDish:activeMembers().length;
+function pickBag(){
+  const picks=[],sorted=[...SURPLUS].sort((a,b)=>b.kg-a.kg);
+  for(const pass of [0,1])for(const s of sorted){if(picks.length===3)break;for(const id of s.dishes){const d=byId[id];if(blocked(d)||picks.some(p=>p.id===id))continue;if(pass===0&&S.menu.includes(id))continue;picks.push({id,ing:s.ing,kg:s.kg});break}}
+  return picks.slice(0,3);
+}
+const hubFee=n=>Math.max(0,(n>=HUB_TARGET?0:n>=3?15000:25000)-(G.amb?5000:0));
+const reuseCost=()=>G.amort+G.wash+G.reward*G.ret*G.redeem+G.loss*G.bagPrice;
+const swapCost=()=>G.swap?reuseCost():G.pack;
+const ambFee=()=>G.amb?2000:0;
+function syncTrial(){
+  const want=S.phoneOk&&G.promo==='spread'&&week()===3;
+  if(want&&!S.bag.trial){S.bag.trial=true;S.bag.added=true;S.bag.revealed=false;S.bag.picks=pickBag()}
+  if(!want&&S.bag.trial){S.bag.trial=false;S.bag.added=false;S.bag.revealed=false;S.bag.picks=[]}
+}
+function cartCalc(){
+  let gross=0,batchSave=0,bagGross=0;
+  S.menu.forEach(id=>{const d=byId[id],g=lineGross(d);gross+=g;batchSave+=g*d.batch/100});
+  if(S.bag.added)S.bag.picks.forEach(p=>bagGross+=lineGross(byId[p.id]));
+  const bagSave=S.bag.trial?bagGross:bagGross*.10, food=gross+bagGross;
+  const regular=food-batchSave-bagSave;
+  let jr=0,jlabel='';const w=week();
+  if(S.phoneOk){if(G.promo==='front'&&w===1){jr=.5;jlabel='Tài khoản mới −50% tuần 1'}if(G.promo==='spread'&&w<=2){jr=.2;jlabel=`Hành trình tuần ${w}: −20%`}}
+  const journey=(food-batchSave-(S.bag.trial?0:bagSave))*jr;
+  const disc=batchSave+bagSave+journey, cap=food*.5, applied=Math.min(disc,cap);
+  const addon=ADDONS.reduce((s,a)=>s+a.price*S.addons[a.id],0);
+  const f1=hubFee(S.hub[1]), f2=hubFee(S.hub[2]), swap=0;
+  const weekly=food-applied+addon+f1+f2-swap;
+  return {gross,bagGross,food,batchSave,bagSave,journey,jlabel,disc,applied,capped:disc>cap+1,addon,f1,f2,swap,weekly,regular,gift:S.phoneOk&&G.promo==='spread'&&w===4};
+}
+
+/* ================= Render Tab 1 ================= */
+const JOURNEY={spread:['Giảm 20%','Giảm 20%','Túi mù dùng thử miễn phí','Lên hạng Bếp Vàng + bộ quà bếp'],front:['Giảm 50%','Không ưu đãi','Không ưu đãi','Không ưu đãi']};
+function renderJourney(){
+  const w=week(),plan=JOURNEY[G.promo];
+  $('#streakTxt').textContent=(S.streak?`Chuỗi nấu bếp: ${S.streak} tuần liên tiếp`:'Chuỗi nấu bếp: bắt đầu tuần đầu tiên')+(S.pay==='pass'?' 🛡 có 1 Khiên bảo vệ chuỗi':'');
+  $('#streakSub').textContent=S.streak>=4?'Đã đạt hạng Bếp Vàng':'Nấu đủ 4 tuần liên tiếp để lên hạng Bếp Vàng';
+  $('#weeks').innerHTML=plan.map((r,i)=>{const n=i+1,st=S.streak>=4&&n===4?'gold':n<=S.streak?'done':n===w?'now':'locked';
+    return `<div class="wk ${st}"><div class="wn"><span>Tuần ${n}</span><span>${st==='done'||st==='gold'?'✓':st==='now'?'Đang mở':'🔒'}</span></div><b>${r}</b></div>`}).join('');
+  setPressed('#promoSeg button','p',G.promo);setPressed('#promoSeg4 button','p',G.promo);
+  $('#journeyNote').innerHTML=S.phoneOk?`<div class="note ${G.promo==='spread'?'ok':'orange'}">${G.promo==='spread'?'Khách phải quay lại 4 tuần để nhận đủ ưu đãi; tổng giá trị tương đương nhưng chi phí tuần đầu thấp hơn.':'Toàn bộ ưu đãi dồn vào tuần 1. Đây là mô thức Blue Apron: khách nhận xong ưu đãi rồi hủy.'}</div>`
+    :'<div class="note">Hành trình áp dụng cho tài khoản mới. Xác thực số điện thoại trong giỏ để mở ưu đãi.</div>';
+  $('#weekDone').disabled=S.streak>=4;
+}
+function renderHub(){
+  const n=S.hub[G.drop], bld=BUILDINGS.find(b=>b.id===S.building).name.split(',')[0], dr=DROPS[G.drop];
+  $('#buildingSel').innerHTML=BUILDINGS.map(b=>`<option value="${b.id}" ${b.id===S.building?'selected':''}>${b.name}</option>`).join('');
+  const pct=Math.min(100,n/HUB_TARGET*100);
+  $('#hubBar').innerHTML=`<i style="width:${pct}%"></i><span class="mk" style="left:50%"></span><span class="ml" style="left:50%">3 hộp: 15.000đ</span><span class="mk" style="left:calc(100% - 2px)"></span><span class="ml" style="left:calc(100% - 30px)">6 hộp: miễn phí</span>`;
+  const left=HUB_TARGET-n;
+  $('#hubMsg').innerHTML=left>0?`${bld} đã gom được <b>${n}/${HUB_TARGET} hộp</b> cho đợt ${dr.name}. Rủ thêm ${left} hàng xóm đặt trước giờ chốt ${dr.cut} để cả tòa được miễn phí giao và tặng 1 phần tráng miệng.`
+    :`${bld} đã đủ <b>${n} hộp</b> cho đợt ${dr.name}. Cả tòa được miễn phí giao và mỗi hộ nhận 1 phần tráng miệng.`;
+  const f=hubFee(n);$('#hubFee').innerHTML=`Phí giao đợt ${dr.name}: <b>${f?fmt(f):'0đ'}</b>`;
+  setPressed('#delivSeg button','v',G.amb?'amb':'door');
+  $('#ambNote').innerHTML=G.amb?`<div class="note ok">${S.building==='hc'?'Cụm nhà phố: tủ mát đặt tại nhà một cư dân làm đại sứ':'Chung cư: tủ mát cư dân ở sảnh hoặc đại sứ ở tầng'} nhận hàng cho cả cụm trong một lần dừng. Khách tự lấy trong 12 giờ và được giảm 5.000đ phí giao mỗi đợt; đại sứ nhận 2.000đ/hộp dạng điểm. Không còn phụ thuộc lễ tân hay việc khách có nhà.</div>`:'';
+}
+function renderControls(){
+  $('#goalChips').innerHTML=GOALS.map(([k,l,s])=>`<button class="chip goal-chip" data-goal="${k}" aria-pressed="${S.goal===k}" ${S.mode==='family'?'disabled':''}>${l}<small>${s}</small></button>`).join('');
+  $('#blackChips').innerHTML=BLACK.map(([k,l])=>`<button class="chip no" data-black="${k}" aria-pressed="${S.black.has(k)}">${S.black.has(k)?'✕ ':''}${l}</button>`).join('');
+  $('#memberToggles').innerHTML=Object.entries(MEMBERS).map(([k,m])=>`<button class="member" data-mem="${k}" aria-pressed="${S.members[k]}"><b>${m.name}</b><small>${m.goalTxt}</small></button>`).join('');
+  $('#familyBox').hidden=S.mode!=='family';$('#perDishWrap').hidden=S.mode!=='solo';$('#perDish').textContent=S.perDish;
+  setPressed('#modeSeg button','mode',S.mode);
+}
+function dishHTML(id,drop,idx){
+  const d=byId[id],fam=S.mode==='family',nn=serve(d,fam?{k:1,carb:'chuan',sauce:1}:profFor(S.gift.on?'ongba':'solo'));
+  const day=(drop===1?['T2','T3','T4']:['T5','T6','T7–CN'])[idx]||'',iqf=drop===2&&idx===2,store=day?`<span class="store ${iqf?'iqf':'cool'}">${day}: ${iqf?'Cấp đông IQF, rã đông 12 giờ':'Ngăn mát 0–2°C'}</span>`:'';
+  const off=!fam&&!d.goals.includes(S.goal)?'<span class="tag">Ngoài mục tiêu</span>':'';
+  const soft=fam&&S.members.ongba&&d.soft?'<span class="tag green">Mềm cho ông bà</span>':'';
+  return `<li class="dish ${fam&&S.focus===id?'sel':''}" data-id="${id}"><div class="thumb ${d.k}" aria-hidden="true">${d.emo}</div>
+    <div class="dish-body"><button class="dish-name" data-act="pick">${d.name}</button>
+      <div class="dish-meta">${Math.round(nn.kcal)} kcal, đạm ${Math.round(nn.P)} g. ${d.src}</div>
+      <div>${store}${d.batch?`<span class="tag orange">Mẻ nấu chung −${d.batch}%</span>`:''}${off}${soft}</div></div>
+    <div class="dish-side"><div class="price">${fmt(lineGross(d)*(1-d.batch/100))}</div>
+      <div class="acts"><button class="icon like" data-act="like" aria-pressed="${S.liked.has(id)}" aria-label="Thích món">${S.liked.has(id)?'♥':'♡'}</button><button class="icon" data-act="drop" aria-label="Bỏ món, đổi món khác">✕</button></div></div></li>`;
+}
+function renderMenu(flashId){
+  const drops=[[1,S.menu.slice(0,3)],[2,S.menu.slice(3,6)]];
+  $('#menuDrops').innerHTML=drops.map(([k,ids])=>`<div class="drop"><h3>Đợt ${DROPS[k].name}</h3><div class="muted">Chốt ${DROPS[k].cut}. ${DROPS[k].eat}</div><ul class="dishes">${ids.map((id,i)=>dishHTML(id,k,i)).join('')}</ul></div>`).join('');
+  const n=portions()*S.menu.length;
+  $('#menuNote').textContent=S.mode==='family'?`${activeMembers().length} người × ${S.menu.length} món = ${n} phần`:`${S.menu.length} món × ${S.perDish} suất`;
+  if(flashId){const el=$(`.dish[data-id="${flashId}"]`);if(el)el.classList.add('flash')}
+}
+function renderSplit(){
+  $('#familySplit').hidden=S.mode!=='family';if(S.mode!=='family')return;
+  const d=byId[S.focus],ms=activeMembers();
+  if(!d||!ms.length){$('#splitBody').innerHTML='<div class="note">Chọn ít nhất một thành viên.</div>';return}
+  const raw=ms.reduce((s,k)=>s+d.protG*MEMBERS[k].k,0),sname=d.finish.replace(/\s[\d,]+\s?(ml|g)$/,'');
+  const gC=ms.filter(k=>MEMBERS[k].carb==='chuan'),gN=ms.filter(k=>MEMBERS[k].carb==='nhe'),sauced=ms.filter(k=>MEMBERS[k].sauce>0);
+  const big=2+(gC.length?1:0)+(gN.length?1:0),old=ms.length*3,kind=d.k==='veg'?'đậu hũ':d.k==='sea'?'cá, hải sản':'thịt';
+  $('#splitBody').innerHTML=`<div class="flow">
+   <div class="fstep s1"><b>Phi thơm Túi Gia Vị Tươi, xào khay đạm</b><span class="small">Túi Gia Vị Tươi gồm hành, tỏi, sả, ngò sơ chế trong ngày. Cho tiếp ${fmtN(raw)} g ${kind} sống ướp nền nhạt không muối (${d.base}), 10–12 phút.</span></div>
+   <div class="fstep s2"><b>Chia ra bát từng người theo vạch in trên khay</b><ul>${ms.map(k=>`<li>${MEMBERS[k].name}: vạch ${fmtN(d.protG*MEMBERS[k].k)} g${k==='ongba'?', cắt nhỏ, đậy nắp thêm 3 phút':''}</li>`).join('')}</ul></div>
+   <div class="fstep s3"><b>Mỗi người rưới gói sốt có tên mình vào bát riêng</b><span class="small">Sốt không bao giờ vào chảo chung, nên không thể nêm nhầm cho người cần ăn nhạt.</span><div>${ms.map(k=>{const m=MEMBERS[k];return `<span class="sticker" style="color:${m.col}">${m.tag} – ${m.sauce?sname+(m.sv?', '+m.sv:''):'Không sốt'}</span>`}).join('')}</div></div>
+  </div>
+  <div class="bags">
+   <div class="bag"><span class="sw" style="background:var(--green)"></span><b>Khay đạm chung</b>In vạch định lượng cho ${ms.length} người</div>
+   <div class="bag"><span class="sw" style="background:#7a9a3a"></span><b>Túi Gia Vị Tươi</b>Hành, tỏi, sả, ngò sơ chế trong ngày</div>
+   ${gC.length?`<div class="bag"><span class="sw" style="background:#c8a24a"></span><b>Túi Chuẩn</b>${gC.map(k=>MEMBERS[k].name).join(', ')}: cơm, khoai, rau luộc</div>`:''}
+   ${gN.length?`<div class="bag"><span class="sw" style="background:#7fb069"></span><b>Túi Nhẹ/Mềm</b>${gN.map(k=>MEMBERS[k].name).join(', ')}: rau hấp mềm, ít cơm mềm</div>`:''}
+   ${sauced.length?`<div class="bag"><span class="sw" style="background:var(--orange)"></span><b>${sauced.length} gói sốt bát riêng</b>Gói nhỏ in tên người dùng</div>`:''}
+  </div>
+  <div class="note ok">Mỗi món: <b>${big} túi chính + ${sauced.length} gói sốt nhỏ</b>, thay vì ${old} túi khi chia riêng từng người. Lỗi nêm nhầm bị loại bằng thiết kế bao bì, không dựa vào trí nhớ người nấu.</div>`;
+}
+function statusOf(kind,v,t){
+  if(kind==='range'){const r=v/t;return r>=.9&&r<=1.1?['ok','Đạt']:r>=.8&&r<=1.2?['mid','Gần đạt']:r<1?['bad','Thiếu']:['bad','Vượt ngưỡng']}
+  if(kind==='min'){return v>=t?['ok','Đạt']:v>=t*.8?['mid','Gần đạt']:['bad','Thiếu']}
+  return v<=t?['ok','Đạt']:v<=t*1.15?['mid','Gần đạt']:['bad','Vượt ngưỡng'];
+}
+function renderNut(){
+  const fam=S.mode==='family', keys=fam?activeMembers():S.gift.on?['ongba']:['solo'];
+  if(!keys.includes(S.prof))S.prof=keys[0]||'solo';
+  const key=S.prof, pr=S.profiles[key], sp=profFor(key), goal=key==='solo'?S.goal:MEMBERS[key].goal, t=targets(pr,goal);
+  const ns=S.menu.map(id=>serve(byId[id],sp)), avg=f=>ns.reduce((s,n)=>s+n[f],0)/(ns.length||1);
+  const rows=[['Năng lượng',avg('kcal'),'kcal',t.meal,'range','≈30% nhu cầu ngày'],['Đạm',avg('P'),'g',t.prot,'min','g/kg × cân nặng ÷ 3 bữa'],['Tinh bột',avg('cp'),'% năng lượng',t.carbCap,'max',''],
+    ['Natri',avg('na'),'mg',t.naMax,'max','WHO: <2.000 mg/ngày'],['Chất xơ',avg('fib'),'g',t.fibMin,'min','≥25 g/ngày'],['Béo bão hòa',avg('sp'),'% năng lượng',t.satMax,'max','WHO: <10% năng lượng'],
+    ['Purin',avg('pur'),'mg',t.purMax,'max','tham chiếu nội bộ'],['Tải lượng đường huyết (GL)',avg('gl'),'',t.glMax,'max','tham chiếu nội bộ']];
+  const tabs=keys.length>1?`<div class="seg" id="profSeg" style="margin-bottom:10px">${keys.map(k=>`<button data-prof="${k}" aria-pressed="${k===key}">${k==='solo'?'Bạn':MEMBERS[k].name}</button>`).join('')}</div>`:'';
+  const acts=[[1.2,'Ít vận động'],[1.375,'Nhẹ (1–3 buổi/tuần)'],[1.55,'Vừa (3–5 buổi)'],[1.725,'Nhiều (6–7 buổi)']];
+  $('#nutBody').innerHTML=`${tabs}
+   <div class="formgrid">
+    <label>Giới tính<select id="pSex"><option value="nam" ${pr.sex==='nam'?'selected':''}>Nam</option><option value="nu" ${pr.sex==='nu'?'selected':''}>Nữ</option></select></label>
+    <label>Tuổi<input type="number" id="pAge" min="5" max="95" value="${pr.age}"></label>
+    <label>Chiều cao (cm)<input type="number" id="pH" min="100" max="210" value="${pr.h}"></label>
+    <label>Cân nặng (kg)<input type="number" id="pW" min="20" max="200" value="${pr.w}"></label>
+    <label>Vận động<select id="pAct">${acts.map(([v,l])=>`<option value="${v}" ${pr.act==v?'selected':''}>${l}</option>`).join('')}</select></label>
+   </div>
+   <div class="kpis">
+    <div class="kpi"><span>BMI (ngưỡng châu Á)</span><b>${nf1.format(t.bmi)}</b><span>${t.bmiTxt}</span></div>
+    <div class="kpi"><span>BMR Mifflin-St Jeor</span><b>${t.bmr?fmtN(t.bmr)+' kcal':'–'}</b></div>
+    <div class="kpi"><span>TDEE</span><b>${fmtN(t.tdee)} kcal</b></div>
+    <div class="kpi"><span>Mục tiêu ${GOAL_LABEL[goal]}</span><b>${fmtN(t.kcal)} kcal/ngày</b></div>
+    <div class="kpi"><span>Khẩu phần hệ thống đề xuất</span><b>Đạm ×${nf1.format(sp.k)}, tinh bột ×${nf1.format(sp.cm)}</b><span>Túi ${sp.carb==='nhe'?'Nhẹ/Mềm':'Chuẩn'}, sốt ${sp.sauce===1?'đủ':sp.sauce?'nửa gói':'không'}</span></div>
+   </div>
+   ${t.child?'<div class="note orange">Mifflin-St Jeor chỉ dùng cho người lớn. Với trẻ em, mô phỏng dùng nhu cầu tham chiếu 1.800 kcal/ngày; cần bảng nhu cầu theo tuổi.</div>':''}
+   <div class="tablewrap"><table><thead><tr><th>Chỉ tiêu (trung bình/bữa, cả tuần)</th><th class="n">Thực đơn</th><th class="n">Ngưỡng</th><th>Đánh giá</th></tr></thead><tbody>
+    ${rows.map(([l,v,u,tg,kind,src])=>{const [c,s]=statusOf(kind,v,tg);return `<tr><td>${l}${src?`<div class="tiny muted">${src}</div>`:''}</td><td class="n">${l==='Năng lượng'||l==='Natri'||l==='Purin'?fmtN(v):nf1.format(v)} ${u}</td><td class="n">${kind==='min'?'≥ ':kind==='max'?'≤ ':'≈ '}${fmtN(tg)} ${u}</td><td><span class="st ${c}">${s}</span></td></tr>`}).join('')}
+   </tbody></table></div>
+   <p class="tiny muted" style="margin-top:8px">Số liệu dinh dưỡng món là ước tính nội bộ. Trước khi gắn nhãn y khoa cần kiểm nghiệm và chuyên gia dinh dưỡng duyệt ngưỡng.</p>`;
+}
+function renderBag(){
+  const row=$('#bagRow');
+  $('#bagAdd').textContent=S.bag.trial?'Quà tuần 3':S.bag.added?'Bỏ túi mù':'Thêm túi mù';$('#bagAdd').disabled=S.bag.trial;
+  $('#bagReveal').disabled=!S.bag.added||S.bag.revealed;
+  if(!S.bag.added){row.innerHTML='<div class="mystery" style="grid-column:1/-1"><span class="small muted">Chưa thêm túi mù.</span></div>';return}
+  row.innerHTML=S.bag.picks.map((p,i)=>{const d=byId[p.id];
+    return S.bag.revealed?`<div class="mystery open"><div class="row gap"><span style="font-size:24px">${d.emo}</span><b>${d.name}</b></div><span class="tag orange" style="margin-top:6px;align-self:flex-start">Xả kho: ${p.ing} ${p.kg} kg</span></div>`
+    :`<div class="mystery"><div class="q">?</div><span class="small">Món bí mật ${i+1}</span><span class="tiny muted">${S.bag.trial?'Quà dùng thử tuần 3':'Đã lọc theo danh sách tránh'}</span></div>`}).join('');
+}
+function qrSVG(seed){
+  const R=rng(seed),n=21;let r='';
+  for(let y=0;y<n;y++)for(let x=0;x<n;x++){const f=(x<7&&y<7)||(x>=n-7&&y<7)||(x<7&&y>=n-7);let on;
+    if(f){const fx=x>=n-7?x-n+7:x,fy=y>=n-7?y-n+7:y;on=fx===0||fx===6||fy===0||fy===6||(fx>=2&&fx<=4&&fy>=2&&fy<=4)}else on=R()>.52;
+    if(on)r+=`<rect x="${x}" y="${y}" width="1" height="1"/>`}
+  return `<svg viewBox="0 0 21 21" aria-label="Mã QR minh họa" fill="#1d211b">${r}</svg>`;
+}
+function renderAddons(){
+  $('#addons').innerHTML=ADDONS.map(a=>`<div class="addon"><div>${a.name}<small>${fmt(a.price)}</small></div><div class="stepper"><button data-add="${a.id}" data-d="-1" aria-label="Bớt">−</button><b>${S.addons[a.id]}</b><button data-add="${a.id}" data-d="1" aria-label="Thêm">+</button></div></div>`).join('');
+  $('#swapChk').checked=G.swap;
+}
+function renderCart(){
+  const c=cartCalc(),L=[];
+  L.push([`Thực đơn ${S.menu.length} món`,fmt(c.gross)]);
+  if(c.bagGross)L.push([S.bag.trial?'Túi mù dùng thử (quà tuần 3)':'Túi mù 3 món',fmt(c.bagGross)]);
+  if(c.batchSave)L.push(['Mẻ nấu chung','−'+fmt(c.batchSave),'minus']);
+  if(c.bagSave)L.push([S.bag.trial?'Quà túi mù dùng thử':'Túi mù −10%','−'+fmt(c.bagSave),'minus']);
+  if(c.journey)L.push([c.jlabel,'−'+fmt(c.journey),'minus']);
+  if(c.capped)L.push(['Áp trần tổng ưu đãi 50%','+'+fmt(c.disc-c.applied)]);
+  if(c.addon)L.push(['Mua thêm',fmt(c.addon)]);
+  L.push([`Phí giao đợt CN (${S.hub[1]} hộp trong cụm${G.amb?', qua đại sứ':''})`,c.f1?fmt(c.f1):'0đ']);
+  L.push([`Phí giao đợt T4 (${S.hub[2]} hộp trong cụm${G.amb?', qua đại sứ':''})`,c.f2?fmt(c.f2):'0đ']);
+  if(G.swap)L.push(['Trả túi giữ nhiệt sạch (2 đợt)','+3.000 điểm','gift']);
+  if(S.pay==='pass')L.push(['Tráng miệng Thẻ Suất Ăn','Tặng','gift']);
+  if(S.hub[1]>=HUB_TARGET)L.push(['Tráng miệng mua chung đợt CN','Tặng','gift']);
+  if(S.hub[2]>=HUB_TARGET)L.push(['Tráng miệng mua chung đợt T4','Tặng','gift']);
+  if(c.gift)L.push(['Bộ quà bếp Bếp Vàng','Tặng','gift']);
+  $('#cartLines').innerHTML=L.map(([a,b,m])=>`<div class="row"><span>${a}</span><span class="${m||''} num">${b}</span></div>`).join('');
+  $('#cartTotal').textContent=fmt(c.weekly);
+  const pd=$('#payDetail');
+  if(S.pay==='qr')pd.innerHTML=`<div class="qr">${qrSVG(Math.round(c.weekly))}<div><b>${fmt(c.weekly)}</b><div class="tiny muted">Mã minh họa, không dùng để thanh toán. Trả khi đặt giúp bếp có tiền mua nguyên liệu trước (xem Tab 4).</div></div></div>`;
+  else if(S.pay==='card'){const reg=c.regular+c.addon+c.f1+c.f2-c.swap;pd.innerHTML=`<div class="lines"><div class="row"><span>Tuần này</span><b class="num">${fmt(c.weekly*1.03)}</b></div><div class="row"><span>Mỗi tháng khi hết ưu đãi</span><b class="num">${fmt(reg*4.33*1.03)}</b></div><div class="row muted"><span>Trong đó phí thẻ 3%</span><span class="num">${fmt(reg*4.33*.03)}/tháng</span></div></div><div class="note orange">Cần kiểm tra quy định của tổ chức thẻ và ngân hàng thanh toán về phụ phí thẻ.</div>`}
+  else{const suat=Math.max(1,portions()*S.menu.length),avg=(c.gross-c.batchSave)/suat,wk=26/suat;
+    pd.innerHTML=`<div class="lines"><div class="row"><span>Trả trước 24 suất</span><b class="num">${fmt(avg*24)}</b></div><div class="row"><span>Nhận</span><b>26 suất (tặng 2)</b></div><div class="row"><span>Đủ dùng khoảng</span><b>${nf1.format(wk)} tuần</b></div><div class="row"><span>Kèm theo</span><b>Tráng miệng mỗi tuần, 1 Khiên chuỗi</b></div></div>
+    <div class="dots" aria-label="26 suất, 2 suất tặng">${Array.from({length:26},(_,i)=>`<i class="${i>=24?'free':''}"></i>`).join('')}</div>
+    <div class="note ok">Thẻ ghi nhận bằng <b>số suất</b>, không lưu số dư tiền, không quy đổi tiền mặt. Ưu đãi thực khoảng ${nf1.format(2/26*100)}% cộng quà. Khiên chuỗi giữ chuỗi nấu khi bỏ qua 1 tuần. Điều khoản hoàn, hủy theo hợp đồng do luật sư soạn.</div>`}
+  // góc nhìn nội bộ
+  const cogs=c.food*.58, addM=ADDONS.reduce((s,a)=>s+a.price*a.m*S.addons[a.id],0);
+  const dCost=[1,2].reduce((s,k)=>s+G.trip/(G.stops*Math.max(1,S.hub[k]))+swapCost()+ambFee(),0);
+  const gp=(c.food-c.applied)-cogs+addM+c.f1+c.f2-c.swap-dCost;
+  $('#internal').innerHTML=[['Giá trị đơn (AOV)',fmt(c.weekly)],['Giá vốn món (58%)','−'+fmt(cogs)],['Lãi gộp mua thêm',fmt(addM)],['Chi phí giao + bao bì thực tế 2 đợt','−'+fmt(dCost)],['Phí giao khách trả',fmt(c.f1+c.f2)],['Lãi gộp ước tính của đơn',fmt(gp)]]
+    .map(([a,b],i)=>`<div class="row"${i===5?' style="font-weight:700"':''}><span>${a}</span><span class="num">${b}</span></div>`).join('')+`<p class="tiny muted">Mua thêm đi cùng chuyến xe nên chi phí giao biên gần 0đ. Chi phí giao tính theo số hộp trong tòa ở mục Mua chung.</p>`;
+}
+function renderTab1(flash){syncTrial();renderGift();renderJourney();renderRenew();renderHub();renderControls();renderMenu(flash);renderSplit();renderNut();renderBag();renderAddons();renderCart()}
+
+/* ================= V6: gia hạn, Gói Hiếu Thảo ================= */
+const PAYERS={hcm:'Con tại TP.HCM',hn:'Con tại Hà Nội',os:'Con ở nước ngoài (thẻ quốc tế)'};
+function renderGift(){
+  $('#giftChk').checked=S.gift.on;
+  $('#giftBody').innerHTML=S.gift.on?`<div class="lines" style="margin:4px 0"><div class="row"><span>Người trả tiền</span><select id="payerSel" style="width:auto">${Object.entries(PAYERS).map(([k,v])=>`<option value="${k}" ${k===S.gift.payer?'selected':''}>${v}</option>`).join('')}</select></div><div class="row"><span>Người nhận</span><b>Bố mẹ, phường Hải Châu, Đà Nẵng</b></div><div class="row"><span>Gói</span><b>Ông bà: mềm, ít muối, 2 suất/món</b></div></div><p class="tiny muted">Người trả nhận ảnh giao hàng và tóm tắt dinh dưỡng mỗi tuần qua Zalo hoặc email; bố mẹ không cần cài ứng dụng.</p>`
+    :'<span class="muted">Gói Hiếu Thảo: con ở xa trả tiền, bố mẹ ở Đà Nẵng nhận gói Ông bà.</span>';
+}
+function setGift(on){
+  if(on&&!S.gift.on){S.gift.prev={mode:S.mode,goal:S.goal,perDish:S.perDish,prof:S.prof};S.gift.on=true;S.mode='solo';S.goal='tim-mach';S.perDish=2;S.prof='ongba'}
+  else if(!on&&S.gift.on){Object.assign(S,S.gift.prev);S.gift.on=false}
+  S.removed.clear();buildMenu();renderTab1();
+}
+function renderRenew(){
+  const c=cartCalc(),dr=DROPS[G.drop],remind=G.drop===1?'T5 17:00':'CN 17:00';
+  $('#renewChk').checked=S.renew;
+  $('#renewBody').innerHTML=S.renew?`<div class="zalo"><div class="zh"><i>Zalo</i>MOVA FRESH OA, ${remind} (3 giờ trước chốt)</div>
+   <div>${S.gift.on?'Gói Hiếu Thảo cho bố mẹ':'Giỏ tuần sau của anh/chị'}, đợt ${dr.name}: ${S.menu.length} món, ${fmt(c.regular+c.addon+c.f1+c.f2)}. Tự động xác nhận lúc ${dr.cut}.</div>
+   <div class="zb"><button class="btn sm" id="skipBtn">${S.skipped?'Đã bỏ qua tuần này':'Bỏ qua tuần này'}</button><button class="btn sm" id="swapMenuBtn">Đổi món</button><button class="btn primary sm" id="keepBtn">Giữ nguyên</button></div></div>`
+   :'<div class="note orange">Tắt gia hạn mặc định: khách phải tự đặt lại mỗi tuần. Sổ đơn mất phần nền khoảng 40% lúc mở sổ; thịt phải đặt khi sổ đơn còn mỏng hơn.</div>';
+}
+
+/* ================= Sự kiện Tab 1 ================= */
+$('#giftChk').addEventListener('change',e=>setGift(e.target.checked));
+$('#giftBody').addEventListener('change',e=>{if(e.target.id==='payerSel'){S.gift.payer=e.target.value;toast('Người trả: '+PAYERS[S.gift.payer])}});
+$('#renewChk').addEventListener('change',e=>{S.renew=e.target.checked;renderRenew()});
+$('#renewBody').addEventListener('click',e=>{
+  if(e.target.id==='skipBtn'){S.skipped=!S.skipped;renderRenew();if(S.skipped)toast(S.pay==='pass'?'Đã bỏ qua tuần. Khiên bảo vệ giữ nguyên chuỗi nấu bếp.':'Đã bỏ qua tuần. Chuỗi nấu bếp sẽ dừng; Thẻ Suất Ăn có Khiên bảo vệ chuỗi.')}
+  if(e.target.id==='keepBtn'){S.skipped=false;renderRenew();toast('Giữ nguyên giỏ tuần sau')}
+  if(e.target.id==='swapMenuBtn')spotEls('#menuPanel');
+});
+$('#delivSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setAmb(b.dataset.v==='amb')});
+function setAmb(v){G.amb=v;$('#ambChk2').checked=v;renderHub();renderCart();renderRenew();renderLeg2();renderFin()}
+function setPromo(p){G.promo=p;renderTab1();renderFin()}
+$('#promoSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setPromo(b.dataset.p)});
+$('#weekDone').addEventListener('click',()=>{if(S.streak<4){S.streak++;renderTab1();toast(S.streak>=4?'Đã lên hạng Bếp Vàng':`Chuỗi nấu ${S.streak} tuần. Mở ưu đãi tuần ${week()}.`)}});
+$('#weekReset').addEventListener('click',()=>{S.streak=0;renderTab1()});
+$('#buildingSel').addEventListener('change',e=>{S.building=e.target.value;renderHub()});
+$('#hubPlus').addEventListener('click',()=>{const k=G.drop;if(S.hub[k]>=12){toast('Tòa đã đủ, đợt sau mở lại');return}S.hub[k]++;renderHub();renderCart();if(S.hub[k]===HUB_TARGET)toast('Cả tòa được miễn phí giao và tặng tráng miệng')});
+$('#hubReset').addEventListener('click',()=>{S.hub={1:4,2:3};renderHub();renderCart()});
+$('#modeSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.mode=b.dataset.mode;S.prof=S.mode==='family'?'bo':'solo';buildMenu();if(S.bag.added&&!S.bag.revealed)S.bag.picks=pickBag();renderTab1()});
+$('#perDishWrap').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.perDish=clamp(S.perDish+(+b.dataset.step),1,4);renderTab1()});
+$('#goalChips').addEventListener('click',e=>{const b=e.target.closest('[data-goal]');if(!b||b.disabled)return;S.goal=b.dataset.goal;S.removed.clear();buildMenu();renderTab1();toast('Đã xếp lại thực đơn: '+GOAL_LABEL[S.goal])});
+$('#blackChips').addEventListener('click',e=>{const b=e.target.closest('[data-black]');if(!b)return;const k=b.dataset.black;S.black.has(k)?S.black.delete(k):S.black.add(k);buildMenu();if(S.bag.added){S.bag.picks=pickBag();if(S.bag.revealed){S.bag.revealed=false;toast('Túi mù đã xếp lại theo danh sách tránh mới')}}renderTab1()});
+$('#memberToggles').addEventListener('click',e=>{const b=e.target.closest('[data-mem]');if(!b)return;S.members[b.dataset.mem]=!S.members[b.dataset.mem];buildMenu();renderTab1()});
+$('#menuDrops').addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b)return;const id=b.closest('.dish').dataset.id;
+  if(b.dataset.act==='like'){S.liked.has(id)?S.liked.delete(id):S.liked.add(id);renderTab1()}
+  else if(b.dataset.act==='drop'){const n=swapDish(id);if(n){renderTab1(n);toast(`Đã đổi ${byId[id].name} sang ${byId[n].name}`)}}
+  else if(b.dataset.act==='pick'&&S.mode==='family'){S.focus=id;renderTab1()}
+});
+$('#nutBody').addEventListener('click',e=>{const b=e.target.closest('[data-prof]');if(b){S.prof=b.dataset.prof;renderNut()}});
+$('#nutBody').addEventListener('change',e=>{const pr=S.profiles[S.prof],id=e.target.id;
+  if(id==='pSex')pr.sex=e.target.value;else if(id==='pAct')pr.act=+e.target.value;else if(id==='pAge')pr.age=clamp(+e.target.value||pr.age,5,95);else if(id==='pH')pr.h=clamp(+e.target.value||pr.h,100,210);else if(id==='pW')pr.w=clamp(+e.target.value||pr.w,20,200);
+  renderMenu();renderNut()});
+$('#bagAdd').addEventListener('click',()=>{if(S.bag.trial)return;S.bag.added=!S.bag.added;S.bag.revealed=false;S.bag.picks=S.bag.added?pickBag():[];renderBag();renderCart()});
+$('#bagReveal').addEventListener('click',()=>{S.bag.revealed=true;renderBag()});
+$('#addons').addEventListener('click',e=>{const b=e.target.closest('[data-add]');if(!b)return;const k=b.dataset.add;S.addons[k]=clamp(S.addons[k]+(+b.dataset.d),0,9);renderAddons();renderCart()});
+function setSwap(v){G.swap=v;$('#swapChk').checked=v;$('#swapChk2').checked=v;renderCart();renderLeg2();renderFin()}
+$('#swapChk').addEventListener('change',e=>setSwap(e.target.checked));
+$('#phoneBtn').addEventListener('click',()=>{
+  const raw=$('#phoneIn').value.replace(/[\s.-]/g,'').replace(/^\+84/,'0'),msg=$('#phoneMsg');
+  if(!/^0(3|5|7|8|9)\d{8}$/.test(raw)){msg.innerHTML='<span style="color:var(--red)">Số chưa đúng định dạng 10 số di động Việt Nam.</span>';return}
+  if(S.phoneOk){msg.textContent='Tài khoản mới đã được xác thực.';return}
+  if(claimed.has(raw)){msg.innerHTML='<span style="color:var(--red)">Số này đã có tài khoản hoặc đã nhận ưu đãi. Không mở hành trình tài khoản mới.</span>';return}
+  claimed.add(raw);S.phoneOk=true;msg.innerHTML='<span style="color:var(--green)">Tài khoản mới. Đã mở hành trình 4 tuần.</span>';renderTab1();
+});
+$('#payGrid').addEventListener('click',e=>{const b=e.target.closest('[data-pay]');if(!b)return;S.pay=b.dataset.pay;setPressed('#payGrid .pay','pay',S.pay);renderCart();renderJourney()});
+$('#orderBtn').addEventListener('click',()=>{const c=cartCalc();toast(`Đã đặt ${S.menu.length+(S.bag.added?3:0)} món, ${fmt(c.weekly)}. Giao Chủ Nhật và Thứ Tư.`)});
+
+/* ================= Biểu đồ SVG ================= */
+function lineChart({w=640,h=240,xMax,yMax,yMin=0,yStep=null,series,hlines=[],xTicks=[],yFmt=v=>v,xFmt=v=>v,points=[]}){
+  const P={l:58,r:34,t:14,b:28},X=x=>P.l+x/xMax*(w-P.l-P.r),Y=y=>P.t+(1-(y-yMin)/(yMax-yMin))*(h-P.t-P.b);let s='';
+  const nT=yStep?Math.max(1,Math.round((yMax-yMin)/yStep)):4;
+  for(let i=0;i<=nT;i++){const v=yMin+(yMax-yMin)*i/nT;s+=`<line x1="${P.l}" x2="${w-P.r}" y1="${Y(v)}" y2="${Y(v)}" style="stroke:var(--line)"/><text x="${P.l-8}" y="${Y(v)+4}" text-anchor="end" style="fill:var(--muted);font-size:11px">${yFmt(v)}</text>`}
+  xTicks.forEach(x=>{s+=`<text x="${X(x)}" y="${h-8}" text-anchor="middle" style="fill:var(--muted);font-size:11px">${xFmt(x)}</text>`});
+  hlines.forEach(l=>{if(l.y<yMin||l.y>yMax)return;s+=`<line x1="${P.l}" x2="${w-P.r}" y1="${Y(l.y)}" y2="${Y(l.y)}" style="stroke:${l.c};stroke-width:1.5;stroke-dasharray:5 4"/><text x="${w-P.r-4}" y="${Y(l.y)-5}" text-anchor="end" style="fill:${l.c};font-size:11px;font-weight:600">${l.label}</text>`});
+  series.forEach(se=>{const d=se.pts.map((p,i)=>(i?'L':'M')+X(p[0]).toFixed(1)+','+Y(clamp(p[1],yMin,yMax)).toFixed(1)).join('');s+=`<path d="${d}" style="fill:none;stroke:${se.c};stroke-width:${se.wd||2};${se.dash?'stroke-dasharray:'+se.dash+';':''}opacity:${se.op||1}"/>`});
+  points.forEach(p=>{const yy=Y(clamp(p.y,yMin,yMax));s+=`<circle cx="${X(p.x)}" cy="${yy}" r="5" style="fill:${p.c};stroke:#fff;stroke-width:2"/>${p.label?`<text x="${X(p.x)+8}" y="${yy-8}" style="fill:var(--ink);font-size:11.5px;font-weight:600">${p.label}</text>`:''}`});
+  return s;
+}
+
+/* ================= Tab 2 ================= */
+const KIT={dn:{name:'Đà Nẵng',meatKm:550,seaKm:1150,x:300,y:42,loc:['Chợ đầu mối Hòa Cường','Cảng cá Thọ Quang']},hcm:{name:'TP.HCM',meatKm:350,seaKm:250,x:250,y:215,loc:['Chợ đầu mối Bình Điền','Thủy sản Bình Điền']}};
+const TRUCK=1500,MOQ=200,SRC_SAVE=.08,LOCAL=500;let kitchen='dn';
+function setStage(st){G.stage=st;const sl=$('#l1Serv');if(st==='pilot'){sl.min=100;sl.max=2000;sl.step=50;sl.value=400}else{sl.min=500;sl.max=12000;sl.step=100;sl.value=3200}renderLeg1()}
+function renderLeg1(){
+  const rate=+$('#l1Rate').value,serv=+$('#l1Serv').value,k=KIT[kitchen],pilot=G.stage==='pilot';
+  setPressed('#stageSeg button','st',G.stage);$('#rateWrap').hidden=pilot;
+  $('#l1RateO').textContent=fmt(rate);$('#l1ServO').textContent=`${fmtN(serv)} (~${fmtN(serv/10)} hộ)`;
+  const kg=serv*.22,runs=2;
+  const lane=(w,km)=>{const trips=Math.max(1,Math.ceil(w/runs/TRUCK))*runs,full=trips*rate*km/100*TRUCK,ltl=w*rate*km/100*1.35;return{util:w/(trips*TRUCK),best:Math.min(full,ltl),mode:full<=ltl?'thuê nguyên xe':'gửi ghép theo kg'}};
+  const a=lane(kg*.6,k.meatKm),b=lane(kg*.4,k.seaKm),reefer=(a.best+b.best)/serv,save=.155*150000*SRC_SAVE,net=reefer-save,meatRun=kg*.6/runs,minHH=Math.ceil(MOQ*runs/(.22*.6)/10),moqOK=meatRun>=MOQ;
+  const rec=!moqOK?`Chưa đủ đơn tối thiểu ${MOQ} kg/chuyến của nhà cung cấp Đắk Lắk (mới ${fmtN(meatRun)} kg). Nên mua tại chỗ.`:net<LOCAL?`Đủ đơn tối thiểu và xe lạnh rẻ hơn mua tại chỗ ${fmt(LOCAL-net)}/suất nhờ giá nguồn thấp hơn ${Math.round(SRC_SAVE*100)}%. Nên mở tuyến xe lạnh hợp nhất.`:`Đủ đơn tối thiểu nhưng xe lạnh chưa rẻ hơn mua tại chỗ. Giữ nguồn tại chỗ.`;
+  $('#l1Kpis').innerHTML=pilot?`<div class="kpi"><span>Nguồn</span><b>Tại chỗ</b><span>${k.loc.join(', ')}</span></div><div class="kpi"><span>Thịt mỗi chuyến nếu đi Đắk Lắk</span><b>${fmtN(meatRun)} kg</b><span>Đơn tối thiểu ${MOQ} kg</span></div><div class="kpi good"><span>Chặng 1 mỗi suất</span><b>${fmt(LOCAL)}</b><span>Đối tác giao tận bếp</span></div><div class="kpi hot"><span>Ngưỡng mở tuyến Đắk Lắk</span><b>~${fmtN(minHH)} hộ</b></div>`
+   :`<div class="kpi"><span>Thịt mỗi chuyến</span><b>${fmtN(meatRun)} kg</b><span>${moqOK?'Đạt':'Chưa đạt'} đơn tối thiểu ${MOQ} kg</span></div><div class="kpi"><span>Tải xe nguyên chuyến (thịt / hải sản)</span><b>${Math.round(a.util*100)}% / ${Math.round(b.util*100)}%</b></div><div class="kpi"><span>Cước xe lạnh mỗi suất</span><b>${fmt(reefer)}</b></div><div class="kpi"><span>Lợi giá nguồn mỗi suất</span><b>−${fmt(save)}</b></div><div class="kpi ${net<LOCAL?'good':'bad'}"><span>Chi phí ròng so với tại chỗ (${fmt(LOCAL)})</span><b>${fmt(net)}</b></div>`;
+  $('#l1Note').innerHTML=`<div class="note ${moqOK&&net<LOCAL?'ok':'orange'}">${pilot?'Pilot: thịt, cá mua tại chợ đầu mối địa phương; đây cũng là cách thử tâm lý “thịt nóng” mà không phụ thuộc xe lạnh. ':`Scale: thịt nên <b>${a.mode}</b>, hải sản nên <b>${b.mode}</b>. `}${rec} Giả định: đơn tối thiểu ${MOQ} kg/chuyến, giá nguồn rẻ hơn ${Math.round(SRC_SAVE*100)}%, chi phí tại chỗ ${fmt(LOCAL)}/suất.</div>`;
+  let svg=`<text x="12" y="18" style="fill:var(--muted);font-size:11px">Sơ đồ tuyến, không theo tỷ lệ</text>`;
+  if(pilot){const cx=210,cy=150,L=[{n:k.loc[0],s:'Thịt',x:70,y:70},{n:k.loc[1],s:'Cá, hải sản',x:300,y:250}];
+    L.forEach(p=>{svg+=`<line x1="${p.x}" y1="${p.y}" x2="${cx}" y2="${cy}" style="stroke:var(--green);stroke-width:2.5;stroke-dasharray:6 5"/><circle cx="${p.x}" cy="${p.y}" r="7" style="fill:var(--orange)"/><text x="${p.x-20}" y="${p.y+(p.y<150?-28:24)}" style="fill:var(--ink);font-size:12.5px;font-weight:600">${p.n}</text><text x="${p.x-20}" y="${p.y+(p.y<150?-14:38)}" style="fill:var(--muted);font-size:11px">${p.s}</text>`});
+    svg+=`<rect x="${cx-9}" y="${cy-9}" width="18" height="18" rx="4" style="fill:var(--green)"/><text x="${cx+16}" y="${cy+5}" style="fill:var(--ink);font-size:12.5px;font-weight:700">Bếp ${k.name}</text><text x="${cx+16}" y="${cy+20}" style="fill:var(--muted);font-size:11px">Đối tác giao tận bếp, ${fmt(LOCAL)}/suất</text>`;}
+  else{const src=[{n:'Đắk Lắk',s:'Thịt',x:330,y:140,km:k.meatKm,c:a,w:kg*.6},{n:'An Giang / Kiên Giang',s:'Hải sản',x:70,y:250,km:k.seaKm,c:b,w:kg*.4}];
+    src.forEach(p=>{const mx=(p.x+k.x)/2,my=(p.y+k.y)/2,m=p.s==='Thịt';
+      svg+=`<line x1="${p.x}" y1="${p.y}" x2="${k.x}" y2="${k.y}" style="stroke:var(--green);stroke-width:2.5;stroke-dasharray:6 5"/><rect x="${mx-58}" y="${my-13}" width="116" height="26" rx="7" style="fill:#fff;stroke:var(--line)"/><text x="${mx}" y="${my+4}" text-anchor="middle" style="fill:var(--ink);font-size:11.5px">${fmtN(p.km)} km, ${fmt(p.c.best/p.w)}/kg</text>
+      <circle cx="${p.x}" cy="${p.y}" r="7" style="fill:var(--orange)"/><text x="${m?p.x+12:p.x-10}" y="${m?p.y+4:p.y+24}" style="fill:var(--ink);font-size:12.5px;font-weight:600">${p.n}</text><text x="${m?p.x+12:p.x-10}" y="${m?p.y+18:p.y+38}" style="fill:var(--muted);font-size:11px">${p.s}</text>`});
+    Object.entries(KIT).forEach(([id,q])=>{const on=id===kitchen;svg+=`<rect x="${q.x-9}" y="${q.y-9}" width="18" height="18" rx="4" style="fill:${on?'var(--green)':'var(--surface-2)'};stroke:var(--green)"/><text x="${q.x+16}" y="${q.y+(id==='hcm'?18:5)}" style="fill:${on?'var(--ink)':'var(--muted)'};font-size:12.5px;font-weight:${on?700:400}">Bếp ${q.name}</text>`});}
+  $('#routeSvg').innerHTML=svg;
+}
+$('#kitchenSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;kitchen=b.dataset.k;setPressed('#kitchenSeg button','k',kitchen);renderLeg1()});
+$('#stageSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setStage(b.dataset.st)});
+['#l1Rate','#l1Serv'].forEach(s=>$(s).addEventListener('input',renderLeg1));
+function renderLeg2(){
+  const bx=+$('#l2Box').value,st=+$('#l2Stops').value,trip=+$('#l2Trip').value;G.pack=+$('#l2Pack').value;G.stops=st;G.trip=trip;
+  $('#l2BoxO').textContent=bx+' hộp';$('#l2StopsO').textContent=st+' điểm';$('#l2TripO').textContent=fmt(trip);$('#l2PackO').textContent=fmt(G.pack);$('#swapChk2').checked=G.swap;$('#ambChk2').checked=G.amb;
+  const pk=swapCost(),fail=G.amb?.01:.08,amb=ambFee(),boxes=bx*st,cf=b=>trip/(b*st)*(1+fail)+pk+amb,cost=cf(bx),mins=20+st*8+boxes*(G.amb?.3:1);
+  $('#l2Kpis').innerHTML=`<div class="kpi"><span>Hộp mỗi chuyến</span><b>${boxes}</b></div><div class="kpi ${cost<=15000?'good':'bad'}"><span>Giao + bao bì mỗi hộp</span><b>${fmt(cost)}</b></div><div class="kpi"><span>Bao bì mỗi hộp</span><b>${fmt(pk)}</b></div><div class="kpi ${mins<=210?'':'bad'}"><span>Thời gian chuyến</span><b>${Math.round(mins)} phút</b></div>`;
+  const pts=[];for(let b=1;b<=40;b++)pts.push([b,cf(b)]);
+  $('#l2Chart').innerHTML=lineChart({w:640,h:220,xMax:40,yMax:60000,yStep:15000,series:[{pts,c:'var(--green)',wd:2.5}],hlines:[{y:15000,c:'var(--red)',label:'15.000đ'}],xTicks:[1,10,20,30,40],xFmt:v=>v===40?'40 hộp/cụm':v,yFmt:v=>fmtN(v/1000)+'k',points:[{x:bx,y:cost,c:cost<=15000?'var(--green)':'var(--red)',label:fmtN(cost/1000)+'k'}]});
+  const need=Math.ceil(trip*(1+fail)/((15000-pk-amb)*st)),rc=reuseCost(),diff=G.pack-rc;
+  const warns=[];if(boxes>90)warns.push(`Vượt tải xe 90 hộp, cần ${Math.ceil(boxes/90)} chuyến.`);if(mins>210)warns.push('Chuyến vượt khung 3,5 giờ; hộp có nguy cơ mất lạnh.');
+  $('#l2Note').innerHTML=`<div class="note ${cost<=15000&&!warns.length?'ok':'warn'}">Cần tối thiểu <b>${need} hộp mỗi cụm</b> với ${st} điểm dừng. ${G.amb?'Giao qua đại sứ rút thời gian mỗi hộp và giảm giao không thành. ':''}${warns.join(' ')}</div>
+   <div class="note ${diff>=0?'ok':'orange'}"><b>Kinh tế túi tái sử dụng:</b> ${fmt(rc)}/lượt (khấu hao ${fmt(G.amort)}, rửa ${fmt(G.wash)}, điểm thưởng ${fmt(G.reward*G.ret*G.redeem)}, mất túi ${fmt(G.loss*G.bagPrice)}) so với thùng xốp ${fmt(G.pack)}. ${diff>=0?`Rẻ hơn ${fmt(diff)}/hộp.`:`Đắt hơn ${fmt(-diff)}/hộp; hòa vốn khi thùng xốp + đá gel từ ${fmt(rc)}/hộp.`} So với V5.5 (giảm 5.000đ tiền mặt, lỗ ~3.400đ/hộp), mức chênh đã thu hẹp; lợi ích chính là bớt thùng xốp ở chung cư.</div>`;
+}
+['#l2Box','#l2Stops','#l2Trip','#l2Pack'].forEach(s=>$(s).addEventListener('input',()=>{renderLeg2();renderCart();renderFin()}));
+$('#swapChk2').addEventListener('change',e=>setSwap(e.target.checked));
+$('#ambChk2').addEventListener('change',e=>setAmb(e.target.checked));
+/* Express RTH */
+const NEAR=[{id:'n1',ing:'Ức gà phi lê',kg:6.5,h:18,tray:'Ức gà sốt chanh dây',cost:95000},{id:'n2',ing:'Cá lóc phi lê',kg:4.2,h:11,tray:'Cá lóc kho',cost:120000},{id:'n3',ing:'Bắp bò',kg:5,h:26,tray:'Bò hầm rau củ',cost:230000},{id:'n4',ing:'Thịt heo nạc vai',kg:3.6,h:7,tray:'Heo ram gừng',cost:110000}];
+const EX={done:new Set(),trays:[],orders:0,speed:30,timer:null,start:0,saved:0,base:Date.now()};
+const STAGES=[[0,6,'Hâm và đóng gói'],[6,9,'Bàn giao shipper'],[9,20,'Đang giao']];
+function renderExpress(){
+  const el=(Date.now()-EX.base)/1000;
+  $('#nearList').innerHTML=NEAR.map(n=>{const left=Math.max(0,n.h*3600-el);return `<div class="nearrow ${EX.done.has(n.id)?'done':''}"><div><b>${n.ing}</b><div class="tiny muted">${n.kg} kg, còn ${Math.floor(left/3600)} giờ ${pad(Math.floor(left%3600/60))} phút</div></div>${EX.done.has(n.id)?'<span class="tag green">Đã nấu</span>':`<button class="btn sm" data-cook="${n.id}">Nấu, thanh trùng</button>`}</div>`}).join('');
+  $('#trayList').innerHTML=EX.trays.length?EX.trays.map((t,i)=>`<div class="nearrow"><div><b>${t.name}</b><div class="tiny muted">${t.qty} khay RTH, vi sóng 3 phút, giá ${fmt(59000)}</div></div><button class="btn primary sm" data-buy="${i}" ${t.qty&&!EX.timer?'':'disabled'}>Đặt hỏa tốc</button></div>`).join(''):'<div class="note">Chưa có khay. Nấu từ nguyên liệu cận hạn ở cột trái.</div>';
+  renderExTimer();
+  $('#exKpis').innerHTML=`<div class="kpi"><span>Nguyên liệu cứu khỏi hủy</span><b>${fmt(EX.saved)}</b></div><div class="kpi"><span>Khay RTH đã tạo</span><b>${EX.trays.reduce((s,t)=>s+t.qty,0)+EX.orders}</b></div><div class="kpi"><span>Đơn hỏa tốc đã giao</span><b>${EX.orders}</b></div><div class="kpi"><span>Giá khay so với suất thường</span><b>−25%</b></div>`;
+}
+function renderExTimer(){
+  const box=$('#expressBox');
+  if(!EX.timer){box.innerHTML='<div class="timer" style="color:var(--muted)">20:00</div><p class="small muted">Phí giao do đối tác nội thành thu, khoảng 20.000–25.000đ (giả định).</p>';return}
+  const sm=(Date.now()-EX.start)/1000*EX.speed/60,left=Math.max(0,20-sm),m=Math.floor(left),s=Math.floor((left-m)*60);
+  box.innerHTML=`<div class="timer">${pad(m)}:${pad(s)}</div><div class="stages">${STAGES.map(([a,b,l])=>`<div class="stage ${sm>=b?'done':sm>=a?'on':''}">${l}</div>`).join('')}</div>`;
+  if(left<=0){clearInterval(EX.timer);EX.timer=null;EX.orders++;toast('Đơn hỏa tốc đã giao trong 20 phút');renderExpress()}
+}
+$('#nearList').addEventListener('click',e=>{const b=e.target.closest('[data-cook]');if(!b)return;const n=NEAR.find(x=>x.id===b.dataset.cook);EX.done.add(n.id);EX.trays.push({name:n.tray,qty:Math.floor(n.kg/.16)});EX.saved+=n.kg*n.cost;renderExpress()});
+$('#trayList').addEventListener('click',e=>{const b=e.target.closest('[data-buy]');if(!b||EX.timer)return;const t=EX.trays[+b.dataset.buy];if(!t.qty)return;t.qty--;EX.start=Date.now();EX.timer=setInterval(renderExTimer,250);renderExpress()});
+$('#speedSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(EX.timer){const sm=(Date.now()-EX.start)/1000*EX.speed/60;EX.speed=+b.dataset.s;EX.start=Date.now()-sm*60/EX.speed*1000}else EX.speed=+b.dataset.s;setPressed('#speedSeg button','s',EX.speed)});
+
+/* ================= Tab 3: sổ đơn hai đợt ================= */
+const CAP=1500,BATCH=120,DAYN=['T2','T3','T4','T5','T6','T7','CN'];
+const WIN={1:{start:-4,len:96,startTxt:'CN 20:00 mở sổ',endTxt:'T5 20:00 chốt'},2:{start:92,len:72,startTxt:'T5 20:00 mở sổ',endTxt:'CN 20:00 chốt'}};
+const SUB=.4, Fexp=tau=>tau<=0?0:Math.min(1,SUB+(1-SUB)*(.6*Math.pow(tau,1.3)+.4*Math.pow(tau,6)));
+function genOrders(seed,count,len){
+  const R=rng(seed),out=[];
+  const names=['Chị Lan','Anh Minh','Cô Hạnh','Anh Tuấn','Chị Thảo','Anh Khoa','Chị My','Chú Bình','Chị Ngọc','Anh Phúc','Chị Vy','Anh Dũng'];
+  const wards=['Hải Châu','Thanh Khê','Sơn Trà','Ngũ Hành Sơn','An Hải','Hòa Cường','Cẩm Lệ'];
+  const segs=[['van-phong',.26],['giam-can',.22],['tim-mach',.2],['tieu-duong',.18],['tang-co',.14]];
+  const ws=DISHES.reduce((s,d)=>s+d.pop,0),pick=()=>{let x=R()*ws;for(const d of DISHES){x-=d.pop;if(x<=0)return d}return DISHES[0]};
+  const pickSeg=()=>{let x=R();for(const [s,p] of segs){x-=p;if(x<=0)return s}return 'van-phong'};
+  const MG={bo:[18,22],me:[13,16],con:[10,13],ongba:[11,14]};
+  for(let i=0;i<count;i++){
+    const u=R();let tau;if(u<SUB)tau=R()*.005;else tau=R()<.6?Math.pow(R(),1/1.3):Math.pow(R(),1/6);
+    const fam=R()<.45,seg=pickSeg(),nd=2+Math.floor(R()*3),used=new Set(),items=[];
+    const mem=fam?['bo','me','con','ongba'].filter(()=>R()<.75):[];if(fam&&!mem.length)mem.push('me');
+    for(let k=0;k<nd;k++){const d=pick();if(used.has(d.id))continue;used.add(d.id);
+      if(fam)mem.forEach(m=>{const [a,b]=MG[m];items.push({d:d.id,q:1,g:10*(a+Math.floor(R()*(b-a+1))),m})});
+      else{const q=1+Math.floor(R()*2),base=seg==='tang-co'?18:seg==='giam-can'?13:15;items.push({d:d.id,q,g:10*(base+Math.floor(R()*4)-1),m:'solo',seg})}}
+    out.push({id:'MV'+(seed%1000*1000+10421+i),t:tau*len,renew:u<SUB,name:names[Math.floor(R()*names.length)],ward:wards[Math.floor(R()*wards.length)],fam,mem,seg,items});
+  }
+  return out.sort((a,b)=>a.t-b.t);
+}
+const ORD={1:genOrders(20261112,190,96),2:genOrders(20261115,170,72)};
+const F={drop:1,h:40,playing:null,prep:'lean',lastN:0};
+const sizeOf=g=>g<150?'S':g<200?'M':'L', SIZE_G={S:120,M:170,L:220};
+function hLabel(drop,h){const a=WIN[drop].start+h,ab=((a%168)+168)%168,d=Math.floor(ab/24),hr=Math.floor(ab%24),mi=Math.round((ab%1)*60);return `${DAYN[d]} ${pad(hr)}:${pad(mi%60)}`}
+function aggregate(drop,h){
+  const live=ORD[drop].filter(o=>o.t<=h),agg={};
+  live.forEach(o=>o.items.forEach(it=>{const a=agg[it.d]||(agg[it.d]={serv:0,prot:0,veg:0,fine:{},lean:{S:0,M:0,L:0},sauce:0,chuan:0,nhe:0});
+    a.serv+=it.q;a.prot+=it.q*it.g/1000*1.08;a.veg+=it.q*byId[it.d].vegG/1000;a.fine[it.g]=(a.fine[it.g]||0)+it.q;a.lean[sizeOf(it.g)]+=it.q;
+    if(it.m==='solo'||it.m==='bo'||it.m==='me')a.sauce+=it.q;
+    const nhe=it.m==='me'||it.m==='ongba'||(it.m==='solo'&&(it.seg==='giam-can'||it.seg==='tieu-duong'));a[nhe?'nhe':'chuan']+=it.q}));
+  return {live,agg};
+}
+function classKg(agg){const r={meat:0,sea:0,veg:0};Object.entries(agg).forEach(([id,a])=>{const d=byId[id];r[d.k]+=a.prot;r.veg+=a.veg});return r}
+const ZT={.5:0,.55:.126,.6:.253,.65:.385,.7:.524,.75:.674,.8:.842,.85:1.036,.9:1.282,.95:1.645};
+function renderNV(){
+  const drop=F.drop,len=WIN[drop].len,final=classKg(aggregate(drop,len).agg);
+  const C=[{k:'meat',name:'Thịt heo, bò, gà',src:'Đắk Lắk',lt:5,off:-60,cu:120000,co:15000},{k:'sea',name:'Cá, tôm, mực',src:'An Giang, Kiên Giang',lt:3,off:-12,cu:150000,co:20000},{k:'veg',name:'Rau, đậu, thảo mộc',src:'Đà Lạt, địa phương',lt:1,off:36,cu:25000,co:10000}];
+  const rows=C.map(c=>{const hO=clamp(len+c.off,0,len),tau=hO/len,Fx=c.off>0?1:Fexp(tau),booked=classKg(aggregate(drop,hO).agg)[c.k];
+    const mu=booked/Math.max(Fx,.05),cv=c.off>0?.03:.3*(1-Fx)+.04,cr=c.cu/(c.cu+c.co),lvl=clamp(Math.round(cr*20)/20,.5,.95),q=mu*(1+ZT[lvl]*cv),act=final[c.k];
+    return {...c,fill:Math.round(Fx*100)+'%',booked:nf1.format(booked)+' kg',mu,lvl,cr,q,act,diff:q-act,done:F.h>=hO,when:c.off>0?`${hLabel(drop,len+36)} (sau chốt)`:hLabel(drop,hO)}});
+  let show=rows,note;
+  if(drop===2){
+    const old=rows[0],mu=final.meat*.97,cv=.15,cu=30000,co=15000,cr=cu/(cu+co),lvl=clamp(Math.round(cr*20)/20,.5,.95),q=mu*(1+ZT[lvl]*cv),act=final.meat,top=Math.max(0,act-q),over=Math.max(0,q-act);
+    const cons={k:'meat',name:'Thịt – chuyến xe lạnh gộp tuần',src:'Về cùng chuyến Đợt 1, kho đệm 0–2°C',lt:5,when:'T3 08:00 (cùng đơn Đợt 1)',done:true,fill:'Nền gia hạn',booked:'–',mu,lvl,cr,q,act,diff:q-act};
+    const topR={k:'top',name:'Thịt – bù tại chỗ sau chốt',src:'Chợ đầu mối địa phương, giá +20%',lt:0,when:`${hLabel(2,len+2)} (sau chốt)`,done:F.h>=len,fill:'100%',booked:nf1.format(act)+' kg',mu:top,lvl:null,cr:null,q:top,act:top,diff:0};
+    show=[cons,topR,rows[1],rows[2]];
+    note=`<div class="note ok"><b>Đợt 2 không còn đặt thịt lúc sổ đơn mới ${old.fill}.</b> Thịt cho Đợt 2 đặt cùng chuyến xe lạnh tuần của Đợt 1, dựa trên nền khách gia hạn tự động (sai số giả định ±15%), lưu kho đệm 0–2°C. Vì có thể bù tại chỗ sau chốt (giá +20%), mức phục vụ chỉ cần P${Math.round(lvl*100)} thay vì P90. Kết quả: ${over?`dư ${nf1.format(over)} kg đi qua van xả áp (Túi mù, khay RTH)`:`thiếu ${nf1.format(top)} kg, mua bù tại chỗ`}, so với cách V5.5 ${old.diff>=0?'dư':'thiếu'} ${nf1.format(Math.abs(old.diff))} kg. Món ăn T7–CN của Đợt 2 cấp đông IQF.</div>`;
+  }else note=`<div class="note orange">Thịt phải đặt lúc ${rows[0].when}, khi sổ đơn mới chạy khoảng ${rows[0].fill}. Thiếu thịt mất cả suất và niềm tin của khách (Cu cao), dư thịt chỉ mất phần giảm giá khi cấp đông hoặc chuyển RTH (Co thấp), nên đặt ở mức P90. Rau đặt sau giờ chốt theo số thật.</div>`;
+  $('#nvTable').innerHTML=`<thead><tr><th>Nhóm</th><th>Lead time</th><th>Đặt lúc</th><th class="n">Sổ đơn khi đặt</th><th class="n">Đã chốt</th><th class="n">Dự báo TB</th><th class="n">Mức phục vụ</th><th class="n">Lượng đặt</th><th class="n">Thực tế khi chốt</th><th class="n">Dư / thiếu</th></tr></thead><tbody>${show.map(r=>`<tr class="${r.k==='meat'?'hl':''}"><td><b>${r.name}</b><div class="tiny muted">${r.src}</div></td><td>${r.lt?r.lt+' ngày':'Trong ngày'}</td><td>${r.when}<div class="tiny">${r.done?'<span class="tag green">Đã đặt</span>':'<span class="tag">Chưa tới giờ</span>'}</div></td><td class="n">${r.fill}</td><td class="n">${r.booked}</td><td class="n">${nf1.format(r.mu)} kg</td><td class="n">${r.lvl?`P${Math.round(r.lvl*100)}<div class="tiny muted">Cu/(Cu+Co) = ${Math.round(r.cr*100)}%</div>`:'Theo số thiếu'}</td><td class="n"><b>${nf1.format(r.q)} kg</b></td><td class="n">${nf1.format(r.act)} kg</td><td class="n" style="color:${r.diff>=0?'var(--green)':'var(--red)'}">${r.k==='top'?'–':(r.diff>=0?'+':'')+nf1.format(r.diff)+' kg'}</td></tr>`).join('')}</tbody>`;
+  $('#nvNote').innerHTML=note;
+}
+function prepStats(agg){const ids=Object.keys(agg),fl=ids.reduce((s,id)=>s+Object.keys(agg[id].fine).length,0),ll=ids.reduce((s,id)=>s+Object.values(agg[id].lean).filter(v=>v>0).length,0);return {n:ids.length,fl,ll,fm:Math.max(0,fl-ids.length)*3.1,lm:Math.max(0,ll-ids.length)*3.1}}
+function renderGap(){
+  const servBy={};let tot=0;
+  [1,2].forEach(dr=>ORD[dr].forEach(o=>o.items.forEach(it=>{const s=it.m==='solo'?it.seg:it.m==='bo'?'tang-co':it.m==='me'?'giam-can':it.m==='ongba'?'tim-mach':null;if(!s)return;servBy[s]=(servBy[s]||0)+it.q;tot+=it.q})));
+  const rows=Object.entries(SEG).map(([k,s])=>{const ok=DISHES.filter(d=>s.test(serve(d,s.prof)));const share=(servBy[k]||0)/tot;return {k,s,ok,share,gap:share*100/Math.max(ok.length,.5)}}).sort((a,b)=>b.gap-a.gap);
+  $('#gapTable').innerHTML=`<thead><tr><th>Nhóm khách</th><th class="n">Tỷ trọng suất</th><th class="n">Món đạt</th><th class="n">Chỉ số thiếu món</th></tr></thead><tbody>${rows.map((r,i)=>`<tr class="${i<2?'hl':''}"><td><b>${GOAL_LABEL[r.k]}</b><div class="tiny muted">${r.s.crit}</div><div class="tiny">${r.ok.map(d=>d.name).join(', ')||'Chưa có món đạt'}</div></td><td class="n">${Math.round(r.share*100)}%</td><td class="n">${r.ok.length}/${DISHES.length}</td><td class="n"><b>${nf1.format(r.gap)}</b></td></tr>`).join('')}</tbody>`;
+  $('#gapNote').innerHTML=`<div class="note orange"><b>Lệnh R&D ưu tiên:</b> ${GOAL_LABEL[rows[0].k]} – ${rows[0].s.rd} Tiếp theo: ${GOAL_LABEL[rows[1].k]} – ${rows[1].s.rd}</div>`;
+}
+function renderFactory(){
+  const drop=F.drop,len=WIN[drop].len,h=Math.min(F.h,len),{live,agg}=aggregate(drop,h),serv=Object.values(agg).reduce((s,a)=>s+a.serv,0),closed=h>=len;
+  const tl=$('#tl');tl.max=len;tl.value=h;$('#tlStart').textContent=WIN[drop].startTxt;$('#tlEnd').textContent=WIN[drop].endTxt;
+  $('#winTxt').textContent=`Cửa sổ nhận đơn ${len} giờ, giao ${DROPS[drop].name} 08:00. Khoảng ${Math.round(SUB*100)}% suất là gia hạn tự động lúc mở sổ.`;
+  $('#simClock').textContent=hLabel(drop,h);const st=$('#simStatus');st.textContent=closed?'Đã chốt sổ':'Đang nhận đơn';st.className='status '+(closed?'closed':'open');
+  const left=len-h,ld=Math.floor(left/24),lh=Math.floor(left%24),lm=Math.round((left%1)*60);
+  const batches=Object.values(agg).reduce((s,a)=>s+Math.ceil(a.serv/BATCH),0),prot=Object.values(agg).reduce((s,a)=>s+a.prot,0);
+  $('#facKpis').innerHTML=`<div class="kpi hot"><span>Còn đến giờ chốt</span><b>${closed?'0':`${ld} ngày ${pad(lh)}:${pad(lm%60)}`}</b></div><div class="kpi"><span>Đơn đã nhận</span><b>${fmtN(live.length)}</b></div><div class="kpi"><span>Tổng suất</span><b>${fmtN(serv)}</b></div><div class="kpi"><span>Mẻ nấu (≤${BATCH} suất)</span><b>${batches}</b></div><div class="kpi"><span>Đạm sống cần</span><b>${fmtN(prot)} kg</b></div>`;
+  const pct=serv/CAP*100;$('#capTxt').textContent=Math.round(pct)+'%';$('#capGauge i').style.width=Math.min(100,pct)+'%';$('#capGauge').classList.toggle('hot',pct>90);
+  const rows=Object.entries(agg).sort((a,b)=>b[1].serv-a[1].serv),maxS=rows.length?rows[0][1].serv:1;
+  $('#bomTable').innerHTML=`<thead><tr><th>Món (RTC, sơ chế sống)</th><th class="n">Suất</th><th class="n">Mẻ</th><th class="n">Đạm sống (kg)</th><th class="n">Rau (kg)</th><th class="n">Gói sốt định vị</th></tr></thead><tbody>${rows.map(([id,a])=>`<tr><td><b>${byId[id].name}</b><div class="bar"><i style="width:${a.serv/maxS*100}%"></i></div></td><td class="n">${fmtN(a.serv)}</td><td class="n">${Math.ceil(a.serv/BATCH)}</td><td class="n">${nf1.format(a.prot)}</td><td class="n">${nf1.format(a.veg)}</td><td class="n">${fmtN(a.sauce)}</td></tr>`).join('')||'<tr><td colspan="6" class="muted">Chưa có đơn.</td></tr>'}</tbody>`;
+  const recent=live.slice(-8).reverse(),newN=live.length-F.lastN;
+  $('#stream').innerHTML=recent.map((o,i)=>{const s=o.items.reduce((x,it)=>x+it.q,0),nm=[...new Set(o.items.map(it=>byId[it.d].name))];
+    return `<li class="order ${i<newN&&newN<9&&F.lastN?'new':''}"><div class="row"><b>${o.id} ${o.name}</b><span class="tiny muted">${o.renew?'Gia hạn tự động':hLabel(drop,o.t)}</span></div><div class="tiny muted">${o.fam?`Gia đình ${o.mem.length} người`:`Cá nhân, ${GOAL_LABEL[o.seg]}`}, phường ${o.ward}, ${s} suất</div><div class="tiny">${nm.join(', ')}</div></li>`}).join('')||'<li class="muted small">Chưa có đơn.</li>';
+  F.lastN=live.length;
+  const ps=prepStats(agg),fine=F.prep==='fine',lines=fine?ps.fl:ps.ll,mins=fine?ps.fm:ps.lm,ratio=ps.ll?ps.fl/ps.ll:0;
+  $('#prepKpis').innerHTML=`<div class="kpi ${fine?'bad':'good'}"><span>Dòng cắt (món × cỡ)</span><b>${lines}</b></div><div class="kpi ${fine?'bad':'good'}"><span>Lần đổi dao khay</span><b>${Math.max(0,lines-ps.n)}</b></div><div class="kpi ${fine?'bad':'good'}"><span>Thời gian đổi khay</span><b>${nf1.format(mins/60)} giờ</b></div><div class="kpi"><span>Tinh so với Gọn</span><b>${ratio?nf1.format(ratio):'–'} lần</b></div>`;
+  $('#prepNote').innerHTML=fine?`<div class="note warn"><b>Chế độ Tinh:</b> mỗi lần đổi dao khay mất 3,1 phút; xưởng mất thêm ${nf1.format((ps.fm-ps.lm)/60)} giờ công và số dòng cắt gấp ${nf1.format(ratio)} lần chế độ Gọn.</div>`:`<div class="note ok">Chế độ Gọn giữ ${ps.ll} dòng cắt. Khác biệt giữa thành viên xử lý bằng 2 nhóm túi và sốt định vị.</div>`;
+  $('#ticketBtn').textContent=closed?'Xuất phiếu sản xuất':'Xuất phiếu tạm (chưa chốt)';
+  setPressed('#facDrop button','drop',drop);
+  renderNV();
+}
+function ticketData(){const {agg}=aggregate(F.drop,Math.min(F.h,WIN[F.drop].len)),fine=F.prep==='fine';
+  return Object.entries(agg).sort((a,b)=>b[1].serv-a[1].serv).map(([id,a])=>{const d=byId[id];
+    const sizes=fine?Object.keys(a.fine).sort((x,y)=>x-y).map(g=>`${g} g × ${a.fine[g]}`).join(', '):['S','M','L'].filter(k=>a.lean[k]).map(k=>`${k} ${SIZE_G[k]} g × ${a.lean[k]}`).join(', ');
+    return {name:d.name,serv:a.serv,batches:Math.ceil(a.serv/BATCH),prot:a.prot,sizes,base:d.base,finish:`${d.finish} × ${a.sauce} gói`,groups:`Chuẩn ${a.chuan}, Nhẹ/Mềm ${a.nhe}`,cut:d.cut}})}
+function openTicket(){
+  const rows=ticketData(),drop=F.drop,closed=F.h>=WIN[drop].len;
+  $('#ticketSub').textContent=`${closed?'Bản chốt':'Bản tạm'} đợt ${DROPS[drop].name}, lúc ${hLabel(drop,Math.min(F.h,WIN[drop].len))}. Chế độ ${F.prep==='fine'?'Tinh':'Gọn'}. Đạm sống đã cộng 8% hao hụt sơ chế. Ướp nền không muối; muối nằm trong gói sốt định vị.`;
+  $('#ticketTable').innerHTML=`<thead><tr><th>Món</th><th class="n">Suất</th><th class="n">Mẻ</th><th class="n">Đạm sống</th><th>Gram/khay × số khay</th><th>Ướp nền nhạt</th><th>Sốt định vị</th><th>Túi tinh bột, rau</th><th>Cắt</th></tr></thead><tbody>${rows.map(r=>`<tr><td><b>${r.name}</b></td><td class="n">${fmtN(r.serv)}</td><td class="n">${r.batches}</td><td class="n">${nf1.format(r.prot)} kg</td><td class="small">${r.sizes}</td><td class="small">${r.base}</td><td class="small">${r.finish}</td><td class="small">${r.groups}</td><td class="small">${r.cut}</td></tr>`).join('')}</tbody>`;
+  $('#ticketModal').hidden=false;$('#closeTicket').focus();
+}
+$('#ticketBtn').addEventListener('click',openTicket);
+$('#closeTicket').addEventListener('click',()=>$('#ticketModal').hidden=true);
+$('#ticketModal').addEventListener('click',e=>{if(e.target.id==='ticketModal')$('#ticketModal').hidden=true});
+$('#copyTicket').addEventListener('click',()=>{const txt=['PHIẾU YÊU CẦU SẢN XUẤT – MOVA FRESH',$('#ticketSub').textContent,''].concat(ticketData().map(r=>`${r.name} | ${r.serv} suất | ${r.batches} mẻ | đạm sống ${nf1.format(r.prot)} kg | ${r.sizes} | Ướp nền: ${r.base} | Sốt: ${r.finish} | Túi: ${r.groups} | Cắt: ${r.cut}`)).join('\n');
+  (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>toast('Đã sao chép phiếu')).catch(()=>toast('Trình duyệt chặn sao chép. Hãy bôi đen bảng để sao chép.'))});
+$('#tl').addEventListener('input',e=>{F.h=+e.target.value;renderFactory()});
+function stopPlay(){if(F.playing){clearInterval(F.playing);F.playing=null;$('#playBtn').textContent='▶'}}
+$('#playBtn').addEventListener('click',()=>{if(F.playing){stopPlay();return}const len=WIN[F.drop].len;if(F.h>=len){F.h=0;F.lastN=0}$('#playBtn').textContent='❚❚';
+  F.playing=setInterval(()=>{F.h=Math.min(len,F.h+.5);renderFactory();if(F.h>=len){stopPlay();toast('Đã chốt sổ. Có thể xuất phiếu sản xuất.')}},120)});
+$('#prepSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;F.prep=b.dataset.p;setPressed('#prepSeg button','p',F.prep);renderFactory()});
+$('#facDrop').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setDrop(+b.dataset.drop)});
+
+/* ================= Tab 4 ================= */
+const FP=[['price','Giá mỗi suất',50000,150000,1000,75000,fmt],['serv','Số suất/tuần mỗi hộ',4,21,1,8,v=>v+' suất'],['cogs','Giá vốn (món, nhân công bếp)',35,75,1,58,v=>v+'%'],['fee','Chi phí giao mỗi lượt (2 lượt/tuần)',4000,35000,500,9000,fmt],['waste','Hao hụt trên giá vốn',2,15,.5,7,v=>nf1.format(v)+'%'],['freq','Tần suất đặt của hộ còn hoạt động',30,100,5,60,v=>v+'% số tuần'],['addon','Mua thêm trung bình/tuần',0,120000,5000,20000,fmt],['fixed','Chi phí cố định/tháng',100e6,1500e6,10e6,450e6,fmtTr],['cac','Chi phí kéo 1 hộ mới (CAC)',200000,1500000,50000,700000,fmt],['r12','Giữ chân tuần 12 khi dồn 50% tuần 1',10,90,1,40,v=>v+'%'],['uplift','Hiệu ứng giữ chân của lộ trình 4 tuần (giả định)',0,20,1,8,v=>'+'+v+' điểm %'],['newHH','Hộ mới mỗi tháng',50,1000,50,300,v=>fmtN(v)+' hộ'],['share','Tỷ lệ hộ dùng Thẻ Suất Ăn',0,60,5,30,v=>v+'%']];
+const FV={};FP.forEach(p=>FV[p[0]]=p[5]);
+$('#finSliders').innerHTML='<h2>Giả định</h2>'+FP.map(([k,l,mi,ma,st,v,f])=>`<div class="slider"><div class="row"><label for="f_${k}">${l}</label><output id="o_${k}">${f(v)}</output></div><input type="range" id="f_${k}" data-k="${k}" min="${mi}" max="${ma}" step="${st}" value="${v}"></div>`).join('')+'<p class="tiny muted">Bao bì giữ lạnh và hoàn trả túi lấy từ Tab 2 và giỏ hàng.</p>';
+$('#finSliders').addEventListener('input',e=>{const k=e.target.dataset.k;if(!k)return;FV[k]=+e.target.value;$('#o_'+k).textContent=FP.find(p=>p[0]===k)[6](FV[k]);renderFin()});
+$('#promoSeg4').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setPromo(b.dataset.p)});
+function ret(w,R){const t=R/Math.pow(.997,12),e=Math.exp(-3),a=clamp((t-e)/(1-e),0,1);return(a+(1-a)*Math.exp(-w/4))*Math.pow(.997,w)}
+function econ(){
+  const v=FV,rw=v.price*v.serv,rev=rw*4.33,cogs=rev*v.cogs/100,waste=cogs*v.waste/100;
+  const pk=swapCost(),perDel=v.fee+pk+ambFee(),del=perDel*2*4.33,addM=v.addon*.5*4.33;
+  const gp=rev-cogs-waste-del+addM,wc=gp/4.33,freq=v.freq/100;
+  const promo={front:[.5*rw,0,0,0],spread:[.2*rw,.2*rw,3*v.price*v.cogs/100,120000]};
+  const R0={front:v.r12/100,spread:Math.min(.95,(v.r12+v.uplift)/100)};
+  const cum=(t,strat,R)=>{R=R??R0[strat];let s=0;for(let w=0;w<=t;w++){const f=w===0?1:freq,act=ret(w,R)*f;s+=act*wc-(w<4?act*promo[strat][w]:0)}return s};
+  return {rev,cogs,waste,del,perDel,gp,wc,freq,cum,R0,promo,gm:gp/rev,be:v.fixed/(gp*freq)};
+}
+function threshold(f){let lo=.05,hi=.95;if(!f(hi))return null;if(f(lo))return lo;for(let i=0;i<28;i++){const m=(lo+hi)/2;f(m)?hi=m:lo=m}return hi}
+function renderFin(){
+  const v=FV,E=econ(),st=G.promo,alt=st==='spread'?'front':'spread';setPressed('#promoSeg4 button','p',st);
+  $('#ueKpis').innerHTML=`<div class="kpi"><span>Doanh thu/hộ/tháng (đặt đủ tuần)</span><b>${fmt(E.rev)}</b></div><div class="kpi ${E.gp>0?'good':'bad'}"><span>Lãi gộp sau giao/hộ/tháng</span><b>${fmt(E.gp)}</b></div><div class="kpi"><span>Biên lãi gộp</span><b>${Math.round(E.gm*100)}%</b></div><div class="kpi ${E.gp>0?'':'bad'}"><span>Hộ hoạt động để hòa vốn</span><b>${E.gp>0?fmtN(E.be):'Không đạt'}</b></div>`;
+  $('#ueNote').innerHTML=`<div class="note orange">Chi phí giao + bao bì mỗi lượt ${fmt(E.perDel)} (chiếm ${Math.round(E.del/E.rev*100)}% doanh thu). Mua thêm đóng góp ${fmt(v.addon*.5*4.33)} lãi gộp/tháng ở biên 50%. Hòa vốn đã tính tần suất đặt ${v.freq}%.</div>`;
+  const W=52,mk=(s)=>{const p=[];for(let t=0;t<W;t++)p.push([t,E.cum(t,s)]);return p};
+  const cur=mk(st),oth=mk(alt),pb=cur.find(p=>p[1]>=v.cac),pbo=oth.find(p=>p[1]>=v.cac);
+  const all=[...cur,...oth].map(p=>p[1]),yMax0=Math.max(v.cac*3.2,...all),yMin0=Math.min(0,...all),step=yMax0>8e6?2e6:yMax0>4e6?1e6:5e5;
+  const nm={spread:'Rải 4 tuần',front:'Dồn 50% tuần 1'};
+  $('#cacChart').innerHTML=lineChart({w:640,h:260,xMax:W-1,yStep:step,yMin:Math.floor(yMin0/step)*step,yMax:Math.ceil(yMax0/step)*step,series:[{pts:oth,c:'var(--muted)',dash:'5 4'},{pts:cur,c:'var(--green)',wd:3}],hlines:[{y:v.cac,c:'var(--red)',label:'CAC'},{y:v.cac*3,c:'var(--red)',label:'3 × CAC'}],xTicks:[0,4,8,12,26,39,51],xFmt:t=>'T'+t,yFmt:fmtTr,points:pb?[{x:pb[0],y:pb[1],c:'var(--green)',label:'Hoàn vốn tuần '+pb[0]}]:[]});
+  $('#cacLegend').innerHTML=`<span><i style="background:var(--green)"></i>${nm[st]} (giữ chân T12 ${Math.round(E.R0[st]*100)}%)</span><span><i style="background:var(--muted)"></i>${nm[alt]} (giữ chân T12 ${Math.round(E.R0[alt]*100)}%)</span>`;
+  const t12=threshold(R=>E.cum(11,st,R)>=v.cac),ltv=E.cum(51,st);
+  $('#cacKpis').innerHTML=`<div class="kpi ${pb&&pb[0]<=12?'good':'bad'}"><span>Hoàn vốn CAC</span><b>${pb?'Tuần '+pb[0]:'Quá 52 tuần'}</b></div><div class="kpi"><span>So với ${nm[alt].toLowerCase()}</span><b>${pbo?'Tuần '+pbo[0]:'Quá 52 tuần'}</b></div><div class="kpi ${ltv>=3*v.cac?'good':'bad'}"><span>LTV 52 tuần / CAC</span><b>${nf1.format(ltv/v.cac)}×</b></div><div class="kpi"><span>Giữ chân T12 tối thiểu để hoàn vốn trong 12 tuần</span><b>${t12===null?'Không đạt':Math.round(t12*100)+'%'}</b></div>`;
+  const cost=s=>E.promo[s][0]+E.promo[s].slice(1).reduce((x,c,i)=>x+c*ret(i+1,E.R0[s])*E.freq,0);
+  $('#cacNote').innerHTML=`<div class="note ${pb&&(!pbo||pb[0]<=pbo[0])?'ok':'orange'}">Chi phí ưu đãi kỳ vọng mỗi hộ: rải 4 tuần ${fmt(cost('spread'))}, dồn tuần 1 ${fmt(cost('front'))}. Lợi thế của cách rải phụ thuộc giả định +${v.uplift} điểm giữ chân; nếu bằng 0, chênh lệch chỉ còn do chi phí. Phải đo bằng A/B test trong đợt chạy thử.</div>`;
+  // phao nổi: Thẻ Suất Ăn
+  const M=12,R=E.R0[st],fl=[],co=[],it=[];let cC=0,cI=0;
+  const useM=v.serv*E.freq*4.33,outst=12*v.price,passCost=2*v.price*v.cogs/100,dessert=15000*4.33;
+  for(let m=0;m<=M;m++){let act=0;for(let c=0;c<m;c++)act+=v.newHH*ret((m-1-c)*4.33,R);const h=act*v.share/100,f=h*outst;if(m>0){cC+=h*(useM/26*passCost+dessert);cI+=f*.04/12}fl.push([m,f]);co.push([m,cC]);it.push([m,cI])}
+  const fy=Math.max(...fl.map(p=>p[1]),...co.map(p=>p[1]),1e6),fs=fy>2e9?5e8:fy>8e8?2e8:fy>3e8?1e8:5e7;
+  $('#floatChart').innerHTML=lineChart({w:640,h:260,xMax:M,yStep:fs,yMax:Math.ceil(fy/fs)*fs,series:[{pts:fl,c:'var(--green)',wd:3},{pts:co,c:'var(--red)',wd:2.5},{pts:it,c:'var(--gold)',wd:2.5}],xTicks:[0,3,6,9,12],xFmt:m=>m===12?'Tháng 12':'T'+m,yFmt:fmtTr});
+  $('#floatKpis').innerHTML=`<div class="kpi"><span>Suất chưa dùng, tháng 12</span><b>${fmtTr(fl[M][1])}</b><span>~12 suất/hộ dùng thẻ</span></div><div class="kpi bad"><span>Chi phí 2 suất tặng + quà, 12 tháng</span><b>${fmtTr(cC)}</b></div><div class="kpi"><span>Lãi tiền gửi trên phao</span><b>${fmtTr(cI)}</b></div><div class="kpi ${cI>=cC?'good':'bad'}"><span>Chi phí ưu đãi / lãi phao</span><b>${cI?nf1.format(cC/cI)+'×':'–'}</b></div>`;
+  renderWC();
+}
+/* Vốn lưu động */
+const WC={terms:0,col:'order'};
+function wcSim(){
+  const serv=+$('#wcServ').value,R=serv*FV.price,food=R*FV.cogs/100*.72,lab=R*FV.cogs/100*.28,del=R*.05,D=35,fl=new Array(D).fill(0);
+  const add=(d,v)=>{if(d<0)d=0;if(d<D)fl[d]+=v};
+  const share=(start,hrs,len)=>{let cum=0,prev=0;return hrs.map(h=>{cum+=h;const f=Fexp(cum/len);const r=f-prev;prev=f;return r})};
+  const s1=share(-1,[4,24,24,24,20],96),s2=share(3,[4,24,24,20],72);
+  for(let k=0;k<5;k++){const b=7*k,half=R/2;
+    if(WC.col==='order'){s1.forEach((f,i)=>add(b-1+i,half*f));s2.forEach((f,i)=>add(b+3+i,half*f))}else{add(b+6,half);add(b+9,half)}
+    const t=WC.terms;
+    add(b+1+t,-food/2*.5);add(b+3+t,-food/2*.3);add(b+5+t,-food/2*.2);
+    add(b+4+t,-food/2*.5);add(b+6+t,-food/2*.3);add(b+8+t,-food/2*.2);
+    add(b+5,-lab/2);add(b+8,-lab/2);add(b+6,-del/2);add(b+9,-del/2)}
+  const bal=[];let c=0;fl.forEach(v=>{c+=v;bal.push(c)});return bal;
+}
+const dayLbl=d=>`${DAYN[d%7]} tuần ${Math.floor(d/7)+1}`;
+function renderWC(){
+  $('#wcServO').textContent=fmtN(+$('#wcServ').value);setPressed('#termSeg button','t',WC.terms);setPressed('#colSeg button','c',WC.col);
+  const bal=wcSim(),mn=Math.min(0,...bal),mi=bal.indexOf(Math.min(...bal)),neg=bal.filter(v=>v<0).length,first=bal.findIndex(v=>v<0);
+  const w=640,h=250,P={l:58,r:14,t:14,b:30},mx=Math.max(...bal,1),step=Math.max(mx,-mn)>4e8?1e8:Math.max(mx,-mn)>1.5e8?5e7:2e7,yMax=Math.ceil(mx/step)*step,yMin=Math.floor(mn/step)*step||0;
+  const X=i=>P.l+i*(w-P.l-P.r)/bal.length,Y=y=>P.t+(1-(y-yMin)/(yMax-yMin))*(h-P.t-P.b),bw=(w-P.l-P.r)/bal.length-2;
+  let s='';for(let v=yMin;v<=yMax+1;v+=step)s+=`<line x1="${P.l}" x2="${w-P.r}" y1="${Y(v)}" y2="${Y(v)}" style="stroke:${v===0?'var(--ink)':'var(--line)'};opacity:${v===0?.5:1}"/><text x="${P.l-8}" y="${Y(v)+4}" text-anchor="end" style="fill:var(--muted);font-size:11px">${fmtTr(v)}</text>`;
+  bal.forEach((v,i)=>{const y0=Y(0),y1=Y(v);s+=`<rect x="${X(i)+1}" y="${Math.min(y0,y1)}" width="${bw}" height="${Math.max(1,Math.abs(y1-y0))}" rx="2" style="fill:${v<0?'var(--red)':'var(--green)'};opacity:${i===mi&&v<0?1:.75}"><title>${dayLbl(i)}: ${fmtTr(v)}</title></rect>`});
+  [0,7,14,21,28].forEach(d=>s+=`<text x="${X(d)+bw/2}" y="${h-10}" text-anchor="start" style="fill:var(--muted);font-size:11px">T2 tuần ${d/7+1}</text>`);
+  $('#wcChart').innerHTML=s;
+  $('#wcKpis').innerHTML=`<div class="kpi ${mn<0?'bad':'good'}"><span>Đỉnh ứng vốn</span><b>${mn<0?fmtTr(mn):'Không âm'}</b></div><div class="kpi"><span>Ngày đỉnh</span><b>${mn<0?dayLbl(mi):'–'}</b></div><div class="kpi ${neg?'bad':'good'}"><span>Số ngày quỹ âm (35 ngày)</span><b>${neg}</b></div><div class="kpi"><span>Số dư sau 5 tuần</span><b>${fmtTr(bal[bal.length-1])}</b></div>`;
+  $('#wcNote').innerHTML=mn<0?`<div class="note warn">Quỹ âm từ ${dayLbl(first)}: phải ứng tiền mua thịt Đắk Lắk (T3) và hải sản (T5) trước khi ${WC.col==='order'?'thu đủ tiền khách':'giao hàng thu tiền'}. Cần hạn mức vốn lưu động ít nhất ${fmtTr(-mn)} hoặc đổi điều khoản.</div>`
+    :`<div class="note ok">Không cần ứng vốn: khách trả khi đặt${WC.terms?` và nhà cung cấp cho nợ ${WC.terms} ngày`:''}. Đòn bẩy vốn lưu động thật là thu tiền trước, không phải phao nổi.</div>`;
+}
+$('#termSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;WC.terms=+b.dataset.t;renderWC()});
+$('#colSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;WC.col=b.dataset.c;renderWC()});
+$('#wcServ').addEventListener('input',renderWC);
+
+/* ================= Điều hướng, đợt giao, đồng hồ ================= */
+const TABS=['tong-quan','khach-hang','giao-van','nha-may','tai-chinh','chien-luoc'];let skipTop=false;
+function showTab(id){if(!TABS.includes(id))id=TABS[0];$$('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===id?'true':'false'));$$('.view').forEach(v=>v.hidden=v.id!=='v-'+id);const a=$(`.tab[data-tab="${id}"]`);if(a)a.scrollIntoView({block:'nearest',inline:'nearest'});if(id==='tong-quan')renderOverview()}
+$$('.tab').forEach(b=>b.addEventListener('click',()=>{if(location.hash.slice(1)===b.dataset.tab)showTab(b.dataset.tab);else location.hash=b.dataset.tab;window.scrollTo({top:0})}));
+window.addEventListener('hashchange',()=>{showTab(location.hash.slice(1));if(!skipTop)window.scrollTo({top:0});skipTop=false});
+function setDrop(d){G.drop=d;F.drop=d;stopPlay();F.h=Math.min(F.h,WIN[d].len);F.lastN=0;setPressed('#dropSw button','drop',d);renderHub();renderFactory()}
+$('#dropSw').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setDrop(+b.dataset.drop)});
+function nextAt(now,dow,hr){const c=new Date(now.getFullYear(),now.getMonth(),now.getDate()+((dow-now.getDay()+7)%7),hr,0,0);if(c<=now)c.setDate(c.getDate()+7);return c}
+function cdTxt(ms){const d=ms/1000;return `${Math.floor(d/86400)} ngày ${pad(Math.floor(d%86400/3600))}:${pad(Math.floor(d%3600/60))}:${pad(Math.floor(d%60))}`}
+function tickHeader(){const now=new Date();$('#cd1').textContent=cdTxt(nextAt(now,4,20)-now);$('#cd2').textContent=cdTxt(nextAt(now,0,20)-now)}
+setInterval(()=>{tickHeader();if(!$('#v-giao-van').hidden&&!EX.timer)renderExpress()},1000);
+
+/* ================= Tab 0: Tổng quan ================= */
+function spotEls(sel,keep){$$('.spot').forEach(x=>x.classList.remove('spot'));const els=[].concat(sel).map(x=>$(x)).filter(Boolean);els.forEach(e=>e.classList.add('spot'));
+  setTimeout(()=>{if(els[0])els[0].scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})},80);
+  if(!keep)setTimeout(()=>els.forEach(e=>e.classList.remove('spot')),3400)}
+function jumpTo(tab,el,setup,keep){if(location.hash.slice(1)!==tab){skipTop=true;location.hash=tab}showTab(tab);if(setup)setup();spotEls(el,keep)}
+const famOn=()=>{if(S.mode!=='family'){if(S.gift.on)setGift(false);S.mode='family';S.prof='bo';buildMenu();renderTab1()}};
+const FEATS=[
+ ['Khách hàng','Hành trình 4 tuần và chuỗi nấu bếp','khach-hang','#journeyPanel','Khách mới','pilot','Thay ưu đãi 50% tuần 1. Hiệu ứng +8 điểm giữ chân cần đo.'],
+ ['Khách hàng','Tự động gia hạn, bỏ qua 1 chạm qua Zalo OA','khach-hang','#renewPanel','Khách định kỳ','pilot','Mới ở V6. Cơ sở của 40% suất gia hạn ở Tab 3; tỷ lệ bỏ qua cần đo.'],
+ ['Khách hàng','Mua chung theo tòa, theo cụm','khach-hang','#hubPanel','Cư dân chung cư, cụm nhà phố','real','Phí giao tính thật theo số hộp; tỷ lệ rủ được hàng xóm cần đo.'],
+ ['Khách hàng','Nhận qua Đại sứ cụm / Tủ mát cư dân','khach-hang','#hubPanel','Chung cư, nhà phố Đà Nẵng','pilot','Mới ở V6. Xử lý lễ tân từ chối và khách vắng nhà.',()=>setAmb(true)],
+ ['Khách hàng','Thực đơn tuần, ♡ ✕, giá mẻ nấu chung','khach-hang','#menuPanel','Mọi khách','real','Đổi món tức thì, không khảo sát.'],
+ ['Khách hàng','Nhãn bảo quản Đợt 2: mát hoặc cấp đông IQF','khach-hang','#menuPanel','Mọi khách','pilot','Mới ở V6. Hạn dùng thịt ướp không muối cần kiểm nghiệm.'],
+ ['Khách hàng','Nấu chung 1 nền, sốt trộn bát riêng in tên','khach-hang','#familySplit','Gia đình nhiều thế hệ','real','Mới ở V6. Túi Gia Vị Tươi; sốt không vào chảo chung.',famOn],
+ ['Khách hàng','Gói Hiếu Thảo: con ở xa đặt cho bố mẹ','khach-hang','#giftBox','Con ở TP.HCM, Hà Nội, nước ngoài','pilot','Mới ở V6. Người trả khác người nhận.',()=>{if(!S.gift.on)setGift(true)}],
+ ['Khách hàng','Thẻ Suất Ăn 24 + 2, Khiên chuỗi','khach-hang','#payGrid','Khách trung thành','pilot','Mới ở V6. Thay số dư tiền; cần luật sư duyệt hợp đồng.',()=>{S.pay='pass';setPressed('#payGrid .pay','pay','pass');renderCart();renderJourney()}],
+ ['Khách hàng','Mua thêm đi cùng chuyến xe','khach-hang','#addons','Mọi khách','real','Chi phí giao biên gần 0đ.'],
+ ['Khách hàng','Túi mù có kiểm soát','khach-hang','#bagPanel','Khách thích thử món','real','Xả nguyên liệu dư, giảm 10%.'],
+ ['Khách hàng','Chống lạm dụng ưu đãi bằng số điện thoại','khach-hang','#phoneBox','MOVA','real','Chặn số đã có tài khoản.'],
+ ['Dinh dưỡng','BMI, TDEE Mifflin-St Jeor, khẩu phần tự động','khach-hang','#nutPanel','Khách có mục tiêu sức khỏe','real','Tự chỉnh đạm và tinh bột theo người.',()=>{$('#nutPanel').open=true}],
+ ['Dinh dưỡng','Chấm 8 chỉ tiêu của thực đơn tuần','khach-hang','#nutPanel','Khách bệnh mạn tính','pilot','Số liệu món là ước tính; cần kiểm nghiệm.',()=>{$('#nutPanel').open=true}],
+ ['Dinh dưỡng','Khoảng trống thực đơn cho R&D','nha-may','#gapPanel','Bếp R&D','real','Chỉ ra nhóm khách thiếu món đạt chuẩn.'],
+ ['Giao vận','Pilot mua tại chỗ hoặc Scale xe lạnh Đắk Lắk','giao-van','#leg1Panel','Vận hành, nhà đầu tư','real','Mới ở V6. Ngưỡng mở tuyến theo đơn tối thiểu nhà cung cấp.'],
+ ['Giao vận','Gom đơn theo cụm, ngưỡng 15.000đ/hộp','giao-van','#leg2Panel','Vận hành','real','Tính phí giao theo mật độ cụm.'],
+ ['Giao vận','Túi giữ nhiệt tái sử dụng 15 vòng','giao-van','#leg2Panel','Cư dân, MOVA','pilot','Mới ở V6. Tỷ lệ trả túi và giá thùng xốp thật cần đo.',()=>setSwap(true)],
+ ['Giao vận','Express RTH 20 phút từ nguyên liệu cận hạn','giao-van','#expressPanel','Văn phòng, khách cần ăn ngay','pilot','Nên để giai đoạn 2.'],
+ ['Nhà máy','Sổ đơn sống với 2 giờ chốt','nha-may','#facTop','Bếp trung tâm','real','Đồng bộ với header.'],
+ ['Nhà máy','BOM và phiếu sản xuất','nha-may','#bomPanel','Xưởng sơ chế','real','Gồm ướp nền, gói sốt, nhóm túi.'],
+ ['Nhà máy','Đặt hàng trước giờ chốt theo P90','nha-may','#nvPanel','Thu mua','real','Mức phục vụ theo Cu/(Cu+Co).',()=>setDrop(1)],
+ ['Nhà máy','Đợt 2: gộp chuyến tuần, kho đệm 0–2°C','nha-may','#nvPanel','Thu mua','real','Mới ở V6. Bỏ điểm mù đặt thịt lúc sổ đơn 44%.',()=>setDrop(2)],
+ ['Nhà máy','Chế độ sơ chế Tinh hoặc Gọn','nha-may','#prepPanel','Xưởng sơ chế','real','Tinh nhân số dòng cắt khoảng 4 lần.'],
+ ['Tài chính','Kinh tế đơn vị và điểm hòa vốn','tai-chinh','#uePanel','Nhà đầu tư','pilot','Giá vốn, tần suất đặt là giả định.'],
+ ['Tài chính','Hoàn vốn CAC: rải 4 tuần hay dồn tuần 1','tai-chinh','#cacPanel','Nhà đầu tư','pilot','Hiệu ứng giữ chân là giả định.'],
+ ['Tài chính','Vốn lưu động và đỉnh ứng vốn','tai-chinh','#wcPanel','CFO, ngân hàng','real','Theo điều khoản nhà cung cấp và thời điểm thu tiền.'],
+ ['Tài chính','Phao nổi Thẻ Suất Ăn','tai-chinh','#floatPanel','CFO','real','Mới ở V6. Suất chưa dùng là doanh thu chưa thực hiện.'],
+ ['Chiến lược','Benchmark quốc tế','chien-luoc','#benchPanel','Hội đồng quản trị','real','Dữ kiện đã xác minh nguồn.'],
+ ['Chiến lược','7 quyết định cần chốt','chien-luoc','#decPanel','Ban điều hành','pilot','Cần chốt trước pilot.'],
+ ['Chiến lược','Rủi ro vận hành và giải pháp','chien-luoc','#riskPanel','Ban điều hành','real','Gồm rủi ro nêm nhầm và nhận hàng.']
+];
+let featF='all';
+function weekTotals(){let serv=0,rev=0,orders=0;[1,2].forEach(dr=>ORD[dr].forEach(o=>{orders++;o.items.forEach(it=>{const d=byId[it.d];serv+=it.q;rev+=it.q*d.price*(1-d.batch/100)})}));return {serv,rev,orders}}
+function renderOverview(){
+  const T=weekTotals(),E=econ(),bal=wcSim(),mn=Math.min(0,...bal),mi=bal.indexOf(Math.min(...bal));
+  const batches=[1,2].reduce((s,dr)=>s+Object.values(aggregate(dr,WIN[dr].len).agg).reduce((x,a)=>x+Math.ceil(a.serv/BATCH),0),0),ps=prepStats(aggregate(1,WIN[1].len).agg);
+  const fail=G.amb?.01:.08,deliv=G.trip/(+$('#l2Box').value*G.stops)*(1+fail)+swapCost()+ambFee();
+  const W=52,pb=(()=>{for(let t=0;t<W;t++)if(E.cum(t,G.promo)>=FV.cac)return t;return null})();
+  const N=[['Khách & Gia đình','RTC gói tuần, RTH Express; cá nhân, gia đình, Gói Hiếu Thảo',`${fmtN(T.orders)} đơn trong sổ tuần`,'khach-hang','#menuPanel'],
+    ['Dinh dưỡng & Mẻ nấu','Mifflin-St Jeor, 8 chỉ tiêu; gom món thành mẻ',`${batches} mẻ nấu/tuần`,'khach-hang','#nutPanel'],
+    ['Sổ đơn & Xưởng sơ chế','2 giờ chốt, đặt hàng P90, phiếu sản xuất, chế độ Gọn',`${ps.ll} dòng cắt mỗi đợt`,'nha-may','#facTop'],
+    ['Logistics 2 chặng & Cụm','Nguồn tại chỗ hoặc xe lạnh; giao theo cụm, qua đại sứ',`${fmt(deliv)}/hộp giao + bao bì`,'giao-van','#leg2Panel'],
+    ['Kinh tế đơn vị & Dòng tiền','Hòa vốn, CAC, vốn lưu động, Thẻ Suất Ăn',`Hòa vốn ${fmtN(E.be)} hộ`,'tai-chinh','#uePanel']];
+  $('#chain').innerHTML=N.map((n,i)=>`<button class="link" data-tab="${n[3]}" data-el="${n[4]}"><span class="no">${i+1}</span><b>${n[0]}</b><span class="d">${n[1]}</span><span class="m">${n[2]}</span></button>`).join('');
+  const K=[['Tổng suất ăn tuần (2 đợt)',fmtN(T.serv),'Từ sổ đơn mô phỏng','nha-may','#facTop',''],
+    ['Doanh thu dự phóng tuần',nf1.format(T.rev/1e6)+' triệu','Sau giá mẻ nấu chung','nha-may','#bomPanel',''],
+    ['Biên lãi gộp sau giao',Math.round(E.gm*100)+'%','Giả định Tab 4','tai-chinh','#uePanel',E.gm>=.3?'good':'bad'],
+    ['Hộ hoạt động để hòa vốn',fmtN(E.be)+' hộ','Đã tính tần suất đặt','tai-chinh','#uePanel','hot'],
+    ['Đỉnh ứng vốn trong tuần',mn<0?'−'+nf1.format(-mn/1e6)+' triệu':'Không âm',mn<0?dayLbl(mi):`Thu ${WC.col==='order'?'khi đặt':'khi giao'}, trả NCC ${WC.terms?'sau '+WC.terms+' ngày':'ngay'}`,'tai-chinh','#wcPanel',mn<0?'bad':'good'],
+    ['Hoàn vốn CAC',pb!==null?'Tuần '+pb:'Quá 52 tuần',G.promo==='spread'?'Ưu đãi rải 4 tuần':'Dồn 50% tuần 1','tai-chinh','#cacPanel',pb!==null&&pb<=12?'good':'bad']];
+  $('#snapKpis').innerHTML=K.map(k=>`<button class="kpi ${k[5]}" data-tab="${k[3]}" data-el="${k[4]}"><span>${k[0]}</span><b>${k[1]}</b><span>${k[2]}</span></button>`).join('');
+  setPressed('#featFilter button','f',featF);
+  const rows=FEATS.map((f,i)=>[f,i]).filter(([f])=>featF==='all'||f[5]===featF);
+  $('#featTable').innerHTML=`<thead><tr><th>Phân hệ</th><th>Tính năng</th><th>Đối tượng phục vụ</th><th>Trạng thái</th><th>Ghi chú, cải tiến V6</th></tr></thead><tbody>${rows.map(([f,i])=>`<tr><td>${f[0]}</td><td><button class="featlink" data-i="${i}">${f[1]}</button></td><td class="small">${f[4]}</td><td>${f[5]==='real'?'<span class="tag green">Tính thật trên mô hình</span>':'<span class="tag orange">Giả định cần đo Pilot</span>'}</td><td class="small">${f[6]}</td></tr>`).join('')}</tbody>`;
+}
+$('#chain').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b)jumpTo(b.dataset.tab,b.dataset.el,b.dataset.el==='#nutPanel'?()=>{$('#nutPanel').open=true}:null)});
+$('#snapKpis').addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(b)jumpTo(b.dataset.tab,b.dataset.el)});
+$('#featFilter').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;featF=b.dataset.f;renderOverview()});
+$('#featTable').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(!b)return;const f=FEATS[+b.dataset.i];jumpTo(f[2],f[3],f[7])});
+
+/* ================= Chế độ thuyết trình ================= */
+const TOUR=[
+ {tab:'tong-quan',el:'#chainPanel',t:'Bức tranh trong 30 giây',b:'Năm mắt xích từ khách hàng đến dòng tiền, mỗi mắt xích có một con số sống. Bảng tính năng tách rõ phần tính thật và phần còn là giả định cần đo trong pilot.',go:()=>{}},
+ {tab:'khach-hang',el:['#journeyPanel','#renewPanel'],t:'Thói quen: hành trình 4 tuần và tự gia hạn',b:'Ưu đãi rải 4 tuần thay vì đốt 50% tuần đầu. Giỏ tuần sau tự xác nhận, Zalo nhắc 3 giờ trước giờ chốt với nút bỏ qua một chạm.',go:()=>{S.phoneOk=true;S.streak=1;G.promo='spread';S.renew=true;$('#phoneMsg').innerHTML='<span style="color:var(--green)">Tài khoản mới (minh họa).</span>';renderTab1();renderFin()}},
+ {tab:'khach-hang',el:'#hubPanel',t:'Mua chung theo cụm, nhận qua Đại sứ',b:'Đủ 6 hộp trong cụm thì miễn phí giao. Đại sứ cụm hoặc tủ mát cư dân nhận hộ cả cụm, xử lý lễ tân từ chối và khách vắng nhà, kể cả cụm nhà phố Đà Nẵng.',go:()=>{setDrop(1);S.hub[1]=4;setAmb(true)}},
+ {tab:'khach-hang',el:['#familySplit'],t:'Nấu chung một nền, không thể nêm nhầm',b:'Phi Túi Gia Vị Tươi, xào khay đạm không muối, chia bát theo vạch, rồi mỗi người tự rưới gói sốt in tên mình. Sốt không vào chảo chung.',go:()=>{if(S.gift.on)setGift(false);S.mode='family';S.members={bo:true,me:true,con:true,ongba:true};S.prof='bo';buildMenu();renderTab1()}},
+ {tab:'khach-hang',el:['#giftBox'],t:'Gói Hiếu Thảo',b:'Con ở TP.HCM, Hà Nội hoặc nước ngoài trả tiền; bố mẹ ở Đà Nẵng nhận gói Ông bà mềm, ít muối. Người trả nhận ảnh giao hàng và tóm tắt dinh dưỡng mỗi tuần.',go:()=>{setGift(true)}},
+ {tab:'khach-hang',el:['#payGrid','#payDetail'],t:'Thẻ Suất Ăn 24 + 2 thay số dư tiền',b:'Khách mua trước 24 suất, tặng 2 suất, quà mỗi tuần và một Khiên bảo vệ chuỗi. Thẻ ghi bằng số suất, không lưu giá trị tiền.',go:()=>{S.pay='pass';setPressed('#payGrid .pay','pay','pass');renderCart();renderJourney()}},
+ {tab:'giao-van',el:'#leg1Panel',t:'Pilot mua tại chỗ, Scale mới đi Đắk Lắk',b:'Ở 30–50 hộ, thịt mỗi chuyến chưa tới đơn tối thiểu của nhà cung cấp Đắk Lắk; mua tại chỗ khoảng 500đ/suất. Tuyến xe lạnh chỉ mở khi đạt khoảng 300 hộ.',go:()=>{setStage('pilot')}},
+ {tab:'giao-van',el:'#leg2Panel',t:'Túi tái sử dụng và giao qua Đại sứ',b:'Túi 15 vòng với điểm thưởng 1.500đ thu hẹp mức lỗ của V5.5. Giao qua đại sứ giảm thời gian mỗi hộp và tỷ lệ giao không thành.',go:()=>{$('#l2Box').value=6;G.swap=true;$('#swapChk').checked=true;setAmb(true)}},
+ {tab:'nha-may',el:'#nvPanel',t:'Đợt 2: gộp chuyến tuần và kho đệm',b:'Thịt Đợt 2 không còn đặt khi sổ đơn mới 44%. Đặt cùng chuyến xe lạnh Đợt 1, lưu kho 0–2°C, bù tại chỗ nếu thiếu; phần dư đi qua Túi mù và khay RTH.',go:()=>{setDrop(2);F.h=40;renderFactory()}},
+ {tab:'tai-chinh',el:['#wcPanel','#floatPanel'],t:'Tiền: thu trước và Thẻ Suất Ăn',b:'Thu tiền khi đặt qua VietQR giữ quỹ không âm. Thẻ Suất Ăn tạo doanh thu chưa thực hiện; giá trị chính là giữ chân, không phải lãi tiền gửi. Bảy quyết định còn lại nằm ở Tab 5.',go:()=>{WC.terms=0;WC.col='order';renderWC()}}
+];
+let tourI=-1;
+function tourGo(i){
+  tourI=clamp(i,0,TOUR.length-1);const s=TOUR[tourI];
+  $$('.spot').forEach(x=>x.classList.remove('spot'));
+  if(location.hash.slice(1)!==s.tab){skipTop=true;location.hash=s.tab}showTab(s.tab);s.go();
+  $('#tourDots').innerHTML=TOUR.map((_,j)=>`<button data-i="${j}" ${j===tourI?'aria-current="step"':''} aria-label="Bước ${j+1}">${j+1}</button>`).join('');
+  $('#tourTitle').textContent=`${tourI+1}/${TOUR.length}. ${s.t}`;$('#tourBody').textContent=s.b;
+  $('#tourPrev').disabled=tourI===0;$('#tourNext').textContent=tourI===TOUR.length-1?'Kết thúc':'Tiếp';
+  spotEls(s.el,true);
+}
+function tourStart(){$('#tour').hidden=false;document.body.classList.add('touring');tourGo(0)}
+function tourEnd(){$('#tour').hidden=true;document.body.classList.remove('touring');$$('.spot').forEach(x=>x.classList.remove('spot'));tourI=-1}
+$('#presentBtn').addEventListener('click',tourStart);
+$('#tourNext').addEventListener('click',()=>tourI>=TOUR.length-1?tourEnd():tourGo(tourI+1));
+$('#tourPrev').addEventListener('click',()=>tourGo(tourI-1));
+$('#tourExit').addEventListener('click',tourEnd);
+$('#tourDots').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(b)tourGo(+b.dataset.i)});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){if(!$('#ticketModal').hidden)$('#ticketModal').hidden=true;else if(tourI>=0)tourEnd()}
+  if(tourI>=0&&!/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)){if(e.key==='ArrowRight')tourI>=TOUR.length-1?tourEnd():tourGo(tourI+1);if(e.key==='ArrowLeft')tourGo(tourI-1)}
+});
+
+/* ================= Khởi tạo ================= */
+buildMenu();renderTab1();setStage('pilot');renderLeg2();renderExpress();renderFactory();renderGap();renderFin();tickHeader();
+showTab(location.hash.slice(1));
+</script>
+</body>
+</html>
