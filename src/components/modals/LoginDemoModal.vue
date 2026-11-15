@@ -38,7 +38,7 @@
                 <span class="demo-pill orange">Mới</span>
               </div>
               <small class="muted" style="display: block; margin-top: 3px">
-                Anh Minh • Số dư 30.000đ • Landmark 4 Vinhomes • Chưa có đơn
+                Anh Minh • 30.000đ quà tặng • Chưa làm khảo sát AI (sẵn sàng làm 6 bước nhận +20k)
               </small>
             </div>
           </button>

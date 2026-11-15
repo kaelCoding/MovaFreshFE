@@ -1,18 +1,7 @@
 <template>
   <div class="store-view">
-    <!-- 0. Phễu Touchpoint & AI Onboarding (Hiển thị nổi bật đầu hành trình khi chưa hoàn tất) -->
-    <section
-      v-if="!store.onboardingProfile?.isCompleted && !store.onboardingSkipped"
-      class="onboarding-banner-wrap"
-      aria-label="Phễu khảo sát AI Onboarding"
-    >
-      <div class="wrap">
-        <AiOnboardingWizard />
-      </div>
-    </section>
-
-    <!-- 1. Hero Section (Hiển thị khi đã hoàn thành hoặc khi bấm bỏ qua để xem mẫu) -->
-    <HeroSection v-else />
+    <!-- 1. Hero Section (Split-Hero 2 cột: Brand & Cold-chain bên trái, Wizard/Summary Card bên phải) -->
+    <HeroSection />
 
     <!-- 2. Journey 16h Section -->
     <JourneySection />
@@ -35,8 +24,8 @@
           </button>
         </div>
 
-        <!-- Dải mời khảo sát nếu đang nhảy cóc (Skip) xem thử thực đơn mẫu -->
-        <div v-else-if="store.onboardingSkipped" class="ai-skip-banner-store">
+        <!-- Dải mời khảo sát nếu chưa hoàn tất Hồ sơ AI -->
+        <div v-else class="ai-skip-banner-store">
           <div class="skip-banner-text">
             💡 Bạn đang xem thực đơn mẫu. Thiết lập <b>Hồ sơ AI (1 phút)</b> để nhận <b>Gift Card 900.000đ</b> & cộng ngay <b>+20.000đ Fresh Credit</b>!
           </div>
@@ -159,7 +148,6 @@
 
 <script setup>
 import { computed } from 'vue';
-import AiOnboardingWizard from '../components/onboarding/AiOnboardingWizard.vue';
 import HeroSection from '../components/store/HeroSection.vue';
 import JourneySection from '../components/store/JourneySection.vue';
 import BudgetPlanner from '../components/store/BudgetPlanner.vue';

@@ -21,18 +21,19 @@ const store = useMovaStore();
   left: 50%;
   bottom: 24px;
   transform: translate(-50%, 16px);
-  background: var(--ink);
-  color: #fff;
+  background: #1C1917;
+  color: #FFFFFF;
   border-radius: 12px;
-  padding: 10px 18px;
+  padding: 12px 20px;
   font-size: 14px;
+  font-weight: 600;
   opacity: 0;
   pointer-events: none;
   transition: .25s ease;
-  z-index: 75;
+  z-index: 9999;
   max-width: min(92vw, 500px);
   text-align: center;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.24);
 }
 
 .toast.show {

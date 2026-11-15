@@ -698,6 +698,9 @@ const handleSkip = () => {
 };
 
 const handleClose = () => {
+  if (currentStep.value === 6) {
+    store.saveOnboardingProfile({ ...form }, true);
+  }
   emit('close');
   if (store.activeModal === 'onboarding') {
     store.closeModal();
@@ -778,12 +781,11 @@ const handleFinishWizard = () => {
 
   setTimeout(() => {
     isAnalyzing.value = false;
-    // Save to store and credit 20.000d Fresh Credit
-    store.saveOnboardingProfile({ ...form }, true);
   }, 1500);
 };
 
 const handleGoToMenu = () => {
+  store.saveOnboardingProfile({ ...form }, true);
   emit('complete');
   if (props.asModal) {
     store.closeModal();
@@ -806,13 +808,12 @@ const handleGoToMenu = () => {
 .ai-wizard-container.as-modal-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 100;
-  background: rgba(15, 20, 15, 0.65);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  z-index: 80;
+  background: rgba(30, 25, 15, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: grid;
+  place-items: center;
   padding: 16px;
   overflow-y: auto;
 }
@@ -823,11 +824,18 @@ const handleGoToMenu = () => {
   border: 1.5px solid var(--line);
   border-radius: 20px;
   box-shadow: 0 8px 32px rgba(20, 35, 20, 0.08);
-  max-width: 680px;
+  max-width: 100%;
   width: 100%;
   margin: 0 auto;
   overflow: hidden;
   transition: all 0.25s ease;
+}
+
+.as-modal-backdrop .ai-wizard-card {
+  max-width: 680px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 50px rgba(20, 15, 10, 0.25);
 }
 
 .wizard-close-btn {

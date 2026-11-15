@@ -492,20 +492,20 @@ export const DEMO_MINH_DATA = {
         isDefault: true
       }
     ],
-    pref: { ppl: 1, budget: 1200000, sauce: false, carb: false, f: [] },
+    pref: { ppl: 2, budget: 1200000, sauce: false, carb: false, f: [] },
     zaloRemind: true
   },
   onboardingProfile: {
-    contact: '0912 999 888',
+    contact: '',
     region: 'hcm_inner',
-    householdSize: 1,
+    householdSize: 2,
     mealsPerWeek: 5,
-    cuisinePreference: 'viet_fusion',
-    healthGoal: ['muscle'],
-    exclusions: ['no_spicy'],
-    isCompleted: true
+    cuisinePreference: 'pure_viet',
+    healthGoal: ['balanced'],
+    exclusions: [],
+    isCompleted: false
   },
-  profileRewardClaimed: true,
+  profileRewardClaimed: false,
   onboardingSkipped: false,
   activeOrder: null,
   historyOrders: [],

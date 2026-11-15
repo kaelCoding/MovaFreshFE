@@ -738,6 +738,46 @@ export const useMovaStore = defineStore('mova', {
       };
       this.onboardingSkipped = false;
 
+      // Tự động đăng nhập người dùng khi hoàn tất khảo sát
+      this.user.isLoggedIn = true;
+      if (profile.contact) {
+        const trimmed = profile.contact.trim();
+        if (this.user.name && this.user.name !== 'Khách hàng' && this.user.name !== 'Khách mới' && !this.user.name.startsWith('Khách •')) {
+          // Giữ nguyên tên tài khoản định danh / demo (như 'Anh Minh', 'Chị Lan')
+          if (trimmed.includes('@')) {
+            this.user.email = trimmed;
+          } else {
+            this.user.phone = trimmed;
+          }
+        } else if (trimmed.includes('@')) {
+          const emailPrefix = trimmed.split('@')[0];
+          this.user.name = emailPrefix || 'Khách hàng';
+          this.user.email = trimmed;
+        } else {
+          const digits = trimmed.replace(/\D/g, '');
+          const last4 = digits.length >= 4 ? digits.slice(-4) : digits;
+          this.user.name = last4 ? `Khách • ${last4}` : 'Khách hàng';
+          this.user.phone = trimmed;
+        }
+      } else if (!this.user.name || this.user.name === 'Khách hàng') {
+        this.user.name = 'Khách mới';
+      }
+
+      // Khởi tạo sổ địa chỉ mặc định nếu chưa có
+      if (!this.user.addresses || !this.user.addresses.length) {
+        this.user.addresses = [
+          {
+            id: 'addr-' + Date.now(),
+            label: 'Địa chỉ giao hàng',
+            name: this.user.name,
+            phone: this.user.phone || '',
+            district: profile.region === 'hcm_inner' ? 'Quận 1' : 'TP. Thủ Đức',
+            detail: 'Chưa cập nhật chi tiết số nhà, tên đường',
+            isDefault: true
+          }
+        ];
+      }
+
       // Sync household size to store
       if (profile.householdSize) {
         this.n = profile.householdSize;
@@ -789,7 +829,7 @@ export const useMovaStore = defineStore('mova', {
       }
 
       if (rewarded) {
-        this.toast('🎉 Chúc mừng! Bạn nhận được +20.000đ Fresh Credit vào tài khoản!');
+        this.toast(`🎉 Chúc mừng! Đã kích hoạt tài khoản ${this.user.name} & nhận +20.000đ Fresh Credit!`);
       } else {
         this.toast('Đã cập nhật Hồ sơ sức khỏe AI thành công!');
       }
@@ -831,18 +871,36 @@ export const useMovaStore = defineStore('mova', {
       this.persist();
     },
 
+    loginDemoReturning() {
+      return this.loginDemoLan();
+    },
+
     loginDemoNew() {
       this.user = JSON.parse(JSON.stringify(DEMO_MINH_DATA.user));
+      this.user.isLoggedIn = true;
+      this.user.name = 'Anh Minh';
+      this.user.prepaidBalance = 30000;
       this.activeOrder = null;
       this.historyOrders = [];
       this.ledger = JSON.parse(JSON.stringify(DEMO_MINH_DATA.ledger));
       this.notifications = JSON.parse(JSON.stringify(DEMO_MINH_DATA.notifications));
-      this.onboardingProfile = JSON.parse(JSON.stringify(DEMO_MINH_DATA.onboardingProfile));
-      this.profileRewardClaimed = true;
+      // Bắt buộc đặt onboardingProfile.isCompleted = false và reset câu trả lời để Anh Minh trải nghiệm đúng luồng khách mới
+      this.onboardingProfile = {
+        contact: '',
+        region: 'hcm_inner',
+        householdSize: 2,
+        mealsPerWeek: 5,
+        cuisinePreference: 'pure_viet',
+        healthGoal: ['balanced'],
+        exclusions: [],
+        isCompleted: false
+      };
+      this.profileRewardClaimed = false;
       this.onboardingSkipped = false;
-      this.n = this.onboardingProfile.householdSize;
+      this.n = 2;
+      this.f = [];
       this.pay = 'qr';
-      this.toast('Đã đăng nhập tài khoản Khách Mới: Anh Minh (Tặng 30.000đ Fresh Credit)!');
+      this.toast('Đã đăng nhập Demo Khách Mới: Anh Minh (Chưa làm khảo sát, sẵn sàng trải nghiệm AI)!');
       if (this.pendingCheckoutAfterLogin) {
         this.pendingCheckoutAfterLogin = false;
         this.openModal('checkout');
