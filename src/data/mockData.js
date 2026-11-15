@@ -393,6 +393,18 @@ export const DEMO_LAN_DATA = {
     pref: { ppl: 4, budget: 1200000, sauce: false, carb: false, f: [] },
     zaloRemind: true
   },
+  onboardingProfile: {
+    contact: '0908 123 456',
+    region: 'hcm_inner',
+    householdSize: 4,
+    mealsPerWeek: 5,
+    cuisinePreference: 'pure_viet',
+    healthGoal: ['balanced'],
+    exclusions: [],
+    isCompleted: true
+  },
+  profileRewardClaimed: true,
+  onboardingSkipped: false,
   activeOrder: {
     id: 'MV10298',
     createdAt: 'Hôm nay lúc 09:15',
@@ -450,16 +462,16 @@ export const DEMO_LAN_DATA = {
     }
   ],
   ledger: [
-    { date: '01/11 14:20', desc: 'Đăng ký Gói Đi Chợ 1.000.000đ (Tặng 50.000đ)', amount: 1050000, bal: 1050000 },
+    { date: '01/11 14:20', desc: 'Đăng ký Fresh Credit 1.000.000đ (Tặng 50.000đ)', amount: 1050000, bal: 1050000 },
     { date: '01/11 15:00', desc: 'Thanh toán đơn hàng #MV08405', amount: -618000, bal: 432000 },
-    { date: '06/11 09:30', desc: 'Đăng ký Gói Đi Chợ 1.000.000đ (Tặng 50.000đ)', amount: 1050000, bal: 1482000 },
+    { date: '06/11 09:30', desc: 'Đăng ký Fresh Credit 1.000.000đ (Tặng 50.000đ)', amount: 1050000, bal: 1482000 },
     { date: '08/11 19:40', desc: 'Thanh toán đơn hàng #MV08912', amount: -745000, bal: 737000 },
     { date: '10/11 11:15', desc: 'Bảo hành bữa ăn #MV08912 (Rau dập xe lạnh)', amount: 113000, bal: 850000 }
   ],
   notifications: [
     { id: 'n1', time: '10:00 hôm nay', title: 'Đơn #MV10298 đã chuyển nhà máy Đắk Lắk', desc: 'Đơn của bạn đã được ghi nhận vào lịch sơ chế đêm nay.', unread: true },
     { id: 'n2', time: 'Hôm qua 19:30', title: 'Zalo OA: Nhắc lịch chốt đơn trước 20:00', desc: 'Xe lạnh chuẩn bị đóng chuyến đêm về TP.HCM.', unread: false },
-    { id: 'n3', time: '10/11 11:15', title: 'Đã hoàn 113.000đ vào Gói Đi Chợ', desc: 'Hoàn tiền bảo đảm độ tươi cho sự cố rau dập đơn #MV08912.', unread: false }
+    { id: 'n3', time: '10/11 11:15', title: 'Đã hoàn 113.000đ vào Fresh Credit', desc: 'Hoàn tiền bảo đảm độ tươi cho sự cố rau dập đơn #MV08912.', unread: false }
   ]
 };
 
@@ -480,15 +492,27 @@ export const DEMO_MINH_DATA = {
         isDefault: true
       }
     ],
-    pref: { ppl: 4, budget: 1200000, sauce: false, carb: false, f: [] },
+    pref: { ppl: 1, budget: 1200000, sauce: false, carb: false, f: [] },
     zaloRemind: true
   },
+  onboardingProfile: {
+    contact: '0912 999 888',
+    region: 'hcm_inner',
+    householdSize: 1,
+    mealsPerWeek: 5,
+    cuisinePreference: 'viet_fusion',
+    healthGoal: ['muscle'],
+    exclusions: ['no_spicy'],
+    isCompleted: true
+  },
+  profileRewardClaimed: true,
+  onboardingSkipped: false,
   activeOrder: null,
   historyOrders: [],
   ledger: [
     {
       date: 'Hôm nay',
-      desc: 'Quà tặng thành viên mới MOVA Fresh',
+      desc: 'Quà tặng tân thủ Fresh Credit',
       amount: 30000,
       bal: 30000
     }
@@ -498,7 +522,7 @@ export const DEMO_MINH_DATA = {
       id: 'notif-welcome',
       time: 'Vừa xong',
       title: 'Chào mừng Anh Minh đến với MOVA Fresh',
-      desc: 'MOVA tặng bạn 30.000đ vào Gói Đi Chợ cho đơn đầu tiên.',
+      desc: 'MOVA tặng bạn 30.000đ vào Fresh Credit cho đơn đầu tiên.',
       unread: true
     }
   ]
@@ -511,9 +535,9 @@ export const DEFAULT_STATE = () => ({
   addonsA: {},
   addonsB: {},
   budget: 1200000,
-  n: 4,
+  n: 2,
   f: [],
-  pay: 'qr', // 'qr' | 'prepaid' | 'cod'
+  pay: 'qr', // 'qr' | 'prepaid'
   sauce: false,
   carb: false,
   firstDrop: 'sun', // 'sun' | 'wed'
@@ -528,9 +552,21 @@ export const DEFAULT_STATE = () => ({
     phone: '',
     prepaidBalance: 0,
     addresses: [],
-    pref: { ppl: 4, budget: 1200000, sauce: false, carb: false, f: [] },
+    pref: { ppl: 2, budget: 1200000, sauce: false, carb: false, f: [] },
     zaloRemind: true
   },
+  onboardingProfile: {
+    contact: '',
+    region: 'hcm_inner',
+    householdSize: 2,
+    mealsPerWeek: 5,
+    cuisinePreference: 'pure_viet',
+    healthGoal: ['balanced'],
+    exclusions: [],
+    isCompleted: false
+  },
+  profileRewardClaimed: false,
+  onboardingSkipped: false,
 
   activeOrder: null,
   historyOrders: [],

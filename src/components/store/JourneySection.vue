@@ -10,7 +10,7 @@
           <span class="dot">1</span>
           <span class="when">Trước 20:00 T5 hoặc CN</span>
           <b>Bạn chốt đơn</b>
-          <p>Không ép mua cả tuần. Chọn số bữa vừa túi tiền (đơn tối thiểu 250.000đ).</p>
+          <p>Không ép mua cả tuần. Khẩu phần được AI định lượng chuẩn theo số lượng người ăn và số bữa mỗi tuần.</p>
         </li>
         <li>
           <span class="dot">2</span>

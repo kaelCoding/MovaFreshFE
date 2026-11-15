@@ -9,7 +9,7 @@
     </div>
     <div class="u-stats">
       <div class="stat-chip">
-        <small>Gói Đi Chợ Trả Trước</small>
+        <small>Fresh Credit khả dụng</small>
         <b class="num">{{ fmt(store.user.prepaidBalance) }}</b>
       </div>
       <div class="stat-chip">

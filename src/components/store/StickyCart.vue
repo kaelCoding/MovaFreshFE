@@ -16,23 +16,15 @@
         Chốt đơn đợt {{ cutoffData.sunLbl }}: <b>{{ cutoffData.formatted }}</b>
       </div>
 
-      <!-- Thanh tiến trình 3 mốc (MOV 250k -> VietQR 400k -> Freeship 600k) -->
-      <div class="progress-box">
-        <div class="p-header">
-          <span>Ưu đãi hành trình xe lạnh</span>
-          <span class="num">{{ fmt(c.netFood) }}</span>
+      <!-- Thông tin hành trình xe lạnh V2 (Miễn phí vận chuyển) -->
+      <div class="v2-logistics-box">
+        <div class="v2-logistics-badge">
+          <span class="dot-live"></span>
+          <span>Tuyến lạnh Đắk Lắk – TP.HCM</span>
         </div>
-        <div class="p-bar-outer">
-          <div class="p-bar-inner" :style="{ width: progressPercent + '%' }"></div>
-        </div>
-        <div class="p-nodes">
-          <span :class="{ reached: c.netFood >= 250000 }">250k: Đủ đơn</span>
-          <span :class="{ reached: c.netFood >= 400000 }">400k: -20k QR</span>
-          <span :class="{ reached: c.netFood >= 600000 && c.meals >= 4 }">600k: Freeship</span>
-        </div>
-        <div class="p-hint" :class="hintStatusClass">
-          {{ progressHintText }}
-        </div>
+        <p class="v2-logistics-desc">
+          Bảo đảm 0°C – 4°C trong thùng giữ nhiệt đá gel • <b>Miễn phí giao hàng</b>
+        </p>
       </div>
     </div>
 
@@ -213,7 +205,7 @@
 
       <button
         class="btn orange order"
-        :disabled="!c.meals || !c.meetsMOV"
+        :disabled="!c.meals"
         @click="handleOrder"
       >
         {{ orderBtnText }}
@@ -249,34 +241,6 @@ onUnmounted(() => {
   clearInterval(timer);
 });
 
-const progressPercent = computed(() => {
-  const net = c.value.netFood;
-  if (net < 250000) return (net / 250000) * 33;
-  if (net < 400000) return 33 + ((net - 250000) / 150000) * 33;
-  if (net < 600000) return 66 + ((net - 400000) / 200000) * 34;
-  return 100;
-});
-
-const hintStatusClass = computed(() => {
-  if (!c.value.netFood || c.value.netFood < 250000) return 'warn';
-  return 'ok';
-});
-
-const progressHintText = computed(() => {
-  const net = c.value.netFood;
-  if (!net) return 'Giỏ chưa có món. Chọn món để bắt đầu.';
-  if (net < 250000) return `Cần thêm ${fmt(250000 - net)} để đạt đơn tối thiểu 250.000đ.`;
-  if (net < 400000) return `Đã đủ đơn tối thiểu! Thêm ${fmt(400000 - net)} để được giảm ngay 20.000đ VietQR.`;
-  if (net < 600000 || c.value.meals < 4) {
-    const needMoney = Math.max(0, 600000 - net);
-    const needMeals = Math.max(0, 4 - c.value.meals);
-    if (needMoney && needMeals) return `Thêm ${fmt(needMoney)} & ${needMeals} bữa nữa để Freeship và Tách 2 đợt.`;
-    if (needMoney) return `Thêm ${fmt(needMoney)} để được Miễn phí giao hàng & Tách 2 đợt.`;
-    return `Thêm ${needMeals} bữa nữa để đủ điều kiện tách 2 đợt & Freeship.`;
-  }
-  return '🎉 Đạt mốc tối đa: Miễn phí giao hàng & Tự động tách 2 đợt giữ trọn độ tươi!';
-});
-
 const dates = computed(() => schedule());
 const drop1Date = computed(() => (store.firstDrop === 'sun' ? dates.value.sun : dates.value.wed));
 const drop2Date = computed(() => (store.firstDrop === 'sun' ? dates.value.wed : dates.value.sun));
@@ -296,7 +260,6 @@ const onCarbChange = () => {
 
 const orderBtnText = computed(() => {
   if (!c.value.meals) return 'Chưa chọn món';
-  if (!c.value.meetsMOV) return `Cần thêm ${fmt(250000 - c.value.netFood)} để đặt hàng`;
   return `Tiến hành đặt hàng • ${fmt(c.value.total)}`;
 });
 
@@ -370,67 +333,40 @@ const handleOrder = () => {
   font-variant-numeric: tabular-nums;
 }
 
-.progress-box {
+.v2-logistics-box {
   margin-top: 10px;
   border: 1px solid var(--line);
   border-radius: 14px;
-  padding: 11px 12px;
+  padding: 10px 12px;
   background: var(--bg);
 }
 
-.p-header {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12.5px;
+.v2-logistics-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
   font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.p-bar-outer {
-  position: relative;
-  height: 10px;
-  border-radius: 6px;
-  background: var(--line-2);
-  overflow: hidden;
-  margin-bottom: 8px;
-}
-
-.p-bar-inner {
-  height: 100%;
-  background: linear-gradient(90deg, var(--orange), var(--green));
-  border-radius: 6px;
-  transition: width 0.3s ease;
-}
-
-.p-nodes {
-  display: flex;
-  justify-content: space-between;
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.p-nodes span.reached {
   color: var(--green);
-  font-weight: 700;
-}
-
-.p-hint {
-  margin-top: 8px;
-  font-size: 12px;
-  line-height: 1.4;
-  padding: 6px 8px;
-  border-radius: 8px;
-}
-
-.p-hint.warn {
-  background: #FFF4E5;
-  color: #B25E00;
-}
-
-.p-hint.ok {
   background: var(--green-soft);
-  color: var(--green);
-  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.dot-live {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 2px rgba(20, 108, 67, 0.2);
+}
+
+.v2-logistics-desc {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.4;
+  margin: 0;
 }
 
 /* Phần giữa: Tự cuộn mượt khi danh sách dài */

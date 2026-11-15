@@ -41,8 +41,25 @@
         </router-link>
       </nav>
 
-      <!-- Bên phải: 3 cụm gọn gàng -->
+      <!-- Bên phải: cụm Hồ sơ AI & Tiện ích -->
       <div class="hdr-r">
+        <!-- 0. Hồ sơ AI tóm tắt & nút Sửa hồ sơ AI -->
+        <div v-if="store.onboardingProfile?.isCompleted" class="ai-profile-strip">
+          <span class="ai-summary-text">{{ aiProfileText }}</span>
+          <button class="btn-edit-ai" @click="store.openOnboarding" aria-label="Sửa hồ sơ AI">
+            Sửa hồ sơ AI
+          </button>
+        </div>
+        <button
+          v-else
+          class="btn-setup-ai"
+          @click="store.openOnboarding"
+          aria-label="Thiết lập hồ sơ AI nhận 20k Fresh Credit"
+        >
+          <span class="pill-spark">✨</span>
+          <span>Thiết lập Hồ sơ AI (+20k)</span>
+        </button>
+
         <!-- 1. Nút Chuông Thông Báo -->
         <button
           class="icon-btn"
@@ -99,6 +116,25 @@ import { fmt } from '../../utils/formatters';
 const store = useMovaStore();
 const route = useRoute();
 const router = useRouter();
+
+// Tóm tắt hồ sơ AI: "4 người • 5 bữa/tuần • Giảm mỡ"
+const aiProfileText = computed(() => {
+  const p = store.onboardingProfile;
+  if (!p) return 'Hồ sơ AI';
+  const size = p.householdSize ? `${p.householdSize} người` : '2 người';
+  const meals = p.mealsPerWeek ? `${p.mealsPerWeek} bữa/tuần` : '5 bữa/tuần';
+
+  const goalMap = {
+    balanced: 'Cân bằng',
+    muscle: 'Tăng cơ',
+    low_carb: 'Giảm mỡ',
+    diabetic: 'Tiểu đường',
+    easy_digest: 'Dễ tiêu'
+  };
+
+  const firstGoal = (p.healthGoal && p.healthGoal[0]) ? (goalMap[p.healthGoal[0]] || 'Cân bằng') : 'Cân bằng';
+  return `${size} • ${meals} • ${firstGoal}`;
+});
 
 const userAvatar = computed(() => {
   return (store.user.name || 'U').charAt(0);
@@ -338,6 +374,68 @@ const handleCartClick = async () => {
   flex-shrink: 0;
 }
 
+/* AI Profile Pill in Header */
+.ai-profile-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 5px 10px;
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
+.ai-summary-text {
+  font-weight: 600;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.btn-edit-ai {
+  border: 0;
+  background: var(--green-soft);
+  color: var(--green);
+  font-weight: 700;
+  font-size: 11.5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.btn-edit-ai:hover {
+  background: var(--green);
+  color: #fff;
+}
+
+.btn-setup-ai {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--orange-soft);
+  border: 1.5px solid var(--orange);
+  color: var(--orange-ink);
+  font-weight: 700;
+  font-size: 12.5px;
+  padding: 6px 11px;
+  border-radius: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.btn-setup-ai:hover {
+  background: var(--orange);
+  color: #fff;
+}
+
+.pill-spark {
+  font-size: 13px;
+}
+
 /* Mobile responsive (<= 768px): clean App style */
 @media (max-width: 768px) {
   .hdr .wrap {
@@ -352,6 +450,20 @@ const handleCartClick = async () => {
   }
   .city-tag {
     display: none;
+  }
+  .ai-summary-text {
+    display: none;
+  }
+  .ai-profile-strip {
+    padding: 4px 6px;
+  }
+  .btn-edit-ai {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+  .btn-setup-ai {
+    font-size: 11px;
+    padding: 5px 8px;
   }
 }
 </style>

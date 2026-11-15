@@ -99,7 +99,7 @@
               @click="store.setPay('prepaid')"
             >
               <div>
-                <b>Trừ vào Gói Đi Chợ Trả Trước</b>
+                <b>Trừ vào Fresh Credit</b>
                 <small>Số dư khả dụng: {{ fmt(store.user.prepaidBalance) }}</small>
               </div>
               <span class="badge" style="background: var(--green)">Khuyên dùng</span>
@@ -118,20 +118,6 @@
                 <small>{{ c.canQR ? 'Đủ điều kiện: Giảm ngay 20.000đ' : 'Áp dụng khi tiền món ≥ 400.000đ' }}</small>
               </div>
               <span v-if="c.canQR" class="badge">Giảm 20.000đ</span>
-            </button>
-
-            <button
-              type="button"
-              class="pay"
-              :class="{ active: store.pay === 'cod' }"
-              role="radio"
-              :aria-checked="store.pay === 'cod'"
-              @click="store.setPay('cod')"
-            >
-              <div>
-                <b>Thanh toán khi nhận hàng (COD)</b>
-                <small>Giao tiền mặt cho shipper</small>
-              </div>
             </button>
           </div>
         </div>
@@ -198,15 +184,12 @@ const paymentDescription = computed(() => {
   const bal = store.user.prepaidBalance;
   if (store.pay === 'prepaid') {
     if (bal >= c.value.total) {
-      return `Trừ trực tiếp ${fmt(c.value.total)} vào Gói Đi Chợ Trả Trước (Số dư còn lại sau đặt: ${fmt(bal - c.value.total)}).`;
+      return `Trừ trực tiếp ${fmt(c.value.total)} vào Fresh Credit (Số dư còn lại sau đặt: ${fmt(bal - c.value.total)}).`;
     }
     const diff = c.value.total - bal;
-    return `Trừ hết ${fmt(bal)} từ Gói Trả Trước. Còn thiếu ${fmt(diff)} sẽ thanh toán thêm qua mã VietQR khi xác nhận.`;
+    return `Trừ hết ${fmt(bal)} từ Fresh Credit. Còn thiếu ${fmt(diff)} sẽ thanh toán thêm qua mã VietQR khi xác nhận.`;
   }
-  if (store.pay === 'qr') {
-    return `Thanh toán ${fmt(c.value.total)} qua VietQR chuyển khoản nhanh${c.value.qrDiscount ? ' (đã giảm 20.000đ ưu đãi)' : ''}.`;
-  }
-  return `Thanh toán tiền mặt ${fmt(c.value.total)} khi nhận thùng hàng từ shipper.`;
+  return `Thanh toán ${fmt(c.value.total)} qua VietQR chuyển khoản nhanh${c.value.qrDiscount ? ' (đã giảm 20.000đ ưu đãi)' : ''}.`;
 });
 
 const submitCheckout = () => {

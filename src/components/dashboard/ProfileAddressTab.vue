@@ -123,7 +123,7 @@
         <div class="zalo-bubble">
           <b>🔔 {{ store.user.name }} ơi, chuẩn bị chốt sổ đợt giao Chủ Nhật nhé!</b>
           <p style="margin-top: 6px">
-            Chuyến xe lạnh Đắk Lắk – Sài Gòn sẽ chốt danh sách sơ chế lúc <b>20:00 tối nay</b>. Số dư Gói Đi Chợ của chị hiện còn <b>{{ fmt(store.user.prepaidBalance) }}</b>.
+            Chuyến xe lạnh Đắk Lắk – Sài Gòn sẽ chốt danh sách sơ chế lúc <b>20:00 tối nay</b>. Số dư Fresh Credit của chị hiện còn <b>{{ fmt(store.user.prepaidBalance) }}</b>.
           </p>
           <div class="zalo-acts">
             <!-- BUG 2 FIX: Chuyển sang router.push('/') rồi scrollIntoView('#thuc-don') -->

@@ -30,12 +30,8 @@
           </p>
         </div>
 
-        <div v-else-if="store.pay === 'prepaid'" class="prepaid-success-note">
-          ✓ Đã trừ đủ <b>{{ fmt(orderInfo.calc.total) }}</b> vào Gói Đi Chợ Trả Trước. Bạn không cần thanh toán thêm gì khi nhận hàng.
-        </div>
-
-        <div v-else class="cod-success-note">
-          Thanh toán tiền mặt <b>{{ fmt(orderInfo.calc.total) }}</b> cho shipper khi nhận đợt hàng đầu tiên.
+        <div v-else class="prepaid-success-note">
+          ✓ Đã trừ đủ <b>{{ fmt(orderInfo.calc.total) }}</b> vào Fresh Credit. Bạn không cần thanh toán thêm gì khi nhận hàng.
         </div>
 
         <div style="margin-top: 20px; display: flex; justify-content: flex-end">
@@ -157,15 +153,6 @@ const goToDashboard = () => {
 .prepaid-success-note {
   background: var(--green-soft);
   color: var(--green-d);
-  padding: 10px 14px;
-  border-radius: 12px;
-  font-size: 13.5px;
-  margin-top: 14px;
-}
-
-.cod-success-note {
-  background: var(--orange-soft);
-  color: var(--orange-ink);
   padding: 10px 14px;
   border-radius: 12px;
   font-size: 13.5px;

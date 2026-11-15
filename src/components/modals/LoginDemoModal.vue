@@ -7,7 +7,7 @@
         Tài khoản MOVA Fresh
       </h3>
       <p class="muted" style="font-size: 13.5px; margin-bottom: 14px">
-        Đăng nhập bằng SĐT để quản lý lịch giao và Gói Đi Chợ Trả Trước.
+        Đăng nhập bằng SĐT để quản lý lịch giao và Fresh Credit.
       </p>
 
       <!-- Nhắc tiếp tục đặt hàng nếu chuyển từ giỏ hàng -->
@@ -51,11 +51,11 @@
           >
             <div class="demo-btn-body">
               <div class="demo-btn-title">
-                <b>Demo Khách quen: Chị Lan (Có sẵn 850.000đ Gói Đi Chợ)</b>
+                <b>Demo Khách quen: Chị Lan (Có sẵn 850.000đ Fresh Credit)</b>
                 <span class="demo-pill green">850k</span>
               </div>
               <small class="muted" style="display: block; margin-top: 3px">
-                Chị Lan • 850.000đ Gói Đi Chợ • 2 địa chỉ • Đơn đang giao #MV10298
+                Chị Lan • 850.000đ Fresh Credit • 2 địa chỉ • Đơn đang giao #MV10298
               </small>
             </div>
           </button>

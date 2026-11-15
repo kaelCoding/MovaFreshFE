@@ -28,7 +28,7 @@
           @click="currentTab = 'prepaid'"
           role="tab"
         >
-          💳 Gói Đi Chợ Trả Trước (Prepaid)
+          💳 Fresh Credit Trả Trước
         </button>
         <button
           class="dash-tab-btn"

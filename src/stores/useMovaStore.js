@@ -18,7 +18,17 @@ function loadState() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      return { ...DEFAULT_STATE(), ...parsed };
+      const def = DEFAULT_STATE();
+      return {
+        ...def,
+        ...parsed,
+        onboardingProfile: {
+          ...def.onboardingProfile,
+          ...(parsed.onboardingProfile || {})
+        },
+        profileRewardClaimed: parsed.profileRewardClaimed ?? def.profileRewardClaimed,
+        onboardingSkipped: parsed.onboardingSkipped ?? def.onboardingSkipped
+      };
     }
   } catch (e) {
     console.warn('Could not parse saved state:', e);
@@ -39,7 +49,7 @@ export const useMovaStore = defineStore('mova', {
       mobileCartOpen: false,
 
       // Modal states
-      activeModal: null, // 'dish' | 'login' | 'checkout' | 'success' | 'refund' | 'topup' | 'address'
+      activeModal: null, // 'dish' | 'login' | 'checkout' | 'success' | 'refund' | 'topup' | 'address' | 'onboarding'
       selectedDishId: null,
       lastPlacedOrder: null,
       pendingTopup: { amount: 0, bonus: 0 },
@@ -91,12 +101,12 @@ export const useMovaStore = defineStore('mova', {
       });
 
       const netFood = sub - save + adTotal;
-      const isSplit = netFood >= 600000 && meals >= 4;
-      const shipFee = meals ? (isSplit ? 0 : 25000) : 0;
+      const isSplit = meals >= 4;
+      const shipFee = 0; // V2: Miễn phí vận chuyển tuyến xe lạnh định kỳ
       const canQR = netFood >= 400000;
       const qrDiscount = state.pay === 'qr' && canQR ? 20000 : 0;
       const total = Math.max(0, netFood + shipFee - qrDiscount);
-      const meetsMOV = netFood >= 250000;
+      const meetsMOV = true; // V2: Bỏ hoàn toàn ngưỡng đơn tối thiểu 250.000đ
 
       return {
         sub,
@@ -139,7 +149,10 @@ export const useMovaStore = defineStore('mova', {
           activeOrder: this.activeOrder,
           historyOrders: this.historyOrders,
           ledger: this.ledger,
-          notifications: this.notifications
+          notifications: this.notifications,
+          onboardingProfile: this.onboardingProfile,
+          profileRewardClaimed: this.profileRewardClaimed,
+          onboardingSkipped: this.onboardingSkipped
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(clone));
       } catch (e) {
@@ -221,14 +234,15 @@ export const useMovaStore = defineStore('mova', {
     },
 
     setPay(p) {
+      if (p !== 'qr' && p !== 'prepaid') {
+        p = 'qr';
+      }
       this.pay = p;
       if (p === 'qr') {
         const c = this.calcAll;
         this.toast(c.canQR ? 'Đã chọn VietQR: Giảm trực tiếp 20.000đ!' : 'Đã chọn VietQR (cần đơn ≥ 400k để giảm 20.000đ)');
       } else if (p === 'prepaid') {
-        this.toast(`Đã chọn trừ vào Gói Đi Chợ (Số dư: ${fmt(this.user.prepaidBalance)})`);
-      } else {
-        this.toast('Đã chọn thanh toán tiền mặt khi nhận hàng (COD)');
+        this.toast(`Đã chọn trừ vào Fresh Credit (Số dư: ${fmt(this.user.prepaidBalance)})`);
       }
       this.persist();
     },
@@ -271,8 +285,7 @@ export const useMovaStore = defineStore('mova', {
           if (a && adQ > 0) testAdTotal += a.price * adQ;
         });
         const testNet = testSub - testSave + testAdTotal;
-        const testIsSplit = testNet >= 600000 && testMeals >= 4;
-        const testShip = testMeals ? (testIsSplit ? 0 : 25000) : 0;
+        const testShip = 0;
         const testQr = this.pay === 'qr' && testNet >= 400000 ? 20000 : 0;
         const testTotal = Math.max(0, testNet + testShip - testQr);
 
@@ -292,7 +305,7 @@ export const useMovaStore = defineStore('mova', {
       return true;
     },
 
-    // BUG 4 FIX: Khóa trần ngân sách cho cả sản phẩm mua thêm (Add-ons) khi ở Chế độ Ngân sách (Mode B)
+    // Khóa trần ngân sách cho cả sản phẩm mua thêm (Add-ons) khi ở Chế độ Ngân sách (Mode B)
     tryChangeAddon(id, q) {
       const targetAddons = this.mode === 'A' ? this.addonsA : this.addonsB;
       const next = { ...targetAddons };
@@ -317,8 +330,7 @@ export const useMovaStore = defineStore('mova', {
           if (a && adQ > 0) testAdTotal += a.price * adQ;
         });
         const testNet = testSub - testSave + testAdTotal;
-        const testIsSplit = testNet >= 600000 && testMeals >= 4;
-        const testShip = testMeals ? (testIsSplit ? 0 : 25000) : 0;
+        const testShip = 0;
         const testQr = this.pay === 'qr' && testNet >= 400000 ? 20000 : 0;
         const testTotal = Math.max(0, testNet + testShip - testQr);
 
@@ -418,8 +430,7 @@ export const useMovaStore = defineStore('mova', {
           if (a && adQ > 0) adTotal += a.price * adQ;
         });
         const net = sub - save + adTotal;
-        const isSplit = net >= 600000 && ids.length >= 4;
-        const ship = isSplit ? 0 : 25000;
+        const ship = 0; // V2: Miễn phí vận chuyển
         const qr = this.pay === 'qr' && net >= 400000 ? 20000 : 0;
         return net + ship - qr;
       };
@@ -529,11 +540,11 @@ export const useMovaStore = defineStore('mova', {
         id: 'notif-' + Date.now(),
         time: 'Vừa xong',
         title: `Đã hủy đơn #${this.activeOrder.id}`,
-        desc: `Hoàn tiền 100% (${fmt(refundAmt)}) vào Gói Đi Chợ Trả Trước.`,
+        desc: `Hoàn tiền 100% (${fmt(refundAmt)}) vào Fresh Credit.`,
         unread: true
       });
       this.activeOrder = null;
-      this.toast(`Đã hủy đơn và hoàn ${fmt(refundAmt)} vào Gói Đi Chợ Trả Trước.`);
+      this.toast(`Đã hủy đơn và hoàn ${fmt(refundAmt)} vào Fresh Credit.`);
       this.persist();
     },
 
@@ -551,10 +562,10 @@ export const useMovaStore = defineStore('mova', {
         id: 'notif-' + Date.now(),
         time: 'Vừa xong',
         title: 'Đã hoàn tiền bồi thường chất lượng',
-        desc: `MOVA đã cộng ${fmt(refundAmount)} vào Gói Đi Chợ cho món ${d ? d.name : 'bữa ăn'}.`,
+        desc: `MOVA đã cộng ${fmt(refundAmount)} vào Fresh Credit cho món ${d ? d.name : 'bữa ăn'}.`,
         unread: true
       });
-      this.toast(`🎉 Đã duyệt hoàn ${fmt(refundAmount)} ngay vào Gói Đi Chợ Trả Trước.`);
+      this.toast(`🎉 Đã duyệt hoàn ${fmt(refundAmount)} ngay vào Fresh Credit.`);
       this.closeModal();
       this.persist();
     },
@@ -603,19 +614,19 @@ export const useMovaStore = defineStore('mova', {
       this.user.prepaidBalance += totalVal;
       this.ledger.unshift({
         date: 'Hôm nay ' + new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
-        desc: `Nạp Gói Đi Chợ ${fmt(amount)} (Tặng ${fmt(bonus)})`,
+        desc: `Nạp Fresh Credit ${fmt(amount)} (Tặng ${fmt(bonus)})`,
         amount: totalVal,
         bal: this.user.prepaidBalance
       });
       this.notifications.unshift({
         id: 'notif-' + Date.now(),
         time: 'Vừa xong',
-        title: 'Nạp Gói Đi Chợ thành công',
-        desc: `Đã cộng ${fmt(totalVal)} vào số dư gói bữa ăn tươi.`,
+        title: 'Nạp Fresh Credit thành công',
+        desc: `Đã cộng ${fmt(totalVal)} vào số dư điểm ăn tươi.`,
         unread: true
       });
       this.closeModal();
-      this.toast(`🎉 Nạp thành công! Số dư Gói Đi Chợ hiện tại: ${fmt(this.user.prepaidBalance)}`);
+      this.toast(`🎉 Nạp thành công! Số dư Fresh Credit hiện tại: ${fmt(this.user.prepaidBalance)}`);
       this.persist();
     },
 
@@ -719,14 +730,98 @@ export const useMovaStore = defineStore('mova', {
       this.persist();
     },
 
+    saveOnboardingProfile(profile, claimReward = true) {
+      this.onboardingProfile = {
+        ...this.onboardingProfile,
+        ...profile,
+        isCompleted: true
+      };
+      this.onboardingSkipped = false;
+
+      // Sync household size to store
+      if (profile.householdSize) {
+        this.n = profile.householdSize;
+        if (this.user.pref) {
+          this.user.pref.ppl = profile.householdSize;
+        }
+      }
+
+      // Sync exclusions to filter chips
+      const newFilters = new Set(this.f);
+      if (profile.exclusions) {
+        if (profile.exclusions.includes('no_beef')) newFilters.add('noBo');
+        else newFilters.delete('noBo');
+
+        if (profile.exclusions.includes('no_pork')) newFilters.add('noHeo');
+        else newFilters.delete('noHeo');
+
+        if (profile.exclusions.includes('no_spicy')) newFilters.add('noCay');
+        else newFilters.delete('noCay');
+      }
+      this.f = [...newFilters];
+
+      // Award +20.000d Fresh Credit viral reward if not yet claimed
+      let rewarded = false;
+      if (claimReward && !this.profileRewardClaimed) {
+        this.profileRewardClaimed = true;
+        this.user.prepaidBalance += 20000;
+        rewarded = true;
+
+        const nowStr = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+        this.ledger.unshift({
+          date: 'Hôm nay ' + nowStr,
+          desc: 'Thưởng 100% Hồ sơ sức khỏe AI (Viral Credit)',
+          amount: 20000,
+          bal: this.user.prepaidBalance
+        });
+
+        this.notifications.unshift({
+          id: 'notif-' + Date.now(),
+          time: 'Vừa xong',
+          title: '🎁 Thưởng +20.000đ Fresh Credit',
+          desc: 'MOVA đã cộng 20.000đ vào tài khoản Fresh Credit vì bạn đã hoàn thiện 100% Hồ sơ sức khỏe AI.',
+          unread: true
+        });
+      }
+
+      if (this.activeModal === 'onboarding') {
+        this.closeModal();
+      }
+
+      if (rewarded) {
+        this.toast('🎉 Chúc mừng! Bạn nhận được +20.000đ Fresh Credit vào tài khoản!');
+      } else {
+        this.toast('Đã cập nhật Hồ sơ sức khỏe AI thành công!');
+      }
+
+      this.persist();
+    },
+
+    skipOnboarding() {
+      this.onboardingSkipped = true;
+      if (this.activeModal === 'onboarding') {
+        this.closeModal();
+      }
+      this.toast('Đã chuyển sang thực đơn mẫu. Bạn có thể bấm "Sửa hồ sơ AI" trên thanh tiêu đề để thiết lập lại.');
+      this.persist();
+    },
+
+    openOnboarding() {
+      this.openModal('onboarding');
+    },
+
     loginDemoLan() {
       this.user = JSON.parse(JSON.stringify(DEMO_LAN_DATA.user));
       this.activeOrder = JSON.parse(JSON.stringify(DEMO_LAN_DATA.activeOrder));
       this.historyOrders = JSON.parse(JSON.stringify(DEMO_LAN_DATA.historyOrders));
       this.ledger = JSON.parse(JSON.stringify(DEMO_LAN_DATA.ledger));
       this.notifications = JSON.parse(JSON.stringify(DEMO_LAN_DATA.notifications));
+      this.onboardingProfile = JSON.parse(JSON.stringify(DEMO_LAN_DATA.onboardingProfile));
+      this.profileRewardClaimed = true;
+      this.onboardingSkipped = false;
+      this.n = this.onboardingProfile.householdSize;
       this.pay = 'prepaid';
-      this.toast('Đã chuyển sang tài khoản Demo: Chị Lan (850k Gói Đi Chợ)');
+      this.toast('Đã chuyển sang tài khoản Demo: Chị Lan (850k Fresh Credit)');
       if (this.pendingCheckoutAfterLogin) {
         this.pendingCheckoutAfterLogin = false;
         this.openModal('checkout');
@@ -742,8 +837,12 @@ export const useMovaStore = defineStore('mova', {
       this.historyOrders = [];
       this.ledger = JSON.parse(JSON.stringify(DEMO_MINH_DATA.ledger));
       this.notifications = JSON.parse(JSON.stringify(DEMO_MINH_DATA.notifications));
+      this.onboardingProfile = JSON.parse(JSON.stringify(DEMO_MINH_DATA.onboardingProfile));
+      this.profileRewardClaimed = true;
+      this.onboardingSkipped = false;
+      this.n = this.onboardingProfile.householdSize;
       this.pay = 'qr';
-      this.toast('Đã đăng nhập tài khoản Khách Mới: Anh Minh (Tặng 30.000đ)!');
+      this.toast('Đã đăng nhập tài khoản Khách Mới: Anh Minh (Tặng 30.000đ Fresh Credit)!');
       if (this.pendingCheckoutAfterLogin) {
         this.pendingCheckoutAfterLogin = false;
         this.openModal('checkout');

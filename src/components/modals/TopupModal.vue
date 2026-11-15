@@ -3,7 +3,7 @@
     <div class="mbox" style="max-width: 480px; padding: 24px">
       <button class="mclose" @click="store.closeModal" aria-label="Đóng">×</button>
       <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 4px">
-        Đăng ký Gói Đi Chợ Trả Trước
+        Nạp Fresh Credit (Điểm bữa ăn trả trước)
       </h3>
       <p class="muted" style="font-size: 13px; margin-bottom: 14px">
         Quét mã VietQR để hoàn tất nạp giá trị vào tài khoản.

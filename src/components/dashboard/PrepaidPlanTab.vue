@@ -20,13 +20,13 @@
     <div class="legal-notice">
       <b>⚖️ Minh bạch quyền lợi theo Nghị định 52/2024/NĐ-CP:</b>
       <p style="margin-top: 4px">
-        “Gói Đi Chợ Trả Trước” là hình thức trả trước tiền nguyên liệu thực phẩm định kỳ, giúp tối ưu chi phí vận hành tuyến lạnh Đắk Lắk – TP.HCM và nhận giá trị tặng thêm (lên đến 120.000đ). Giá trị trong gói <b>chỉ dùng để đổi nguyên liệu sơ chế tại MOVA FRESH</b>, không phải ví điện tử và không hỗ trợ rút tiền mặt. Toàn bộ số dư được cam kết bảo lưu giá trị trong vòng 60 ngày.
+        “Fresh Credit” là hình thức trả trước tiền nguyên liệu thực phẩm định kỳ, giúp tối ưu chi phí vận hành tuyến lạnh Đắk Lắk – TP.HCM và nhận giá trị tặng thêm (lên đến 120.000đ). Giá trị trong gói <b>chỉ dùng để đổi nguyên liệu sơ chế tại MOVA FRESH</b>, không phải ví điện tử và không hỗ trợ rút tiền mặt. Toàn bộ số dư được cam kết bảo lưu giá trị trong vòng 60 ngày.
       </p>
     </div>
 
     <!-- Mua thêm gói mới -->
     <h3 style="font-size: 17px; font-weight: 800; margin-bottom: 12px">
-      Đăng ký thêm Gói Đi Chợ Trả Trước (Nhận thêm giá trị)
+      Nạp thêm Fresh Credit (Nhận thêm giá trị thực)
     </h3>
     <div class="plan-tiers">
       <div class="tier-card">
@@ -66,7 +66,7 @@
 
     <!-- Lịch sử biến động số dư -->
     <h3 style="font-size: 17px; font-weight: 800; margin: 24px 0 12px">
-      Lịch sử biến động giá trị Gói Đi Chợ
+      Lịch sử biến động Fresh Credit
     </h3>
     <div class="ledger-table-wrap">
       <table class="ledger-table">

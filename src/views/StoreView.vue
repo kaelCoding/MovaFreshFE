@@ -1,7 +1,18 @@
 <template>
   <div class="store-view">
-    <!-- 1. Hero Section -->
-    <HeroSection />
+    <!-- 0. Phễu Touchpoint & AI Onboarding (Hiển thị nổi bật đầu hành trình khi chưa hoàn tất) -->
+    <section
+      v-if="!store.onboardingProfile?.isCompleted && !store.onboardingSkipped"
+      class="onboarding-banner-wrap"
+      aria-label="Phễu khảo sát AI Onboarding"
+    >
+      <div class="wrap">
+        <AiOnboardingWizard />
+      </div>
+    </section>
+
+    <!-- 1. Hero Section (Hiển thị khi đã hoàn thành hoặc khi bấm bỏ qua để xem mẫu) -->
+    <HeroSection v-else />
 
     <!-- 2. Journey 16h Section -->
     <JourneySection />
@@ -9,6 +20,31 @@
     <!-- 3. Menu & Cart Section -->
     <section class="menu" id="thuc-don">
       <div class="wrap">
+        <!-- Dải thông tin hồ sơ AI đã kích hoạt -->
+        <div v-if="store.onboardingProfile?.isCompleted" class="ai-profile-strip-store">
+          <div class="strip-left">
+            <span class="ai-spark-badge">✨ THỰC ĐƠN ĐƯỢC AI CÁ NHÂN HÓA</span>
+            <div class="strip-desc">
+              Phục vụ: <b>{{ store.onboardingProfile.householdSize }} người ăn</b> •
+              <b>{{ store.onboardingProfile.mealsPerWeek }} bữa/tuần</b> •
+              Mục tiêu: <b>{{ goalLabel }}</b>
+            </div>
+          </div>
+          <button class="btn-edit-profile-strip" @click="store.openOnboarding" aria-label="Sửa hồ sơ AI">
+            Sửa hồ sơ AI ✎
+          </button>
+        </div>
+
+        <!-- Dải mời khảo sát nếu đang nhảy cóc (Skip) xem thử thực đơn mẫu -->
+        <div v-else-if="store.onboardingSkipped" class="ai-skip-banner-store">
+          <div class="skip-banner-text">
+            💡 Bạn đang xem thực đơn mẫu. Thiết lập <b>Hồ sơ AI (1 phút)</b> để nhận <b>Gift Card 900.000đ</b> & cộng ngay <b>+20.000đ Fresh Credit</b>!
+          </div>
+          <button class="btn-start-onboarding-banner" @click="store.openOnboarding">
+            Bắt đầu khảo sát AI →
+          </button>
+        </div>
+
         <div class="sec-h">
           <h2>Thực đơn tuần này</h2>
           <p>Tự chọn món ngon, hoặc để MOVA tự động xếp chuẩn ngân sách. Mọi món nấu trong 15 phút với 1 chảo.</p>
@@ -123,6 +159,7 @@
 
 <script setup>
 import { computed } from 'vue';
+import AiOnboardingWizard from '../components/onboarding/AiOnboardingWizard.vue';
 import HeroSection from '../components/store/HeroSection.vue';
 import JourneySection from '../components/store/JourneySection.vue';
 import BudgetPlanner from '../components/store/BudgetPlanner.vue';
@@ -139,9 +176,115 @@ const store = useMovaStore();
 const visibleDishesCount = computed(() => {
   return DISHES.filter((d) => store.allowed(d)).length;
 });
+
+const goalLabel = computed(() => {
+  const p = store.onboardingProfile;
+  if (!p || !p.healthGoal || !p.healthGoal.length) return 'Cân bằng dinh dưỡng gia đình';
+  const goalMap = {
+    balanced: 'Cân bằng dinh dưỡng gia đình',
+    muscle: 'Tăng cơ / Tập Gym',
+    low_carb: 'Giảm mỡ / Kiểm soát cân nặng',
+    diabetic: 'Kiểm soát đường huyết',
+    easy_digest: 'Tiêu hóa nhẹ nhàng'
+  };
+  return p.healthGoal.map((g) => goalMap[g] || g).join(', ');
+});
 </script>
 
 <style scoped>
+.onboarding-banner-wrap {
+  padding: 30px 0 10px;
+  background: linear-gradient(180deg, var(--bg) 0%, rgba(228, 240, 232, 0.3) 100%);
+}
+
+.ai-profile-strip-store {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: var(--green-soft);
+  border: 1.5px solid var(--green);
+  border-radius: 14px;
+  padding: 12px 18px;
+  margin-bottom: 24px;
+}
+
+.ai-spark-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--green);
+  letter-spacing: 0.04em;
+  margin-bottom: 3px;
+}
+
+.strip-desc {
+  font-size: 13.5px;
+  color: var(--ink);
+}
+
+.strip-desc b {
+  color: var(--green-d);
+}
+
+.btn-edit-profile-strip {
+  border: 0;
+  background: var(--green);
+  color: #fff;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.btn-edit-profile-strip:hover {
+  background: var(--green-d);
+}
+
+.ai-skip-banner-store {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: var(--orange-soft);
+  border: 1.5px dashed var(--orange);
+  border-radius: 14px;
+  padding: 12px 18px;
+  margin-bottom: 24px;
+}
+
+.skip-banner-text {
+  font-size: 13.5px;
+  color: var(--ink);
+  line-height: 1.45;
+}
+
+.skip-banner-text b {
+  color: var(--orange-ink);
+}
+
+.btn-start-onboarding-banner {
+  border: 0;
+  background: var(--orange);
+  color: #fff;
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.btn-start-onboarding-banner:hover {
+  background: #bf4314;
+}
+
 .menu {
   padding: 40px 0;
 }

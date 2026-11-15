@@ -7,7 +7,7 @@
         <h3 style="font-size: 18px; font-weight: 800">Cam kết độ tươi 100% MOVA</h3>
       </div>
       <p class="muted" style="font-size: 13px; margin-bottom: 14px">
-        Nếu thùng hàng mất lạnh, thịt không đạt chuẩn hoặc rau dập trong chuyến xe, MOVA hoàn tiền 100% ngay vào Gói Đi Chợ Trả Trước.
+        Nếu thùng hàng mất lạnh, thịt không đạt chuẩn hoặc rau dập trong chuyến xe, MOVA hoàn tiền 100% ngay vào Fresh Credit.
       </p>
 
       <form @submit.prevent="handleSubmitRefund" style="display: grid; gap: 12px">

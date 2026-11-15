@@ -62,7 +62,7 @@
           <span class="muted" style="font-size: 12.5px">Tổng thanh toán:</span>
           <div class="num total-pr">{{ fmt(ord.total) }}</div>
           <small class="muted" style="font-size: 12px">
-            {{ ord.payMethod === 'prepaid' ? 'Trừ vào Gói Đi Chợ' : (ord.payMethod === 'qr' ? 'Đã quét VietQR' : 'COD khi nhận') }}
+            {{ ord.payMethod === 'prepaid' ? 'Trừ vào Fresh Credit' : 'Đã quét VietQR' }}
           </small>
         </div>
       </div>
@@ -213,7 +213,7 @@ const handleDelayOrder = () => {
 };
 
 const handleCancelOrder = () => {
-  if (confirm('Bạn muốn hủy đơn hàng này? Toàn bộ số tiền sẽ được hoàn 100% vào Gói Đi Chợ Trả Trước.')) {
+  if (confirm('Bạn muốn hủy đơn hàng này? Toàn bộ số tiền sẽ được hoàn 100% vào Fresh Credit.')) {
     store.cancelActiveOrder();
   }
 };

@@ -9,12 +9,12 @@
         <p>Thịt và rau được thu hoạch sơ chế vào sáng sớm, đóng thùng giữ nhiệt đá gel −18°C, lên xe lạnh lúc 22:00 và tới Sài Gòn lúc 05:00 sáng. Suốt hành trình nhiệt độ luôn giữ 0–4°C. Nếu thùng hàng tới tay không còn lạnh, MOVA bồi thường 100% bữa ăn đó vào Gói Đi Chợ Trả Trước.</p>
       </details>
       <details>
-        <summary>Đơn tối thiểu và quy tắc tách đợt giao như thế nào?</summary>
-        <p>Đơn tối thiểu là 250.000đ để bù chi phí xe lạnh. Đơn từ 250k đến dưới 600k (hoặc ≤ 3 bữa) sẽ giao gộp 1 đợt, phí ship 25.000đ. Đơn từ 600k trở lên VÀ từ 4 bữa trở lên sẽ được Freeship và tự động tách làm 2 đợt (Sáng Chủ Nhật & Sáng Thứ Tư) để nguyên liệu luôn tươi mới.</p>
+        <summary>Quy cách giao hàng và chi phí vận chuyển như thế nào?</summary>
+        <p>MOVA Fresh vận hành tuyến xe lạnh chuyên dụng từ Đắk Lắk về TP.HCM vào các khung giờ sáng sớm cố định (Thứ Tư và Chủ Nhật). Toàn bộ các gói bữa ăn tươi đều được miễn phí giao hàng tận cửa trong thùng giữ nhiệt đá gel chuẩn 0–4°C.</p>
       </details>
       <details>
-        <summary>"Gói Đi Chợ Trả Trước" là gì, có rút tiền mặt được không?</summary>
-        <p>Theo quy định tại Nghị định 52/2024, "Gói Đi Chợ Trả Trước" là giải pháp trả trước tiền nguyên liệu định kỳ cho gia đình để nhận ưu đãi tặng thêm (50.000đ – 120.000đ/gói). Giá trị gói chỉ dùng để đổi món ăn tại MOVA Fresh, không thể rút tiền mặt, có giá trị bảo lưu trong 60 ngày.</p>
+        <summary>"Fresh Credit" là gì, có rút tiền mặt được không?</summary>
+        <p>Theo quy định tại Nghị định 52/2024, "Fresh Credit" là điểm bữa ăn trả trước định kỳ cho gia đình để nhận ưu đãi chiết khấu trực tiếp (10% – 25%). Giá trị chỉ dùng để đổi nguyên liệu sơ chế tại MOVA Fresh, không phải ví điện tử và không rút tiền mặt, được cam kết bảo lưu giá trị.</p>
       </details>
       <details>
         <summary>Nếu bận đột xuất muốn hoãn đợt giao thì làm thế nào?</summary>
