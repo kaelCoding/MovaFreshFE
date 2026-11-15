@@ -1,341 +1,363 @@
+// MÂM CƠM VIỆT 5 THÀNH PHẦN & SUẤT ĂN ĐỘC THÂN HOÀN CHỈNH (V2 SPEC)
+// 1. Món Đạm chính (Thịt/Cá sơ chế sạch Đắk Lắk)
+// 2. Món Canh ấm bụng
+// 3. Món Rau xanh Đà Lạt
+// 4. Tinh bột (Gạo ST25 / Gạo lứt / Bún)
+// 5. Trái cây tráng miệng nhiệt đới theo mùa
+
 export const DISHES = [
+  // ===================================================================
+  // A. MÂM CƠM GIA ĐÌNH VIỆT (Dành cho >= 2 người)
+  // ===================================================================
   {
-    id: 'bo-luclac',
-    name: 'Thăn bò Đắk Lắk lúc lắc tiêu xanh',
+    id: 'mam-bo-luclac',
+    name: 'Mâm Thăn Bò Lúc Lắc & Canh Chua Lá Giang',
     p: 'bo',
-    meat: [150, 'g thăn bò Đắk Lắk'],
-    veg: [120, 'g ớt chuông, hành tây Đà Lạt'],
+    category: 'viet_family',
     time: 15,
-    price: 79000,
+    pricePerPerson: 79000,
+    price: 79000, // Tương thích ngược với các component cũ
     save: 5000,
     pop: 10,
     spicy: false,
     lowOil: false,
-    storage: 'chill',
-    tags: ['Ít đường'],
-    nutrition: { kcal: 420, protein: 34, carb: 18, fat: 24 },
+    components: {
+      main: 'Thăn bò Đắk Lắk lúc lắc ớt chuông Đà Lạt (sốt tiêu xanh)',
+      soup: 'Canh chua cá bớp lá giang Tây Nguyên ấm bụng',
+      veg: 'Cải thìa Đà Lạt xào tỏi giòn ngọt',
+      carb: 'Cơm trắng Gạo dẻo ST25 Sóc Trăng',
+      dessert: 'Bơ sáp Đắk Lắk mật ong rừng'
+    },
+    baseGrams: { meat: 160, veg: 140, soup: 160, carb: 120, dessert: 80 },
+    tags: ['Mâm 5 thành phần', 'Bán chạy nhất', 'High-Protein'],
+    goals: ['balanced', 'muscle'],
+    exclusions: ['has_beef'],
+    nutrition: { kcal: 540, protein: 42, carb: 48, fat: 18 },
     steps: [
-      'Phi thơm túi tỏi băm với 1 thìa dầu, lửa lớn.',
-      'Cho bò vào áp chảo 2 phút mỗi mặt, thêm ớt chuông và hành tây đảo 2 phút.',
-      'Rưới gói sốt tiêu xanh, đảo 30 giây rồi tắt bếp.'
+      'Bật nồi nhỏ: Cho gói nguyên liệu Canh chua lá giang vào 500ml nước sôi, đun 5 phút.',
+      'Bật chảo: Áp chảo thăn bò Đắk Lắk cùng ớt chuông 3 phút lửa lớn, rưới gói xốt tiêu xanh.',
+      'Cùng chảo đó: Xào nhanh cải thìa 2 phút trên lửa lớn với tỏi tươi.',
+      'Xới cơm ST25 dẻo thơm và bày bơ sáp tráng miệng. Hoàn tất mâm 5 món trong 15 phút!'
     ]
   },
   {
-    id: 'ga-sa',
-    name: 'Gà đồi nướng sả mật ong',
+    id: 'mam-ga-sa',
+    name: 'Mâm Gà Đồi Nướng Sả Mật Ong & Canh Cải Bắp',
     p: 'ga',
-    meat: [180, 'g đùi gà đồi rút xương'],
-    veg: [100, 'g dưa leo, cà chua'],
+    category: 'viet_family',
     time: 15,
-    price: 52000,
+    pricePerPerson: 68000,
+    price: 68000,
     save: 4000,
     pop: 9,
     spicy: false,
     lowOil: true,
-    storage: 'chill',
-    tags: ['Ít dầu mỡ'],
-    nutrition: { kcal: 380, protein: 32, carb: 14, fat: 22 },
+    components: {
+      main: 'Đùi gà đồi Đắk Lắk rút xương nướng sả mật ong',
+      soup: 'Canh súp gà cải thảo nấm hương thơm lừng',
+      veg: 'Đậu que xào cà rốt Đà Lạt',
+      carb: 'Cơm Gạo dẻo ST25',
+      dessert: 'Ổi nữ hoàng giòn ngọt rắc muối tôm'
+    },
+    baseGrams: { meat: 180, veg: 130, soup: 150, carb: 120, dessert: 90 },
+    tags: ['Mâm 5 thành phần', 'Ít dầu mỡ', 'Thanh đạm'],
+    goals: ['balanced', 'low_carb', 'easy_digest'],
+    exclusions: ['has_chicken'],
+    nutrition: { kcal: 480, protein: 39, carb: 44, fat: 16 },
     steps: [
-      'Đặt chảo chống dính, cho gà mặt da xuống, không cần dầu.',
-      'Áp chảo lửa vừa 6 phút mỗi mặt đến khi da vàng giòn.',
-      'Thêm gói sốt sả mật ong, rim 1 phút cho bóng rồi cắt miếng.'
+      'Đặt chảo chống dính, áp chảo gà đồi mặt da 6 phút mỗi mặt cho vàng giòn, rưới sốt sả mật ong.',
+      'Nấu nhanh canh cải bắp nấm hương trong 4 phút.',
+      'Xào đậu que cà rốt 2 phút với một thìa nước dùng.',
+      'Dùng nóng cùng cơm dẻo ST25 và ổi nữ hoàng tráng miệng.'
     ]
   },
   {
-    id: 'heo-gung',
-    name: 'Ba chỉ heo thảo mộc ram gừng',
-    p: 'heo',
-    meat: [150, 'g ba chỉ heo thảo mộc'],
-    veg: [120, 'g cải ngọt Đắk Lắk'],
-    time: 15,
-    price: 49000,
-    save: 4000,
-    pop: 9,
-    spicy: false,
-    lowOil: false,
-    storage: 'freeze',
-    tags: ['Vị đậm đà'],
-    nutrition: { kcal: 460, protein: 26, carb: 12, fat: 34 },
-    steps: [
-      'Cho ba chỉ vào chảo nóng, để thịt tự ra mỡ trong 5 phút.',
-      'Thêm túi gừng, hành tím băm, đảo thơm rồi đổ gói nước ram, rim 5 phút.',
-      'Đẩy thịt sang một bên, xào nhanh cải ngọt 2 phút trong cùng chảo.'
-    ]
-  },
-  {
-    id: 'bo-lalot',
-    name: 'Bò cuốn lá lốt áp chảo',
-    p: 'bo',
-    meat: [140, 'g bò xay Đắk Lắk đã cuốn sẵn'],
-    veg: [80, 'g rau sống, dưa leo'],
-    time: 15,
-    price: 65000,
-    save: 0,
-    pop: 7,
-    spicy: false,
-    lowOil: true,
-    storage: 'chill',
-    tags: ['Ít dầu mỡ'],
-    nutrition: { kcal: 350, protein: 28, carb: 10, fat: 22 },
-    steps: [
-      'Quét một lớp dầu mỏng lên chảo chống dính.',
-      'Xếp các cuốn bò, áp chảo lửa vừa 8 phút, lật đều tay.',
-      'Pha gói mắm nêm đóng rời, ăn kèm rau sống.'
-    ]
-  },
-  {
-    id: 'suon-toi',
-    name: 'Sườn non heo rim mắm tỏi',
+    id: 'mam-suon-toi',
+    name: 'Mâm Sườn Non Heo Thảo Mộc & Canh Bí Đỏ Hạt Sen',
     p: 'suon',
-    meat: [200, 'g sườn non heo thảo mộc'],
-    veg: [100, 'g dưa leo, cà chua'],
+    category: 'viet_family',
     time: 15,
-    price: 58000,
+    pricePerPerson: 72000,
+    price: 72000,
     save: 4000,
-    pop: 8,
+    pop: 9,
     spicy: false,
     lowOil: false,
-    storage: 'freeze',
-    tags: ['Vị đậm đà'],
-    nutrition: { kcal: 490, protein: 30, carb: 16, fat: 34 },
+    components: {
+      main: 'Sườn non heo thảo mộc Đắk Lắk rim mắm tỏi tiêu',
+      soup: 'Canh bí đỏ bùi ngọt hạt sen tươi hầm thịt bằm',
+      veg: 'Cải ngọt Đắk Lắk luộc chấm kho quẹt thơm nức',
+      carb: 'Cơm thơm Gạo ST25',
+      dessert: 'Dưa lưới ruột cam Tây Nguyên thanh mát'
+    },
+    baseGrams: { meat: 180, veg: 150, soup: 160, carb: 120, dessert: 90 },
+    tags: ['Mâm 5 thành phần', 'Vị đậm đà', 'Gia đình'],
+    goals: ['balanced', 'easy_digest'],
+    exclusions: ['has_pork'],
+    nutrition: { kcal: 520, protein: 36, carb: 52, fat: 20 },
     steps: [
-      'Chiên sườn với ít dầu 6 phút đến khi vàng các mặt.',
-      'Thêm túi tỏi băm, đảo thơm, đổ gói mắm rim và 3 thìa nước.',
-      'Rim lửa nhỏ 5 phút đến khi nước sệt bám đều sườn.'
+      'Cho sườn non vào chảo rim với tỏi băm và gói nước rim 7 phút đến khi sốt keo bóng.',
+      'Đun canh bí đỏ hạt sen 6 phút cho mềm bùi.',
+      'Luộc nhanh cải ngọt 3 phút, giữ màu xanh mướt.',
+      'Dùng kèm cơm ST25 và dưa lưới ruột cam.'
     ]
   },
   {
-    id: 'ga-saot',
-    name: 'Gà đồi xào sả ớt',
-    p: 'ga',
-    meat: [170, 'g đùi gà đồi cắt miếng'],
-    veg: [80, 'g sả, ớt, hành tây'],
-    time: 12,
-    price: 48000,
-    save: 0,
-    pop: 7,
-    spicy: true,
-    lowOil: false,
-    storage: 'chill',
-    tags: ['Cay nhẹ'],
-    nutrition: { kcal: 340, protein: 31, carb: 12, fat: 18 },
-    steps: [
-      'Phi thơm túi sả ớt băm với 1 thìa dầu.',
-      'Cho gà vào xào lửa lớn 7 phút đến khi săn.',
-      'Thêm hành tây và gói sốt, đảo 2 phút.'
-    ]
-  },
-  {
-    id: 'trung-nam',
-    name: 'Trứng gà đồi chưng nấm đông cô',
-    p: 'trung',
-    meat: [2, ' quả trứng gà đồi'],
-    veg: [50, 'g nấm đông cô, hành lá'],
-    time: 12,
-    price: 38000,
-    save: 0,
-    pop: 6,
-    spicy: false,
-    lowOil: true,
-    storage: 'chill',
-    tags: ['Vị thanh nhẹ', 'Ít dầu mỡ'],
-    nutrition: { kcal: 220, protein: 16, carb: 8, fat: 14 },
-    steps: [
-      'Đánh tan trứng với gói nước dùng nấm và 3 thìa nước.',
-      'Cho nấm vào bát, đổ trứng lên, đặt bát vào chảo có nước sôi, đậy nắp.',
-      'Hấp lửa nhỏ 10 phút, rắc hành lá.'
-    ]
-  },
-  {
-    id: 'bo-raucu',
-    name: 'Bò xào rau củ Đà Lạt',
-    p: 'bo',
-    meat: [130, 'g thăn vai bò Đắk Lắk'],
-    veg: [180, 'g súp lơ, cà rốt, đậu Hà Lan'],
-    time: 12,
-    price: 69000,
+    id: 'mam-ca-kho',
+    name: 'Mâm Cá Bớp Kho Tộ Nước Dừa & Canh Chua Bông Lau',
+    p: 'ca',
+    category: 'viet_family',
+    time: 15,
+    pricePerPerson: 76000,
+    price: 76000,
     save: 5000,
     pop: 8,
     spicy: false,
     lowOil: true,
-    storage: 'chill',
-    tags: ['Ít dầu mỡ', 'Vị thanh nhẹ'],
-    nutrition: { kcal: 310, protein: 29, carb: 20, fat: 13 },
+    components: {
+      main: 'Cá bớp biển miền Trung kho tộ nước dừa thơm béo',
+      soup: 'Canh chua cá bông lau thì là cà chua thanh mát',
+      veg: 'Rau muống non Đắk Lắk xào tỏi giòn rụm',
+      carb: 'Cơm trắng Gạo dẻo ST25',
+      dessert: 'Chanh dây tươi Tây Nguyên pha mật ong'
+    },
+    baseGrams: { meat: 170, veg: 140, soup: 160, carb: 120, dessert: 80 },
+    tags: ['Mâm 5 thành phần', 'Omega-3', 'Thanh mát'],
+    goals: ['balanced', 'low_carb', 'easy_digest'],
+    exclusions: ['has_seafood'],
+    nutrition: { kcal: 460, protein: 41, carb: 42, fat: 15 },
     steps: [
-      'Xào rau củ với 3 thìa nước 3 phút cho chín tới, trút ra.',
-      'Áp chảo bò lửa lớn 2 phút.',
-      'Cho rau củ vào lại, thêm gói sốt, đảo 1 phút.'
+      'Cho cá bớp cùng gói sốt kho nước dừa vào tộ hoặc chảo nhỏ, rim lửa vừa 8 phút.',
+      'Đun sôi nước canh chua bông lau thì là 4 phút.',
+      'Xào nhanh rau muống tỏi trên lửa lớn 2 phút.',
+      'Hoàn tất mâm cơm cá đậm vị quê nhà.'
     ]
   },
   {
-    id: 'heo-cai',
-    name: 'Heo nạc vai xào cải ngồng',
-    p: 'heo',
-    meat: [130, 'g nạc vai heo thảo mộc'],
-    veg: [200, 'g cải ngồng Đà Lạt'],
-    time: 12,
-    price: 45000,
-    save: 3000,
-    pop: 6,
-    spicy: false,
-    lowOil: true,
-    storage: 'freeze',
-    tags: ['Ít dầu mỡ'],
-    nutrition: { kcal: 320, protein: 27, carb: 14, fat: 17 },
-    steps: [
-      'Phi tỏi với ít dầu, cho thịt vào xào 4 phút.',
-      'Thêm cải ngồng và 2 thìa nước, đảo lửa lớn 3 phút.',
-      'Nêm gói sốt, đảo đều rồi tắt bếp.'
-    ]
-  },
-  {
-    id: 'ga-xe',
-    name: 'Gà luộc xé trộn bắp cải rau răm',
-    p: 'ga',
-    meat: [160, 'g ức gà đồi'],
-    veg: [150, 'g bắp cải tím, rau răm'],
-    time: 15,
-    price: 44000,
-    save: 3000,
-    pop: 6,
-    spicy: false,
-    lowOil: true,
-    storage: 'chill',
-    tags: ['Ít dầu mỡ', 'Ít đường'],
-    nutrition: { kcal: 260, protein: 36, carb: 9, fat: 8 },
-    steps: [
-      'Luộc ức gà trong chảo nước có gừng 12 phút, để nguội.',
-      'Xé nhỏ gà, trộn với bắp cải và rau răm.',
-      'Rưới gói nước trộn chanh tỏi.'
-    ]
-  },
-  {
-    id: 'bo-tieu',
-    name: 'Bắp bò áp chảo sốt tiêu đen',
+    id: 'mam-bo-raucu',
+    name: 'Mâm Bắp Bò Áp Chảo Rau Củ & Canh Súp Hạt Sen',
     p: 'bo',
-    meat: [150, 'g bắp bò Đắk Lắk thái lát'],
-    veg: [120, 'g khoai tây, đậu que'],
-    time: 15,
-    price: 72000,
-    save: 0,
-    pop: 7,
-    spicy: true,
-    lowOil: false,
-    storage: 'chill',
-    tags: ['Cay nhẹ'],
-    nutrition: { kcal: 390, protein: 33, carb: 26, fat: 17 },
-    steps: [
-      'Áp chảo khoai tây và đậu que 6 phút, trút ra.',
-      'Áp chảo bò lửa lớn 2 phút.',
-      'Đổ gói sốt tiêu đen, cho rau củ vào đảo 1 phút.'
-    ]
-  },
-  {
-    id: 'heo-dua',
-    name: 'Thịt heo rim nước dừa',
-    p: 'heo',
-    meat: [150, 'g nạc dăm heo thảo mộc'],
-    veg: [1, ' quả trứng gà đồi luộc, dưa chua'],
-    time: 15,
-    price: 47000,
-    save: 3000,
-    pop: 7,
-    spicy: false,
-    lowOil: false,
-    storage: 'freeze',
-    tags: ['Vị đậm đà'],
-    nutrition: { kcal: 470, protein: 32, carb: 18, fat: 30 },
-    steps: [
-      'Đảo thịt với túi hành tỏi đến khi săn, 4 phút.',
-      'Đổ gói nước dừa và nước màu, rim lửa vừa 8 phút.',
-      'Thêm trứng luộc, rim thêm 2 phút.'
-    ]
-  },
-  // MÓN MỚI: Món Canh, Món Rau & Món Thuần Chay
-  {
-    id: 'canh-gala-giang',
-    name: 'Canh chua gà lá giang Tây Nguyên',
-    p: 'canh',
-    meat: [150, 'g gà đồi Đắk Lắk chặt miếng'],
-    veg: [100, 'g lá giang tươi Tây Nguyên, ớt sừng, ngò'],
+    category: 'viet_family',
     time: 12,
-    price: 42000,
-    save: 3000,
+    pricePerPerson: 82000,
+    price: 82000,
+    save: 5000,
     pop: 8,
     spicy: false,
     lowOil: true,
-    storage: 'chill',
-    tags: ['Canh truyền thống', 'Vị thanh nhẹ'],
-    nutrition: { kcal: 280, protein: 26, carb: 14, fat: 12 },
+    components: {
+      main: 'Bắp bò Đắk Lắk áp chảo rau củ sốt tiêu đen',
+      soup: 'Canh súp bắp ngọt hạt sen tươi Đà Lạt',
+      veg: 'Bông cải xanh Đà Lạt xào nấm đông cô',
+      carb: 'Gạo lứt huyết rồng dẻo thơm (Low-GI)',
+      dessert: 'Bơ sáp Đắk Lắk cắt lát'
+    },
+    baseGrams: { meat: 170, veg: 160, soup: 150, carb: 110, dessert: 80 },
+    tags: ['Mâm 5 thành phần', 'Low-GI', 'Tiểu đường & Gym'],
+    goals: ['muscle', 'diabetic', 'low_carb'],
+    exclusions: ['has_beef'],
+    nutrition: { kcal: 490, protein: 44, carb: 40, fat: 16 },
     steps: [
-      'Đun sôi 600ml nước trong nồi, cho thịt gà và gói cốt canh thảo mộc vào nấu 7 phút.',
-      'Vò nhẹ lá giang cho vào nồi, đun thêm 3 phút để vị chua thanh tự nhiên tiết ra.',
-      'Rắc ớt sừng cắt lát và rau ngò tươi, tắt bếp dùng nóng.'
+      'Áp chảo bắp bò thái lát lửa lớn 2.5 phút, trút ra đĩa.',
+      'Xào bông cải xanh và nấm 3 phút, đổ bắp bò vào đảo 1 phút cùng sốt tiêu đen.',
+      'Hâm nóng canh súp bắp hạt sen 3 phút.',
+      'Dùng kèm cơm gạo lứt huyết rồng và bơ sáp.'
     ]
   },
   {
-    id: 'canh-bido-thitbam',
-    name: 'Canh bí đỏ hạt sen hầm thịt bằm Đắk Lắk',
-    p: 'canh',
-    meat: [100, 'g nạc heo thảo mộc bằm sẵn'],
-    veg: [180, 'g bí đỏ Đắk Lắk gọt sẵn, hạt sen tươi'],
-    time: 15,
-    price: 38000,
-    save: 3000,
-    pop: 7,
-    spicy: false,
-    lowOil: true,
-    storage: 'chill',
-    tags: ['Canh bổ dưỡng', 'Ít dầu mỡ'],
-    nutrition: { kcal: 295, protein: 22, carb: 32, fat: 9 },
-    steps: [
-      'Đun sôi 600ml nước, cho thịt bằm và gói cốt hầm xương vào khuấy đều 3 phút.',
-      'Thêm hạt sen và bí đỏ vào hầm lửa vừa 10 phút đến khi bí chín bùi mềm.',
-      'Nêm gói hành ngò băm tươi, khuấy đều rồi tắt bếp.'
-    ]
-  },
-  {
-    id: 'cai-thia-namdongco',
-    name: 'Cải thìa Đà Lạt xào nấm đông cô sốt dầu hào',
-    p: 'rau',
-    meat: [0, 'g (Thuần thực vật)'],
-    veg: [220, 'g cải thìa Đà Lạt, nấm đông cô tươi'],
-    time: 10,
-    price: 35000,
-    save: 2000,
-    pop: 8,
-    spicy: false,
-    lowOil: true,
-    storage: 'chill',
-    tags: ['Món rau', 'Thuần chay / Rằm - Mùng 1', 'Ít dầu mỡ'],
-    isVegan: true,
-    nutrition: { kcal: 185, protein: 8, carb: 24, fat: 6 },
-    steps: [
-      'Chần sơ cải thìa trong nước sôi 1 phút rồi vớt ra để giữ độ giòn ngọt.',
-      'Áp chảo nấm đông cô với túi tỏi băm trên chảo nóng trong 3 phút.',
-      'Cho cải thìa vào lại cùng gói sốt dầu hào chay, đảo nhanh 1 phút trên lửa lớn.'
-    ]
-  },
-  {
-    id: 'nam-duiga-kho',
-    name: 'Nấm đùi gà kho tiêu xanh & Đậu hũ non Đà Lạt',
+    id: 'mam-chay-nam',
+    name: 'Mâm Nấm Đùi Gà Kho Tiêu Xanh & Canh Rong Biển (Thuần Chay)',
     p: 'chay',
-    meat: [0, 'g (Thuần thực vật)'],
-    veg: [200, 'g nấm đùi gà, đậu hũ non chiên, tiêu xanh'],
+    category: 'viet_family',
     time: 12,
-    price: 44000,
+    pricePerPerson: 62000,
+    price: 62000,
     save: 4000,
     pop: 8,
     spicy: false,
     lowOil: true,
-    storage: 'chill',
-    tags: ['Thuần chay / Rằm - Mùng 1', 'Ít dầu mỡ'],
     isVegan: true,
-    nutrition: { kcal: 260, protein: 16, carb: 28, fat: 10 },
+    components: {
+      main: 'Nấm đùi gà & Đậu hũ non Đà Lạt kho tiêu xanh Tây Nguyên',
+      soup: 'Canh rong biển tươi đậu hũ hạt sen thanh nhiệt',
+      veg: 'Cải thìa xào nấm bào ngư sốt dầu hào chay',
+      carb: 'Gạo lứt hữu cơ ST25',
+      dessert: 'Bơ sáp dầm hạt chia ngọt nhẹ'
+    },
+    baseGrams: { meat: 0, veg: 240, soup: 160, carb: 120, dessert: 90 },
+    tags: ['Mâm 5 thành phần', 'Thuần chay / Rằm', 'Dễ tiêu hóa'],
+    goals: ['balanced', 'diabetic', 'easy_digest'],
+    exclusions: ['vegan'],
+    nutrition: { kcal: 410, protein: 26, carb: 54, fat: 11 },
     steps: [
-      'Xếp nấm đùi gà và đậu hũ non chiên sẵn vào chảo hoặc nồi nhỏ.',
-      'Rưới gói sốt kho tiêu xanh thảo mộc và 4 thìa nước lọc.',
-      'Đun lửa nhỏ liu riu 8 phút cho sốt ngấm keo bóng bám đều nấm và đậu hũ.'
+      'Cho nấm đùi gà và đậu hũ non vào chảo rim với sốt tiêu xanh chay 7 phút.',
+      'Nấu nhanh canh rong biển hạt sen đậu hũ 4 phút.',
+      'Xào cải thìa và nấm bào ngư 2 phút.',
+      'Thanh lọc cơ thể với mâm cơm chay tinh tươm.'
+    ]
+  },
+
+  // ===================================================================
+  // B. MÂM CƠM KẾT HỢP ĐỒ TÂY (FUSION BISTRO - PHỤC VỤ GU VIET_FUSION)
+  // ===================================================================
+  {
+    id: 'mam-steak-bistro',
+    name: 'Mâm Steak Thăn Bò Đắk Lắk Sốt Tiêu & Súp Bí Đỏ Bistro',
+    p: 'bo',
+    category: 'fusion',
+    time: 15,
+    pricePerPerson: 95000,
+    price: 95000,
+    save: 6000,
+    pop: 9,
+    spicy: false,
+    lowOil: true,
+    isFusion: true,
+    components: {
+      main: 'Thăn bò Đắk Lắk áp chảo sốt tiêu đen & rượu vang đỏ',
+      soup: 'Súp bí đỏ kem sữa hạt sen béo ngậy',
+      veg: 'Salad rau mầm Đà Lạt sốt chanh dây mật ong',
+      carb: 'Khoai tây nghiền bơ sữa Đắk Lắk mịn mượt',
+      dessert: 'Dưa lưới & Dâu tây Đà Lạt tươi'
+    },
+    baseGrams: { meat: 180, veg: 140, soup: 160, carb: 140, dessert: 80 },
+    tags: ['Fusion Bistro', 'Đổi vị cuối tuần', 'High-Protein'],
+    goals: ['muscle', 'balanced'],
+    exclusions: ['has_beef'],
+    nutrition: { kcal: 580, protein: 48, carb: 44, fat: 22 },
+    steps: [
+      'Áp chảo steak bò Đắk Lắk 2.5 phút mỗi mặt đến độ chín vừa (Medium Rare), rưới sốt tiêu đen.',
+      'Hâm nóng súp bí đỏ hạt sen 3 phút.',
+      'Trộn salad rau mầm Đà Lạt với sốt chanh dây.',
+      'Bày khoai tây nghiền, dĩa steak và thưởng thức chuẩn phong cách Bistro tại nhà.'
+    ]
+  },
+  {
+    id: 'mam-ga-bistro',
+    name: 'Mâm Ức Gà Áp Chảo Sốt Bơ Tỏi Thảo Mộc & Súp Nấm Đà Lạt',
+    p: 'ga',
+    category: 'fusion',
+    time: 15,
+    pricePerPerson: 85000,
+    price: 85000,
+    save: 5000,
+    pop: 8,
+    spicy: false,
+    lowOil: true,
+    isFusion: true,
+    components: {
+      main: 'Ức gà đồi Đắk Lắk áp chảo thảo mộc sốt bơ tỏi chanh vàng',
+      soup: 'Súp kem nấm đông cô tươi Đà Lạt',
+      veg: 'Măng tây & Cà rốt baby nướng muối tiêu',
+      carb: 'Khoai lang mật nướng dẻo ngọt tự nhiên',
+      dessert: 'Bơ sáp dầm sữa chua Hy Lạp'
+    },
+    baseGrams: { meat: 190, veg: 140, soup: 150, carb: 120, dessert: 90 },
+    tags: ['Fusion Bistro', 'Eat Clean', 'Tăng cơ giảm mỡ'],
+    goals: ['muscle', 'low_carb', 'easy_digest'],
+    exclusions: ['has_chicken'],
+    nutrition: { kcal: 510, protein: 46, carb: 42, fat: 15 },
+    steps: [
+      'Áp chảo ức gà thảo mộc 5 phút mỗi mặt, rưới sốt bơ tỏi chanh thơm ngậy.',
+      'Hâm nóng súp kem nấm Đà Lạt 3 phút.',
+      'Áp chảo nhanh măng tây và cà rốt baby 3 phút.',
+      'Dùng kèm khoai lang mật nướng và tráng miệng bơ sữa chua.'
+    ]
+  },
+
+  // ===================================================================
+  // C. SUẤT ĂN ĐỘC THÂN HOÀN CHỈNH (Dành riêng cho householdSize === 1)
+  // Nấu nhanh 1 chảo 10–12 phút, gọn sạch, không phải rửa dọn nhiều
+  // ===================================================================
+  {
+    id: 'suat-don-bo',
+    name: 'Suất Độc Thân: Thăn Bò Lúc Lắc & Cơm Lứt Huyết Rồng',
+    p: 'bo',
+    category: 'solo',
+    time: 10,
+    pricePerPerson: 79000,
+    price: 79000,
+    save: 4000,
+    pop: 9,
+    spicy: false,
+    lowOil: true,
+    components: {
+      main: '180g Thăn bò Đắk Lắk lúc lắc ớt chuông Đà Lạt',
+      soup: 'Chén súp rong biển đậu hũ ăn liền',
+      veg: 'Salad dưa leo, cà chua bi & cải mầm',
+      carb: 'Cơm Gạo lứt huyết rồng dẻo thơm (Low-Carb)',
+      dessert: 'Ổi nữ hoàng cắt lát sẵn'
+    },
+    baseGrams: { meat: 180, veg: 120, soup: 120, carb: 120, dessert: 80 },
+    tags: ['Suất 1 người', 'Nấu 1 chảo 10p', 'High-Protein'],
+    goals: ['muscle', 'low_carb', 'balanced'],
+    exclusions: ['has_beef'],
+    nutrition: { kcal: 480, protein: 42, carb: 40, fat: 16 },
+    steps: [
+      'Bật chảo: Cho 1 thìa dầu mỏng, áp chảo bò và ớt chuông 3 phút lửa lớn, rưới xốt tiêu.',
+      'Trút ra đĩa ăn kèm cơm gạo lứt và salad tươi.',
+      'Khuấy chén súp rong biển đậu hũ với nước sôi. Xong bữa trong 10 phút!'
+    ]
+  },
+  {
+    id: 'suat-don-ga',
+    name: 'Suất Độc Thân: Gà Đồi Nướng Sả & Cơm Dẻo ST25',
+    p: 'ga',
+    category: 'solo',
+    time: 12,
+    pricePerPerson: 69000,
+    price: 69000,
+    save: 4000,
+    pop: 9,
+    spicy: false,
+    lowOil: true,
+    components: {
+      main: '200g Đùi gà đồi rút xương nướng sả mật ong',
+      soup: 'Chén canh cải bắp nấm hương ấm bụng',
+      veg: 'Rau củ luộc sơ chế sẵn (cà rốt, đậu que)',
+      carb: 'Cơm thơm Gạo ST25 Sóc Trăng',
+      dessert: 'Bơ sáp Đắk Lắk lát mỏng mật ong'
+    },
+    baseGrams: { meat: 200, veg: 120, soup: 120, carb: 120, dessert: 80 },
+    tags: ['Suất 1 người', 'Nấu 1 chảo 12p', 'Ít dầu mỡ'],
+    goals: ['balanced', 'easy_digest', 'low_carb'],
+    exclusions: ['has_chicken'],
+    nutrition: { kcal: 470, protein: 40, carb: 42, fat: 15 },
+    steps: [
+      'Áp chảo đùi gà đồi 6 phút đến khi da vàng giòn, rưới xốt sả mật ong 1 phút.',
+      'Tận dụng chảo đảo nhanh rau củ trong 2 phút.',
+      'Dùng kèm cơm ST25 dẻo thơm và tráng miệng bơ sáp.'
+    ]
+  },
+  {
+    id: 'suat-don-chay',
+    name: 'Suất Độc Thân: Nấm Đậu Hũ Kho Tiêu & Cơm Lứt Hữu Cơ',
+    p: 'chay',
+    category: 'solo',
+    time: 10,
+    pricePerPerson: 62000,
+    price: 62000,
+    save: 3000,
+    pop: 8,
+    spicy: false,
+    lowOil: true,
+    isVegan: true,
+    components: {
+      main: 'Nấm đùi gà & Đậu hũ non chiên kho tiêu xanh',
+      soup: 'Chén canh rong biển hạt sen thanh mát',
+      veg: 'Cải thìa xào tỏi nhanh',
+      carb: 'Cơm Gạo lứt hữu cơ ST25',
+      dessert: 'Trái cây tươi theo mùa'
+    },
+    baseGrams: { meat: 0, veg: 220, soup: 120, carb: 120, dessert: 80 },
+    tags: ['Suất 1 người', 'Thuần chay', 'Thanh lọc cơ thể'],
+    goals: ['balanced', 'diabetic', 'easy_digest'],
+    exclusions: ['vegan'],
+    nutrition: { kcal: 390, protein: 24, carb: 50, fat: 10 },
+    steps: [
+      'Đảo nấm đùi gà và đậu hũ với sốt kho tiêu xanh trong chảo nhỏ 6 phút.',
+      'Xào cải thìa 2 phút.',
+      'Dùng nóng cùng cơm gạo lứt dẻo thơm.'
     ]
   }
 ];
@@ -358,12 +380,51 @@ export const BG = {
   suon: '#F4E2D6',
   trung: '#FBF3D2',
   canh: '#E8F5E9',
+  ca: '#E0F2F1',
   rau: '#EBF4EA',
   chay: '#EBF5EC'
 };
 
 export const MAXM = 10;
 
+// ===================================================================
+// CÁC GÓI NẠP FRESH CREDIT CHIẾT KHẤU CAO (V2 FINTECH SPEC)
+// ===================================================================
+export const FRESH_CREDIT_PACKAGES = [
+  {
+    id: 'pkg-family-2m',
+    name: 'Gói Gia Đình Vui Vẻ',
+    val: 2000000, // Giá trị thực nhận hiển thị to nhất
+    pay: 1600000, // Số tiền thực trả
+    bonus: 400000, // Tặng thẳng
+    discountPercent: 20,
+    popular: true,
+    desc: 'Phù hợp gia đình 3–4 người ăn 2–3 tuần. Tặng thẳng 400.000đ trừ dần vào từng bữa ăn.'
+  },
+  {
+    id: 'pkg-month-4m',
+    name: 'Gói Cả Tháng Thảnh Thơi',
+    val: 4000000,
+    pay: 3000000,
+    bonus: 1000000,
+    discountPercent: 25,
+    highlight: true,
+    desc: 'Tiết kiệm cao nhất 25%. Khóa trọn giá nguyên liệu tươi Đắk Lắk suốt cả tháng.'
+  },
+  {
+    id: 'pkg-trial-1m',
+    name: 'Gói Trải Nghiệm Tân Thủ',
+    val: 1000000,
+    pay: 850000,
+    bonus: 150000,
+    discountPercent: 15,
+    desc: 'Trải nghiệm tuần đầu cho người độc thân hoặc cặp đôi trẻ.'
+  }
+];
+
+// ===================================================================
+// DỮ LIỆU DEMO PERSONAS
+// ===================================================================
 export const DEMO_LAN_DATA = {
   user: {
     isLoggedIn: true,
@@ -419,59 +480,44 @@ export const DEMO_LAN_DATA = {
     sauce: true,
     carb: false,
     items: [
-      { id: 'bo-luclac', qty: 4, name: 'Thăn bò Đắk Lắk lúc lắc tiêu xanh', price: 79000, save: 5000, storage: 'chill' },
-      { id: 'ga-sa', qty: 4, name: 'Gà đồi nướng sả mật ong', price: 52000, save: 4000, storage: 'chill' },
-      { id: 'suon-toi', qty: 4, name: 'Sườn non heo rim mắm tỏi', price: 58000, save: 4000, storage: 'freeze' },
-      { id: 'bo-raucu', qty: 4, name: 'Bò xào rau củ Đà Lạt', price: 69000, save: 5000, storage: 'chill' }
+      { id: 'mam-bo-luclac', qty: 1, name: 'Mâm Thăn Bò Lúc Lắc & Canh Chua Lá Giang', price: 79000, save: 5000 },
+      { id: 'mam-ga-sa', qty: 1, name: 'Mâm Gà Đồi Nướng Sả Mật Ong & Canh Cải Bắp', price: 68000, save: 4000 },
+      { id: 'mam-suon-toi', qty: 1, name: 'Mâm Sườn Non Heo Thảo Mộc & Canh Bí Đỏ', price: 72000, save: 4000 },
+      { id: 'mam-ca-kho', qty: 1, name: 'Mâm Cá Bớp Kho Tộ Nước Dừa & Canh Chua', price: 76000, save: 5000 }
     ],
-    addons: [{ id: 'ad-trung', qty: 1, name: 'Vỉ 10 trứng gà đồi Đắk Lắk', price: 38000, storage: 'chill' }],
+    addons: [{ id: 'ad-trung', qty: 1, name: 'Vỉ 10 trứng gà đồi Đắk Lắk', price: 38000 }],
     payMethod: 'prepaid',
-    subTotal: 1070000,
+    subTotal: 1218000,
     saveBatch: 72000,
-    netFood: 998000,
+    netFood: 1146000,
     shipFee: 0,
     qrDiscount: 0,
-    total: 998000,
+    total: 1146000,
     isSplit: true
   },
   historyOrders: [
     {
       id: 'MV08912',
       date: 'Chủ Nhật tuần trước (08/11)',
-      total: 745000,
+      total: 1145000,
       meals: 4,
       items: [
-        { id: 'bo-luclac', name: 'Thăn bò Đắk Lắk lúc lắc tiêu xanh', qty: 4, rate: 'good' },
-        { id: 'heo-gung', name: 'Ba chỉ heo thảo mộc ram gừng', qty: 4, rate: 'salty' },
-        { id: 'ga-sa', name: 'Gà đồi nướng sả mật ong', qty: 4, rate: null },
-        { id: 'trung-nam', name: 'Trứng gà đồi chưng nấm đông cô', qty: 4, rate: null }
+        { id: 'mam-bo-luclac', name: 'Mâm Thăn Bò Lúc Lắc & Canh Chua', qty: 1, rate: 'good' },
+        { id: 'mam-ga-sa', name: 'Mâm Gà Đồi Nướng Sả Mật Ong', qty: 1, rate: null },
+        { id: 'mam-suon-toi', name: 'Mâm Sườn Non Heo Rim Mắm Tỏi', qty: 1, rate: 'good' }
       ],
       addons: [{ id: 'ad-trung', name: 'Vỉ 10 trứng gà đồi Đắk Lắk', qty: 1 }]
-    },
-    {
-      id: 'MV08405',
-      date: 'Thứ Tư 2 tuần trước (01/11)',
-      total: 618000,
-      meals: 3,
-      items: [
-        { id: 'suon-toi', name: 'Sườn non heo rim mắm tỏi', qty: 4, rate: 'good' },
-        { id: 'bo-lalot', name: 'Bò cuốn lá lốt áp chảo', qty: 4, rate: 'good' },
-        { id: 'ga-xe', name: 'Gà luộc xé trộn bắp cải rau răm', qty: 4, rate: null }
-      ],
-      addons: [{ id: 'ad-rau', name: 'Combo rau củ Đà Lạt sạch thêm', qty: 1 }]
     }
   ],
   ledger: [
-    { date: '01/11 14:20', desc: 'Đăng ký Fresh Credit 1.000.000đ (Tặng 50.000đ)', amount: 1050000, bal: 1050000 },
-    { date: '01/11 15:00', desc: 'Thanh toán đơn hàng #MV08405', amount: -618000, bal: 432000 },
-    { date: '06/11 09:30', desc: 'Đăng ký Fresh Credit 1.000.000đ (Tặng 50.000đ)', amount: 1050000, bal: 1482000 },
-    { date: '08/11 19:40', desc: 'Thanh toán đơn hàng #MV08912', amount: -745000, bal: 737000 },
-    { date: '10/11 11:15', desc: 'Bảo hành bữa ăn #MV08912 (Rau dập xe lạnh)', amount: 113000, bal: 850000 }
+    { date: '01/11 14:20', desc: 'Nạp Gói Gia Đình 2.000.000đ (Chỉ trả 1.600.000đ)', amount: 2000000, bal: 2000000 },
+    { date: '01/11 15:00', desc: 'Thanh toán Subscription Tuần 1 #MV08405', amount: -618000, bal: 1382000 },
+    { date: '08/11 19:40', desc: 'Thanh toán Subscription Tuần 2 #MV08912', amount: -745000, bal: 637000 },
+    { date: '10/11 11:15', desc: 'Bảo hành chất lượng bữa ăn #MV08912', amount: 213000, bal: 850000 }
   ],
   notifications: [
-    { id: 'n1', time: '10:00 hôm nay', title: 'Đơn #MV10298 đã chuyển nhà máy Đắk Lắk', desc: 'Đơn của bạn đã được ghi nhận vào lịch sơ chế đêm nay.', unread: true },
-    { id: 'n2', time: 'Hôm qua 19:30', title: 'Zalo OA: Nhắc lịch chốt đơn trước 20:00', desc: 'Xe lạnh chuẩn bị đóng chuyến đêm về TP.HCM.', unread: false },
-    { id: 'n3', time: '10/11 11:15', title: 'Đã hoàn 113.000đ vào Fresh Credit', desc: 'Hoàn tiền bảo đảm độ tươi cho sự cố rau dập đơn #MV08912.', unread: false }
+    { id: 'n1', time: '10:00 hôm nay', title: 'Đơn #MV10298 đã chuyển nhà máy Đắk Lắk', desc: 'Đơn mâm cơm 4 người đã vào lịch sơ chế đêm nay.', unread: true },
+    { id: 'n2', time: 'Hôm qua 19:30', title: 'Nhắc lịch đổi món trước 20:00', desc: 'Bạn còn 30 phút để đổi món cho chuyến xe lạnh sáng mai.', unread: false }
   ]
 };
 
@@ -537,14 +583,24 @@ export const DEFAULT_STATE = () => ({
   budget: 1200000,
   n: 2,
   f: [],
-  pay: 'qr', // 'qr' | 'prepaid'
+  pay: 'credit', // 'credit' (Fresh Credit) | 'vietqr_month' (VietQR 4 tuần) | 'card_recurring' (Thẻ tín dụng)
   sauce: false,
   carb: false,
   firstDrop: 'sun', // 'sun' | 'wed'
   msg: null,
   showNutrition: false,
+  cutoffPassed: false,
 
-  cutoffPassed: false, // false: trước 20h, true: đã qua 20h
+  // Upsell Toggles (Bảng Nâng Cấp Dinh Dưỡng & Khẩu Vị V2)
+  upsellProtein: false, // Tăng 30% Đạm (Protein+) (+35k/bữa)
+  upsellLowCarb: false, // Giảm 50% Tinh bột / Đổi Gạo lứt & Khoai lang
+  upsellWestern: false, // Thêm 2 bữa Đồ Tây (Steak / Bistro Áp chảo)
+
+  // Delivery Preferences
+  deliveryFrequency: '2drop', // '1drop' (Chủ Nhật) | '2drop' (Chủ Nhật & Thứ Tư)
+  deliveryTimeSlot: '06:30–08:30', // '06:30–08:30' | '11:30–13:30' | '18:30–20:30'
+
+  heroWizardDismissed: false,
 
   user: {
     isLoggedIn: false,
@@ -576,7 +632,7 @@ export const DEFAULT_STATE = () => ({
       id: 'notif-init',
       time: 'Hôm nay',
       title: 'Chào mừng bạn đến với MOVA Fresh',
-      desc: 'Nguyên liệu tươi sơ chế sẵn Đắk Lắk đóng thùng xe lạnh giao tận cửa TP.HCM.',
+      desc: 'Mâm cơm gia đình 5 thành phần tươi sạch từ Đắk Lắk giao tận bếp TP.HCM.',
       unread: true
     }
   ]

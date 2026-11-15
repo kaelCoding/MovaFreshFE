@@ -67,8 +67,8 @@
 
       <!-- CỘT PHẢI: SPLIT-HERO CARD -->
       <div class="hero-right">
-        <!-- 1. Khi chưa hoàn thành khảo sát: Nhúng AiOnboardingWizard trực tiếp -->
-        <div v-if="!store.onboardingProfile?.isCompleted" class="hero-wizard-slot">
+        <!-- 1. Khi chưa hoàn tất hoặc đang xem màn hình chúc mừng Bước 6: Nhúng AiOnboardingWizard -->
+        <div v-if="!store.onboardingProfile?.isCompleted || !store.heroWizardDismissed" class="hero-wizard-slot">
           <AiOnboardingWizard />
         </div>
 

@@ -74,7 +74,7 @@ const availableDishes = computed(() => {
   return store.activeOrder.items;
 });
 
-const selectedDishId = ref(availableDishes.value[0]?.id || 'bo-luclac');
+const selectedDishId = ref(availableDishes.value[0]?.id || 'mam-bo-luclac');
 
 const handleSubmitRefund = () => {
   store.refundItem(selectedDishId.value, selectedReason.value);

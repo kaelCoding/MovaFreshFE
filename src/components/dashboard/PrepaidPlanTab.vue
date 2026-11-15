@@ -7,12 +7,12 @@
         <span class="pcard-badge">Thành viên TP.HCM</span>
       </div>
       <div class="pcard-mid">
-        <small>Giá trị bữa ăn tươi khả dụng</small>
+        <small>Giá trị điểm bữa ăn tươi khả dụng</small>
         <div class="pcard-bal num">{{ fmt(store.user.prepaidBalance) }}</div>
       </div>
       <div class="pcard-bot">
-        <span>Mã thẻ: <b>MV-8829-{{ store.user.name.split(' ').pop().toUpperCase() }}</b></span>
-        <span>Hạn sử dụng: <b>Còn 52 ngày</b></span>
+        <span>Mã tài khoản: <b>MV-8829-{{ (store.user.name || 'GUEST').split(' ').pop().toUpperCase() }}</b></span>
+        <span>Hạn bảo lưu: <b>Cam kết bảo lưu 100%</b></span>
       </div>
     </div>
 
@@ -20,46 +20,66 @@
     <div class="legal-notice">
       <b>⚖️ Minh bạch quyền lợi theo Nghị định 52/2024/NĐ-CP:</b>
       <p style="margin-top: 4px">
-        “Fresh Credit” là hình thức trả trước tiền nguyên liệu thực phẩm định kỳ, giúp tối ưu chi phí vận hành tuyến lạnh Đắk Lắk – TP.HCM và nhận giá trị tặng thêm (lên đến 120.000đ). Giá trị trong gói <b>chỉ dùng để đổi nguyên liệu sơ chế tại MOVA FRESH</b>, không phải ví điện tử và không hỗ trợ rút tiền mặt. Toàn bộ số dư được cam kết bảo lưu giá trị trong vòng 60 ngày.
+        “Fresh Credit” là hình thức trả trước tiền nguyên liệu bữa ăn định kỳ, giúp tối ưu chi phí vận hành chuỗi lạnh Đắk Lắk – TP.HCM và nhận giá trị chiết khấu trực tiếp (lên đến 25%). Giá trị trong tài khoản <b>chỉ dùng để đổi nguyên liệu sơ chế tại MOVA FRESH</b>, không phải ví điện tử và không hỗ trợ rút tiền mặt. Toàn bộ số dư được cam kết bảo lưu giá trị không thời hạn.
       </p>
     </div>
 
     <!-- Mua thêm gói mới -->
     <h3 style="font-size: 17px; font-weight: 800; margin-bottom: 12px">
-      Nạp thêm Fresh Credit (Nhận thêm giá trị thực)
+      Nạp thêm Fresh Credit (Chiết khấu cao 15–25%)
     </h3>
     <div class="plan-tiers">
-      <div class="tier-card">
-        <span class="t-pop">Tặng 50.000đ</span>
-        <h4>Gói Gia Đình Nhỏ (1 Triệu)</h4>
-        <div class="t-val num">1.000.000đ</div>
-        <span class="t-bonus">Nhận giá trị thực nhận: 1.050.000đ</span>
-        <p class="muted" style="font-size: 13px">
-          Phù hợp vợ chồng trẻ nấu 2-3 tuần. Tự do đổi món, trừ dần theo từng đơn.
-        </p>
-        <button
-          class="btn primary sm"
-          style="margin-top: auto"
-          @click="openTopup(1000000, 50000)"
-        >
-          Đăng ký gói 1.000.000đ
-        </button>
-      </div>
-
+      <!-- 1. Gói Gia Đình 2M -->
       <div class="tier-card highlight-tier">
-        <span class="t-pop green-pop">Tặng 120.000đ</span>
-        <h4>Gói Cả Tháng Thảnh Thơi (2 Triệu)</h4>
+        <span class="t-pop orange-pop">Tặng thẳng 400.000đ</span>
+        <h4>Gói Gia Đình Vui Vẻ</h4>
         <div class="t-val num">2.000.000đ</div>
-        <span class="t-bonus orange-bonus">Nhận giá trị thực nhận: 2.120.000đ</span>
+        <span class="t-bonus orange-bonus">Nạp hôm nay chỉ trả: <b>1.600.000đ</b> (Tiết kiệm 20%)</span>
         <p class="muted" style="font-size: 13px">
-          Tiết kiệm nhiều nhất cho gia đình 4 người. Tặng kèm đá gel giữ nhiệt cao cấp.
+          Phù hợp gia đình 3–4 người ăn 2–3 tuần. Tự do đổi món, trừ dần theo từng bữa ăn.
         </p>
         <button
           class="btn orange sm"
           style="margin-top: auto"
-          @click="openTopup(2000000, 120000)"
+          @click="openTopup(1600000, 400000)"
         >
-          Đăng ký gói 2.000.000đ
+          Đăng ký gói 2.000.000đ (Trả 1.6M)
+        </button>
+      </div>
+
+      <!-- 2. Gói Cả Tháng 4M -->
+      <div class="tier-card special-tier">
+        <span class="t-pop green-pop">Tặng thẳng 1.000.000đ</span>
+        <h4>Gói Cả Tháng Thảnh Thơi</h4>
+        <div class="t-val num">4.000.000đ</div>
+        <span class="t-bonus green-bonus">Nạp hôm nay chỉ trả: <b>3.000.000đ</b> (Tiết kiệm 25%)</span>
+        <p class="muted" style="font-size: 13px">
+          Tiết kiệm nhiều nhất cho đại gia đình. Khóa trọn giá nguyên liệu tươi suốt cả tháng.
+        </p>
+        <button
+          class="btn primary sm"
+          style="margin-top: auto"
+          @click="openTopup(3000000, 1000000)"
+        >
+          Đăng ký gói 4.000.000đ (Trả 3M)
+        </button>
+      </div>
+
+      <!-- 3. Gói Trải Nghiệm 1M -->
+      <div class="tier-card">
+        <span class="t-pop">Tặng 150.000đ</span>
+        <h4>Gói Trải Nghiệm Tân Thủ</h4>
+        <div class="t-val num">1.000.000đ</div>
+        <span class="t-bonus">Nạp hôm nay chỉ trả: <b>850.000đ</b> (Tiết kiệm 15%)</span>
+        <p class="muted" style="font-size: 13px">
+          Phù hợp người độc thân hoặc cặp đôi nấu thử tuần đầu tiên.
+        </p>
+        <button
+          class="btn sm"
+          style="margin-top: auto"
+          @click="openTopup(850000, 150000)"
+        >
+          Đăng ký gói 1.000.000đ (Trả 850k)
         </button>
       </div>
     </div>
@@ -103,7 +123,8 @@ import { fmt } from '../../utils/formatters';
 const store = useMovaStore();
 
 const openTopup = (amount, bonus) => {
-  store.openModal('topup', { amount, bonus });
+  store.pendingTopup = { amount, bonus };
+  store.openModal('topup');
 };
 </script>
 
@@ -119,180 +140,170 @@ const openTopup = (amount, bonus) => {
   margin-bottom: 24px;
 }
 
-.prepaid-card::after {
-  content: "";
-  position: absolute;
-  right: -40px;
-  bottom: -40px;
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, .06);
-  pointer-events: none;
-}
-
 .pcard-top {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  margin-bottom: 16px;
 }
 
 .pcard-brand {
-  font-size: 17px;
+  font-size: 11px;
   font-weight: 800;
-  letter-spacing: .02em;
+  letter-spacing: .08em;
+  opacity: .85;
 }
 
 .pcard-badge {
-  background: rgba(255, 255, 255, .2);
+  background: rgba(255, 255, 255, .15);
+  font-size: 11px;
   padding: 4px 10px;
   border-radius: 999px;
-  font-size: 11.5px;
-  font-weight: 700;
-}
-
-.pcard-mid {
-  margin: 20px 0 16px;
+  font-weight: 600;
 }
 
 .pcard-mid small {
-  font-size: 13px;
-  opacity: .85;
+  font-size: 12px;
+  opacity: .75;
   display: block;
+  margin-bottom: 4px;
 }
 
 .pcard-bal {
-  font-size: 36px;
+  font-size: clamp(28px, 4vw, 38px);
   font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  line-height: 1.1;
+  letter-spacing: -.02em;
 }
 
 .pcard-bot {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  font-size: 12.5px;
-  opacity: .9;
+  margin-top: 18px;
+  font-size: 12px;
+  opacity: .85;
 }
 
 .legal-notice {
-  background: var(--card);
+  background: var(--bg);
   border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 16px 18px;
+  border-radius: 14px;
+  padding: 14px 16px;
   margin-bottom: 24px;
-  font-size: 13px;
+  font-size: 12.5px;
   color: var(--muted);
-  line-height: 1.55;
-}
-
-.legal-notice b {
-  color: var(--ink);
+  line-height: 1.5;
 }
 
 .plan-tiers {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 24px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
 }
 
 .tier-card {
   background: var(--card);
-  border: 2px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: 18px;
-  padding: 18px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  transition: .15s;
   position: relative;
+  transition: all .2s ease;
 }
 
 .tier-card:hover {
-  border-color: var(--green);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .06);
 }
 
 .tier-card.highlight-tier {
   border-color: var(--orange);
+  background: linear-gradient(180deg, #FCEDE4 0%, #fff 40%);
 }
 
-.tier-card .t-pop {
-  position: absolute;
-  top: -10px;
-  right: 14px;
+.tier-card.special-tier {
+  border-color: var(--green);
+  background: linear-gradient(180deg, #E8F5E9 0%, #fff 40%);
+}
+
+.t-pop {
+  align-self: flex-start;
+  font-size: 10.5px;
+  font-weight: 700;
+  background: var(--line-2);
+  color: var(--muted);
+  padding: 3px 8px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+
+.t-pop.orange-pop {
   background: var(--orange);
   color: #fff;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 3px 9px;
 }
 
-.tier-card .t-pop.green-pop {
+.t-pop.green-pop {
   background: var(--green);
+  color: #fff;
 }
 
 .tier-card h4 {
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 800;
+  margin: 0 0 6px;
 }
 
-.tier-card .t-val {
+.t-val {
   font-size: 24px;
   font-weight: 800;
-  color: var(--green);
+  color: var(--ink);
+  margin-bottom: 4px;
 }
 
-.tier-card .t-bonus {
-  background: var(--green-soft);
-  color: var(--green-d);
-  font-size: 12.5px;
-  font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 8px;
-  display: inline-block;
+.t-bonus {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 10px;
+  display: block;
 }
 
-.tier-card .t-bonus.orange-bonus {
-  background: var(--orange-soft);
+.t-bonus b {
+  color: var(--ink);
+}
+
+.t-bonus.orange-bonus b {
   color: var(--orange-ink);
 }
 
+.t-bonus.green-bonus b {
+  color: var(--green-d);
+}
+
 .ledger-table-wrap {
-  background: var(--card);
+  overflow-x: auto;
   border: 1px solid var(--line);
-  border-radius: 18px;
-  overflow: hidden;
+  border-radius: 16px;
 }
 
 .ledger-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13.5px;
+  font-size: 13px;
+  text-align: left;
+}
+
+.ledger-table th, .ledger-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
 }
 
 .ledger-table th {
   background: var(--bg);
-  text-align: left;
-  padding: 12px 14px;
-  font-size: 12.5px;
   font-weight: 700;
   color: var(--muted);
-  border-bottom: 1px solid var(--line);
 }
 
-.ledger-table td {
-  padding: 12px 14px;
-  border-bottom: 1px solid var(--line-2);
-}
-
-.ledger-table tr:last-child td {
-  border-bottom: 0;
-}
-
-@media (max-width: 640px) {
+@media (max-width: 900px) {
   .plan-tiers {
     grid-template-columns: 1fr;
   }

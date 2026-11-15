@@ -35,34 +35,19 @@
         </div>
 
         <div class="sec-h">
-          <h2>Thực đơn tuần này</h2>
-          <p>Tự chọn món ngon, hoặc để MOVA tự động xếp chuẩn ngân sách. Mọi món nấu trong 15 phút với 1 chảo.</p>
+          <h2>{{ store.onboardingProfile?.householdSize === 1 ? 'Suất ăn Độc thân hoàn chỉnh' : 'Mâm cơm Gia đình Việt 5 thành phần' }}</h2>
+          <p>
+            {{ store.onboardingProfile?.householdSize === 1
+              ? 'Chuẩn bữa ăn cá nhân nhanh gọn: Đạm + Canh + Rau + Tinh bột ST25 + Trái cây. Nấu 1 chảo chỉ 10–12 phút.'
+              : 'Đầy đủ 5 thành phần Á Đông: 1 Đạm chính + 1 Canh nóng + 1 Rau xanh + Cơm ST25 + Trái cây tráng miệng theo mùa.'
+            }}
+          </p>
         </div>
 
         <div class="layout">
           <div>
-            <!-- Mode switcher -->
-            <div class="modes" role="tablist" aria-label="Cách mua">
-              <button
-                role="tab"
-                :aria-selected="store.mode === 'A'"
-                @click="store.setMode('A')"
-              >
-                Tự chọn theo món ngon
-                <small>Thêm, bớt món theo sở thích</small>
-              </button>
-              <button
-                role="tab"
-                :aria-selected="store.mode === 'B'"
-                @click="store.setMode('B')"
-              >
-                Soạn thực đơn theo ngân sách
-                <small>Hệ thống xếp vừa số tiền bạn có</small>
-              </button>
-            </div>
-
-            <!-- Box ngân sách -->
-            <BudgetPlanner v-if="store.mode === 'B'" />
+            <!-- Bảng Nâng Cấp Dinh Dưỡng & Khẩu Vị (Value-Based Upsell Toggles V2) -->
+            <ValueUpsellBar />
 
             <!-- Bộ lọc khẩu vị & Công tắc Dinh dưỡng -->
             <div class="filters-bar">
@@ -102,6 +87,14 @@
                   @click="store.toggleFilter('chay')"
                 >
                   🌱 Thuần chay / Rằm
+                </button>
+                <button
+                  type="button"
+                  class="chip ai-reorder-chip"
+                  @click="store.autoFillMenu"
+                  title="Tự động xếp lại mâm cơm theo hồ sơ AI"
+                >
+                  ✨ AI Tự động xếp thực đơn
                 </button>
               </div>
 
@@ -150,7 +143,7 @@
 import { computed } from 'vue';
 import HeroSection from '../components/store/HeroSection.vue';
 import JourneySection from '../components/store/JourneySection.vue';
-import BudgetPlanner from '../components/store/BudgetPlanner.vue';
+import ValueUpsellBar from '../components/store/ValueUpsellBar.vue';
 import DishCard from '../components/store/DishCard.vue';
 import AddonsSection from '../components/store/AddonsSection.vue';
 import StickyCart from '../components/store/StickyCart.vue';
@@ -363,6 +356,18 @@ const goalLabel = computed(() => {
   background: #F0FDF4;
   border-color: #BBF7D0;
   color: #166534;
+}
+
+.chip.ai-reorder-chip {
+  background: var(--green-soft);
+  border-color: var(--green);
+  color: var(--green);
+  font-weight: 700;
+}
+
+.chip.ai-reorder-chip:hover {
+  background: var(--green);
+  color: #fff;
 }
 
 .chip.vegan-chip.active {

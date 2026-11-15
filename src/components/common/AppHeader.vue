@@ -77,7 +77,7 @@
 
         <!-- 2. Nút Tài khoản -->
         <button
-          v-if="!store.user.isLoggedIn"
+          v-if="!(store.user?.isLoggedIn || store.currentUser?.isLoggedIn)"
           class="btn sm primary login-hdr-btn"
           @click="store.openModal('login')"
         >

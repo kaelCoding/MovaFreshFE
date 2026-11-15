@@ -699,7 +699,7 @@ const handleSkip = () => {
 
 const handleClose = () => {
   if (currentStep.value === 6) {
-    store.saveOnboardingProfile({ ...form }, true);
+    store.dismissHeroWizard();
   }
   emit('close');
   if (store.activeModal === 'onboarding') {
@@ -769,6 +769,9 @@ const handleFinishWizard = () => {
   loadingStep.value = 1;
   dynamicLoadingMessage.value = `AI Nutritionist đang tính toán tỷ lệ Calo & Đạm cho ${form.householdSize} người ăn...`;
 
+  // Ngay tại khoảnh khắc hoàn tất Bước 5: Lập tức đặt onboardingProfile.isCompleted = true, isLoggedIn = true, nhận +20k Fresh Credit
+  store.saveOnboardingProfile({ ...form }, true);
+
   setTimeout(() => {
     loadingStep.value = 2;
     dynamicLoadingMessage.value = 'Đang trích xuất BOM nguyên liệu sạch từ nhà máy Đắk Lắk...';
@@ -785,7 +788,7 @@ const handleFinishWizard = () => {
 };
 
 const handleGoToMenu = () => {
-  store.saveOnboardingProfile({ ...form }, true);
+  store.dismissHeroWizard();
   emit('complete');
   if (props.asModal) {
     store.closeModal();

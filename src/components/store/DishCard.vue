@@ -1,68 +1,94 @@
 <template>
   <article
     v-show="isAllowed"
-    class="dish"
-    :class="{ in: qtyInCart > 0 }"
+    class="dish-card"
+    :class="{ in: qtyInCart > 0, featured: isAiRecommended }"
   >
-    <div class="dimg" :style="{ background: BG[dish.p] }">
-      <span class="t">⏱ {{ dish.time }} phút</span>
-      <span v-if="batchSave > 0" class="sv">Tiết kiệm {{ fmt(batchSave) }}</span>
-      <DishPlateSvg :dish="dish" :uid="'c' + dish.id" :size="150" />
+    <!-- Top Visual & Badges -->
+    <div class="card-visual" :style="{ background: BG[dish.p] || '#FAF0E4' }">
+      <!-- AI Recommendation Badge -->
+      <div v-if="isAiRecommended" class="ai-match-badge">
+        <span class="sparkle">✨</span>
+        <span>AI Đề xuất cho bạn</span>
+      </div>
+
+      <div class="top-meta-badges">
+        <span class="badge-time">⏱ {{ dish.time }} phút • 1 chảo</span>
+        <span v-if="dish.isFusion" class="badge-fusion">🍷 Bistro Đồ Tây</span>
+      </div>
+
+      <div class="plate-center">
+        <DishPlateSvg :dish="dish" :uid="'c' + dish.id" :size="140" />
+      </div>
     </div>
 
-    <div class="dbody">
-      <h3>{{ dish.name }}</h3>
-      <div class="w">{{ dish.meat[0] }}{{ dish.meat[1] }}, {{ dish.veg[0] }}{{ dish.veg[1] }}</div>
+    <!-- Body Information -->
+    <div class="card-body">
+      <h3 class="meal-title">{{ dish.name }}</h3>
 
-      <div class="tags">
-        <span
-          v-for="t in dish.tags"
-          :key="t"
-          class="tag"
-          :class="{ spicy: t === 'Cay nhẹ' }"
-        >
-          {{ t }}
-        </span>
+      <!-- 5 Thành phần Mâm cơm Á Đông (hoặc Suất 1 người) -->
+      <div class="components-box" v-if="dish.components">
+        <div class="comp-row">
+          <span class="comp-icon" title="Món Đạm chính">🥩</span>
+          <span class="comp-text"><b>Đạm chính:</b> {{ dish.components.main }}</span>
+        </div>
+        <div class="comp-row">
+          <span class="comp-icon" title="Món Canh nóng">🥣</span>
+          <span class="comp-text"><b>Canh:</b> {{ dish.components.soup }}</span>
+        </div>
+        <div class="comp-row">
+          <span class="comp-icon" title="Rau xanh">🥬</span>
+          <span class="comp-text"><b>Rau xanh:</b> {{ dish.components.veg }}</span>
+        </div>
+        <div class="comp-row">
+          <span class="comp-icon" title="Tinh bột">🍚</span>
+          <span class="comp-text">
+            <b>Tinh bột:</b> {{ store.upsellLowCarb ? 'Gạo lứt huyết rồng / Khoai lang' : dish.components.carb }}
+          </span>
+        </div>
+        <div class="comp-row">
+          <span class="comp-icon" title="Tráng miệng">🥑</span>
+          <span class="comp-text"><b>Tráng miệng:</b> {{ dish.components.dessert }}</span>
+        </div>
       </div>
 
-      <!-- Dòng badge chỉ số dinh dưỡng khi bật toggle -->
+      <!-- Chỉ số dinh dưỡng khi bật toggle -->
       <div v-if="store.showNutrition && dish.nutrition" class="nutrition-badge">
-        <span>🔥 {{ dish.nutrition.kcal }} kcal</span>
+        <span>🔥 {{ scaledNutrition.kcal }} kcal</span>
         <span class="sep">•</span>
-        <span>🥩 {{ dish.nutrition.protein }}g Đạm</span>
+        <span>🥩 {{ scaledNutrition.protein }}g Đạm</span>
         <span class="sep">•</span>
-        <span>🍚 {{ dish.nutrition.carb }}g Carb</span>
+        <span>🍚 {{ scaledNutrition.carb }}g Carb</span>
       </div>
 
-      <div class="links">
-        <button class="lnk" @click="store.openModal('dish', dish.id)">
-          Chi tiết & Cách nấu
-        </button>
-        <button
-          v-if="qtyInCart > 0"
-          class="lnk"
-          @click="store.swapDish(dish.id)"
-        >
-          Đổi món khác
+      <!-- Link xem chi tiết -->
+      <div class="links-row">
+        <button class="btn-detail-link" @click="store.openModal('dish', dish.id)">
+          Xem 5 thành phần & Cách nấu →
         </button>
       </div>
 
-      <div class="dfoot">
-        <div class="price num">
-          {{ fmt(dish.price) }} <small>/ suất</small>
+      <!-- Footer & Stepper -->
+      <div class="card-footer">
+        <div class="price-wrap">
+          <div class="price num">{{ fmt(mealPrice) }}</div>
+          <small class="portion-label">
+            / bữa ({{ householdSize === 1 ? '1 suất cá nhân' : `Mâm ${householdSize} người ăn` }})
+          </small>
         </div>
 
-        <div v-if="qtyInCart > 0" class="stepper">
-          <button @click="handleDec" aria-label="Bớt 1 suất">−</button>
-          <b class="num">{{ qtyInCart }} suất</b>
-          <button @click="handleInc" aria-label="Thêm 1 suất">+</button>
+        <div v-if="qtyInCart > 0" class="stepper-act">
+          <button @click="handleDec" aria-label="Bớt 1 bữa">−</button>
+          <span class="num">{{ qtyInCart }} bữa</span>
+          <button @click="handleInc" aria-label="Thêm 1 bữa">+</button>
         </div>
+
         <button
           v-else
-          class="btn sm primary"
+          class="btn-add-meal"
           @click="handleAdd"
         >
-          + Thêm {{ defaultServings }} suất
+          + Thêm vào tuần
         </button>
       </div>
     </div>
@@ -87,166 +113,313 @@ const store = useMovaStore();
 
 const isAllowed = computed(() => store.allowed(props.dish));
 
+const householdSize = computed(() => {
+  return store.onboardingProfile?.householdSize || store.n || 2;
+});
+
+const isAiRecommended = computed(() => {
+  const profileGoals = store.onboardingProfile?.healthGoal || [];
+  if (!profileGoals.length) return false;
+  return props.dish.goals && props.dish.goals.some((g) => profileGoals.includes(g));
+});
+
 const qtyInCart = computed(() => {
   return store.cart[props.dish.id] || 0;
 });
 
-const defaultServings = computed(() => {
-  return store.mode === 'B' ? store.n : 2;
+// Tính giá mâm cơm theo quy mô số người ăn
+const mealPrice = computed(() => {
+  const base = props.dish.pricePerPerson || props.dish.price || 75000;
+  let total = householdSize.value === 1 ? base : base * householdSize.value;
+  if (store.upsellProtein) {
+    total += householdSize.value === 1 ? 25000 : 35000;
+  }
+  return total;
 });
 
-const batchSave = computed(() => {
-  const q = qtyInCart.value || defaultServings.value;
-  return props.dish.save * q;
+const scaledNutrition = computed(() => {
+  const n = props.dish.nutrition;
+  if (!n) return { kcal: 0, protein: 0, carb: 0, fat: 0 };
+  const mult = householdSize.value;
+  let p = n.protein;
+  let c = n.carb;
+  if (store.upsellProtein) p = Math.round(p * 1.3);
+  if (store.upsellLowCarb) c = Math.round(c * 0.5);
+  return {
+    kcal: n.kcal * mult,
+    protein: p * mult,
+    carb: c * mult,
+    fat: n.fat * mult
+  };
 });
 
 const handleAdd = () => {
-  if (store.tryChangeDish(props.dish.id, defaultServings.value)) {
-    store.toast(`Đã thêm ${props.dish.name}, ${defaultServings.value} suất`);
+  if (store.tryChangeDish(props.dish.id, 1)) {
+    store.toast(`Đã thêm ${props.dish.name} vào thực đơn tuần`);
   }
 };
 
 const handleInc = () => {
   if (store.tryChangeDish(props.dish.id, qtyInCart.value + 1)) {
-    store.toast(`${props.dish.name}: ${qtyInCart.value} suất`);
+    store.toast(`${props.dish.name}: ${qtyInCart.value} bữa/tuần`);
   }
 };
 
 const handleDec = () => {
   store.tryChangeDish(props.dish.id, qtyInCart.value - 1);
   if (qtyInCart.value > 0) {
-    store.toast(`${props.dish.name}: ${qtyInCart.value} suất`);
+    store.toast(`${props.dish.name}: ${qtyInCart.value} bữa/tuần`);
   } else {
-    store.toast(`Đã bỏ ${props.dish.name}`);
+    store.toast(`Đã bỏ ${props.dish.name} khỏi thực đơn`);
   }
 };
 </script>
 
 <style scoped>
-.dish {
+.dish-card {
   background: var(--card);
-  border: 1px solid var(--line);
+  border: 1.5px solid var(--line);
   border-radius: 18px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: .15s;
-}
-
-.dish.in {
-  border-color: var(--green);
-  box-shadow: 0 0 0 1.5px var(--green);
-}
-
-.dimg {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   position: relative;
-  height: 172px;
+}
+
+.dish-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+  border-color: var(--line-2);
+}
+
+.dish-card.in {
+  border-color: var(--green);
+  box-shadow: 0 8px 24px rgba(20, 108, 67, 0.12);
+}
+
+.dish-card.featured {
+  border-color: rgba(20, 108, 67, 0.4);
+}
+
+.card-visual {
+  height: 180px;
+  position: relative;
+  display: grid;
+  place-items: center;
   overflow: hidden;
-  display: flex;
+}
+
+.plate-center {
+  transform: translateY(6px);
+}
+
+.ai-match-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-}
-
-.dimg .t {
-  position: absolute;
-  left: 12px;
-  top: 12px;
-  background: rgba(255, 255, 255, .94);
-  border-radius: 999px;
-  padding: 4px 9px;
-  font-size: 12px;
-  font-weight: 700;
-  z-index: 2;
-}
-
-.dimg .sv {
-  position: absolute;
-  right: 12px;
-  top: 12px;
-  background: var(--orange);
+  gap: 4px;
+  background: var(--green);
   color: #fff;
-  border-radius: 999px;
-  padding: 4px 9px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(20, 108, 67, 0.25);
   z-index: 2;
 }
 
-.dbody {
-  padding: 14px 16px 16px;
+.top-meta-badges {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+
+.badge-time {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+}
+
+.badge-fusion {
+  background: var(--orange-soft);
+  color: var(--orange-ink);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.card-body {
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
   flex: 1;
 }
 
-.dbody h3 {
-  font-size: 16.5px;
-  font-weight: 700;
-  line-height: 1.3;
+.meal-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ink);
+  margin: 0 0 10px;
+  line-height: 1.35;
 }
 
-.dbody .w {
-  font-size: 13px;
-  color: var(--muted);
-}
-
-.nutrition-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
+/* 5 Thành phần */
+.components-box {
   background: var(--bg);
   border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 4px 8px;
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: grid;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+.comp-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+.comp-icon {
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.comp-text {
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.comp-text b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* Dinh dưỡng */
+.nutrition-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 11.5px;
   font-weight: 600;
-  color: var(--ink);
-  margin-top: 2px;
-  margin-bottom: 2px;
-  width: fit-content;
+  color: var(--orange-ink);
+  background: var(--orange-soft);
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-bottom: 12px;
 }
 
 .nutrition-badge .sep {
-  color: var(--muted);
-  opacity: .5;
+  opacity: 0.4;
 }
 
-.links {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 2px;
+.links-row {
+  margin-bottom: 14px;
 }
 
-.lnk {
+.btn-detail-link {
+  background: transparent;
   border: 0;
-  background: none;
   padding: 0;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 12.5px;
+  font-weight: 700;
   color: var(--green);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: color 0.15s ease;
 }
 
-.dfoot {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
+.btn-detail-link:hover {
+  color: var(--green-d);
+  text-decoration: underline;
+}
+
+.card-footer {
   margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.price-wrap {
+  display: flex;
+  flex-direction: column;
 }
 
 .price {
+  font-size: 17px;
   font-weight: 800;
-  font-size: 17.5px;
+  color: var(--ink);
 }
 
-.price small {
-  font-weight: 500;
-  font-size: 12.5px;
+.portion-label {
+  font-size: 11px;
   color: var(--muted);
+}
+
+.btn-add-meal {
+  background: var(--green);
+  color: #fff;
+  border: 0;
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-add-meal:hover {
+  background: var(--green-d);
+  transform: translateY(-1px);
+}
+
+.stepper-act {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--green-soft);
+  border: 1px solid var(--green);
+  border-radius: 10px;
+  padding: 4px 8px;
+}
+
+.stepper-act button {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 0;
+  background: var(--green);
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.stepper-act span {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green-d);
 }
 </style>
