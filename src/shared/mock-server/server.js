@@ -50,11 +50,22 @@ export function createServer({ storage = defaultStorage(), key = STORAGE_KEY, st
       const db = ensure();
       return fn(db, simNow(db));
     },
-    /** Ghi: fn(db, now), sau đó lưu. */
+    /**
+     * Ghi: fn(db, now), sau đó lưu. Hai tab cùng máy (ví dụ bảng demo và màn xưởng) dùng chung một khóa localStorage
+     * nên trước khi lưu kiểm tra khóa chưa bị tab khác ghi đè; nếu đã đổi thì đọc lại và chạy lại fn (tối đa vài lần).
+     */
     write(fn) {
-      const db = ensure();
-      const result = fn(db, simNow(db));
-      persist(db);
+      let result;
+      for (let attempt = 0; attempt < 4; attempt++) {
+        ensure();
+        const raw = storage.getItem(key);
+        const db = JSON.parse(raw);
+        result = fn(db, simNow(db));
+        if (storage.getItem(key) === raw || attempt === 3) {
+          persist(db);
+          return result;
+        }
+      }
       return result;
     },
     now() {
