@@ -76,3 +76,9 @@ export function dayKeySequence(dows, fromKey, count) {
   }
   return out;
 }
+
+/** "15/11/2026" theo giờ Việt Nam */
+export function fmtDate(date) {
+  const p = vnParts(date);
+  return `${pad(p.d)}/${pad(p.m)}/${p.y}`;
+}

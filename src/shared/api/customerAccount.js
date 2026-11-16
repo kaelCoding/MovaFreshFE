@@ -30,6 +30,8 @@ const THUMBS = ['up', 'down'];
 const SALT = ['salty', 'ok', 'bland'];
 const SPICE = ['low', 'ok', 'high'];
 const MAX_MEMBERS = 8;
+/** Phần ăn khách đổi được (trái cây tráng miệng do nhà máy chọn theo mùa). */
+const SWAPPABLE_KINDS = ['protein', 'veg', 'soup', 'carb'];
 
 /**
  * Các hàm của tài khoản khách (P1B): các tuần của tôi, đổi món theo hạn chốt sổ, tạm hoãn, dừng gói và hoàn tiền thật,
@@ -226,6 +228,7 @@ export function createAccountApi(server, cfg = BUSINESS) {
       return { error: fail('DISH_NOT_ALLOWED', 'Món này không đổi được cho bữa này') };
     }
     const next = applySwaps([meal], { [meal.index]: { [req.kind]: req.dish_id } }, restrictions)[0];
+    if (next.dishes[req.kind] !== req.dish_id) return { error: fail('DISH_NOT_ALLOWED', 'Phần này không đổi món được') };
     const size = order.householdSize;
     const priceDelta = mealPriceVnd(next, size) - mealPriceVnd(meal, size);
     const newList = order.listPriceVnd + priceDelta;
@@ -387,6 +390,7 @@ export function createAccountApi(server, cfg = BUSINESS) {
         if (!order) return fail('MEAL_NOT_FOUND', 'Không tìm thấy bữa ăn này');
         const meal = order.meals.find((m) => m.index === req.meal_index);
         if (!meal.dishes[req.kind]) return fail('MEAL_NOT_FOUND', 'Bữa này không có phần ăn đó');
+        if (!SWAPPABLE_KINDS.includes(req.kind)) return fail('DISH_NOT_ALLOWED', 'Phần này không đổi món được');
         const profile = profileOf(db, customer, sub);
         const restrictions = (profile && profile.restrictions) || [];
         const size = order.householdSize;
@@ -826,14 +830,14 @@ export function createAccountApi(server, cfg = BUSINESS) {
     },
 
     /**
-     * Chia sẻ thực đơn hoặc ảnh món đã nấu để nhận thưởng. kind: 'menu' | 'photo'; ref: mã tuần hoặc mã QR đã chia sẻ.
+     * Chia sẻ thực đơn hoặc ảnh món đã nấu để nhận thưởng. kind: 'menu' | 'photo' | 'qr'; ref: mã tuần hoặc mã QR đã chia sẻ.
      * Mỗi (loại, mã) một lần và tối đa maxShareRewardsPerWeek lần mỗi tuần. Ảnh được duyệt tự động trong bản demo.
      */
     claimShare(req = {}) {
       return server.write((db, now) => {
         const customer = customerOf(db, req.customer_id);
         if (!customer) return NOT_FOUND();
-        const kind = req.kind === 'photo' ? 'photo' : 'menu';
+        const kind = ['photo', 'qr'].includes(req.kind) ? req.kind : 'menu';
         const ref = String(req.ref || '').trim();
         if (!ref) return fail('REF_REQUIRED', 'Thiếu nội dung chia sẻ');
         const shares = col(db, 'shares');
