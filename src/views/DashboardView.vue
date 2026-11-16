@@ -1,109 +1,128 @@
 <template>
   <div class="dash-view">
     <div class="wrap">
-      <!-- 1. Header tóm tắt hồ sơ & số dư -->
-      <DashHeader />
+      <!-- Chưa có khách: mời đăng nhập hoặc thiết kế gói -->
+      <section v-if="store.loaded && !store.isLoggedIn" class="pl-card gate">
+        <h1 class="pl-h1">Gói của tôi</h1>
+        <p class="pl-lead">Đăng nhập bằng số điện thoại đã dùng khi đăng ký để xem các tuần giao, đổi món và Fresh Credit.</p>
+        <div class="gate-btns">
+          <button class="pl-btn primary" type="button" @click="store.openModal('login')">Đăng nhập</button>
+          <router-link to="/plans" class="pl-btn">Thiết kế thực đơn và đăng ký gói</router-link>
+        </div>
+      </section>
 
-      <!-- 2. Danh sách 4 Tabs liên thông -->
-      <div class="dash-tabs" role="tablist">
-        <button
-          class="dash-tab-btn"
-          :class="{ active: currentTab === 'active' }"
-          @click="currentTab = 'active'"
-          role="tab"
-        >
-          📦 Đơn hàng đang chạy & Lịch giao
-        </button>
-        <button
-          class="dash-tab-btn"
-          :class="{ active: currentTab === 'history' }"
-          @click="currentTab = 'history'"
-          role="tab"
-        >
-          🕒 Lịch sử đơn & Khẩu vị đã nấu
-        </button>
-        <button
-          class="dash-tab-btn"
-          :class="{ active: currentTab === 'prepaid' }"
-          @click="currentTab = 'prepaid'"
-          role="tab"
-        >
-          💳 Gói Đi Chợ Trả Trước (Prepaid)
-        </button>
-        <button
-          class="dash-tab-btn"
-          :class="{ active: currentTab === 'profile' }"
-          @click="currentTab = 'profile'"
-          role="tab"
-        >
-          ⚙️ Hồ sơ, Sổ địa chỉ & Zalo OA
-        </button>
-      </div>
+      <template v-else-if="store.isLoggedIn">
+        <DashHeader @tab="setTab" />
 
-      <!-- 3. Nội dung từng Tab -->
-      <div class="tab-content">
-        <ActiveOrderTab v-show="currentTab === 'active'" />
-        <OrderHistoryTab v-show="currentTab === 'history'" />
-        <PrepaidPlanTab v-show="currentTab === 'prepaid'" />
-        <ProfileAddressTab v-show="currentTab === 'profile'" />
-      </div>
+        <!-- Cảnh báo cần xử lý, hiện ở mọi tab -->
+        <section v-if="alert" class="pl-panel warn alert" role="alert">
+          <b>Fresh Credit chưa đủ cho tuần {{ alert.week_index + 1 }}</b>
+          <p class="num">
+            Tuần này cần {{ fmt(alert.amount_vnd) }}, bạn đang có {{ fmt(alert.balance_vnd) }}, còn thiếu {{ fmt(alert.shortfall_vnd) }}.
+            MOVA trừ tiền lúc <b>{{ alert.charge_label }}</b>; nếu chưa đủ, tuần này sẽ bị tạm hoãn khi tới giờ chốt sổ.
+          </p>
+          <button class="pl-btn orange sm" type="button" @click="store.openModal('topup')">Nạp thêm Fresh Credit</button>
+        </section>
+
+        <div class="dash-tabs" role="tablist" aria-label="Tài khoản">
+          <button v-for="t in TABS" :key="t.id" type="button" class="dash-tab-btn" :class="{ active: tab === t.id }" role="tab" :aria-selected="tab === t.id" @click="setTab(t.id)">
+            {{ t.label }}
+          </button>
+        </div>
+
+        <div class="tab-content">
+          <WeeksTab v-if="tab === 'weeks'" @tab="setTab" />
+          <CreditTab v-else-if="tab === 'credit'" />
+          <RewardsTab v-else-if="tab === 'rewards'" @tab="setTab" />
+          <ProfileTab v-else />
+        </div>
+
+        <DemoTools v-if="demo" />
+      </template>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, ref, watch, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useMovaStore } from '../stores/useMovaStore';
+import { fmt } from '../shared/utils/formatters';
 import DashHeader from '../components/dashboard/DashHeader.vue';
-import ActiveOrderTab from '../components/dashboard/ActiveOrderTab.vue';
-import OrderHistoryTab from '../components/dashboard/OrderHistoryTab.vue';
-import PrepaidPlanTab from '../components/dashboard/PrepaidPlanTab.vue';
-import ProfileAddressTab from '../components/dashboard/ProfileAddressTab.vue';
+import WeeksTab from '../components/dashboard/WeeksTab.vue';
+import CreditTab from '../components/dashboard/CreditTab.vue';
+import RewardsTab from '../components/dashboard/RewardsTab.vue';
+import ProfileTab from '../components/dashboard/ProfileTab.vue';
+import DemoTools from '../components/dashboard/DemoTools.vue';
 
-const currentTab = ref('active');
+const TABS = [
+  { id: 'weeks', label: 'Các tuần của tôi' },
+  { id: 'credit', label: 'Fresh Credit' },
+  { id: 'rewards', label: 'Thưởng và mời bạn' },
+  { id: 'profile', label: 'Hồ sơ' }
+];
+
+const store = useMovaStore();
+const route = useRoute();
+const router = useRouter();
+
+const tab = ref(TABS.some((t) => t.id === route.query.tab) ? route.query.tab : 'weeks');
+const alert = computed(() => (store.account ? store.account.alert : null));
+const demo = computed(() => route.query.demo === '1');
+
+function setTab(id) {
+  tab.value = id;
+  router.replace({ path: '/account', query: { ...route.query, tab: id === 'weeks' ? undefined : id } });
+}
+
+watch(
+  () => route.query.tab,
+  (t) => {
+    if (TABS.some((x) => x.id === t)) tab.value = t;
+    else if (!t) tab.value = 'weeks';
+  }
+);
+
+onMounted(() => {
+  store.refresh();
+});
 </script>
 
 <style scoped>
-.dash-view {
-  padding: 30px 0 60px;
-}
+.dash-view { padding: 22px 0 70px; min-height: 70vh; }
+.gate { max-width: 560px; margin: 24px auto; }
+.gate-btns { display: grid; gap: 10px; }
+.alert { margin-bottom: 16px; }
+.alert p { font-size: 16px; }
+.alert .pl-btn { justify-self: start; }
 
 .dash-tabs {
   display: flex;
-  gap: 8px;
+  gap: 4px;
   border-bottom: 1.5px solid var(--line);
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   overflow-x: auto;
-  padding-bottom: 2px;
+  scrollbar-width: none;
 }
-
+.dash-tabs::-webkit-scrollbar { display: none; }
 .dash-tab-btn {
   border: 0;
   background: none;
-  padding: 10px 16px;
-  font-size: 14.5px;
+  padding: 12px 14px;
+  min-height: 48px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--muted);
   border-radius: 12px 12px 0 0;
   white-space: nowrap;
   position: relative;
-  transition: .15s;
 }
-
-.dash-tab-btn:hover {
-  color: var(--ink);
-}
-
-.dash-tab-btn.active {
-  color: var(--green);
-  font-weight: 700;
-}
-
+.dash-tab-btn:hover { color: var(--ink); }
+.dash-tab-btn.active { color: var(--green); font-weight: 700; }
 .dash-tab-btn.active::after {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -3.5px;
+  left: 8px; right: 8px; bottom: -1.5px;
   height: 3px;
   background: var(--green);
   border-radius: 3px;

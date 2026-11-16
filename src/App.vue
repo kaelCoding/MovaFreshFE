@@ -24,10 +24,8 @@
     <ToastMessage />
 
     <!-- Các modal của phần tài khoản -->
-    <LoginDemoModal v-if="store.activeModal === 'login'" />
-    <RefundModal v-if="store.activeModal === 'refund'" />
-    <TopupModal v-if="store.activeModal === 'topup'" />
-    <AddressModal v-if="store.activeModal === 'address'" />
+    <LoginModal v-if="store.activeModal === 'login'" />
+    <TopupModal v-if="store.activeModal === 'topup' && store.isLoggedIn" />
   </div>
 </template>
 
@@ -42,10 +40,8 @@ import FloatingZaloBtn from './components/common/FloatingZaloBtn.vue';
 import ToastMessage from './components/common/ToastMessage.vue';
 
 // Modals
-import LoginDemoModal from './components/modals/LoginDemoModal.vue';
-import RefundModal from './components/modals/RefundModal.vue';
+import LoginModal from './components/modals/LoginModal.vue';
 import TopupModal from './components/modals/TopupModal.vue';
-import AddressModal from './components/modals/AddressModal.vue';
 
 import { useMovaStore } from './stores/useMovaStore';
 
@@ -65,9 +61,13 @@ const handleKeydown = (e) => {
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeydown);
+  // Nạp dữ liệu tài khoản (nếu có khách) và chạy job tới hạn định kỳ như một máy chủ thật
+  store.refresh();
+  store.startPolling();
 });
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown);
+  store.stopPolling();
 });
 </script>

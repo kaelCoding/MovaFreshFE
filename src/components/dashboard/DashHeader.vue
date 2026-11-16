@@ -1,34 +1,38 @@
 <template>
-  <div class="dash-header">
+  <header class="dash-header">
     <div class="u-info">
-      <div class="u-avatar">{{ store.user.name.charAt(0) }}</div>
+      <div class="u-avatar" aria-hidden="true">{{ initial }}</div>
       <div>
-        <h2>{{ store.user.name }}</h2>
-        <p><span>{{ store.user.phone }}</span> • <span class="muted">Khách hàng Gia đình TP.HCM</span></p>
+        <h1>{{ c.name }}</h1>
+        <p class="muted">{{ c.phone }}<template v-if="c.zone_name"> · Khu {{ c.zone_name }}</template></p>
       </div>
     </div>
     <div class="u-stats">
-      <div class="stat-chip">
-        <small>Gói Đi Chợ Trả Trước</small>
-        <b class="num">{{ fmt(store.user.prepaidBalance) }}</b>
-      </div>
-      <div class="stat-chip">
-        <small>Đơn đang chạy</small>
-        <b>{{ store.activeOrder ? '1 đơn' : '0 đơn' }}</b>
-      </div>
-      <div class="stat-chip">
-        <small>Bữa ăn đã nấu</small>
-        <b>24 bữa</b>
+      <button type="button" class="stat" @click="$emit('tab', 'credit')">
+        <small>Fresh Credit</small>
+        <b class="num">{{ fmt(store.balance.total_vnd) }}</b>
+        <span class="num">Tiền thật {{ fmt(store.balance.real_vnd) }}</span>
+      </button>
+      <div class="stat plain" v-if="sub">
+        <small>Gói của bạn</small>
+        <b>{{ statusText }}</b>
+        <span>{{ sub.slot_label }}</span>
       </div>
     </div>
-  </div>
+  </header>
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import { useMovaStore } from '../../stores/useMovaStore';
 import { fmt } from '../../shared/utils/formatters';
 
+defineEmits(['tab']);
 const store = useMovaStore();
+const c = computed(() => store.account.customer);
+const sub = computed(() => store.account.subscription);
+const initial = computed(() => (c.value.name || 'K').trim().split(/\s+/).pop().charAt(0));
+const statusText = computed(() => (sub.value.status === 'active' ? `${sub.value.weeks} tuần` : 'Đã dừng'));
 </script>
 
 <style scoped>
@@ -36,67 +40,35 @@ const store = useMovaStore();
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 20px;
-  padding: 20px 24px;
-  margin-bottom: 24px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   flex-wrap: wrap;
 }
-
-.u-info {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
+.u-info { display: flex; align-items: center; gap: 14px; min-width: 0; }
 .u-avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 18px;
+  width: 52px; height: 52px; border-radius: 16px; flex-shrink: 0;
   background: linear-gradient(135deg, var(--green), var(--green-d));
-  color: #fff;
-  display: grid;
-  place-items: center;
-  font-weight: 800;
-  font-size: 22px;
+  color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 22px;
 }
-
-.dash-header h2 {
-  font-size: 22px;
-  font-weight: 800;
+h1 { font-size: 21px; font-weight: 800; overflow-wrap: anywhere; }
+.u-info p { font-size: 15px; }
+.u-stats { display: flex; gap: 10px; flex-wrap: wrap; }
+.stat {
+  background: var(--bg); border: 1px solid var(--line); border-radius: 14px; padding: 8px 14px;
+  text-align: left; min-height: 44px; display: grid; gap: 0;
 }
-
-.dash-header p {
-  color: var(--muted);
-  font-size: 14px;
-}
-
-.u-stats {
-  display: flex;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.stat-chip {
-  background: var(--bg);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 8px 14px;
-  text-align: right;
-}
-
-.stat-chip small {
-  display: block;
-  font-size: 11.5px;
-  color: var(--muted);
-  font-weight: 600;
-}
-
-.stat-chip b {
-  font-size: 17px;
-  font-weight: 800;
-  color: var(--green);
+button.stat { cursor: pointer; }
+button.stat:hover { background: var(--green-soft); }
+.stat small { font-size: 13px; color: var(--muted); font-weight: 600; }
+.stat b { font-size: 18px; font-weight: 800; color: var(--green); }
+.stat span { font-size: 13px; color: var(--muted); }
+@media (max-width: 640px) {
+  .dash-header { padding: 16px; }
+  .u-stats { width: 100%; }
+  .stat { flex: 1; }
 }
 </style>

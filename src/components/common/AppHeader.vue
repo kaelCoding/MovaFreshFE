@@ -47,7 +47,7 @@
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
           </svg>
           <span class="lbl">Tài khoản</span>
-          <span v-if="store.activeOrder" class="badge-dot" title="Có đơn đang xử lý"></span>
+          <span v-if="store.alertCount" class="badge-dot" title="Cần bạn xem"></span>
         </router-link>
       </nav>
 
@@ -76,7 +76,7 @@
           </svg>
         </button>
         <button
-          v-if="!store.user.isLoggedIn"
+          v-if="!store.isLoggedIn"
           class="btn sm primary login-hdr-btn"
           @click="store.openModal('login')"
         >
@@ -114,19 +114,16 @@ const router = useRouter();
 
 // Trên mobile: chưa đăng nhập thì mở đăng nhập, rồi vào tài khoản
 const openAccount = () => {
-  if (store.user.isLoggedIn) router.push('/account');
+  if (store.isLoggedIn) router.push('/account');
   else store.openModal('login');
 };
 
-const userAvatar = computed(() => {
-  return (store.user.name || 'U').charAt(0);
-});
+const userAvatar = computed(() => (store.userName || 'U').trim().split(/\s+/).pop().charAt(0));
 
-// Hiển thị gọn 1 dòng: "Chị Lan • 850k"
+// Hiển thị gọn 1 dòng: "Lan • 850k"
 const userLineText = computed(() => {
-  const rawName = store.user.name.replace(/\(.*?\)/g, '').trim();
-  const balK = Math.round(store.user.prepaidBalance / 1000) + 'k';
-  return `${rawName} • ${balK}`;
+  const given = (store.userName || '').trim().split(/\s+/).pop();
+  return `${given} • ${Math.round(store.balance.total_vnd / 1000)}k`;
 });
 </script>
 

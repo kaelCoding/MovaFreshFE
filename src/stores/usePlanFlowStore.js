@@ -38,7 +38,8 @@ const freshState = () => ({
   planId: null,
   checkout: freshCheckout(),
   result: null,
-  waitlist: null
+  waitlist: null,
+  refCode: '' // mã mời từ link ?ref=MOVA-0007; người mời nhận thưởng khi khách này trả gói đầu tiên
 });
 
 function load() {
@@ -73,16 +74,26 @@ export const usePlanFlowStore = defineStore('planFlow', {
   actions: {
     persist() {
       try {
-        const { contact, leadId, answers, profileId, planId, checkout, result, waitlist } = this;
-        localStorage.setItem(KEY, JSON.stringify({ contact, leadId, answers, profileId, planId, checkout, result, waitlist }));
+        const { contact, leadId, answers, profileId, planId, checkout, result, waitlist, refCode } = this;
+        localStorage.setItem(KEY, JSON.stringify({ contact, leadId, answers, profileId, planId, checkout, result, waitlist, refCode }));
       } catch {
         // chế độ riêng tư: bỏ qua
       }
     },
 
     reset() {
-      Object.assign(this, freshState(), { plan: null, options: null, preview: null, busy: false, error: '' });
+      const refCode = this.refCode; // mã mời giữ lại khi khách làm lại từ đầu
+      Object.assign(this, freshState(), { refCode, plan: null, options: null, preview: null, busy: false, error: '' });
       this.persist();
+    },
+
+    /** Lưu mã mời từ link /plans?ref=... */
+    setRef(code) {
+      const c = String(code || '').trim().toUpperCase();
+      if (c && c !== this.refCode) {
+        this.refCode = c;
+        this.persist();
+      }
     },
 
     /** Màn đầu: lưu lead ngay khi khách nhập số Zalo hoặc email. */
@@ -254,6 +265,7 @@ export const usePlanFlowStore = defineStore('planFlow', {
         schedule
       });
       if (c.method === 'fresh_credit') req.topup_pay_vnd = this.selectedTopupPay();
+      if (this.refCode) req.referral_code = this.refCode;
       const res = api.customer.createSubscription(req);
       if (res.status === 'error') return { ok: false, kind: errorKind(res), message: res.error.message };
       this.result = { ...res.data, planSummary: this.summary() };

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import DashboardView from '../views/DashboardView.vue';
 import PlansView from '../views/PlansView.vue';
+import QrTraceView from '../views/QrTraceView.vue';
 
 const routes = [
   {
@@ -22,6 +23,12 @@ const routes = [
   {
     path: '/dashboard',
     redirect: '/account'
+  },
+  {
+    // Trang mở khi quét QR trên hộp. Không cần đăng nhập.
+    path: '/q/:code',
+    name: 'trace',
+    component: QrTraceView
   },
   {
     path: '/:pathMatch(.*)*',

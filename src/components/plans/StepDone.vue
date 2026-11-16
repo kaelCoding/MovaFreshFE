@@ -51,6 +51,7 @@
 import { computed, ref } from 'vue';
 import { usePlanFlowStore } from '../../stores/usePlanFlowStore';
 import { BUSINESS } from '../../shared/config/business';
+import { referralCodeFor } from '../../shared/domain/rewards';
 import { fmt } from '../../shared/utils/formatters';
 import { fmtDay, fmtDeadline } from '../../shared/utils/time';
 
@@ -64,7 +65,7 @@ const METHODS = { fresh_credit: 'Nạp Fresh Credit', bank_transfer_4w: 'Chuyể
 const methodLabel = computed(() => METHODS[r.value.payment_method] || '');
 
 async function invite() {
-  const url = `${location.origin}/plans?${new URLSearchParams({ ref: r.value.payment_ref })}`;
+  const url = `${location.origin}/plans?${new URLSearchParams({ ref: referralCodeFor(r.value.customer_id) })}`;
   const text = 'Mình đang dùng MOVA Fresh: nguyên liệu sơ chế sẵn từ Đắk Lắk, nấu cơm nhà 15 phút. Đăng ký qua link này nhé:';
   try {
     if (navigator.share) {

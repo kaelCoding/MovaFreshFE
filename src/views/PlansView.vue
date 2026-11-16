@@ -25,6 +25,9 @@ const store = usePlanFlowStore();
 const route = useRoute();
 const router = useRouter();
 
+// Link mời: /plans?ref=MOVA-0007
+if (route.query.ref) store.setRef(route.query.ref);
+
 // Tải lại trang: thực đơn lấy lại từ dữ liệu dùng chung. Dữ liệu đã bị đặt lại thì bắt đầu lại từ đầu.
 if (store.planId && !store.reloadPlan() && !store.result) store.reset();
 
