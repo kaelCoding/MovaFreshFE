@@ -4,7 +4,9 @@ import { SKUS, SUPPLIERS, SAUCES } from '../data/catalog';
 import { getServer } from '../mock-server/server';
 import { cutoffAtFor } from '../domain/delivery';
 import { applyOrderStatus, applySubstitution, upsertLot } from '../domain/opsEvents';
+import { dishItemGrams, emptyFactory, shortageGrams } from '../domain/factory';
 import { createCustomerApi } from './customer';
+import { createOpsFactoryApi } from './opsFactory';
 import { ForbiddenError, viewOrder, viewSupplier } from './views';
 
 export { ForbiddenError };
@@ -18,7 +20,11 @@ const ROLE_CAN = {
   // Ghi trạng thái giao và thông báo cho khách (xưởng báo đang sản xuất, kho / shipper báo đang giao, đã giao)
   fulfilment: ['workshop', 'hub', 'shipper', 'dispatch', 'admin'],
   substitution: ['workshop', 'hub', 'dispatch', 'admin'],
-  lots: ['workshop', 'admin']
+  lots: ['workshop', 'admin'],
+  // P2A: kế hoạch & chốt sổ (điều phối, mua hàng, admin); xưởng ghi (xưởng, admin); xưởng đọc (thêm điều phối, mua hàng)
+  planning: ['dispatch', 'purchasing', 'admin'],
+  factory: ['workshop', 'admin'],
+  factoryRead: ['workshop', 'admin', 'dispatch', 'purchasing']
 };
 
 const fromEvent = (res) => {
@@ -59,6 +65,8 @@ export function createApi(server = getServer()) {
 
     // ---------- App vận hành (đã lọc theo vai trò) ----------
     ops: {
+      ...createOpsFactoryApi(server, cfg, (ctx, action) => guard(ctx, action)),
+
       /** Chạy các job đã tới hạn (trừ tiền, chốt sổ, nhắc khách). Mọi vai trò đã đăng nhập đều gọi được. */
       tick(ctx) {
         if (!ctx) throw new ForbiddenError();
@@ -117,10 +125,24 @@ export function createApi(server = getServer()) {
        * Nhà máy thiếu hàng nên thay món. Đổi món trong đơn, bù vào Fresh Credit của khách (mặc định phần chênh giá)
        * và báo khách. kind: 'protein' | 'veg' | 'soup' | 'carb' | 'dessert'.
        */
-      substituteDish(ctx, { orderId, mealIndex, kind, toDishId, reason = '', compensationVnd = null }) {
+      substituteDish(ctx, { orderId, mealIndex, kind, toDishId, reason = '', compensationVnd = null, shortageId = null, opId = null }) {
         guard(ctx, 'substitution');
         return server.write((db, now) => {
+          // P2A: opId khử trùng khi máy xưởng gửi lại (không bù hai lần); shortageId ghi đơn này đã được báo khách
+          // vào báo cáo thiếu / hỏng của xưởng.
+          db.factory = db.factory || emptyFactory();
+          if (opId && db.factory.opIds.includes(opId)) return { orderId, compensationVnd: 0, duplicate: true };
+          const before = db.orders.find((o) => o.id === orderId);
+          const meal = before && before.meals.find((m) => m.index === mealIndex);
+          const fromDishId = meal ? meal.dishes[kind] : null;
+          const shortage = shortageId ? db.factory.shortages.find((s) => s.id === shortageId) : null;
+          const grams = shortage && meal ? dishItemGrams(fromDishId, shortage.key, meal, before.householdSize) : 0;
           const res = fromEvent(applySubstitution(db, { orderId, mealIndex, kind, toDishId, reason, compensationVnd }, now));
+          if (opId) db.factory.opIds.push(opId);
+          if (shortage) {
+            shortage.handled.push({ orderId, mealIndex, kind, fromDishId, toDishId, compensationVnd: res.compensationVnd, grams, at: now.toISOString() });
+            if (shortage.status === 'open' && shortageGrams(shortage) - shortage.handled.reduce((s, h) => s + h.grams, 0) <= 0) shortage.status = 'resolved';
+          }
           return { orderId: res.order.id, compensationVnd: res.compensationVnd };
         });
       },

@@ -147,6 +147,24 @@ export const BUSINESS = {
     ambient: { color: null, label: 'Không dán sticker' }
   },
 
+  // Xưởng Đắk Lắk (P2A)
+  factory: {
+    // Chuyến xe lạnh Đắk Lắk -> TP.HCM (giả định). slotIds: các khung giờ giao được chở trên chuyến này.
+    // Chuyến 1 rời 16:00 (đúng timings.truckDepartHour), tới kho phụ 03:00 nên kịp khung sáng sớm.
+    // Chuyến 2 rời 20:00 tới khoảng 07:00, chở hàng cho khung trưa và tối.
+    trips: [
+      { id: 'T1', label: 'Chuyến 1', departHour: 16, departMin: 0, slotIds: [SLOTS.morning.id] },
+      { id: 'T2', label: 'Chuyến 2', departHour: 20, departMin: 0, slotIds: [SLOTS.noon.id, SLOTS.evening.id] }
+    ],
+    // Cỡ túi và hạn dùng mặc định khi SKU chưa khai báo ở data/packaging.js (giả định)
+    defaultBagGrams: 250,
+    shelfDaysByTemp: { chill: 4, frozen: 30, ambient: 60 },
+    // Nút cộng nhanh khi ghi số túi đã làm
+    quickAdds: [10, 50],
+    // Ảnh chụp ở xưởng được thu nhỏ trước khi lưu (cạnh dài tối đa, px) để nhẹ bộ nhớ trình duyệt
+    photoMaxPx: 480
+  },
+
   purchasing: {
     // Dự phòng hao hụt khi tạo PO (giả định)
     wasteBufferPct: 0.05

@@ -5,6 +5,7 @@ import { planOrders, activateSubscription } from '../domain/subscription';
 import { emptyBalance } from '../domain/credit';
 import { nextId } from '../domain/jobs';
 import { SAMPLE_LOTS } from '../data/lots';
+import { emptyFactory } from '../domain/factory';
 
 export const DB_VERSION = 1;
 
@@ -43,7 +44,9 @@ export function emptyDb(now, running) {
     lots: JSON.parse(JSON.stringify(SAMPLE_LOTS)),
     ratings: [],
     shares: [],
-    referrals: []
+    referrals: [],
+    // P2A: sổ ghi của xưởng Đắk Lắk (tiến độ, lô nhận, mẻ túi, thùng, xe, báo thiếu, năng lực)
+    factory: emptyFactory()
   };
 }
 
