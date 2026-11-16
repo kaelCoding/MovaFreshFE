@@ -73,7 +73,7 @@
 import { computed } from 'vue';
 import DishPlateSvg from '../common/DishPlateSvg.vue';
 import { BG } from '../../data/mockData';
-import { fmt } from '../../utils/formatters';
+import { fmt } from '../../shared/utils/formatters';
 import { useMovaStore } from '../../stores/useMovaStore';
 
 const props = defineProps({

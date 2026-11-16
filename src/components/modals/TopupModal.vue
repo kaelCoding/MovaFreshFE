@@ -48,7 +48,7 @@
 import { computed } from 'vue';
 import VietQrSvg from '../common/VietQrSvg.vue';
 import { useMovaStore } from '../../stores/useMovaStore';
-import { fmt } from '../../utils/formatters';
+import { fmt } from '../../shared/utils/formatters';
 
 const store = useMovaStore();
 

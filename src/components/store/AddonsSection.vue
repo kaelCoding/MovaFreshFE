@@ -44,7 +44,7 @@
 
 <script setup>
 import { ADDONS } from '../../data/mockData';
-import { fmt } from '../../utils/formatters';
+import { fmt } from '../../shared/utils/formatters';
 import { useMovaStore } from '../../stores/useMovaStore';
 
 const store = useMovaStore();

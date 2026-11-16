@@ -226,8 +226,8 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useMovaStore } from '../../stores/useMovaStore';
 import { byId, addonById } from '../../data/mockData';
-import { fmt } from '../../utils/formatters';
-import { schedule, dLbl, splitDropsList, getTimeLeft } from '../../utils/schedule';
+import { fmt } from '../../shared/utils/formatters';
+import { schedule, dLbl, splitDropsList, getTimeLeft } from '../../shared/utils/schedule';
 
 const store = useMovaStore();
 

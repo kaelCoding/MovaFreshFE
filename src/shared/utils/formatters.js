@@ -2,6 +2,9 @@ const nf = new Intl.NumberFormat('vi-VN');
 
 export const fmt = (n) => nf.format(Math.round(n || 0)) + 'đ';
 
+// Tên chuẩn trong .agent/04 (formatVnd); fmt giữ lại để không phải sửa toàn bộ app V1.
+export const formatVnd = fmt;
+
 export const pad = (n) => String(n).padStart(2, '0');
 
 export function rng(seed) {

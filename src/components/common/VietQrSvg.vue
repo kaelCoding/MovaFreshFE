@@ -4,7 +4,7 @@
 
 <script setup>
 import { computed } from 'vue';
-import { rng } from '../../utils/formatters';
+import { rng } from '../../shared/utils/formatters';
 
 const props = defineProps({
   seed: {

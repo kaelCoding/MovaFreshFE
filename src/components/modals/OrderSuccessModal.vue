@@ -53,8 +53,8 @@ import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import VietQrSvg from '../common/VietQrSvg.vue';
 import { useMovaStore } from '../../stores/useMovaStore';
-import { fmt } from '../../utils/formatters';
-import { schedule, dLbl } from '../../utils/schedule';
+import { fmt } from '../../shared/utils/formatters';
+import { schedule, dLbl } from '../../shared/utils/schedule';
 
 const store = useMovaStore();
 const router = useRouter();

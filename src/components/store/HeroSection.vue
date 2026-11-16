@@ -54,7 +54,7 @@
 <script setup>
 import DishPlateSvg from '../common/DishPlateSvg.vue';
 import { byId } from '../../data/mockData';
-import { fmt } from '../../utils/formatters';
+import { fmt } from '../../shared/utils/formatters';
 import { useMovaStore } from '../../stores/useMovaStore';
 
 const store = useMovaStore();

@@ -26,7 +26,7 @@
 
 <script setup>
 import { useMovaStore } from '../../stores/useMovaStore';
-import { fmt } from '../../utils/formatters';
+import { fmt } from '../../shared/utils/formatters';
 
 const store = useMovaStore();
 </script>

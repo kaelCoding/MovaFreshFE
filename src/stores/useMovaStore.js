@@ -9,7 +9,7 @@ import {
   DEMO_LAN_DATA,
   DEMO_MINH_DATA
 } from '../data/mockData';
-import { fmt } from '../utils/formatters';
+import { fmt } from '../shared/utils/formatters';
 
 const STORAGE_KEY = 'mova_fresh_v3_onboard_v4';
 

@@ -162,7 +162,7 @@
 <script setup>
 import { reactive, computed, onMounted } from 'vue';
 import { useMovaStore } from '../../stores/useMovaStore';
-import { fmt } from '../../utils/formatters';
+import { fmt } from '../../shared/utils/formatters';
 
 const store = useMovaStore();
 const c = computed(() => store.calcAll);

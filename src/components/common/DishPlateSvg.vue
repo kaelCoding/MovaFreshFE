@@ -9,7 +9,7 @@
 
 <script setup>
 import { computed } from 'vue';
-import { rng, hash } from '../../utils/formatters';
+import { rng, hash } from '../../shared/utils/formatters';
 
 const props = defineProps({
   dish: {
