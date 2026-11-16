@@ -35,6 +35,21 @@ export function upcomingDeliveryDays(zoneId, now, count = 4, cfg = BUSINESS) {
   return all.filter((k) => cutoffAtFor(k, cfg).getTime() > now.getTime()).slice(0, count);
 }
 
+export const capacityKey = (zoneId, day, slotId) => `${zoneId}|${day}|${slotId}`;
+
+/**
+ * Sức chứa (thùng) của một khung giờ. P2C: điều phối có thể ghi đè trong `db.logistics.capacity` theo (khu, ngày, khung)
+ * hoặc theo (khu, '*', khung) cho mọi ngày; không có thì lấy số trong cấu hình (`BUSINESS.zones`).
+ */
+export function slotCapacity(overrides, zoneId, day, slot) {
+  const o = overrides || {};
+  const exact = o[capacityKey(zoneId, day, slot.id)];
+  if (Number.isFinite(exact)) return exact;
+  const any = o[capacityKey(zoneId, '*', slot.id)];
+  if (Number.isFinite(any)) return any;
+  return slot.capacityBoxes;
+}
+
 /** Số thùng đã đặt cho một khu / ngày / khung. */
 export function slotUsage(orders, zoneId, dayKeyStr, slotId) {
   return orders.filter(
@@ -47,13 +62,13 @@ export function slotUsage(orders, zoneId, dayKeyStr, slotId) {
 }
 
 /** Các khung giao còn chỗ của một khu trong vài ngày tới. */
-export function availableSlots(orders, zoneId, now, daysCount = 4, cfg = BUSINESS) {
+export function availableSlots(orders, zoneId, now, daysCount = 4, cfg = BUSINESS, overrides = null) {
   const zone = getZone(zoneId);
   const out = [];
   for (const day of upcomingDeliveryDays(zoneId, now, daysCount, cfg)) {
     for (const slot of zone.slots) {
       const used = slotUsage(orders, zoneId, day, slot.id);
-      const remaining = slot.capacityBoxes - used;
+      const remaining = slotCapacity(overrides, zoneId, day, slot) - used;
       if (remaining > 0) {
         out.push({
           day,

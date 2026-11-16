@@ -8,7 +8,10 @@ import { dishItemGrams, emptyFactory, shortageGrams } from '../domain/factory';
 import { createCustomerApi } from './customer';
 import { createOpsFactoryApi } from './opsFactory';
 import { createProcurementApi } from './opsProcurement';
+import { createLogisticsApi } from './opsLogistics';
 import { seedTraceScenario } from '../data/traceScenario';
+import { seedTripsScenario } from '../data/logisticsScenario';
+import { atDay } from '../utils/time';
 import { ForbiddenError, viewOrder, viewPo, viewSupplier } from './views';
 
 export { ForbiddenError };
@@ -37,7 +40,20 @@ const ROLE_CAN = {
   hubOps: ['hub', 'purchasing', 'admin'],
   recallCompensate: ['purchasing', 'admin'],
   // P2B: cổng nhà cung cấp (admin xem thử một nhà cung cấp)
-  supplierPortal: ['supplier', 'admin']
+  supplierPortal: ['supplier', 'admin'],
+  // P2C: điều phối (sức chứa, chuyến xe, ngoại lệ, chi phí, KPI); xem cấu hình logistics
+  dispatchOps: ['dispatch', 'admin'],
+  logisticsView: ['dispatch', 'hub', 'admin', 'shipper'],
+  // P2C: lập tuyến (điều phối, kho phụ, admin); thao tác kho phụ (nhận xe, ghép hải sản, chia tuyến, xuất kho); đọc bảng kho phụ
+  routePlan: ['dispatch', 'hub', 'admin'],
+  hubFlow: ['hub', 'admin'],
+  hubFlowRead: ['hub', 'dispatch', 'admin'],
+  // P2C: chuỗi lạnh (QC quyết định giữ / hủy), chi phí đã đẩy cho Tài chính
+  coldChain: ['hub', 'dispatch', 'admin'],
+  costRead: ['dispatch', 'accounting', 'admin'],
+  // P2C: app shipper (shipper ghi; điều phối chỉ xem thử; admin thao tác thay)
+  shipperApp: ['shipper', 'dispatch', 'admin'],
+  shipperWrite: ['shipper', 'admin']
 };
 
 const fromEvent = (res) => {
@@ -60,12 +76,18 @@ function guard(ctx, action) {
 export function createApi(server = getServer()) {
   const cfg = server.cfg || BUSINESS;
 
+  const procurement = createProcurementApi(server, cfg, (ctx, action) => guard(ctx, action));
+  const logistics = createLogisticsApi(server, cfg, (ctx, action) => guard(ctx, action));
+
   const api = {
     // ---------- Đăng nhập app vận hành (PIN demo) ----------
     auth: {
       login(pin) {
+        // P2C: mỗi shipper một PIN riêng (3333 vẫn dùng được, là shipper đầu tiên)
+        const sh = cfg.logistics.shippers.find((x) => x.pin === String(pin));
+        if (sh) return { role: 'shipper', label: `${ROLES.shipper.label}: ${sh.name}`, home: ROLES.shipper.home, supplierId: null, shipperId: sh.id };
         for (const [role, def] of Object.entries(ROLES)) {
-          if (def.pin && def.pin === String(pin)) return { role, label: def.label, home: def.home, supplierId: null };
+          if (def.pin && def.pin === String(pin)) return { role, label: def.label, home: def.home, supplierId: null, shipperId: null };
         }
         const sup = Object.values(SUPPLIERS).find((s) => s.pin === String(pin));
         if (sup) return { role: 'supplier', label: `${ROLES.supplier.label}: ${sup.name}`, home: ROLES.supplier.home, supplierId: sup.id };
@@ -79,7 +101,10 @@ export function createApi(server = getServer()) {
     // ---------- App vận hành (đã lọc theo vai trò) ----------
     ops: {
       ...createOpsFactoryApi(server, cfg, (ctx, action) => guard(ctx, action)),
-      ...createProcurementApi(server, cfg, (ctx, action) => guard(ctx, action)),
+      ...procurement,
+      ...logistics,
+      // P2C thêm các hàm kho phụ vào cùng nhóm `hub` của P2B
+      hub: { ...procurement.hub, ...logistics.hub },
 
       /** Chạy các job đã tới hạn (trừ tiền, chốt sổ, nhắc khách). Mọi vai trò đã đăng nhập đều gọi được. */
       tick(ctx) {
@@ -215,6 +240,8 @@ export function createApi(server = getServer()) {
             nextCharge: scheduled.map((o) => o.chargeAt).filter((t) => Date.parse(t) > now.getTime()).sort()[0] || null,
             nextCutoff: days.filter((d) => !db.firedJobs[`cutoff:${d}`]).map((d) => cutoffAtFor(d, cfg).toISOString()).filter((t) => Date.parse(t) > now.getTime()).sort()[0] || null,
             nextDelivery: db.orders.map((o) => o.deliveryAt).filter((t) => Date.parse(t) > now.getTime()).sort()[0] || null,
+            // P2C: mốc xe về kho phụ (ngày giao D lúc 02:00) của ngày đã chốt sổ kế tiếp
+            nextHubArrival: db.productionPlans.map((p) => hubJumpAt(p.day).toISOString()).filter((t) => Date.parse(t) > now.getTime()).sort()[0] || null,
             firedCutoffs: Object.keys(db.firedJobs).filter((k) => k.startsWith('cutoff:')),
             plans: db.productionPlans.length,
             purchaseOrders: db.purchaseOrders.length
@@ -227,13 +254,22 @@ export function createApi(server = getServer()) {
         return server.setNow(iso);
       },
 
-      /** kind: 'charge' | 'cutoff' | 'delivery' — nhảy tới ngay sau mốc kế tiếp. */
+      /** kind: 'charge' | 'cutoff' | 'delivery' | 'hub' — nhảy tới ngay sau mốc kế tiếp ('hub' = đúng 02:00 ngày giao D, xe về kho phụ). */
       jumpTo(ctx, kind) {
         guard(ctx, 'demo');
         const st = this.state(ctx);
-        const target = { charge: st.nextCharge, cutoff: st.nextCutoff, delivery: st.nextDelivery }[kind];
+        const target = { charge: st.nextCharge, cutoff: st.nextCutoff, delivery: st.nextDelivery, hub: st.nextHubArrival }[kind];
         if (!target) return [];
-        return server.setNow(new Date(Date.parse(target) + 60 * 1000));
+        return server.setNow(new Date(Date.parse(target) + (kind === 'hub' ? 0 : 60 * 1000)));
+      },
+
+      /**
+       * Dựng chuyến xe mẫu cho kho phụ (P2C): trên ngày đã chốt sổ, đóng đủ thùng, lên xe và xuất bến cả hai chuyến (nhiệt độ, niêm phong)
+       * để thử Nhận xe → Ghép hải sản → Lập tuyến → Xuất kho → Shipper. Cần đã chốt sổ ít nhất một ngày.
+       */
+      seedTrips(ctx, opts = {}) {
+        guard(ctx, 'demo');
+        return seedTripsScenario(server, cfg, opts);
       },
 
       tick(ctx) {
@@ -258,5 +294,8 @@ export function createApi(server = getServer()) {
   };
   return api;
 }
+
+/** Mốc "xe về kho phụ" dùng cho bảng demo: đúng giờ cấu hình của ngày giao D. */
+const hubJumpAt = (day) => atDay(day, BUSINESS.logistics.demoHubJump.hour, BUSINESS.logistics.demoHubJump.min);
 
 export const api = createApi();

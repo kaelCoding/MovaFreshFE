@@ -6,6 +6,7 @@ import { emptyBalance } from '../domain/credit';
 import { nextId } from '../domain/jobs';
 import { SAMPLE_LOTS } from '../data/lots';
 import { emptyFactory } from '../domain/factory';
+import { emptyLogistics } from '../domain/logisticsOps';
 import { supplementProcurement } from '../data/procurementSeed';
 
 export const DB_VERSION = 1;
@@ -47,7 +48,10 @@ export function emptyDb(now, running) {
     shares: [],
     referrals: [],
     // P2A: sổ ghi của xưởng Đắk Lắk (tiến độ, lô nhận, mẻ túi, thùng, xe, báo thiếu, năng lực)
-    factory: emptyFactory()
+    factory: emptyFactory(),
+    // P2C: sức chứa ghi đè, chuyến xe, nhận xe, ghép hải sản, tuyến, giao hàng, ngoại lệ, nhiệt độ; chi phí đẩy cho Tài chính
+    logistics: emptyLogistics(),
+    logisticsCosts: []
   };
 }
 

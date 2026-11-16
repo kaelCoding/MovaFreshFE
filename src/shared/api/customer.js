@@ -487,7 +487,7 @@ export function createCustomerApi(server, cfg = BUSINESS) {
     // ---------- Giao hàng ----------
     /** Các khung giao còn chỗ của một khu (app khách chỉ hiện khung còn sức chứa). */
     availableSlots(zoneId, days = 4) {
-      return server.read((db, now) => availableSlots(db.orders, zoneId, now, days, cfg));
+      return server.read((db, now) => availableSlots(db.orders, zoneId, now, days, cfg, db.logistics && db.logistics.capacity));
     },
 
     /**

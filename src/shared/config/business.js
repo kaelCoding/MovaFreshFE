@@ -3,9 +3,9 @@
 // phải lấy từ nghiên cứu 200 hộ. Xem prompts/README.md, mục "Việc cần làm trước khi chạy".
 
 const SLOTS = {
-  morning: { id: 'early_morning_06_08', label: 'Sáng sớm 06:00 – 08:00', startHour: 6, startMin: 0 },
-  noon: { id: 'noon_11_13', label: 'Buổi trưa 11:00 – 13:00', startHour: 11, startMin: 0 },
-  evening: { id: 'evening_18_21', label: 'Tối muộn 18:30 – 21:00', startHour: 18, startMin: 30 }
+  morning: { id: 'early_morning_06_08', label: 'Sáng sớm 06:00 – 08:00', startHour: 6, startMin: 0, endHour: 8, endMin: 0, short: 'S' },
+  noon: { id: 'noon_11_13', label: 'Buổi trưa 11:00 – 13:00', startHour: 11, startMin: 0, endHour: 13, endMin: 0, short: 'T' },
+  evening: { id: 'evening_18_21', label: 'Tối muộn 18:30 – 21:00', startHour: 18, startMin: 30, endHour: 21, endMin: 0, short: 'M' }
 };
 
 const slot = (key, capacityBoxes) => ({ ...SLOTS[key], capacityBoxes });
@@ -240,6 +240,45 @@ export const BUSINESS = {
       in_transit: ['shipped'],
       delivered: ['delivered']
     }
+  },
+
+  // Logistics chặng dài, kho phụ và chặng cuối (P2C). Mọi số tiền và hạn mức là giả định, chờ anh Trung chốt.
+  logistics: {
+    // Shipper: mỗi người có PIN riêng (3333 là PIN shipper đã có từ trước, gán cho shipper đầu tiên) và sức chở (thùng / chuyến).
+    shippers: [
+      { id: 'SH-01', name: 'Nguyễn Văn Hùng', pin: '3333', capacityBoxes: 15 },
+      { id: 'SH-02', name: 'Trần Minh Tuấn', pin: '3334', capacityBoxes: 15 },
+      { id: 'SH-03', name: 'Lê Thị Hoa', pin: '3335', capacityBoxes: 12 },
+      { id: 'SH-04', name: 'Phạm Quốc Bảo', pin: '3336', capacityBoxes: 12 }
+    ],
+    // Xe lạnh chặng dài: sức chứa mặc định (thùng) và giá mỗi chuyến khi điều phối chưa nhập
+    truck: { capacityBoxes: 120, costPerTripVnd: 4500000, carrierSupplierId: 'S-TRUCK' },
+    // Chi phí kho phụ TP.HCM mỗi ngày khi kế toán / điều phối chưa nhập
+    hubDailyCostVnd: { laborVnd: 1200000, rentVnd: 600000, iceVnd: 350000, otherVnd: 0 },
+    // Chặng cuối: mỗi tuyến một khoản cố định, mỗi điểm giao một khoản, mỗi lần giao hụt thêm một khoản
+    lastMile: { routeBaseVnd: 120000, perStopVnd: 15000, perFailedAttemptVnd: 10000 },
+    // Ước tính thời gian tuyến (bản mock): phút làm việc tại một điểm và di chuyển giữa hai điểm liên tiếp
+    minutesPerStop: 8,
+    travelMinutes: { sameWard: 4, otherWard: 10, otherZone: 20 },
+    // Kho phụ xuất kho trước giờ bắt đầu khung bao nhiêu phút (chỉ nhắc, không chặn)
+    dispatchLeadMinutes: 45,
+    // Đo nhiệt độ lúc giao có bắt buộc không (shipper vẫn nhập được nếu để false)
+    deliveryTempRequired: false,
+    // "Không liên lạc được" chỉ báo được khi đã bấm gọi khách ít nhất ngần này lần
+    unreachableMinCalls: 1,
+    failReasons: { unreachable: 'Không liên lạc được', wrong_address: 'Sai địa chỉ', customer_reschedule: 'Khách hẹn lại' },
+    // Giữ lạnh ở kho phụ tối đa bao nhiêu giờ; quá hạn thì cảnh báo hủy hoặc bù
+    holdColdMaxHours: 24,
+    // Bù Fresh Credit khi không giao được = tỷ lệ giá trị đơn (điều phối không nhập số, admin được chỉnh)
+    failedCompensationPct: 1,
+    // Thu hồi thùng xốp và túi gel ở lần giao sau: bật / tắt, và số mỗi thùng giao
+    recovery: { enabled: true, foamBoxesPerBox: 1, gelPacksPerBox: 2 },
+    // Gợi ý gộp ngày cho khu có độ lấp đầy của một ngày giao dưới mức này
+    mergeSuggestBelowFillPct: 0.35,
+    // Bảng demo: nút nhảy tới mốc xe về kho phụ (giờ ngày giao D)
+    demoHubJump: { hour: 2, min: 0 },
+    // KPI
+    kpi: { onTimeGraceMinutes: 0, minRouteMinutes: 15 }
   },
 
   payables: {

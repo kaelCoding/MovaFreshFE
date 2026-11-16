@@ -57,6 +57,10 @@
       </li>
     </ul>
 
+    <p v-for="b in week.boxes.filter((x) => x.delivery_issue)" :key="'iss' + b.order_id" class="pl-panel note issue" :data-issue="b.delivery_issue.kind">
+      <b>{{ b.delivery_issue.label }}</b><br />{{ b.delivery_issue.detail }}
+    </p>
+
     <div v-if="week.boxes.some((b) => b.photo_url)" class="proof">
       <img v-for="b in week.boxes.filter((x) => x.photo_url)" :key="b.order_id" :src="b.photo_url" alt="Ảnh giao hàng" loading="lazy" />
     </div>

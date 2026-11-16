@@ -172,7 +172,10 @@ export function createAccountApi(server, cfg = BUSINESS) {
         editable: isOpen(o, now),
         deadline_at: o.cutoffAt,
         deadline_label: fmtDeadline(new Date(o.cutoffAt)),
-        photo_url: o.deliveryPhotoUrl || null
+        photo_url: o.deliveryPhotoUrl || null,
+        // P2C: vấn đề giao hàng do vận hành ghi (chưa giao được, giao lại khung sau, giữ lạnh, đã bù Fresh Credit)
+        delivery_issue: o.deliveryIssue ? { kind: o.deliveryIssue.kind, label: o.deliveryIssue.label, detail: o.deliveryIssue.detail, at: o.deliveryIssue.at } : null,
+        redelivery: o.redelivery ? { day: o.redelivery.day, label: fmtDay(o.redelivery.day), slot_label: (findSlot(getZone(o.zoneId), o.redelivery.slotId) || {}).label || '' } : null
       })),
       meals,
       list_vnd: sum(live.map((o) => o.listPriceVnd)),

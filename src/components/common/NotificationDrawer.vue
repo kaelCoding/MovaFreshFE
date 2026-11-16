@@ -49,6 +49,9 @@ function describe(n) {
       if (st === 'shipped') return { label: 'Đang giao', tone: 'info' };
       if (st === 'delivered') return { label: 'Đã giao', tone: 'good', action: { label: 'Đánh giá món vừa giao', go: '/account#danh-gia' } };
       if (st === 'redelivery') return { label: 'Giao lại', tone: 'warn' };
+      if (st === 'failed') return { label: 'Chưa giao được', tone: 'warn' };
+      if (st === 'held') return { label: 'Đang giữ lạnh', tone: 'warn' };
+      if (st === 'compensated') return { label: 'Bù Fresh Credit', tone: 'good', action: { label: 'Xem Fresh Credit', go: '/account' } };
       return { label: 'Giao hàng', tone: 'info' };
     case 'substitution': return { label: 'Đổi món do thiếu hàng', tone: 'warn', action: { label: 'Xem các tuần', go: '/account' } };
     case 'week_postponed':

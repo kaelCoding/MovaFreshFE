@@ -1,6 +1,6 @@
 import { BUSINESS, getZone } from '../config/business';
 import { dayKey, dayKeySequence } from '../utils/time';
-import { cutoffAtFor, chargeAtFor, deliveryStartAt, findSlot, slotUsage } from './delivery';
+import { cutoffAtFor, chargeAtFor, deliveryStartAt, findSlot, slotCapacity, slotUsage } from './delivery';
 import { generateMeals, mealsPriceVnd } from './mealPlan';
 import { giftCardSchedule } from './pricing';
 import { applyUpsells } from './upsells';
@@ -140,7 +140,7 @@ export function findFullSlots(db, drafts, cfg = BUSINESS) {
     const slot = findSlot(zone, d.slotId);
     const k = `${d.zoneId}|${d.deliveryDay}|${d.slotId}`;
     planned[k] = (planned[k] || 0) + 1;
-    if (slotUsage(db.orders, d.zoneId, d.deliveryDay, d.slotId) + planned[k] > slot.capacityBoxes) {
+    if (slotUsage(db.orders, d.zoneId, d.deliveryDay, d.slotId) + planned[k] > slotCapacity(db.logistics && db.logistics.capacity, d.zoneId, d.deliveryDay, slot)) {
       full.push({ day: d.deliveryDay, slotId: d.slotId });
     }
   }

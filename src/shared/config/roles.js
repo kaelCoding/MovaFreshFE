@@ -3,7 +3,7 @@
 export const ROLES = {
   workshop: { label: 'Xưởng Đắk Lắk', pin: '1111', home: '/xuong' },
   hub: { label: 'Kho phụ TP.HCM', pin: '2222', home: '/kho' },
-  shipper: { label: 'Shipper', pin: '3333', home: '/giao-hang' },
+  shipper: { label: 'Shipper', pin: null, home: '/giao-hang' }, // PIN theo từng shipper (BUSINESS.logistics.shippers); 3333 vẫn vào được
   supplier: { label: 'Nhà cung cấp', pin: null, home: '/nha-cung-cap' }, // PIN theo từng nhà cung cấp
   dispatch: { label: 'Điều phối logistics', pin: '5555', home: '/ke-hoach' },
   purchasing: { label: 'Mua hàng', pin: '6666', home: '/mua-hang' },

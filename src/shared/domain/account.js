@@ -2,7 +2,7 @@ import { BUSINESS, getZone } from '../config/business';
 import { DISHES, SAUCES } from '../data/catalog';
 import { dowOfKey, addDays, dayKeySequence } from '../utils/time';
 import { totalBalance, creditBack, refundOnCancel } from './credit';
-import { cutoffAtFor, chargeAtFor, deliveryStartAt, findSlot, slotUsage } from './delivery';
+import { cutoffAtFor, chargeAtFor, deliveryStartAt, findSlot, slotCapacity, slotUsage } from './delivery';
 import { topUpBonus } from './pricing';
 
 /** Đơn còn sửa được: chưa chốt sổ. Sau giờ chốt sổ là khóa, kể cả khi job chốt sổ chưa kịp chạy. */
@@ -90,7 +90,7 @@ export function planPostponement(db, weekOrders, subOrders, now, cfg = BUSINESS)
     const candidates = dayKeySequence([dowOfKey(o.deliveryDay)], addDays(cursor, 1), 4);
     const day = candidates.find((k) => {
       const planned = clones.filter((c) => c.deliveryDay === k && c.slotId === o.slotId).length;
-      return slotUsage(db.orders, o.zoneId, k, o.slotId) + planned < slot.capacityBoxes;
+      return slotUsage(db.orders, o.zoneId, k, o.slotId) + planned < slotCapacity(db.logistics && db.logistics.capacity, o.zoneId, k, slot);
     });
     if (!day) return { ok: false, error: 'SLOT_FULL' };
     cursor = day;
