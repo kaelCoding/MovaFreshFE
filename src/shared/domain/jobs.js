@@ -3,6 +3,7 @@ import { DISHES } from '../data/catalog';
 import { spendCredit } from './credit';
 import { aggregateBom } from './bom';
 import { draftPurchaseOrders } from './purchasing';
+import { priceResolver, stockAvailableFn } from './procurementOps';
 import { cutoffAtFor, findSlot, remindAtFor } from './delivery';
 import { fmtDeadline } from '../utils/time';
 import { fmt } from '../utils/formatters';
@@ -172,7 +173,12 @@ export function runCutoff(db, day, now, cfg = BUSINESS) {
     status: 'closed'
   };
   db.productionPlans.push(plan);
-  db.purchaseOrders.push(...draftPurchaseOrders(bom, day, cfg));
+  // PO nháp: đơn giá theo ngày hiệu lực của bảng giá, hàng để lâu (gạo, bún, mì, bao bì) trừ tồn khả dụng.
+  // Mỗi PO vừa lập đã tính vào phần tồn giữ chỗ nên PO kế tiếp không trừ trùng.
+  const opts = { priceAt: priceResolver(db), availableStock: stockAvailableFn(db, now), createdAt: nowIso };
+  const drafts = draftPurchaseOrders(bom, day, cfg, opts);
+  const fresh = drafts.filter((po) => !db.purchaseOrders.some((x) => x.id === po.id));
+  db.purchaseOrders.push(...fresh);
   return plan;
 }
 

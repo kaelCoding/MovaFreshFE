@@ -75,6 +75,18 @@ export function applyOrderStatus(db, { orderId, status, photoUrl = null, note = 
 }
 
 /**
+ * Cộng khoản bù vào Fresh Credit của khách (ngăn khuyến mãi, vì đây là thiện chí của MOVA chứ không phải tiền khách nạp)
+ * và ghi sổ `compensation`. Dùng chung cho đổi món do thiếu hàng và thu hồi lô.
+ */
+export function creditCompensation(db, order, amountVnd, nowIso) {
+  const customer = db.customers.find((c) => c.id === order.customerId);
+  if (!customer || !(amountVnd > 0)) return false;
+  customer.credit = { ...customer.credit, promo: customer.credit.promo + amountVnd };
+  db.ledger.push({ id: nextId(db, 'LED'), customerId: customer.id, orderId: order.id, kind: 'compensation', amountVnd, real: 0, promo: amountVnd, at: nowIso });
+  return true;
+}
+
+/**
  * Nhà máy thiếu hàng nên thay một món: đổi món trong đơn, cộng khoản bù vào Fresh Credit (ngăn khuyến mãi,
  * vì đây là thiện chí của MOVA chứ không phải tiền khách nạp) và báo khách.
  * Khoản bù mặc định = phần giá món bị thay mà khách đã trả vượt món mới (không âm).
@@ -96,12 +108,8 @@ export function applySubstitution(db, { orderId, mealIndex, kind, toDishId, reas
   const comp = compensationVnd == null ? Math.max(0, before - after) : Math.max(0, Math.round(Number(compensationVnd) || 0));
   order.meals[i] = next;
 
-  const customer = db.customers.find((c) => c.id === order.customerId);
   const nowIso = now.toISOString();
-  if (customer && comp > 0) {
-    customer.credit = { ...customer.credit, promo: customer.credit.promo + comp };
-    db.ledger.push({ id: nextId(db, 'LED'), customerId: customer.id, orderId: order.id, kind: 'compensation', amountVnd: comp, real: 0, promo: comp, at: nowIso });
-  }
+  creditCompensation(db, order, comp, nowIso);
   notify(db, {
     customerId: order.customerId,
     type: 'substitution',

@@ -7,7 +7,9 @@ import { applyOrderStatus, applySubstitution, upsertLot } from '../domain/opsEve
 import { dishItemGrams, emptyFactory, shortageGrams } from '../domain/factory';
 import { createCustomerApi } from './customer';
 import { createOpsFactoryApi } from './opsFactory';
-import { ForbiddenError, viewOrder, viewSupplier } from './views';
+import { createProcurementApi } from './opsProcurement';
+import { seedTraceScenario } from '../data/traceScenario';
+import { ForbiddenError, viewOrder, viewPo, viewSupplier } from './views';
 
 export { ForbiddenError };
 
@@ -19,12 +21,23 @@ const ROLE_CAN = {
   demo: ['admin'],
   // Ghi trạng thái giao và thông báo cho khách (xưởng báo đang sản xuất, kho / shipper báo đang giao, đã giao)
   fulfilment: ['workshop', 'hub', 'shipper', 'dispatch', 'admin'],
-  substitution: ['workshop', 'hub', 'dispatch', 'admin'],
+  // P2B: mua hàng cũng được áp món thay cho đơn bị ảnh hưởng khi nhà cung cấp xác nhận thiếu
+  substitution: ['workshop', 'hub', 'dispatch', 'purchasing', 'admin'],
   lots: ['workshop', 'admin'],
   // P2A: kế hoạch & chốt sổ (điều phối, mua hàng, admin); xưởng ghi (xưởng, admin); xưởng đọc (thêm điều phối, mua hàng)
   planning: ['dispatch', 'purchasing', 'admin'],
   factory: ['workshop', 'admin'],
-  factoryRead: ['workshop', 'admin', 'dispatch', 'purchasing']
+  factoryRead: ['workshop', 'admin', 'dispatch', 'purchasing'],
+  // P2B: mua hàng đọc (kế toán xem công nợ), mua hàng ghi, trả nhà cung cấp, cài đặt mẫu bảng kê (kế toán chọn)
+  procRead: ['purchasing', 'accounting', 'admin'],
+  procWrite: ['purchasing', 'admin'],
+  payment: ['purchasing', 'accounting', 'admin'],
+  settingsWrite: ['accounting', 'admin'],
+  // P2B: kho phụ (nhận hàng, tồn, truy xuất, thu hồi). Bù Fresh Credit khi thu hồi là tiền của MOVA nên chỉ mua hàng và admin.
+  hubOps: ['hub', 'purchasing', 'admin'],
+  recallCompensate: ['purchasing', 'admin'],
+  // P2B: cổng nhà cung cấp (admin xem thử một nhà cung cấp)
+  supplierPortal: ['supplier', 'admin']
 };
 
 const fromEvent = (res) => {
@@ -47,7 +60,7 @@ function guard(ctx, action) {
 export function createApi(server = getServer()) {
   const cfg = server.cfg || BUSINESS;
 
-  return {
+  const api = {
     // ---------- Đăng nhập app vận hành (PIN demo) ----------
     auth: {
       login(pin) {
@@ -66,6 +79,7 @@ export function createApi(server = getServer()) {
     // ---------- App vận hành (đã lọc theo vai trò) ----------
     ops: {
       ...createOpsFactoryApi(server, cfg, (ctx, action) => guard(ctx, action)),
+      ...createProcurementApi(server, cfg, (ctx, action) => guard(ctx, action)),
 
       /** Chạy các job đã tới hạn (trừ tiền, chốt sổ, nhắc khách). Mọi vai trò đã đăng nhập đều gọi được. */
       tick(ctx) {
@@ -95,7 +109,7 @@ export function createApi(server = getServer()) {
       listPurchaseOrders(ctx) {
         guard(ctx, 'purchaseOrders');
         return server.read((db) =>
-          db.purchaseOrders.filter((po) => ctx.role !== 'supplier' || po.supplierId === ctx.supplierId)
+          db.purchaseOrders.filter((po) => ctx.role !== 'supplier' || po.supplierId === ctx.supplierId).map((po) => viewPo(po, ctx.role))
         );
       },
 
@@ -227,12 +241,22 @@ export function createApi(server = getServer()) {
         return server.tick();
       },
 
+      /**
+       * Dựng dữ liệu truy xuất mẫu trên ngày đã chốt sổ: hai lô nguyên liệu, mẻ túi, thùng, xe và đơn ở đủ ba trạng thái
+       * (chưa xuất / đang giao / đã giao) để thử thu hồi lô. Cần đã chốt sổ ít nhất một ngày.
+       */
+      seedTrace(ctx) {
+        guard(ctx, 'demo');
+        return seedTraceScenario(api, server);
+      },
+
       reset(ctx) {
         guard(ctx, 'demo');
         server.reset();
       }
     }
   };
+  return api;
 }
 
 export const api = createApi();

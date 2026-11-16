@@ -239,6 +239,8 @@ export function createOpsFactoryApi(server, cfg, guard) {
             const o = orderOf(full.orderId);
             if (!o || !planOrderIds(o.deliveryDay).includes(o.id)) throw notFound();
             if (full.type === 'load' && full.scope !== scopeKey(o.deliveryDay, tripForSlot(o.slotId, cfg).id)) throw toError({ code: 'WRONG_TRIP', message: 'Thùng này không đi chuyến xe này' });
+            // P2B: đơn đang bị giữ vì thu hồi lô thì không lên xe được
+            if (full.type === 'load' && full.loaded !== false && o.recallHold) throw toError({ code: 'ORDER_ON_HOLD', message: 'Đơn này đang bị giữ vì thu hồi lô nguyên liệu, chưa lên xe được' });
           }
           if (full.type === 'shortage' && !db.productionPlans.some((p) => p.day === full.day)) throw toError({ code: 'PLAN_NOT_FOUND', message: 'Ngày giao này chưa chốt sổ' });
           if (full.type === 'depart') {

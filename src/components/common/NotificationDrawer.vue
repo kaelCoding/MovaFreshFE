@@ -56,6 +56,7 @@ function describe(n) {
     case 'plan_cancelled': return { label: 'Dừng gói', tone: 'info' };
     case 'plan_renewed': return { label: 'Gia hạn', tone: 'good' };
     case 'reward': return { label: 'Thưởng', tone: 'good' };
+    case 'recall': return { label: n.meta && n.meta.kind === 'compensation' ? 'Bù Fresh Credit' : 'Thu hồi nguyên liệu', tone: 'warn', action: { label: 'Xem Fresh Credit', go: '/account' } };
     default: return { label: 'Thông báo', tone: 'info' };
   }
 }

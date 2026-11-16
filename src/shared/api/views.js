@@ -52,3 +52,30 @@ export function viewSupplier(supplier) {
   const { pin, ...rest } = supplier;
   return rest;
 }
+
+/**
+ * Lọc PO theo vai trò TẠI TẦNG API. Nhà cung cấp chỉ nhận PO của chính mình và không thấy phần nội bộ của MOVA:
+ * phần trừ tồn kho (cho biết tồn của MOVA), ghi chú nội bộ, mã báo cáo thiếu của xưởng, lịch sử thao tác nội bộ.
+ */
+export function viewPo(po, role) {
+  if (role !== 'supplier') return { ...po };
+  const { coveredByStock, shortageIds, internalNote, history, matchNote, matchIssues, acceptedInvoicePrice, ...rest } = po;
+  return {
+    ...rest,
+    lines: po.lines.map(({ sku, name, qty, unit, unitPriceVnd, lineTotalVnd }) => ({ sku, name, qty, unit, unitPriceVnd, lineTotalVnd })),
+    history: (history || []).filter((h) => ['sent', 'confirmed', 'received', 'received_partial', 'invoiced', 'matched', 'paid'].includes(h.status)).map((h) => ({ at: h.at, status: h.status }))
+  };
+}
+
+/** Hóa đơn không kèm nội dung tệp (tệp tải riêng khi cần xem). */
+export function viewInvoice(inv) {
+  const { file, ...rest } = inv;
+  return { ...rest, file: file ? { name: file.name, type: file.type } : null };
+}
+
+/** Người nhận của một đơn chỉ hiện cho vai trò được phép thấy (kho phụ, admin). Không bao giờ trả mã khách. */
+export function recipientFor(order, role) {
+  if (!['hub', 'admin'].includes(role)) return null;
+  const r = order.recipient || {};
+  return { name: r.name, phone: r.phone, address: r.address };
+}

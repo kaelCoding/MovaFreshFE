@@ -6,6 +6,7 @@ import { emptyBalance } from '../domain/credit';
 import { nextId } from '../domain/jobs';
 import { SAMPLE_LOTS } from '../data/lots';
 import { emptyFactory } from '../domain/factory';
+import { supplementProcurement } from '../data/procurementSeed';
 
 export const DB_VERSION = 1;
 
@@ -121,6 +122,9 @@ export function buildSeed(now, { running = true, cfg = BUSINESS } = {}) {
     const res = activateSubscription(db, { customer, subscription, orders, now, cfg });
     if (!res.ok) throw new Error(`Seed lỗi ở hộ ${customer.id}: ${res.error}`);
   }
+
+  // P2B: hồ sơ nhà cung cấp, bảng giá, tồn kho, PO cũ, bảng kê (bộ nhớ cũ được bù ở server.js, không đổi DB_VERSION)
+  supplementProcurement(db, now, cfg);
 
   return db;
 }

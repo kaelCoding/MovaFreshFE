@@ -167,7 +167,79 @@ export const BUSINESS = {
 
   purchasing: {
     // Dự phòng hao hụt khi tạo PO (giả định)
-    wasteBufferPct: 0.05
+    wasteBufferPct: 0.05,
+    // Hàng để lâu (hạn dùng từ ngần này ngày: gạo, bún, mì, bao bì) được trừ tồn kho khả dụng khi lập PO (giả định)
+    longLifeShelfDays: 60,
+    // Dung sai khi đối chiếu 3 chiều PO / phiếu nhập / hóa đơn. Số lượng: % của số lượng đối chiếu. Giá: % của đơn giá PO (giả định)
+    matchTolerance: { qtyPct: 0.01, pricePct: 0 },
+    // Giá PO cao hơn giá thị trường (dữ liệu mock của pricing agent) quá ngần này thì tô cảnh báo
+    marketDiffWarnPct: 0.05,
+    // Hạn trả tính từ ngày: 'invoice' (ngày hóa đơn) hoặc 'receipt' (ngày nhận hàng cuối). Kế toán chốt (giả định)
+    dueFrom: 'invoice',
+    // Dự báo gửi nhà cung cấp: số tuần
+    forecastWeeks: 4,
+    // Mẫu bảng kê thu mua nông sản không hóa đơn. KẾ TOÁN CHỌN trong cài đặt; mọi mẫu dưới đây đều chờ kế toán xác nhận
+    // còn hiệu lực. Không viết cứng một mẫu: thêm mẫu mới chỉ cần thêm một mục ở đây.
+    statementTemplates: {
+      internal: {
+        label: 'Mẫu nội bộ MOVA',
+        title: 'BẢNG KÊ THU MUA HÀNG HÓA KHÔNG CÓ HÓA ĐƠN',
+        legalNote: '',
+        confirmed: false
+      },
+      form_01_tndn: {
+        label: 'Mẫu 01/TNDN (bảng kê thu mua hàng hóa, dịch vụ không có hóa đơn)',
+        title: 'BẢNG KÊ THU MUA HÀNG HÓA, DỊCH VỤ MUA VÀO KHÔNG CÓ HÓA ĐƠN',
+        legalNote: 'Mẫu theo hướng dẫn thuế cũ, kế toán cần kiểm tra mẫu này còn hiệu lực trước khi dùng cho hồ sơ thuế.',
+        confirmed: false
+      },
+      custom: {
+        label: 'Mẫu do kế toán nhập (tiêu đề và ghi chú tự soạn)',
+        title: 'BẢNG KÊ THU MUA',
+        legalNote: '',
+        confirmed: false,
+        editable: true
+      }
+    },
+    // Mặc định khi kế toán chưa chọn
+    defaultStatementTemplate: 'internal'
+  },
+
+  // Hồ sơ nhà cung cấp (P2B)
+  suppliers: {
+    // Cảnh báo giấy chứng nhận ATTP / VietGAP trước ngày hết hạn
+    certWarnDays: 30,
+    kinds: {
+      factory: 'Nhà máy',
+      htx: 'Hợp tác xã',
+      nong_ho: 'Nông hộ',
+      lo_mo: 'Lò mổ',
+      seafood: 'Hải sản',
+      long_haul: 'Nhà xe',
+      last_mile: 'Giao hàng',
+      packaging: 'Bao bì'
+    },
+    certTypes: { attp: 'ATTP', vietgap: 'VietGAP', haccp: 'HACCP', other: 'Khác' }
+  },
+
+  // Kho phụ TP.HCM (P2B)
+  inventory: {
+    // Lô còn hạn không quá ngần này ngày thì cảnh báo "sắp hết hạn"
+    expiryWarnDays: 2,
+    wasteReasons: { expired: 'Hết hạn dùng', spoiled: 'Hỏng / biến chất', damaged: 'Rơi vỡ / hư bao bì', temp_breach: 'Vượt nhiệt độ', recall: 'Thu hồi lô', other: 'Lý do khác' },
+    countReasons: { count: 'Kiểm kê định kỳ', spill: 'Hao hụt tự nhiên', mistake: 'Nhập / xuất nhầm', other: 'Lý do khác' }
+  },
+
+  // Thu hồi lô (P2B)
+  recall: {
+    // Khoản bù Fresh Credit mặc định cho đơn đã nhận hàng bị thu hồi = giá trị các món có nguyên liệu của lô, nhân hệ số này (giả định)
+    compensationFactor: 1,
+    // Trạng thái đơn xếp vào nhóm nào khi thu hồi
+    groups: {
+      not_shipped: ['locked', 'in_production'],
+      in_transit: ['shipped'],
+      delivered: ['delivered']
+    }
   },
 
   payables: {

@@ -2,6 +2,7 @@ import { BUSINESS } from '../config/business';
 import { runDueJobs } from '../domain/jobs';
 import { defaultStorage } from './storage';
 import { buildSeed, DB_VERSION } from './seed';
+import { supplementProcurement } from '../data/procurementSeed';
 
 export const STORAGE_KEY = 'mova_shared_db_v1';
 
@@ -38,6 +39,10 @@ export function createServer({ storage = defaultStorage(), key = STORAGE_KEY, st
     let db = load();
     if (!db) {
       db = buildSeed(initialNow(), { running, cfg });
+      persist(db);
+    } else if (!db.procurement || !db.procurement.suppliers || !Object.keys(db.procurement.suppliers).length) {
+      // Bộ nhớ demo cũ (trước P2B) chưa có dữ liệu mua hàng / kho phụ: bù hạt giống mà không đổi DB_VERSION
+      supplementProcurement(db, simNow(db), cfg);
       persist(db);
     }
     return db;

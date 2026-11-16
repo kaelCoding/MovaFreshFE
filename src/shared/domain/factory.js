@@ -582,6 +582,35 @@ export function shortageGrams(shortage) {
 }
 
 /**
+ * Các món trong đơn dùng mặt hàng `key` và món thay đề xuất cho từng món (cùng loại, không dùng mặt hàng đang thiếu,
+ * tôn trọng kiêng cữ của khách đọc ở server, ưu tiên món không đắt hơn và gần giá nhất). Dùng cho báo thiếu / hỏng
+ * của xưởng, PO nhà cung cấp xác nhận thiếu và thu hồi lô. Không trả thông tin khách.
+ */
+export function substitutionHits(db, order, key, blockedKeys = [key]) {
+  const profile = db.profiles.find((p) => p.customerId === order.customerId);
+  const restrictions = (profile && profile.restrictions) || [];
+  const hits = [];
+  for (const meal of order.meals) {
+    for (const [kind, dishId] of Object.entries(meal.dishes)) {
+      if (!dishUses(dishId, key)) continue;
+      const before = mealPriceVnd(meal, order.householdSize);
+      const options = swapOptionsFor(meal, kind, restrictions)
+        .filter((d) => d.id !== dishId && !blockedKeys.some((k) => dishUses(d.id, k)))
+        .map((d) => {
+          const after = mealPriceVnd({ ...meal, dishes: { ...meal.dishes, [kind]: d.id } }, order.householdSize);
+          return { dishId: d.id, name: d.name, priceDeltaVnd: after - before, compensationVnd: Math.max(0, before - after) };
+        })
+        .sort((a, b) => (a.priceDeltaVnd > 0) - (b.priceDeltaVnd > 0) || Math.abs(a.priceDeltaVnd) - Math.abs(b.priceDeltaVnd));
+      hits.push({
+        mealIndex: meal.index, kind, dishId, dishName: DISHES[dishId].name,
+        options: options.slice(0, 5), suggestedDishId: options.length ? options[0].dishId : null
+      });
+    }
+  }
+  return hits;
+}
+
+/**
  * Các đơn bị ảnh hưởng bởi một báo cáo thiếu / hỏng và món thay đề xuất.
  * Đơn của ngày giao đã chốt, chưa lên xe, có món dùng mặt hàng thiếu; lấy đơn giao muộn nhất trước cho tới khi đủ lượng thiếu.
  * Món thay: cùng loại, không dùng mặt hàng đang thiếu, tôn trọng kiêng cữ của khách (đọc ở server, không trả ra ngoài),
@@ -607,26 +636,7 @@ export function shortageImpact(db, shortage, cfg = BUSINESS) {
   let covered = 0;
   for (const { order, grams } of candidates) {
     if (covered >= Math.max(need, 0)) break;
-    const profile = db.profiles.find((p) => p.customerId === order.customerId);
-    const restrictions = (profile && profile.restrictions) || [];
-    const hits = [];
-    for (const meal of order.meals) {
-      for (const [kind, dishId] of Object.entries(meal.dishes)) {
-        if (!dishUses(dishId, shortage.key)) continue;
-        const before = mealPriceVnd(meal, order.householdSize);
-        const options = swapOptionsFor(meal, kind, restrictions)
-          .filter((d) => d.id !== dishId && !blocked.some((k) => dishUses(d.id, k)))
-          .map((d) => {
-            const after = mealPriceVnd({ ...meal, dishes: { ...meal.dishes, [kind]: d.id } }, order.householdSize);
-            return { dishId: d.id, name: d.name, priceDeltaVnd: after - before, compensationVnd: Math.max(0, before - after) };
-          })
-          .sort((a, b) => (a.priceDeltaVnd > 0) - (b.priceDeltaVnd > 0) || Math.abs(a.priceDeltaVnd) - Math.abs(b.priceDeltaVnd));
-        hits.push({
-          mealIndex: meal.index, kind, dishId, dishName: DISHES[dishId].name,
-          options: options.slice(0, 5), suggestedDishId: options.length ? options[0].dishId : null
-        });
-      }
-    }
+    const hits = substitutionHits(db, order, shortage.key, blocked);
     if (!hits.length) continue;
     affected.push({
       orderId: order.id, zoneId: order.zoneId, slotId: order.slotId, tripId: tripForSlot(order.slotId, cfg).id,
