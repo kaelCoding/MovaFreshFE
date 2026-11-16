@@ -11,7 +11,7 @@
         </h1>
 
         <p class="hero-subtext">
-          Thịt tươi Đắk Lắk sơ chế sẵn • Thực đơn AI thiết kế riêng cho từng thành viên, nấu xong trong 15 phút – 1 chảo
+          Thực đơn AI cá nhân hóa định lượng theo từng thành viên, nấu chuẩn vị nhà chỉ trong 15 phút – 1 chảo.
         </p>
 
         <!-- 3 Cam kết cốt lõi chuẩn V2 -->
@@ -208,57 +208,59 @@ const exclusionLabel = computed(() => {
 
 <style scoped>
 .hero {
-  padding: 36px 0 44px;
+  padding: 24px 0 32px;
   background: linear-gradient(180deg, rgba(20, 108, 67, 0.04) 0%, transparent 100%);
 }
 
 .hero .wrap {
   display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
-  gap: 36px;
-  align-items: start;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+  gap: 28px;
+  align-items: stretch;
 }
 
 /* CỘT TRÁI */
 .hero-left {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
 }
 
 .kicker {
   display: inline-block;
   align-self: flex-start;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--orange-ink);
   background: var(--orange-soft);
   border-radius: 999px;
-  padding: 5px 12px;
-  margin-bottom: 14px;
+  padding: 4px 10px;
+  margin-bottom: 10px;
   letter-spacing: 0.03em;
 }
 
 .hero-title {
-  font-size: clamp(26px, 3.8vw, 42px);
+  font-size: clamp(24px, 3.4vw, 38px);
   font-weight: 800;
   line-height: 1.2;
   letter-spacing: -0.025em;
   color: var(--ink);
-  margin: 0 0 14px;
+  margin: 0 0 10px;
 }
 
 .hero-subtext {
-  font-size: 15.5px;
+  font-size: 14.5px;
   color: var(--muted);
-  line-height: 1.55;
-  margin: 0 0 20px;
+  line-height: 1.5;
+  margin: 0 0 14px;
 }
 
 .hero-commitments {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin: 0 0 24px;
+  gap: 8px;
+  margin: 0 0 16px;
   padding: 0;
   list-style: none;
 }
@@ -266,16 +268,16 @@ const exclusionLabel = computed(() => {
 .commit-item {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 10px;
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 12px 14px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+  padding: 10px 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
 }
 
 .commit-icon {
-  font-size: 22px;
+  font-size: 19px;
   flex-shrink: 0;
   line-height: 1.2;
 }
@@ -283,19 +285,19 @@ const exclusionLabel = computed(() => {
 .commit-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
 }
 
 .commit-text b {
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 700;
   color: var(--ink);
 }
 
 .commit-text span {
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--muted);
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
 /* Trust Stats Bar */
@@ -305,9 +307,9 @@ const exclusionLabel = computed(() => {
   justify-content: space-between;
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 14px 18px;
-  margin-bottom: 22px;
+  border-radius: 12px;
+  padding: 10px 16px;
+  margin-bottom: 16px;
 }
 
 .stat-col {
@@ -318,21 +320,21 @@ const exclusionLabel = computed(() => {
 }
 
 .stat-val {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 800;
   color: var(--green);
 }
 
 .stat-lbl {
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--muted);
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 .stat-divider {
   width: 1px;
-  height: 28px;
+  height: 24px;
   background: var(--line);
 }
 
@@ -348,11 +350,11 @@ const exclusionLabel = computed(() => {
   background: var(--card);
   border: 1.5px solid var(--green);
   color: var(--green);
-  font-size: 14.5px;
+  font-size: 13.5px;
   font-weight: 700;
   font-family: inherit;
-  padding: 11px 20px;
-  border-radius: 12px;
+  padding: 9px 18px;
+  border-radius: 11px;
   cursor: pointer;
   transition: all 0.15s ease;
 }
@@ -363,7 +365,7 @@ const exclusionLabel = computed(() => {
 }
 
 .arrow-down {
-  font-size: 16px;
+  font-size: 15px;
   transition: transform 0.15s ease;
 }
 
@@ -375,19 +377,27 @@ const exclusionLabel = computed(() => {
 .hero-right {
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .hero-wizard-slot {
   width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Summary Card when Profile Completed */
 .hero-profile-summary-card {
   background: var(--card);
   border: 1.5px solid var(--line);
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.06);
+  border-radius: 18px;
+  padding: 20px 22px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
 }
 
 .summary-card-header {

@@ -21,7 +21,7 @@ const openZaloHelp = () => {
 .float-help {
   position: fixed;
   right: 20px;
-  bottom: 24px;
+  bottom: 72px;
   z-index: 32;
   display: flex;
   align-items: center;
@@ -29,28 +29,30 @@ const openZaloHelp = () => {
   background: #0068FF;
   color: #fff;
   border-radius: 999px;
-  padding: 10px 18px;
-  font-size: 13.5px;
+  padding: 9px 16px;
+  font-size: 13px;
   font-weight: 700;
   border: 0;
-  box-shadow: 0 8px 20px rgba(0, 104, 255, .3);
+  box-shadow: 0 6px 18px rgba(0, 104, 255, .28);
   transition: .15s;
 }
 
 .float-help:hover {
   background: #0055D4;
+  transform: translateY(-1px);
 }
 
 .float-help svg {
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
 }
 
 @media (max-width: 980px) {
   .float-help {
-    bottom: 80px;
+    bottom: 84px;
     right: 14px;
-    padding: 9px 14px;
+    padding: 8px 13px;
+    font-size: 12px;
   }
 }
 </style>
