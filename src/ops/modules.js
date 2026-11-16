@@ -10,8 +10,8 @@ export const MODULES = [
   { path: '/kho', name: 'hub', title: 'Kho phụ TP.HCM', roles: ['hub', 'purchasing', 'admin', 'dispatch'], build: 'P2B', preview: 'orders', note: 'Nhận hàng đối chiếu PO, tồn kho theo lô và FEFO, truy xuất và thu hồi lô (P2B); nhận xe lạnh, ghép hải sản, chia khung giờ / tuyến, xuất kho (P2C).' },
   { path: '/logistics', name: 'logistics', title: 'Logistics', roles: ['dispatch', 'admin'], build: 'P2C', preview: 'orders', note: 'Khu và sức chứa khung giờ, chuyến chặng dài, lập tuyến, ngoại lệ giao hàng, chuỗi lạnh, chi phí và KPI.' },
   { path: '/giao-hang', name: 'shipper', title: 'Giao hàng', roles: ['shipper', 'dispatch', 'admin'], build: 'P2C', preview: 'orders', note: 'Điểm giao theo thứ tự, gọi khách (SĐT che một phần), đã giao / không giao được.' },
-  { path: '/tai-chinh', name: 'finance', title: 'Tài chính & kế toán', roles: ['accounting', 'admin'], build: 'P2D', preview: 'orders', note: 'Sổ Fresh Credit 2 ngăn, đối soát thu, doanh thu, giá vốn, công nợ, dòng tiền, xuất bút toán.' },
-  { path: '/giam-sat', name: 'monitoring', title: 'Giám sát nhà cung cấp', roles: ['admin', 'purchasing'], build: 'P2D', preview: 'suppliers', note: 'Thẻ điểm: đúng hạn, tỷ lệ đạt QC, chênh khối lượng, vượt nhiệt, khiếu nại.' },
+  { path: '/tai-chinh', name: 'finance', title: 'Tài chính & kế toán', roles: ['accounting', 'admin'], build: 'P2D', preview: 'orders', note: 'Sổ Fresh Credit 2 ngăn, đối soát thu VietQR và thẻ, doanh thu và hóa đơn, giá vốn và margin, công nợ và đợt chi, dòng tiền 30 ngày, xuất bút toán CSV.' },
+  { path: '/giam-sat', name: 'monitoring', title: 'Giám sát nhà cung cấp', roles: ['admin', 'purchasing'], build: 'P2D', preview: 'suppliers', note: 'Thẻ điểm: giao đúng hạn, đáp ứng PO, đạt QC, chênh khối lượng, vượt nhiệt, khiếu nại, chênh giá so thị trường.' },
   { path: '/demo', name: 'demo', title: 'Bảng demo', roles: ['admin'], build: 'P0', preview: null, note: 'Đồng hồ giả lập và các nút nhảy tới mốc.' }
 ];
 

@@ -45,6 +45,13 @@
         <button class="ops-btn" data-testid="seed-trips" :disabled="!st.plans" @click="seedTrips">Dựng chuyến xe mẫu (xuất bến)</button>
       </div>
 
+      <h2>Tiền về ngân hàng (mock webhook)</h2>
+      <p class="ops-muted">Thử đối soát VietQR: gửi giao dịch ngân hàng giả cho khoản nạp / chuyển khoản đang chờ gần nhất (khớp mã tự động), hoặc một giao dịch lạ không có mã (vào hàng chờ khớp tay ở Tài chính → Thu tiền & đối soát).</p>
+      <div class="ops-actions">
+        <button class="ops-btn" data-testid="bank-exact" @click="bankExact">Tiền về đúng mã cho khoản chờ gần nhất</button>
+        <button class="ops-btn" data-testid="bank-stranger" @click="bankStranger">Tiền về không rõ nội dung</button>
+      </div>
+
       <p v-if="msg" class="ops-ok" role="status" data-testid="demo-msg">{{ msg }}</p>
       <p v-if="err" class="ops-error" role="alert">{{ err }}</p>
 
@@ -98,6 +105,16 @@ const seedTrips = () =>
     () => api.demo.seedTrips(ctx.value),
     (r) => `Đã đóng thùng, lên xe và xuất bến ${r.departed.length} chuyến của ngày ${r.day}: ${r.boxes} thùng.`
   );
+const bankExact = () =>
+  run(
+    () => {
+      const w = api.ops.finance.reconciliation(ctx.value).waiting[0];
+      if (!w) throw new Error('Không có khoản nạp / chuyển khoản nào đang chờ tiền về');
+      return { txn: api.ops.finance.mockBankTransfer(ctx.value, { ledgerId: w.ledgerId, scenario: 'exact' }), w };
+    },
+    (r) => `Ngân hàng báo ${r.txn.amountVnd.toLocaleString('vi-VN')}đ nội dung "${r.txn.content}": ${r.txn.status === 'matched' ? 'đã tự khớp' : r.txn.status}.`
+  );
+const bankStranger = () => run(() => api.ops.finance.mockBankTransfer(ctx.value, {}), (t) => `Nhận giao dịch lạ ${t.amountVnd.toLocaleString('vi-VN')}đ: vào hàng chờ khớp tay.`);
 const jump = (kind) => run(() => api.demo.jumpTo(ctx.value, kind), summarize);
 const setNow = () => run(() => api.demo.setNow(ctx.value, new Date(at.value)), summarize);
 const reset = () => {

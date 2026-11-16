@@ -8,6 +8,7 @@ import { mealPriceVnd, swapOptionsFor, applySwaps, westernCountFor } from '../do
 import { planOrders, findFullSlots } from '../domain/subscription';
 import { spendCredit, creditBack, topUp, emptyBalance, totalBalance } from '../domain/credit';
 import { topUpBonus } from '../domain/pricing';
+import { topupRefFor } from '../domain/financeBank';
 import { nextId, notify, runDueJobs } from '../domain/jobs';
 import { normalizeContact } from '../domain/leads';
 import {
@@ -683,7 +684,7 @@ export function createAccountApi(server, cfg = BUSINESS) {
         const pct = pack ? pack.bonusPct : cfg.incentives.topUpPacks[0].bonusPct;
         const bonus = topUpBonus(pay, pct);
         const nowIso = now.toISOString();
-        const ref = `NAP${nextId(db, 'TOP').slice(4)}`;
+        const ref = topupRefFor(customer.id);
         customer.credit = topUp(customer.credit, pay, bonus);
         db.ledger.push({ id: nextId(db, 'LED'), customerId: customer.id, kind: 'topup', amountVnd: pay, real: pay, promo: 0, ref, at: nowIso });
         if (bonus > 0) db.ledger.push({ id: nextId(db, 'LED'), customerId: customer.id, kind: 'topup_bonus', amountVnd: bonus, real: 0, promo: bonus, ref, at: nowIso });

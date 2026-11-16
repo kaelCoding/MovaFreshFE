@@ -3,6 +3,9 @@ import { cardFee } from './financePayables';
 
 const DAY_MS = 24 * 3600 * 1000;
 
+/** Mã đối soát của các lần nạp Fresh Credit: cố định theo khách (C-0007 thành NAP0007), khách ghi vào nội dung chuyển khoản. */
+export const topupRefFor = (customerId) => `NAP${String(customerId).replace(/\D/g, '')}`;
+
 /** Chuẩn hóa nội dung chuyển khoản để tìm mã: ngân hàng hay bỏ dấu cách và ký tự lạ. */
 export const normalizeContent = (s) => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
 

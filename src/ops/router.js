@@ -10,12 +10,14 @@ import HubLayout from './views/hub/HubLayout.vue';
 import SupplierPortalView from './views/supplier/SupplierPortalView.vue';
 import LogisticsLayout from './views/logistics/LogisticsLayout.vue';
 import ShipperView from './views/shipper/ShipperView.vue';
+import FinanceLayout from './views/finance/FinanceLayout.vue';
+import ScorecardView from './views/ScorecardView.vue';
 import { MODULES } from './modules';
 import { session } from './session';
 import { ROLES } from '../shared/config/roles';
 
-// Màn thật đã làm: tổng quan (tạm), kế hoạch (P2A), xưởng (P2A). Các phân hệ còn lại là trang xem trước dữ liệu cho P2B-P2D.
-const COMPONENTS = { overview: HomeView, plan: PlanView, supplier: SupplierPortalView, shipper: ShipperView };
+// Màn thật: tổng quan founder (P2D), kế hoạch (P2A), cổng nhà cung cấp (P2B), giao hàng (P2C), giám sát nhà cung cấp (P2D). ModuleView chỉ còn là dự phòng.
+const COMPONENTS = { overview: HomeView, plan: PlanView, supplier: SupplierPortalView, shipper: ShipperView, monitoring: ScorecardView };
 
 const workshopChildren = [
   { path: '', name: 'workshop', component: () => import('./views/workshop/TodayView.vue') },
@@ -60,7 +62,19 @@ const logisticsChildren = [
   { path: 'chi-phi-kpi', name: 'logistics-cost', component: () => import('./views/logistics/CostKpiView.vue') }
 ];
 
-const LAYOUTS = { workshop: [WorkshopLayout, workshopChildren], purchasing: [PurchasingLayout, purchasingChildren], hub: [HubLayout, hubChildren], logistics: [LogisticsLayout, logisticsChildren] };
+// P2D: tài chính & kế toán (kế toán và admin)
+const financeChildren = [
+  { path: '', name: 'finance', component: () => import('./views/finance/CreditLedgerView.vue') },
+  { path: 'thu-tien', name: 'finance-bank', component: () => import('./views/finance/ReconcileView.vue') },
+  { path: 'doanh-thu', name: 'finance-revenue', component: () => import('./views/finance/RevenueView.vue') },
+  { path: 'gia-von', name: 'finance-margin', component: () => import('./views/finance/MarginView.vue') },
+  { path: 'cong-no', name: 'finance-payables', component: () => import('./views/finance/PayablesFinView.vue') },
+  { path: 'dong-tien', name: 'finance-cashflow', component: () => import('./views/finance/CashflowView.vue') },
+  { path: 'xuat-but-toan', name: 'finance-journal', component: () => import('./views/finance/JournalView.vue') },
+  { path: 'cai-dat', name: 'finance-settings', component: () => import('./views/finance/FinSettingsView.vue') }
+];
+
+const LAYOUTS = { workshop: [WorkshopLayout, workshopChildren], purchasing: [PurchasingLayout, purchasingChildren], hub: [HubLayout, hubChildren], logistics: [LogisticsLayout, logisticsChildren], finance: [FinanceLayout, financeChildren] };
 
 const moduleRoutes = MODULES.filter((m) => m.name !== 'demo').map((m) =>
   LAYOUTS[m.name]

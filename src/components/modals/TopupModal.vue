@@ -42,6 +42,7 @@ import { computed, ref } from 'vue';
 import { api } from '../../shared/api';
 import { fmt } from '../../shared/utils/formatters';
 import VietQrSvg from '../common/VietQrSvg.vue';
+import { topupRefFor } from '../../shared/domain/financeBank';
 import { useMovaStore } from '../../stores/useMovaStore';
 
 const store = useMovaStore();
@@ -60,7 +61,8 @@ function prepare() {
   }
 }
 
-const transferContent = computed(() => `NAP ${store.account.customer.phone || store.customerId}`);
+// Mã đối soát: kế toán khớp tiền về theo mã này trong nội dung chuyển khoản
+const transferContent = computed(() => topupRefFor(store.customerId));
 
 function confirm() {
   const res = api.customer.topUpCredit({ customer_id: store.customerId, ...(pending.value.pack_id ? { pack_id: pending.value.pack_id } : { pay_vnd: pending.value.pay_vnd }) });

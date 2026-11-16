@@ -28,3 +28,9 @@ export function hhmm(iso) {
 }
 
 export const sourceKindLabel = { htx: 'HTX', nong_ho: 'Nông hộ', lo_mo: 'Lò mổ' };
+
+/** 12,5% (một chữ số thập phân); không có số liệu thì "—" (không báo 0%). */
+export const pct = (x, digits = 1) => (x == null || Number.isNaN(x) ? '—' : `${(x * 100).toFixed(digits).replace('.', ',')}%`);
+
+/** Số tiền có dấu: +1.500.000đ / −300.000đ */
+export const signedVnd = (n) => `${n > 0 ? '+' : n < 0 ? '−' : ''}${new Intl.NumberFormat('vi-VN').format(Math.abs(Math.round(n || 0)))}đ`;
