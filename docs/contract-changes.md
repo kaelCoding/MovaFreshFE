@@ -2,7 +2,7 @@
 
 > Repo web KHÔNG sửa `movafresh-platform/docs/api-contract.json`. Theo `movafresh-platform/AGENTS.md`, mọi thay đổi phải có cả Khôi và Hiếu đồng thuận và giữ tương thích ngược. File này ghi lại những chỗ lớp mock `src/shared/api/` đang khác contract hiện tại hoặc cần thêm, để đưa sang bên platform.
 
-Cập nhật: 16/11/2026 (P0, P1A, P1B, P2A)
+Cập nhật: 16/11/2026 (P0, P1A, P1B, P2A, P2B)
 
 ## 1. Đã khớp contract (không cần đổi)
 
@@ -227,6 +227,78 @@ Các hàm nằm ở `src/shared/api/opsFactory.js`, gộp vào `api.ops.*` (kế
 
 Hai API `GET /api/v2/factory/daily-bom` và `POST /api/v2/factory/mark-batch-completed`, `report-spoilage` của `factory-portal` nên bổ sung: nhận nguyên liệu kèm mã lô, mẻ túi gán lô, xuất xe (nhiệt độ, niêm phong), năng lực tuần sau và khử trùng theo `opId` cho máy khách mất mạng.
 
+## 3e. Mua hàng, kho phụ, truy xuất và thu hồi (P2B)
+
+Hàm nằm ở `src/shared/api/opsProcurement.js`, gộp vào `api.ops.procurement.*` (mua hàng), `api.ops.hub.*` (kho phụ), `api.ops.supplierPortal.*` (cổng nhà cung cấp). Logic thuần ở `domain/procurement.js`, `inventory.js`, `recall.js`, `statement.js`; phần ghi ở `procurementOps.js`, `recallOps.js`. Hằng cấu hình mới ở `BUSINESS.purchasing` (thêm `longLifeShelfDays`, `matchTolerance`, `marketDiffWarnPct`, `dueFrom`, `forecastWeeks`, `statementTemplates`), `BUSINESS.suppliers` (`certWarnDays`, `kinds`, `certTypes`), `BUSINESS.inventory`, `BUSINESS.recall`.
+
+### Quyền
+
+| Nhóm | Vai trò |
+|---|---|
+| `procRead` (đọc mua hàng) | mua hàng, kế toán, admin |
+| `procWrite` (duyệt, gửi, giá, hồ sơ, đối chiếu, mua trực tiếp) | mua hàng, admin |
+| `payment` (trả nhà cung cấp) | mua hàng, kế toán, admin |
+| `settingsWrite` (chọn mẫu bảng kê) | kế toán, admin |
+| `hubOps` (nhận hàng, tồn, truy xuất, thu hồi) | kho phụ, mua hàng, admin |
+| `recallCompensate` (bù Fresh Credit khi thu hồi) | mua hàng, admin (tiền của MOVA) |
+| `supplierPortal` | nhà cung cấp (luôn bị ép về chính mình; mã nhà cung cấp client gửi lên bị bỏ qua), admin xem thử qua `asSupplierId` |
+| `substitution` (đã có) | thêm mua hàng, để áp món thay khi nhà cung cấp thiếu hàng |
+
+Nhà cung cấp không nhận: PIN, phần trừ tồn kho (`coveredByStock`, `stockUsedQty`), mã báo cáo thiếu của xưởng, dữ liệu khách, dữ liệu nhà cung cấp khác. `api.ops.listPurchaseOrders` cũng lọc qua `viewPo`. Mã khách không bao giờ ra khỏi API truy xuất / thu hồi; tên, địa chỉ, SĐT người nhận chỉ trả cho kho phụ và admin (`recipientFor`).
+
+### Collection mới `db.procurement` (một lát cắt)
+
+`{ suppliers{}, priceList[], receipts[], invoices[], claims[], payments[], stock[], stockMoves[], purchases[], forecasts[], recalls[], settings, seq }`. Không đổi `DB_VERSION`: bộ nhớ cũ chưa có thì `supplementProcurement` (`data/procurementSeed.js`) bù hạt giống khi mở (`server.js`). Dữ liệu mẫu (MST, CCCD, số tài khoản là số giả): 13 hồ sơ (5 nhà cung cấp có cổng + 3 HTX, 3 nông hộ, 2 lò mổ), giấy chứng nhận (có cái sắp hết hạn, một cái đã hết hạn), bảng giá 3 mức mỗi SKU, 12 lô tồn kho có hạn dùng, 5 PO cũ đủ trạng thái (có hóa đơn lệch giá và số lượng, PO đến hạn, PO đã trả), 1 bảng kê thu mua, dự báo đã gửi. PO cũ có `sample: true`.
+
+- Hồ sơ `suppliers[id]`: `{ id, kind (factory|htx|nong_ho|lo_mo|seafood|long_haul|last_mile|packaging), name, taxId | cccd, address, bank{bankName,accountNo,accountName}, termDays, contact{name,phone}, portal, certs[{id,type (attp|vietgap|haccp|other),number,issuer,expiresAt}] }`. Cảnh báo giấy chứng nhận: `certStatus` cho `expired | expiring (<= 30 ngày) | valid`.
+- Bảng giá `priceList[]`: `{ id, sku, priceVnd, effectiveFrom, note, createdAt, by }`; giá tại ngày = mức có `effectiveFrom` muộn nhất không quá ngày hỏi (`priceAt`). `runCutoff` lấy giá theo ngày giao khi lập PO.
+- Lô tồn `stock[]`: `{ id, sku, lotCode, qty, qtyIn, unit, receivedAt, expiresAt, tempC, supplierId, receiptId, location ('hub'|'factory'), heldBy (recallId), unitCostVnd }`. `stockMoves[]`: `receive | issue | waste | count` kèm `reason`, `costVnd` (chi phí hao hụt).
+- Phiếu nhập `receipts[]` (`PN-YYYYMMDD-NNN`): `{ id, poId, supplierId, receivedAt, receivedBy, photo, note, lines[{ sku, orderedQty, targetQty, acceptedQty, rejectedQty, tempC, reason, lotCode, expiresAt, stockId }] }`. Phần không đạt sinh `claims[]` (`KN-...`): `{ poId, receiptId, sku, qty, reason, amountVnd (= số lượng x đơn giá PO), status 'open'|'acknowledged'|'deducted', reply }`; khi PO được đối chiếu thì thành `deducted` (trừ vào công nợ).
+- Hóa đơn `invoices[]`: `{ id, poId, supplierId, number, issuedAt, lines[{sku,qty,unitPriceVnd}], totalVnd, file{name,type,dataUrl}, uploadedAt }`. Danh sách trả về không kèm nội dung tệp (`invoiceFile` tải riêng). Ảnh được thu nhỏ trên máy, PDF tối đa khoảng 700 KB.
+- Đợt thu hồi `recalls[]` (`RC-YYYYMMDD-NNN`): `{ id, lotCode, sku, reason, status, held{orderId:at}, notified{}, compensated{orderId:{amountVnd,at}}, stockHeld[], orders[] (danh sách chốt lúc tạo), log[] }`.
+- `settings`: `{ statementTemplate, customTitle, customNote }`.
+
+### Trường mới trên collection cũ
+
+- `purchaseOrder`: `status` mở rộng `draft | approved | sent | confirmed | received_partial | received | invoiced | matched | paid` (`due` là trạng thái hiển thị suy ra: `matched` và đã qua `dueAt`). Thêm `createdAt, history[], coveredByStock[], approvedAt, sentAt, sentVia ('link'|'print'), confirmation{ at, result ('full'|'short'), lines[{sku,orderedQty,confirmedQty}], shortLines[], shortPct, note }, shortageIds[], receiptIds[], invoiceId, dueAt, payableVnd, matchedAt, matchNote, paidAt, paidVnd, sample`. Dòng PO thêm `needQty`, `stockUsedQty`.
+- `db.factory.shortages[]`: thêm `source: 'po'` và `poId` khi nhà cung cấp xác nhận thiếu (cơ chế `shortageImpact` của P2A chạy y hệt; đề xuất món thay rồi áp bằng `api.ops.substituteDish` kèm `shortageId`).
+- `db.orders[]`: `recallHold { recallId, at }`. Đơn bị giữ thì `factory.apply` loại `load` báo `ORDER_ON_HOLD`.
+- `db.notifications[]`: loại mới `recall` (`meta.kind` = `notice` | `compensation`, `recallId`, `lotCode`, `group`, `compensationVnd`).
+- `db.ledger[]`: khoản bù thu hồi ghi `kind: 'compensation'` (cùng đường ghi với đổi món do thiếu hàng: `creditCompensation` trong `opsEvents.js`).
+
+### Quy tắc chính
+
+- **Đề xuất mua** (`draftPurchaseOrders`): `qty = max(0, nhu cầu x (1 + wasteBufferPct) - tồn khả dụng)`; chỉ trừ tồn với hàng để lâu (hạn dùng từ `longLifeShelfDays`: gạo, bún, mì, bao bì). Tồn khả dụng = tồn còn hạn không bị giữ, trừ phần đã giữ chỗ cho các PO chưa nhận xong. PO không còn dòng nào thì không lập.
+- **Đối chiếu 3 chiều** (`threeWayMatch`): hàng "đã giao" = đạt + không đạt. Lỗi: `qty_invoice_over | qty_invoice_under` (hóa đơn lệch hàng đã giao), `price_diff` (đơn giá hóa đơn lệch đơn giá PO), `line_not_in_po`. Cảnh báo: `short_delivery | over_delivery` (so với PO). Dung sai `matchTolerance`. Phải trả = hóa đơn tính trên số lượng không vượt hàng đã giao, trừ phần không đạt; chấp nhận chênh lệch phải ghi lý do. Hạn trả = ngày hóa đơn + kỳ công nợ của PO (`dueFrom` đổi được). Chi tiền mặt từ `alerts.cashPaymentVatLimitVnd` trở lên bị chặn.
+- **FEFO** (`fefoAllocate`): lô hết hạn sớm nhất trước, cùng hạn thì lô nhận sớm trước; bỏ lô đã quá hạn, lô đang bị giữ, lô hết hàng.
+- **Truy xuất** (`traceLot`): xưởng ghi mẻ túi theo (ngày giao, chuyến) kèm lô và số túi đã tích vào thùng từng đơn, nhưng KHÔNG ghi túi nào của mẻ nào vào thùng nào. Bản mock chia túi của các mẻ cho các đơn cùng chuyến theo thứ tự cố định (`allocateBatches`: mẻ làm trước vào đơn có mã nhỏ trước). Bản thật cần quét mã túi lúc bỏ vào thùng để ghi chính xác; chỉ cần thay hàm này. Danh sách đơn của đợt thu hồi được chốt lúc tạo đợt để không xê dịch khi đổi món.
+- **Bảng kê thu mua**: mẫu chọn trong `BUSINESS.purchasing.statementTemplates` qua `settings` (kế toán chọn), mỗi mẫu có `confirmed: false` cho tới khi kế toán xác nhận còn hiệu lực. Chỉ nông sản tươi (`taxGroup: 'fresh'`). Bảng kê đã lập giữ mẫu lúc lập.
+
+### Hàm chính
+
+| Hàm | Ghi chú |
+|---|---|
+| `procurement.suppliers / saveSupplier / addCert / removeCert` | hồ sơ và giấy chứng nhận, cảnh báo 30 ngày |
+| `procurement.skuCatalog / prices / addPrice / forecast / sendForecast` | danh mục SKU, bảng giá theo ngày hiệu lực + giá thị trường (mock pricing agent), dự báo 4 tuần |
+| `procurement.listPos / getPo / editLine / approvePo / sendPo / submitInvoice / matchPo / payPo / payables` | vòng đời PO, đối chiếu, công nợ và tuổi nợ |
+| `procurement.directPurchases / previewStatement / recordDirectPurchase / settings / saveSettings` | mua trực tiếp, bảng kê, mẫu |
+| `hub.receivable / receive / receipts` | nhận hàng đối chiếu PO |
+| `hub.stock / fefoPlan / issue / waste / count` | tồn theo lô, FEFO, xuất hủy, kiểm kê, hao hụt tháng |
+| `hub.traceLots / trace` | truy xuất từ mã QR / lô / mẻ |
+| `hub.recalls / createRecall / recall / holdOrders / notifyCustomers / compensate / wasteHeldStock / closeRecall` | thu hồi lô |
+| `supplierPortal.overview / confirmPo / submitInvoice / replyClaim / updateContact / addCert` | cổng nhà cung cấp |
+| `demo.seedTrace(ctx, { day?, sku? })` | dựng lô, mẻ, thùng, đơn đủ ba trạng thái để thử thu hồi (chỉ admin) |
+
+Mã lỗi mới: `PO_NOT_FOUND`, `PO_STATUS_INVALID`, `PO_EMPTY`, `CONFIRM_INVALID`, `RECEIPT_INVALID`, `INVOICE_INVALID`, `DUPLICATE_INVOICE`, `FILE_TOO_LARGE`, `MATCH_DIFF`, `NOTE_REQUIRED`, `CASH_OVER_LIMIT`, `STOCK_SHORT`, `PROFILE_INVALID`, `CERT_INVALID`, `PRICE_INVALID`, `STATEMENT_INVALID`, `TEMPLATE_INVALID`, `RECALL_EXISTS`, `RECALL_CLOSED`, `RECALL_NOT_FOUND`, `LOT_NOT_FOUND`, `ORDER_ON_HOLD`, `SUPPLIER_REQUIRED`, `NOT_FOUND`.
+
+### Màn hình (hash router của app vận hành)
+
+`/mua-hang` (Đơn mua; con: `nha-cung-cap`, `sku`, `bang-gia`, `du-bao`, `cong-no`, `mua-truc-tiep`, `cai-dat`), `/kho` (Nhận hàng; con: `ton-kho`, `truy-xuat`, `thu-hoi`), `/nha-cung-cap` (cổng, ưu tiên điện thoại). Kế toán thêm vào `/mua-hang` (xem PO, công nợ, cài đặt). Mua hàng thêm vào `/kho`. P2C thêm tab Ghép hải sản / Nhận xe / Chia tuyến vào `HubLayout.vue`.
+
+### Đề xuất sang platform
+
+Bổ sung vào `cashflow-ledger` sổ công nợ nhà cung cấp theo PO (đã giao, hóa đơn, đến hạn, đã trả, khấu trừ khiếu nại) và vào `traceability-waze` ghi chính xác túi nào vào thùng nào (quét mã túi) để thu hồi lô không phải suy luận.
+
 ## 4. Câu hỏi mở cho Khôi và Hiếu
 
 1. Giờ chốt sổ mặc định 08:00 ngày D-2 có khớp lịch xe lạnh Đắk Lắk → TP.HCM không?
@@ -236,3 +308,6 @@ Hai API `GET /api/v2/factory/daily-bom` và `POST /api/v2/factory/mark-batch-com
 5. Chênh lệch khi đổi món sau mốc trừ tiền của khách trả thẻ: cộng/trừ Fresh Credit (mock) hay trừ / hoàn thẳng vào thẻ?
 6. Chuyến xe lạnh: một chuyến (16:00) hay hai chuyến (16:00 và 20:00)? Mock chia theo khung giờ giao (sáng sớm đi chuyến 1, trưa và tối đi chuyến 2).
 7. Cỡ túi chuẩn của xưởng theo từng SKU (mock: `src/shared/data/packaging.js`) cần quản đốc xác nhận, kèm hạn dùng từng loại.
+8. Mẫu bảng kê thu mua nông sản không hóa đơn nào còn hiệu lực? Mock chỉ có mẫu nội bộ, Mẫu 01/TNDN (chưa xác nhận) và mẫu kế toán tự soạn; kế toán chọn ở Cài đặt.
+9. Hạn trả nhà cung cấp tính từ ngày hóa đơn (mock) hay ngày nhận hàng? Đổi bằng BUSINESS.purchasing.dueFrom.
+10. Quét mã túi lúc bỏ vào thùng có đưa vào quy trình xưởng không? Nếu có thì thu hồi chính xác từng thùng thay vì chia túi theo thứ tự.
