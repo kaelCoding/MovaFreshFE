@@ -484,7 +484,13 @@ describe('thu hồi lô', () => {
     const ctxs = setup();
     const { api } = ctxs;
     closeFirstDay(api);
-    const seeded = api.demo.seedTrace(admin);
+    for (let i = 0; i < 4; i++) api.demo.jumpTo(admin, 'cutoff'); // chốt thêm vài ngày để có ngày nhiều đơn bò
+    // Chọn ngày đã chốt có nhiều túi thịt bò nhất
+    const beefBags = (day) =>
+      api.ops.factory.snapshot(admin, day).orders.reduce((s, o) => s + (o.items.find((i) => i.key === 'NL-BO-01' && !i.hub)?.bags || 0), 0);
+    const day = api.ops.listProductionPlans(admin).map((p) => p.day).sort((a, b) => beefBags(b) - beefBags(a))[0];
+    const seeded = api.demo.seedTrace(admin, { day, sku: 'NL-BO-01' });
+    expect(seeded.sku).toBe('NL-BO-01'); // thu hồi một lô thịt bò
     const snap = api.ops.factory.snapshot(admin, seeded.day);
     const [codeA, codeB] = seeded.lotCodes;
     const batches = snap.factory.batches.filter((b) => b.key === seeded.sku);
@@ -528,8 +534,9 @@ describe('thu hồi lô', () => {
     const tB = api.ops.hub.trace(hub, codeB);
     expect(tA.orders.map((o) => o.orderId).sort()).toEqual([...expectedA].sort());
     expect(tB.orders.map((o) => o.orderId).sort()).toEqual([...expectedB].sort());
-    expect(tA.orders.length).toBeGreaterThan(0);
+    expect(tA.orders.length).toBeGreaterThan(1);
     expect(tB.orders.length).toBeGreaterThan(0);
+    expect(lists.length).toBeGreaterThanOrEqual(4); // đủ nhiều đơn có bò để phân biệt hai lô
     // Hợp của hai lô = mọi đơn của chuyến có mặt hàng đó; không đơn nào ngoài chuyến / không có mặt hàng
     const union = new Set([...tA.orders, ...tB.orders].map((o) => o.orderId));
     expect([...union].sort()).toEqual(lists.map((o) => o.orderId).sort());
@@ -625,16 +632,31 @@ describe('thu hồi lô', () => {
   });
 
   it('thay món cho đơn chưa xuất kho trong đợt thu hồi dùng cơ chế sẵn có', () => {
-    const { api, codeA, seeded } = scenario();
-    const rc = api.ops.hub.createRecall(hub, { lotCode: codeA, reason: 'Nghi nhiễm khuẩn' });
-    const detail = api.ops.hub.recall(hub, rc.id);
-    const o = detail.orders.find((x) => x.group === 'not_shipped' && x.suggestions.some((h) => h.suggestedDishId));
+    const { api, codeA, codeB } = scenario();
+    // Lấy lô có đơn chưa xuất kho (đang sản xuất hoặc đã chốt) và món thay đề xuất
+    let rc = null;
+    let o = null;
+    for (const code of [codeA, codeB]) {
+      const r = api.ops.hub.createRecall(hub, { lotCode: code, reason: 'Nghi nhiễm khuẩn' });
+      const found = api.ops.hub.recall(hub, r.id).orders.find((x) => x.group === 'not_shipped' && x.suggestions.some((h) => h.suggestedDishId));
+      if (found) {
+        rc = r;
+        o = found;
+        break;
+      }
+      api.ops.hub.closeRecall(hub, { recallId: r.id });
+    }
     expect(o).toBeTruthy();
     const hit = o.suggestions.find((h) => h.suggestedDishId);
-    api.ops.substituteDish(hub, { orderId: o.orderId, mealIndex: hit.mealIndex, kind: hit.kind, toDishId: hit.suggestedDishId, reason: `Thu hồi lô ${codeA}` });
-    const after = api.ops.hub.recall(hub, rc.id).orders.find((x) => x.orderId === o.orderId);
+    api.ops.substituteDish(hub, { orderId: o.orderId, mealIndex: hit.mealIndex, kind: hit.kind, toDishId: hit.suggestedDishId, reason: `Thu hồi lô ${rc.lotCode}` });
+    const detail = api.ops.hub.recall(hub, rc.id);
+    const after = detail.orders.find((x) => x.orderId === o.orderId);
+    // Đơn đã đổi món vẫn nằm trong danh sách chốt của đợt, nhưng hết món có nguyên liệu của lô và hết đề xuất
+    expect(after).toBeTruthy();
+    expect(after.dishes).toEqual([]);
     expect(after.suggestions.find((h) => h.mealIndex === hit.mealIndex && h.kind === hit.kind)).toBeUndefined();
-    expect(seeded.sku).toBeTruthy();
+    expect(detail.orders.length).toBe(detail.recall.orders.length); // phép chia túi của các đơn khác không bị xê dịch
+    expect(detail.totals.orders).toBe(detail.recall.orders.length);
   });
 });
 

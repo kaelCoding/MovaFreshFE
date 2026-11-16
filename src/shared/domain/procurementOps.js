@@ -91,6 +91,7 @@ export function saveSupplierProfile(db, profile, now) {
   const errors = validateSupplierProfile(profile);
   if (errors.length) return bad('PROFILE_INVALID', errors.join('; '), { errors });
   const existing = profile.id ? proc.suppliers[profile.id] : null;
+  if (!existing && !['htx', 'nong_ho', 'lo_mo'].includes(profile.kind)) return bad('PROFILE_INVALID', 'Chỉ thêm mới HTX, nông hộ hoặc lò mổ; nhà cung cấp có cổng đã có sẵn trong hệ thống');
   if (profile.id && !existing && !profile.id.startsWith('SUP-')) return bad('SUPPLIER_NOT_FOUND', 'Không tìm thấy nhà cung cấp');
   const id = profile.id || seqId(proc, 'SUP');
   if (!existing && SUPPLIERS[id]) return bad('SUPPLIER_NOT_FOUND', 'Không tìm thấy nhà cung cấp');

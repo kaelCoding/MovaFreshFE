@@ -5,7 +5,7 @@ import { nextDailyId, substitutionHits } from './factory';
 import { notify } from './jobs';
 import { creditCompensation } from './opsEvents';
 import { ensureProcurement, wasteStock } from './procurementOps';
-import { RECALL_GROUP_LABEL, affectedDishNames, affectedDishValueVnd, traceLot } from './recall';
+import { RECALL_GROUP_LABEL, affectedDishNames, affectedDishValueVnd, frozenOrderRow, traceLot } from './recall';
 
 /**
  * Thu hồi lô (P2B): tạo đợt thu hồi, giữ hàng, báo khách, bù Fresh Credit, hủy tồn đang giữ, đóng đợt.
@@ -22,10 +22,23 @@ function log(recall, at, by, action, detail = '') {
   recall.log.push({ at, by, action, detail });
 }
 
-/** Các đơn của đợt thu hồi (tính lại từ dữ liệu hiện tại, nên trạng thái luôn mới nhất). */
+/**
+ * Các đơn của đợt thu hồi. Danh sách được CHỐT lúc tạo đợt (`recall.orders`), cộng thêm các đơn của mẻ mới mà xưởng ghi sau đó. Chốt danh sách để đơn đã đổi món (không còn túi của lô) vẫn nằm trong báo cáo và phép chia túi
+ * của các đơn khác không bị xê dịch. Trạng thái, nhóm và tình trạng thùng luôn lấy mới nhất.
+ */
 export function recallOrders(db, recall, cfg = BUSINESS) {
   const t = traceLot(db, recall.lotCode, cfg);
-  return t ? t.orders : [];
+  const live = new Map((t ? t.orders : []).map((o) => [o.orderId, o]));
+  const out = [];
+  for (const f of recall.orders || []) {
+    const row = live.get(f.orderId) || frozenOrderRow(db, f, cfg);
+    live.delete(f.orderId);
+    if (row) out.push(row);
+  }
+  // Chỉ thêm đơn mới khi có mẻ mới của lô (sau khi tạo đợt); đơn chỉ "xuất hiện" vì phép chia túi xê dịch sau khi đổi món thì không tính
+  const known = new Set((recall.orders || []).flatMap((f) => f.batchIds || []));
+  for (const row of live.values()) if (row.batchIds.some((b) => !known.has(b))) out.push(row);
+  return out.sort((a, b) => a.deliveryDay.localeCompare(b.deliveryDay) || a.orderId.localeCompare(b.orderId));
 }
 
 export function createRecall(db, { lotCode, reason, by = '' }, now, cfg = BUSINESS) {
@@ -49,6 +62,7 @@ export function createRecall(db, { lotCode, reason, by = '' }, now, cfg = BUSINE
     notified: {}, // { orderId: at }
     compensated: {}, // { orderId: { amountVnd, at } }
     stockHeld: [],
+    orders: trace.orders.map((o) => ({ orderId: o.orderId, bags: o.bags, batchIds: o.batchIds })), // danh sách chốt lúc tạo đợt
     log: []
   };
   // Hàng tồn của lô này ở kho phụ bị giữ ngay để FEFO không xuất ra nữa
@@ -198,7 +212,7 @@ export function recallSubstitutions(db, recallId, cfg = BUSINESS) {
 export function recallReportData(db, recall, cfg = BUSINESS) {
   const trace = traceLot(db, recall.lotCode, cfg);
   const proc = ensureProcurement(db);
-  const orders = trace ? trace.orders : [];
+  const orders = recallOrders(db, recall, cfg);
   const wasteMoves = proc.stockMoves.filter((m) => m.kind === 'waste' && m.reason === 'recall' && m.lotCode === recall.lotCode);
   const compVnd = Object.values(recall.compensated).reduce((s, c) => s + c.amountVnd, 0);
   const wasteVnd = wasteMoves.reduce((s, m) => s + m.costVnd, 0);
@@ -214,6 +228,7 @@ export function recallReportData(db, recall, cfg = BUSINESS) {
     recall,
     skuName: SKUS[recall.sku] ? SKUS[recall.sku].name : recall.sku,
     trace,
+    orders,
     groups,
     totals: {
       orders: orders.length,

@@ -31,7 +31,13 @@
         <button class="ops-btn" :disabled="!at" @click="setNow">Đặt</button>
       </div>
 
-      <p v-if="msg" class="ops-ok" role="status">{{ msg }}</p>
+      <h2>Dữ liệu mẫu cho truy xuất và thu hồi lô</h2>
+      <p class="ops-muted">Cần đã chốt sổ ít nhất một ngày. Dựng hai lô nguyên liệu, mẻ túi, thùng và đơn ở đủ ba trạng thái (chưa xuất / đang giao / đã giao) để thử Kho phụ → Truy xuất và Thu hồi lô.</p>
+      <div class="ops-actions">
+        <button class="ops-btn" data-testid="seed-trace" :disabled="!st.plans" @click="seedTrace">Dựng dữ liệu truy xuất mẫu</button>
+      </div>
+
+      <p v-if="msg" class="ops-ok" role="status" data-testid="demo-msg">{{ msg }}</p>
       <p v-if="err" class="ops-error" role="alert">{{ err }}</p>
 
       <hr />
@@ -74,6 +80,11 @@ const summarize = (fired) => {
   return `Đã chạy: ${n('charge')} lần trừ tiền, ${n('cutoff')} lần chốt sổ, ${n('remind')} lần nhắc khách.`;
 };
 
+const seedTrace = () =>
+  run(
+    () => api.demo.seedTrace(ctx.value),
+    (r) => `Đã dựng ${r.skuName}: lô ${r.lotCodes.join(' và ')} trên ${r.orders} đơn (đã giao ${r.counts.delivered}, đang giao ${r.counts.shipped}, đang sản xuất ${r.counts.in_production}, chưa xuất ${r.counts.locked}).`
+  );
 const jump = (kind) => run(() => api.demo.jumpTo(ctx.value, kind), summarize);
 const setNow = () => run(() => api.demo.setNow(ctx.value, new Date(at.value)), summarize);
 const reset = () => {

@@ -245,9 +245,9 @@ export function createApi(server = getServer()) {
        * Dựng dữ liệu truy xuất mẫu trên ngày đã chốt sổ: hai lô nguyên liệu, mẻ túi, thùng, xe và đơn ở đủ ba trạng thái
        * (chưa xuất / đang giao / đã giao) để thử thu hồi lô. Cần đã chốt sổ ít nhất một ngày.
        */
-      seedTrace(ctx) {
+      seedTrace(ctx, opts = {}) {
         guard(ctx, 'demo');
-        return seedTraceScenario(api, server);
+        return seedTraceScenario(api, server, opts);
       },
 
       reset(ctx) {

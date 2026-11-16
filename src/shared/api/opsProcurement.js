@@ -456,7 +456,7 @@ export function createProcurementApi(server, cfg, guard) {
           const report = recallReportData(db, recall, cfg);
           const byId = new Map(db.orders.map((o) => [o.id, o]));
           const subs = recallSubstitutions(db, recallId, cfg);
-          const orders = (report.trace ? report.trace.orders : []).map(({ customerId, ...o }) => {
+          const orders = report.orders.map(({ customerId, ...o }) => {
             const order = byId.get(o.orderId);
             return {
               ...o,

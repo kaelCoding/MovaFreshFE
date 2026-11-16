@@ -1,6 +1,6 @@
 import { BUSINESS } from '../config/business';
 import { DISHES, SKUS } from '../data/catalog';
-import { buildDemandDays, emptyFactory, scopeKey } from './factory';
+import { buildDemandDays, emptyFactory, orderPackList, scopeKey } from './factory';
 import { dishFactor } from './mealPlan';
 
 /**
@@ -81,6 +81,35 @@ export function closedLists(db, cfg = BUSINESS) {
   return buildDemandDays(db, cfg, { closedOnly: true }).flatMap((d) => d.lists);
 }
 
+/** Một dòng "đơn chứa lô": thông tin đơn, nhóm trạng thái, số túi của lô, tình trạng thùng. `l` là phiếu nhặt của đơn. */
+function orderRow(db, l, order, parts, cfg) {
+  const f = db.factory || emptyFactory();
+  const box = f.boxes[l.orderId] || null;
+  const load = f.loads[scopeKey(l.deliveryDay, l.tripId)] || null;
+  return {
+    orderId: l.orderId,
+    customerId: order.customerId,
+    zoneId: l.zoneId,
+    slotId: l.slotId,
+    tripId: l.tripId,
+    deliveryDay: l.deliveryDay,
+    deliveryAt: l.deliveryAt,
+    status: order.status,
+    group: recallGroupOf(order.status, cfg),
+    bags: parts.reduce((s, p) => s + p.bags, 0),
+    batchIds: [...new Set(parts.map((p) => p.batchId))],
+    box: { packedAt: box ? box.packedAt : null, loadedAt: load && load.loaded ? load.loaded[l.orderId] || null : null, departedAt: load ? load.departedAt : null },
+    held: Boolean(order.recallHold)
+  };
+}
+
+/** Dựng lại dòng của một đơn đã ghi trong danh sách chốt của đợt thu hồi (đơn đã đổi món nên không còn nằm trong phép chia túi). */
+export function frozenOrderRow(db, entry, cfg = BUSINESS) {
+  const order = db.orders.find((o) => o.id === entry.orderId);
+  if (!order) return null;
+  return { ...orderRow(db, orderPackList(order, cfg), order, [{ bags: entry.bags, batchId: null }], cfg), batchIds: entry.batchIds || [] };
+}
+
 /**
  * Chuỗi truy xuất của một lô. Trả null nếu không có lô nào mang mã này.
  * `orders` là các đơn có túi của lô (thùng của đơn chứa lô), kèm nhóm trạng thái và tình trạng thùng.
@@ -101,25 +130,7 @@ export function traceLot(db, lotCode, cfg = BUSINESS) {
   const orders = [];
   for (const l of lists) {
     const parts = (alloc[l.orderId] || []).filter((a) => a.lotCode === lotCode);
-    if (!parts.length) continue;
-    const o = byOrder.get(l.orderId);
-    const box = f.boxes[l.orderId] || null;
-    const load = f.loads[scopeKey(l.deliveryDay, l.tripId)] || null;
-    orders.push({
-      orderId: l.orderId,
-      customerId: o.customerId,
-      zoneId: l.zoneId,
-      slotId: l.slotId,
-      tripId: l.tripId,
-      deliveryDay: l.deliveryDay,
-      deliveryAt: l.deliveryAt,
-      status: o.status,
-      group: recallGroupOf(o.status, cfg),
-      bags: parts.reduce((s, p) => s + p.bags, 0),
-      batchIds: [...new Set(parts.map((p) => p.batchId))],
-      box: { packedAt: box ? box.packedAt : null, loadedAt: load && load.loaded ? load.loaded[l.orderId] || null : null, departedAt: load ? load.departedAt : null },
-      held: Boolean(o.recallHold)
-    });
+    if (parts.length) orders.push(orderRow(db, l, byOrder.get(l.orderId), parts, cfg));
   }
   orders.sort((a, b) => a.deliveryDay.localeCompare(b.deliveryDay) || a.orderId.localeCompare(b.orderId));
 
