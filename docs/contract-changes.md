@@ -2,7 +2,7 @@
 
 > Repo web KHÔNG sửa `movafresh-platform/docs/api-contract.json`. Theo `movafresh-platform/AGENTS.md`, mọi thay đổi phải có cả Khôi và Hiếu đồng thuận và giữ tương thích ngược. File này ghi lại những chỗ lớp mock `src/shared/api/` đang khác contract hiện tại hoặc cần thêm, để đưa sang bên platform.
 
-Cập nhật: 16/11/2026 (P0, P1A, P1B, P2A, P2B)
+Cập nhật: 16/11/2026 (P0, P1A, P1B, P2A, P2B, P2C)
 
 ## 1. Đã khớp contract (không cần đổi)
 
@@ -299,6 +299,98 @@ Mã lỗi mới: `PO_NOT_FOUND`, `PO_STATUS_INVALID`, `PO_EMPTY`, `CONFIRM_INVAL
 
 Bổ sung vào `cashflow-ledger` sổ công nợ nhà cung cấp theo PO (đã giao, hóa đơn, đến hạn, đã trả, khấu trừ khiếu nại) và vào `traceability-waze` ghi chính xác túi nào vào thùng nào (quét mã túi) để thu hồi lô không phải suy luận.
 
+## 3f. Logistics, kho phụ và giao hàng chặng cuối (P2C)
+
+Hàm nằm ở `src/shared/api/opsLogistics.js`, gộp vào `api.ops.logistics.*` (điều phối), `api.ops.routes.*` (lập tuyến), `api.ops.hub.*` (thêm vào nhóm kho phụ của P2B) và `api.ops.shipper.*` (app giao hàng). Logic thuần ở `domain/logistics.js` (sức chứa, lập tuyến, chuỗi lạnh, thu hồi thùng xốp, chi phí, KPI), phần ghi ở `domain/logisticsOps.js`. Mọi thay đổi trạng thái giao đi qua `applyOrderStatus` (cùng hàm mà `api.ops.setOrderStatus` gọi) nên app khách thấy đúng thông báo.
+
+### Quyền
+
+| Nhóm | Vai trò |
+|---|---|
+| `dispatchOps` (sức chứa, chuyến xe, ngoại lệ, chi phí, KPI) | điều phối, admin |
+| `routePlan` (xem bảng tuyến, lập tuyến, chuyển điểm) | điều phối, kho phụ, admin |
+| `hubFlow` (nhận xe, ghép hải sản, chia thùng, xuất kho, phiếu tuyến) | kho phụ, admin |
+| `hubFlowRead` (xem bảng nhận xe, ghép hải sản) | thêm điều phối |
+| `coldChain` (xem và QC giữ / hủy) | kho phụ, điều phối, admin |
+| `costRead` (`logistics.publishedCosts`) | điều phối, kế toán, admin |
+| `shipperApp` (xem) / `shipperWrite` (giao, báo thất bại, gọi) | shipper (ép về chính mình), điều phối xem thử qua `asShipperId`; admin thao tác thay |
+
+Lọc dữ liệu: điều phối chỉ thấy mã đơn, khu, quận, phường (không tên, SĐT, địa chỉ, số nhà, mã khách, tiền). Kho phụ và admin thấy tên, địa chỉ, SĐT người nhận để in phiếu tuyến (`recipientFor`). Shipper chỉ thấy điểm giao trong tuyến của mình: tên, địa chỉ, SĐT che một phần (`090****321`); không có tiền, mã khách. Gọi khách đi qua `shipper.callCustomer` (tổng đài ẩn số, mock): SĐT thật không rời server.
+
+### Đăng nhập shipper
+
+`BUSINESS.logistics.shippers`: `{ id, name, pin, capacityBoxes }`. Mỗi shipper một PIN: `3333` (PIN cũ, nay là SH-01), `3334`, `3335`, `3336`. `api.auth.login` trả thêm `shipperId`; `ctx = { role, supplierId, shipperId }`. `ROLES.shipper.pin` đặt `null` (PIN theo từng shipper, giống nhà cung cấp).
+
+### Sức chứa khung giờ: `db.logistics.capacity`
+
+`{ "Z1|2026-11-23|early_morning_06_08": 20, "Z1|*|noon_11_13": 25 }`: ghi đè sức chứa (thùng) theo (khu, ngày, khung) hoặc mọi ngày (`*`); không có thì lấy `BUSINESS.zones[].slots[].capacityBoxes`. `slotCapacity(overrides, zoneId, day, slot)` trong `domain/delivery.js`; `availableSlots`, `findFullSlots` (đăng ký, gia hạn) và `planPostponement` (tạm hoãn) đều đọc nó nên app khách và việc chặn đặt vượt sức chứa dùng cùng một con số.
+
+- `logistics.capacityBoard(ctx)` → `zones[{ zoneId, name, deliveryDays, days[{ day, slots[{ slotId, label, configCapacity, capacity, overridden, used, remaining, overbooked, fillPct }], used, capacity, fillPct }] }]`, `suggestions[]` (gợi ý gộp ngày: `{ zoneId, fromDay, toDay, moveBoxes, beforePerDay, afterPerDay }`), `overbookedTotal`.
+- `logistics.setCapacity(ctx, { zoneId, day?|'*', slotId, capacityBoxes | null, allowBelowUsed? })`. `null` bỏ ghi đè. Hạ thấp hơn số đã đặt: `CAPACITY_BELOW_USED` trừ khi `allowBelowUsed`; đơn đã đặt vẫn giao, khách mới không đặt thêm được, bảng hiện `overbooked`. Mã lỗi `CAPACITY_INVALID` (số nguyên 0–500).
+- `BUSINESS.logistics.mergeSuggestBelowFillPct`: ngưỡng gợi ý gộp ngày. `BUSINESS.zones[].slots[]` có thêm `endHour`, `endMin`, `short` (để tính đúng giờ).
+
+### `db.logistics` (một lát cắt; bộ nhớ cũ chưa có thì `ensureLogistics` tạo khi ghi)
+
+`{ capacity, trips, arrivals, seafood, routes[], deliveries, exceptions[], temps[], coldDecisions, hubCosts, assets, recoveries[] }` và collection riêng `db.logisticsCosts[]`.
+
+- `trips["day|T1"] = { carrier, plate, capacityBoxes, costVnd, plannedDepartAt, note }` (điều phối lập; xuất bến, nhiệt độ, niêm phong vẫn ở `db.factory.loads` của P2A). `logistics.trips(ctx, day)` gộp lại: số thùng, bảng kê, nhiệt độ các mốc, trạng thái `unplanned | planned | loading | departed | arrived`. Mặc định: `BUSINESS.logistics.truck` (120 thùng, 4.500.000 đ / chuyến).
+- `arrivals["day|T1"] = { startedAt, closedAt, boxes: { orderId: "ok" | "damaged" }, extra[], missing[], tempC, frozenTempC, photo, note }`. Bảng kê = các thùng `db.factory.loads[scope].loaded`. `hub.scanArrival({ scope, code, state: "ok" | "damaged" | "clear" })` (mã không có trong bảng kê vào `extra` = thừa); `hub.closeArrival({ scope, tempC, frozenTempC?, photo?, note? })` ghi số đo mốc "nhận kho phụ", tạo ngoại lệ cho thùng thiếu / hỏng; cần ảnh nếu có thiếu, thừa, hỏng hoặc nhiệt độ vượt ngưỡng.
+- `seafood[orderId] = { ticks: { sku: n }, packedAt, lots[{ sku, lotCode, qty }], shortKg }`: `hub.tickSeafood`, `hub.closeSeafood` (tích đủ túi mới chốt, trừ `db.procurement.stock` theo FEFO bằng `issueStock`, thiếu tồn thì ghi `shortKg`). Chỉ làm được khi thùng đã về kho phụ.
+- `routes[] = { id "RT-YYYYMMDD-S|T|M-NN", day, slotId, shipperId, capacityBoxes, boxes, estMinutes, fitsWindow, status "planned" | "dispatched" | "done", dispatchedAt, dispatchTempC, sorted: { orderId: { at, location } }, mock: true, stops[{ orderId, seq, zoneId, district, ward, wardIndex, street, no }] }`. `routes.plan(ctx, { day, slotId, shipperIds? })` lập (thay các tuyến chưa xuất kho của khung), `routes.moveStop`, `hub.sortBox` (chia thùng vào tuyến, ghi kệ lạnh), `hub.dispatchRoute({ routeId, tempC, frozenTempC? })` (cần chia đủ thùng; đơn sang `shipped` qua `applyOrderStatus`), `hub.routeSheet(routeId)` (phiếu tuyến có người nhận).
+- `deliveries[orderId] = { routeId, status "planned" | "pending" | "delivered" | "failed" | "unrouted" | "closed", attempts[{ at, outcome, routeId, reason?, tempC? }], calls, recovered? }`.
+- `exceptions[] = { id "EX-NNNNN", orderId, kind "missing_box" | "damaged_box" | "delivery_failed" | "cold_discard", reason, status "open" | "held" | "resolved", resolution? }`. `logistics.resolveException({ id, kind: "redeliver" | "hold_cold" | "compensate", day?, slotId? })`.
+- `temps[] = { id, point "hub_receive" | "hub_dispatch" | "delivery", ref, cls "chill" | "frozen", tempC, at, orderId? }`. Mốc `factory_depart` lấy từ `db.factory.loads[*].tempC`. `evaluateTemp`: mát 0–4°C (cả quá cao lẫn quá thấp), đông ≤ −18°C (`BUSINESS.temperature`). `logistics.coldChain` trả 4 mốc, `alerts[]` (kèm `decision`) và `readings[]`; `logistics.decideCold({ id, decision: "keep" | "discard", note })`: hủy thì mỗi đơn bị ảnh hưởng thành một ngoại lệ `cold_discard`.
+- `assets[customerId] = { foam, gel }`: thùng xốp / túi gel đang ở nhà khách. `BUSINESS.logistics.recovery = { enabled, foamBoxesPerBox, gelPacksPerBox }`. Mỗi lần giao, shipper nhập số thu về (không vượt số khách đang giữ, `RECOVERY_EXCEEDS`), rồi cộng bộ vừa để lại. `kpis` có tỷ lệ thu hồi.
+
+### Trường mới trên collection cũ
+
+- `db.orders[]`: `deliveryIssue { kind "failed" | "redelivery" | "held" | "compensated", label, detail, at }`, `redelivery { day, slotId, atHub, at }` (lịch giao lại; đơn vẫn giữ `deliveryDay` gốc), `holdCold { at, until }`. Giao thành công thì xóa các trường này.
+- `db.notifications[]` (loại `delivery_status`) thêm `meta.status`: `failed` (kèm `meta.reason`), `held`, `compensated` (kèm `meta.compensationVnd`), ngoài `shipped | delivered | redelivery` đã có. App khách đã thêm nhãn cho các trạng thái này.
+- `api.customer.myWeeks`: mỗi `boxes[]` thêm `phase_label`, `delivery_issue { kind, label, detail, at } | null`, `redelivery { day, label, slot_label } | null`. Trang tuần của khách hiện trạng thái từng thùng (khi tuần có nhiều thùng) và khung báo vấn đề giao hàng.
+- `db.ledger[]`: bù không giao được ghi `kind: "compensation"` (cùng `creditCompensation` với đổi món và thu hồi lô).
+
+### Chi phí đẩy sang Tài chính (P2D đọc): `db.logisticsCosts[]`
+
+Mỗi ngày giao một bản ghi, cập nhật mỗi khi lập chuyến, nhập chi phí kho phụ, lập tuyến, nhận xe, xuất kho, giao hay báo thất bại; đọc qua `logistics.publishedCosts(ctx)` (điều phối, kế toán, admin):
+
+```json
+{
+  "id": "LC-2026-11-20", "day": "2026-11-20", "boxes": 19, "totalVnd": 12370000, "perBoxVnd": 651053,
+  "parts": { "longHaulVnd": 9000000, "hubVnd": 2150000, "lastMileVnd": 1220000 },
+  "perBox": { "longHaulVnd": 473684, "hubVnd": 113158, "lastMileVnd": 64211 },
+  "trips": [{ "scope": "2026-11-20|T1", "tripId": "T1", "boxes": 6, "costVnd": 4500000, "perBoxVnd": 750000, "estimated": true }],
+  "hub": { "laborVnd": 1200000, "rentVnd": 600000, "iceVnd": 350000, "otherVnd": 0, "totalVnd": 2150000, "estimated": true },
+  "routes": [{ "routeId": "RT-20261120-M-01", "stops": 12, "failedAttempts": 0, "costVnd": 300000, "perStopVnd": 25000, "status": "dispatched" }],
+  "status": "open | final", "updatedAt": "...", "source": "logistics"
+}
+```
+
+`perBoxVnd = round((xe chặng dài + kho phụ + chặng cuối) / boxes)`. Xe: giá chuyến điều phối nhập, chưa nhập thì `BUSINESS.logistics.truck.costPerTripVnd` (`estimated: true`). Kho phụ: `hubCosts[day]` hoặc `BUSINESS.logistics.hubDailyCostVnd`. Chặng cuối: `routeBaseVnd + perStopVnd x điểm + perFailedAttemptVnd x lần giao hụt` mỗi tuyến. Mọi số tiền là giả định chờ anh Trung chốt. `status: "final"` khi mọi tuyến của ngày đã xong.
+
+### KPI: `logistics.kpis(ctx, { from?, to? })`
+
+`onTimePct` (giao trong khung giờ), `failPct` (lần hụt / lần thử), `stopsPerHour` (điểm giao / giờ / tuyến, tối thiểu `kpi.minRouteMinutes` phút để không bị thổi phồng), `stopsPerRoute`, `boxesPerTruck`, `costPerBoxVnd`, `tempBreaches`, `recoveryPct`. Chưa có dữ liệu thì `null`, không báo 0%.
+
+### Lập tuyến là BẢN MOCK
+
+`planRoutes` gom theo khu → quận → phường → đường → số nhà, dùng ít shipper nhất đủ chở và chia cân bằng theo sức chở (`BUSINESS.logistics.shippers[].capacityBoxes`), không bao giờ vượt sức chở. Đơn hàng chưa có phường / tọa độ nên `data/geo.js` cho ra phường GIẢ ổn định từ địa chỉ chữ. Giao diện ghi rõ "Bản mock"; sau thay bằng engine tối ưu tuyến của Hiếu hoặc dịch vụ bản đồ (đổi `planRoutes` và `geocode`).
+
+### Cấu hình mới: `BUSINESS.logistics`
+
+`shippers`, `truck`, `hubDailyCostVnd`, `lastMile`, `minutesPerStop`, `travelMinutes`, `dispatchLeadMinutes`, `deliveryTempRequired`, `unreachableMinCalls`, `failReasons`, `holdColdMaxHours`, `failedCompensationPct`, `recovery`, `mergeSuggestBelowFillPct`, `demoHubJump`, `kpi`.
+
+### Mã lỗi mới
+
+`CAPACITY_INVALID`, `CAPACITY_BELOW_USED`, `ZONE_NOT_FOUND`, `SLOT_NOT_FOUND`, `TRIP_INVALID`, `COST_INVALID`, `TRIP_NOT_DEPARTED`, `ARRIVAL_CLOSED`, `ARRIVAL_INVALID`, `SEAFOOD_INVALID`, `SEAFOOD_INCOMPLETE`, `BOX_NOT_AT_HUB`, `ROUTE_NOT_FOUND`, `ROUTE_STATE`, `NOT_SORTED`, `TEMP_REQUIRED`, `NOT_YOUR_STOP`, `STOP_STATE`, `PHOTO_REQUIRED`, `REASON_INVALID`, `CALL_REQUIRED`, `RECOVERY_INVALID`, `RECOVERY_EXCEEDS`, `EXCEPTION_NOT_FOUND`, `RESOLVE_INVALID`, `ALERT_NOT_FOUND`, `DECISION_INVALID`, `SHIPPER_NOT_FOUND`.
+
+### Màn hình và bảng demo
+
+`/logistics` (điều phối, admin): Khu & sức chứa, Chuyến xe (`chuyen-xe`), Lập tuyến (`lap-tuyen`), Giao hàng & ngoại lệ (`giao-hang`), Chuỗi lạnh (`chuoi-lanh`), Chi phí & KPI (`chi-phi-kpi`). `/kho` thêm Nhận xe (`nhan-xe`), Ghép hải sản (`ghep-hai-san`), Chia khung/tuyến (`chia-tuyen`, điều phối cũng vào được, không PII), Xuất kho (`xuat-kho`). `/giao-hang`: app shipper ưu tiên 375px. Bảng demo thêm `demo.jumpTo(ctx, "hub")` (nút "Tới D 02:00") và `demo.seedTrips(ctx)` (đóng thùng, lên xe, xuất bến cả hai chuyến của ngày chốt sổ).
+
+### Đề xuất sang platform
+
+`orders-logistics` nên có: sức chứa khung giờ ghi đè theo ngày, bảng kê thùng đối chiếu ở kho phụ (thiếu / thừa / hỏng), ghép hải sản theo lô, tuyến giao theo shipper, nhật ký nhiệt độ 4 mốc kèm quyết định QC, thu hồi thùng xốp / túi gel, chi phí logistics mỗi thùng cho `cashflow-ledger` (hình dạng `db.logisticsCosts` ở trên), và webhook `DELIVERED` kèm ảnh. Điểm cần Hiếu / Khôi chọn: engine tối ưu tuyến thật (thay bản mock), nguồn phường / tọa độ.
+
 ## 4. Câu hỏi mở cho Khôi và Hiếu
 
 1. Giờ chốt sổ mặc định 08:00 ngày D-2 có khớp lịch xe lạnh Đắk Lắk → TP.HCM không?
@@ -311,3 +403,7 @@ Bổ sung vào `cashflow-ledger` sổ công nợ nhà cung cấp theo PO (đã g
 8. Mẫu bảng kê thu mua nông sản không hóa đơn nào còn hiệu lực? Mock chỉ có mẫu nội bộ, Mẫu 01/TNDN (chưa xác nhận) và mẫu kế toán tự soạn; kế toán chọn ở Cài đặt.
 9. Hạn trả nhà cung cấp tính từ ngày hóa đơn (mock) hay ngày nhận hàng? Đổi bằng BUSINESS.purchasing.dueFrom.
 10. Quét mã túi lúc bỏ vào thùng có đưa vào quy trình xưởng không? Nếu có thì thu hồi chính xác từng thùng thay vì chia túi theo thứ tự.
+11. Sức chở shipper (mock: 12–15 thùng / chuyến) và chi phí logistics (xe 4,5 triệu / chuyến, kho phụ 2,15 triệu / ngày, chặng cuối 120.000 + 15.000 / điểm) là số giả định; anh Trung cần chốt.
+12. Điểm giao thất bại có cần gọi khách trước khi báo "không liên lạc được" không (mock: ít nhất 1 lần gọi), và giữ lạnh ở kho phụ tối đa bao lâu (mock: 24 giờ)?
+13. Bù Fresh Credit khi không giao được: bao nhiêu % giá trị đơn (mock: 100%, vào ngăn khuyến mãi)?
+14. Thùng xốp / túi gel: thu ở lần giao sau, mỗi thùng giao kèm 1 thùng xốp + 2 túi gel (mock), bật / tắt ở `BUSINESS.logistics.recovery.enabled`.
