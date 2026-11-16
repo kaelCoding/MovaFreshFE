@@ -8,9 +8,24 @@
 
     <!-- 3. Menu & Cart Section -->
     <section class="menu" id="thuc-don">
-      <div class="wrap">
-        <!-- Dải thông tin hồ sơ AI đã kích hoạt -->
-        <div v-if="store.onboardingProfile?.isCompleted" class="ai-profile-strip-store">
+      <div class="wrap menu-wrap-relative">
+        <!-- Floating Focus Gate Card (Kính mờ phủ lên thực đơn khi chưa hoàn thành Onboarding) -->
+        <div v-if="!store.onboardingProfile?.isCompleted && !store.onboardingSkipped" class="menu-focus-gate-overlay">
+          <div class="focus-gate-floating-card">
+            <span class="gate-lock-icon">🔒</span>
+            <div class="gate-card-content">
+              <b>Thực đơn Mâm cơm Việt đang chờ hồ sơ dinh dưỡng của bạn</b>
+              <p>Hoàn thành 3 bước phía trên (30 giây) để AI lọc món &amp; tính định lượng riêng cho gia đình bạn.</p>
+            </div>
+            <button type="button" class="btn-scroll-to-wizard" @click="scrollToWizard">
+              Làm khảo sát AI ngay (30s) ↑
+            </button>
+          </div>
+        </div>
+
+        <div :class="{ 'menu-content-locked': !store.onboardingProfile?.isCompleted && !store.onboardingSkipped }">
+          <!-- Dải thông tin hồ sơ AI đã kích hoạt -->
+          <div v-if="store.onboardingProfile?.isCompleted" class="ai-profile-strip-store">
           <div class="strip-left">
             <span class="ai-spark-badge">✨ THỰC ĐƠN ĐƯỢC AI CÁ NHÂN HÓA</span>
             <div class="strip-desc">
@@ -128,6 +143,7 @@
           <!-- Sticky Cart -->
           <StickyCart />
         </div>
+        </div>
       </div>
     </section>
 
@@ -170,6 +186,13 @@ const goalLabel = computed(() => {
   };
   return p.healthGoal.map((g) => goalMap[g] || g).join(', ');
 });
+
+const scrollToWizard = () => {
+  const el = document.getElementById('hero-section') || document.querySelector('.ai-wizard-card');
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth' });
+  }
+};
 </script>
 
 <style scoped>
@@ -264,6 +287,102 @@ const goalLabel = computed(() => {
 
 .btn-start-onboarding-banner:hover {
   background: #bf4314;
+}
+
+.menu-wrap-relative {
+  position: relative;
+}
+
+.menu-content-locked {
+  filter: blur(6px);
+  -webkit-filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
+  transition: filter 0.3s ease;
+}
+
+.menu-focus-gate-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 140px;
+  pointer-events: none;
+}
+
+.focus-gate-floating-card {
+  pointer-events: auto;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid var(--green);
+  border-radius: 18px;
+  box-shadow: 0 16px 45px rgba(20, 108, 67, 0.22);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 720px;
+  width: 92%;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: floatGateCard 3s ease-in-out infinite;
+}
+
+@keyframes floatGateCard {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.gate-lock-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.gate-card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.gate-card-content b {
+  display: block;
+  font-size: 15.5px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 4px;
+  line-height: 1.35;
+}
+
+.gate-card-content p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.btn-scroll-to-wizard {
+  border: 0;
+  background: var(--green);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 800;
+  padding: 11px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(20, 108, 67, 0.25);
+  transition: all 0.15s ease;
+}
+
+.btn-scroll-to-wizard:hover {
+  background: var(--green-d);
+  transform: translateY(-1px);
 }
 
 .menu {
@@ -425,6 +544,21 @@ const goalLabel = computed(() => {
 @media (max-width: 980px) {
   .layout {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 680px) {
+  .menu-focus-gate-overlay {
+    padding-top: 80px;
+  }
+  .focus-gate-floating-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 16px;
+    gap: 12px;
+  }
+  .btn-scroll-to-wizard {
+    width: 100%;
   }
 }
 

@@ -60,6 +60,17 @@
           <span>Thiết lập Hồ sơ AI (+20k)</span>
         </button>
 
+        <!-- Nút Mời bạn +100k (Viral & Referral Engine) -->
+        <button
+          type="button"
+          class="btn-referral-hdr"
+          @click="store.openModal('referral')"
+          aria-label="Mời bạn bè nhận +100k Fresh Credit"
+        >
+          <span class="ref-icon">🎁</span>
+          <span class="ref-text">Mời bạn +100k</span>
+        </button>
+
         <!-- 1. Nút Chuông Thông Báo -->
         <button
           class="icon-btn"
@@ -276,6 +287,33 @@ const handleCartClick = async () => {
   flex-shrink: 0;
 }
 
+.btn-referral-hdr {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--orange-soft);
+  border: 1px solid rgba(217, 83, 30, 0.35);
+  color: var(--orange-ink);
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 7px 11px;
+  border-radius: 11px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.btn-referral-hdr:hover {
+  background: #FDE8DB;
+  border-color: var(--orange);
+  transform: translateY(-1px);
+}
+
+.ref-icon {
+  font-size: 14px;
+}
+
 .icon-btn {
   position: relative;
   width: 38px;
@@ -464,6 +502,13 @@ const handleCartClick = async () => {
   .btn-setup-ai {
     font-size: 11px;
     padding: 5px 8px;
+  }
+  .btn-referral-hdr {
+    padding: 6px 8px;
+    font-size: 11.5px;
+  }
+  .btn-referral-hdr .ref-text {
+    display: none;
   }
 }
 </style>

@@ -466,6 +466,8 @@ export const DEMO_LAN_DATA = {
   },
   profileRewardClaimed: true,
   onboardingSkipped: false,
+  viralShareClaimed: true,
+  viralFriendsReferred: 2,
   activeOrder: {
     id: 'MV10298',
     createdAt: 'Hôm nay lúc 09:15',
@@ -539,6 +541,7 @@ export const DEMO_MINH_DATA = {
       }
     ],
     pref: { ppl: 2, budget: 1200000, sauce: false, carb: false, f: [] },
+    referralCode: 'MOVA-2026',
     zaloRemind: true
   },
   onboardingProfile: {
@@ -553,6 +556,10 @@ export const DEMO_MINH_DATA = {
   },
   profileRewardClaimed: false,
   onboardingSkipped: false,
+  viralShareClaimed: false,
+  viralFriendsReferred: 0,
+  viralShareClaimed: false,
+  viralFriendsReferred: 0,
   activeOrder: null,
   historyOrders: [],
   ledger: [
@@ -609,6 +616,7 @@ export const DEFAULT_STATE = () => ({
     prepaidBalance: 0,
     addresses: [],
     pref: { ppl: 2, budget: 1200000, sauce: false, carb: false, f: [] },
+    referralCode: 'MOVA-2026',
     zaloRemind: true
   },
   onboardingProfile: {
@@ -623,6 +631,8 @@ export const DEFAULT_STATE = () => ({
   },
   profileRewardClaimed: false,
   onboardingSkipped: false,
+  viralShareClaimed: false,
+  viralFriendsReferred: 0,
 
   activeOrder: null,
   historyOrders: [],

@@ -6,7 +6,7 @@
       </svg>
       Mua thêm đi cùng chuyến xe lạnh Đắk Lắk – TP.HCM
     </h3>
-    <p>Thực phẩm phụ tươi ngon từ Tây Nguyên & Đà Lạt, tiện mua thêm để đạt mốc 400k (giảm 20k) hoặc 600k (Freeship & tách 2 đợt):</p>
+    <p>Rau củ Đà Lạt, trứng gà đồi & trái cây thu hoạch trong ngày — Giao kèm miễn phí trên chuyến xe lạnh định kỳ của gia đình</p>
 
     <div class="addons-grid">
       <div

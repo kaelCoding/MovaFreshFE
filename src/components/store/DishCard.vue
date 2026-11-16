@@ -6,15 +6,18 @@
   >
     <!-- Top Visual & Badges -->
     <div class="card-visual" :style="{ background: BG[dish.p] || '#FAF0E4' }">
-      <!-- AI Recommendation Badge -->
-      <div v-if="isAiRecommended" class="ai-match-badge">
-        <span class="sparkle">✨</span>
-        <span>AI Đề xuất cho bạn</span>
-      </div>
+      <!-- Top Badges Row (Wrapped safely so AI tag never overlaps cooking time) -->
+      <div class="card-badges-row">
+        <!-- AI Recommendation Badge -->
+        <div v-if="isAiRecommended" class="ai-match-badge">
+          <span class="sparkle">✨</span>
+          <span>AI Đề xuất cho bạn</span>
+        </div>
 
-      <div class="top-meta-badges">
-        <span class="badge-time">⏱ {{ dish.time }} phút • 1 chảo</span>
-        <span v-if="dish.isFusion" class="badge-fusion">🍷 Bistro Đồ Tây</span>
+        <div class="top-meta-badges">
+          <span class="badge-time">⏱ {{ dish.time }} phút • 1 chảo</span>
+          <span v-if="dish.isFusion" class="badge-fusion">🍷 Bistro Đồ Tây</span>
+        </div>
       </div>
 
       <div class="plate-center">
@@ -214,10 +217,21 @@ const handleDec = () => {
   transform: translateY(6px);
 }
 
-.ai-match-badge {
+.card-badges-row {
   position: absolute;
   top: 10px;
   left: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 6px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.ai-match-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -228,16 +242,15 @@ const handleDec = () => {
   padding: 4px 9px;
   border-radius: 999px;
   box-shadow: 0 2px 8px rgba(20, 108, 67, 0.25);
-  z-index: 2;
+  pointer-events: auto;
 }
 
 .top-meta-badges {
-  position: absolute;
-  top: 10px;
-  right: 10px;
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
-  z-index: 2;
+  margin-left: auto;
+  pointer-events: auto;
 }
 
 .badge-time {

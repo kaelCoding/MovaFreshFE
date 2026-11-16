@@ -4,6 +4,11 @@
       <!-- 1. Header tóm tắt hồ sơ & số dư -->
       <DashHeader />
 
+      <!-- Cụm tính năng Viral Referral Engine ở đầu Dashboard -->
+      <div class="dash-referral-top" style="margin-bottom: 24px">
+        <ViralReferralCard />
+      </div>
+
       <!-- 2. Danh sách 4 Tabs liên thông -->
       <div class="dash-tabs" role="tablist">
         <button
@@ -54,6 +59,7 @@
 <script setup>
 import { ref } from 'vue';
 import DashHeader from '../components/dashboard/DashHeader.vue';
+import ViralReferralCard from '../components/shared/ViralReferralCard.vue';
 import ActiveOrderTab from '../components/dashboard/ActiveOrderTab.vue';
 import OrderHistoryTab from '../components/dashboard/OrderHistoryTab.vue';
 import PrepaidPlanTab from '../components/dashboard/PrepaidPlanTab.vue';

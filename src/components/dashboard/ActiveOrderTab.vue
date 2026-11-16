@@ -101,30 +101,6 @@
         <div v-if="ord.note">📝 <b>Ghi chú shipper:</b> {{ ord.note }}</div>
       </div>
 
-      <!-- Phân loại bảo quản Ngăn Mát vs Ngăn Đông -->
-      <div class="storage-box">
-        <h4>❄️ Hướng dẫn bảo quản ngay khi nhận thùng đá gel:</h4>
-        <div class="storage-grid">
-          <div class="store-col chill">
-            <div class="st-title">🥬 Cất Ngăn Mát (0 – 2°C) • Nấu trong 2–3 ngày</div>
-            <ul>
-              <li v-for="it in chillItems" :key="it.id">
-                • <b>{{ it.name }}</b> ({{ it.qty }} {{ it.isAddon ? 'phần' : 'suất' }})
-              </li>
-            </ul>
-          </div>
-          <div class="store-col freeze">
-            <div class="st-title">🧊 Cất Ngăn Đông (−18°C) • Rã đông trước khi nấu</div>
-            <ul>
-              <li v-for="it in freezeItems" :key="it.id">
-                • <b>{{ it.name }}</b> ({{ it.qty }} suất)
-              </li>
-              <li v-if="freezeItems.length === 0">• Không có món cần cấp đông sâu.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
       <!-- Các nút thao tác thực tế -->
       <div class="order-acts">
         <template v-if="!store.cutoffPassed">
@@ -168,20 +144,6 @@ const statusLabel = computed(() => {
   return store.cutoffPassed
     ? 'Đã qua giờ chốt 20:00 (Đắk Lắk đang sơ chế)'
     : 'Trước giờ chốt sổ 20:00 (Cho phép sửa/hoãn/hủy)';
-});
-
-const chillItems = computed(() => {
-  if (!ord.value) return [];
-  const list = ord.value.items.filter((it) => it.storage === 'chill');
-  if (ord.value.addons) {
-    ord.value.addons.forEach((a) => list.push({ ...a, isAddon: true }));
-  }
-  return list;
-});
-
-const freezeItems = computed(() => {
-  if (!ord.value) return [];
-  return ord.value.items.filter((it) => it.storage === 'freeze');
 });
 
 const handleEditOrder = () => {
@@ -426,68 +388,6 @@ const handleCancelOrder = () => {
   gap: 6px;
 }
 
-/* Storage guide */
-.storage-box {
-  background: var(--bg);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 16px;
-  margin: 18px 0;
-}
-
-.storage-box h4 {
-  font-size: 14.5px;
-  font-weight: 700;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.storage-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.store-col {
-  border-radius: 12px;
-  padding: 12px;
-  background: var(--card);
-  border: 1px solid var(--line);
-}
-
-.store-col.chill {
-  border-left: 4px solid var(--blue);
-}
-
-.store-col.freeze {
-  border-left: 4px solid var(--green);
-}
-
-.store-col .st-title {
-  font-size: 13.5px;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.store-col.chill .st-title {
-  color: var(--blue);
-}
-
-.store-col.freeze .st-title {
-  color: var(--green);
-}
-
-.store-col ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  font-size: 13px;
-  display: grid;
-  gap: 4px;
-}
-
 .order-acts {
   display: flex;
   gap: 10px;
@@ -525,9 +425,6 @@ const handleCancelOrder = () => {
   }
   .t-icon {
     margin: 0;
-  }
-  .storage-grid {
-    grid-template-columns: 1fr;
   }
 }
 </style>

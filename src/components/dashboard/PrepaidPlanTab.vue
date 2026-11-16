@@ -84,6 +84,11 @@
       </div>
     </div>
 
+    <!-- Cụm tính năng Viral Referral Engine -->
+    <div style="margin: 28px 0">
+      <ViralReferralCard />
+    </div>
+
     <!-- Lịch sử biến động số dư -->
     <h3 style="font-size: 17px; font-weight: 800; margin: 24px 0 12px">
       Lịch sử biến động Fresh Credit
@@ -119,6 +124,7 @@
 <script setup>
 import { useMovaStore } from '../../stores/useMovaStore';
 import { fmt } from '../../utils/formatters';
+import ViralReferralCard from '../shared/ViralReferralCard.vue';
 
 const store = useMovaStore();
 

@@ -33,7 +33,9 @@ function loadState() {
         upsellLowCarb: parsed.upsellLowCarb ?? def.upsellLowCarb,
         upsellWestern: parsed.upsellWestern ?? def.upsellWestern,
         deliveryFrequency: parsed.deliveryFrequency ?? def.deliveryFrequency,
-        deliveryTimeSlot: parsed.deliveryTimeSlot ?? def.deliveryTimeSlot
+        deliveryTimeSlot: parsed.deliveryTimeSlot ?? def.deliveryTimeSlot,
+        viralShareClaimed: parsed.viralShareClaimed ?? def.viralShareClaimed,
+        viralFriendsReferred: parsed.viralFriendsReferred ?? def.viralFriendsReferred
       };
     }
   } catch (e) {
@@ -785,6 +787,53 @@ export const useMovaStore = defineStore('mova', {
       this.openModal('onboarding');
     },
 
+    claimViralShare() {
+      if (this.viralShareClaimed) {
+        this.toast('Bạn đã nhận phần thưởng chia sẻ thực đơn tuần này rồi!');
+        return;
+      }
+      this.viralShareClaimed = true;
+      this.user.prepaidBalance += 20000;
+      const nowStr = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+      this.ledger.unshift({
+        date: 'Hôm nay ' + nowStr,
+        desc: 'Thưởng chia sẻ thực đơn tuần (Viral Credit)',
+        amount: 20000,
+        bal: this.user.prepaidBalance
+      });
+      this.notifications.unshift({
+        id: 'notif-' + Date.now(),
+        time: 'Vừa xong',
+        title: '🎁 Thưởng +20.000đ Fresh Credit',
+        desc: 'Cảm ơn bạn đã lan tỏa thực đơn Mâm cơm gia đình sạch MOVA Fresh!',
+        unread: true
+      });
+      this.toast('🎉 Đã chia sẻ & cộng ngay +20.000đ Fresh Credit vào tài khoản!');
+      this.persist();
+    },
+
+    simulateFriendReferral() {
+      this.viralFriendsReferred = (this.viralFriendsReferred || 0) + 1;
+      this.user.prepaidBalance += 100000;
+      const nowStr = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+      const refCode = this.user.referralCode || 'MOVA-2026';
+      this.ledger.unshift({
+        date: 'Hôm nay ' + nowStr,
+        desc: `Thưởng bạn bè đăng ký gói 4 tuần (Mã: ${refCode})`,
+        amount: 100000,
+        bal: this.user.prepaidBalance
+      });
+      this.notifications.unshift({
+        id: 'notif-' + Date.now(),
+        time: 'Vừa xong',
+        title: '🎉 Bạn bè đăng ký thành công gói 4 tuần',
+        desc: 'MOVA đã cộng +100.000đ Fresh Credit vào tài khoản của bạn. Bạn của bạn cũng nhận được +100.000đ!',
+        unread: true
+      });
+      this.toast('🎉 Giả lập thành công: Bạn bè đăng ký gói 4 tuần! Nhận ngay +100.000đ Fresh Credit!');
+      this.persist();
+    },
+
     loginDemoLan() {
       this.user = JSON.parse(JSON.stringify(DEMO_LAN_DATA.user));
       this.activeOrder = JSON.parse(JSON.stringify(DEMO_LAN_DATA.activeOrder));
@@ -794,6 +843,8 @@ export const useMovaStore = defineStore('mova', {
       this.onboardingProfile = JSON.parse(JSON.stringify(DEMO_LAN_DATA.onboardingProfile));
       this.profileRewardClaimed = true;
       this.onboardingSkipped = false;
+      this.viralShareClaimed = true;
+      this.viralFriendsReferred = 2;
       this.heroWizardDismissed = true;
       this.n = this.onboardingProfile.householdSize;
       this.pay = 'credit';
@@ -832,6 +883,8 @@ export const useMovaStore = defineStore('mova', {
       };
       this.profileRewardClaimed = false;
       this.onboardingSkipped = false;
+      this.viralShareClaimed = false;
+      this.viralFriendsReferred = 0;
       this.heroWizardDismissed = false;
       this.n = 2;
       this.f = [];

@@ -31,6 +31,7 @@
     <RefundModal v-if="store.activeModal === 'refund'" />
     <TopupModal v-if="store.activeModal === 'topup'" />
     <AddressModal v-if="store.activeModal === 'address'" />
+    <ReferralModal v-if="store.activeModal === 'referral'" />
     <AiOnboardingWizard v-if="store.activeModal === 'onboarding'" as-modal @close="store.closeModal" />
   </div>
 </template>
@@ -52,6 +53,7 @@ import OrderSuccessModal from './components/modals/OrderSuccessModal.vue';
 import RefundModal from './components/modals/RefundModal.vue';
 import TopupModal from './components/modals/TopupModal.vue';
 import AddressModal from './components/modals/AddressModal.vue';
+import ReferralModal from './components/modals/ReferralModal.vue';
 import AiOnboardingWizard from './components/onboarding/AiOnboardingWizard.vue';
 
 import { useMovaStore } from './stores/useMovaStore';
