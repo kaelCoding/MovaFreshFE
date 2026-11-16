@@ -47,7 +47,7 @@ Mục tiêu: **Rào cản gia nhập thấp nhất có thể (Frictionless Entry
    - **Câu 1 — Khu vực sinh sống:** TP.HCM (Quận 1, 3, 7, Bình Thạnh, TP. Thủ Đức...) hoặc các tỉnh Đông Nam Bộ lân cận (Bình Dương, Đồng Nai).
    - **Câu 2 — Số người ăn trong gia đình:** Sử dụng bộ nút tăng giảm linh hoạt `[-] [Số người] [+]` (1, 2, 3, 4, 5, 6+ người). *Tuyệt đối không dùng dropdown cứng ngắc.*
    - **Câu 3 — Phong cách ẩm thực:** Món thuần Việt truyền thống, Món kết hợp Á-Âu, Cơm nhà thanh đạm, hay Đổi vị cuối tuần phong cách Bistro Tây.
-   - **Câu 4 — Mục tiêu sức khỏe & Thể trạng:** Tăng cơ / High Protein (gym/thể thao), Giảm mỡ / Low Carb, Kiểm soát đường huyết (tiểu đường / tiền tiểu đường), Ăn nhẹ dễ tiêu (dạ dày / hệ tiêu hóa nhạy cảm), Cân bằng dinh dưỡng gia đình có trẻ nhỏ và người lớn tuổi.
+   - **Câu 4 — Mục tiêu sức khỏe & Thể trạng:** Tăng cơ / High Protein (gym/thể thao), Giảm mỡ / Low Carb, Hạn chế đường / ít tinh bột (người cần ăn kiêng đường; không hứa chữa bệnh), Ăn nhẹ dễ tiêu (dạ dày / hệ tiêu hóa nhạy cảm), Cân bằng dinh dưỡng gia đình có trẻ nhỏ và người lớn tuổi.
    - **Câu 5 — Dị ứng & Thực phẩm kiêng cữ:** Không ăn cay, kiêng hải sản, không ăn thịt bò, ăn chay bán phần (Flexitarian).
    - **Câu 6 — Số bữa nấu tại nhà dự kiến mỗi tuần:** 3 bữa, 4 bữa, 5 bữa, hay 6 bữa/tuần.
 
@@ -83,9 +83,10 @@ Khác biệt cốt lõi: **Không hiển thị danh sách hàng chục món lẻ
 - **Chu kỳ cam kết:** Bắt buộc tối thiểu **4 tuần** (1 chu kỳ gói tháng).
 - **Thanh toán Fresh Credit trả trước:**
   - Thiết kế bảng nạp nhấn mạnh giá trị thực nhận (Perceived Value):
-    - *Gói Tiêu chuẩn:* Nạp **1.500.000đ** $\rightarrow$ Nhận tài khoản ăn **2.000.000đ Fresh Credit** (Tiết kiệm 25%).
-    - *Gói Gia đình Vui vẻ:* Nạp **2.800.000đ** $\rightarrow$ Nhận tài khoản ăn **3.800.000đ Fresh Credit**.
-    - *Gói Premium Dinh dưỡng:* Nạp **5.000.000đ** $\rightarrow$ Nhận tài khoản ăn **7.000.000đ Fresh Credit**.
+    - *Gói Tiêu chuẩn:* Nạp **1.500.000đ** $\rightarrow$ Nhận **1.650.000đ Fresh Credit** (thưởng nạp 10%; số minh họa, cấu hình được).
+    - *Gói Gia đình Vui vẻ:* Nạp **2.800.000đ** $\rightarrow$ Nhận **3.080.000đ Fresh Credit** (thưởng 10%).
+    - *Gói Premium Dinh dưỡng:* Nạp **5.000.000đ** $\rightarrow$ Nhận **5.500.000đ Fresh Credit** (thưởng 10%).
+  - *Ưu đãi chu kỳ đầu:* thẻ quà tặng chia theo tuần, cộng thưởng nạp không vượt trần `maxFirstCycleDiscountPct`. Thẻ quà tặng tính theo quy mô gói.
 - **Auto-debit thẻ tín dụng / Gói trả sau (Post-paid Credit line qua ngân hàng đối tác):**
   - Hệ thống tự động trừ tiền trước giờ giao hàng **72 tiếng**. Nếu giao dịch thất bại, gửi thông báo cảnh báo trước 48 tiếng để khách cập nhật thẻ.
 
@@ -98,7 +99,7 @@ Khác biệt cốt lõi: **Không hiển thị danh sách hàng chục món lẻ
   - Tối muộn (18:30 – 21:00): Khách đã có mặt ở nhà tiếp nhận.
 - **Quy tắc đổi món (Cutoff Rules):**
   - Tự động gửi thông báo gợi ý thực đơn tuần tới trước 24 tiếng.
-  - Khách được quyền đổi món hoặc tạm hoãn (Skip) tuần trước giờ giao hàng **8 tiếng** (giờ chốt đơn nhà máy đóng thùng).
+  - Khách được quyền đổi món hoặc tạm hoãn (Skip) tuần trước **giờ chốt sổ nhà máy** của chuyến giao (mặc định 08:00 ngày D-2, cấu hình được). Giao diện luôn hiện ngày giờ cụ thể, ví dụ "Đổi món trước 08:00 thứ Sáu 27/11".
 
 ---
 

@@ -41,7 +41,7 @@ Nghiên cứu        Frontend V2            Backend & Ops     AI Agents &
   2. Xây dựng **10 Khách hàng AI mẫu (AI Personas)** với hồ sơ cá nhân hóa sâu sắc:
      - *Persona 1:* Dân Gym/Fitness nam (Tập trung High Protein, ức gà, bò áp chảo, giảm tinh bột nhanh).
      - *Persona 2:* Nữ văn phòng giảm mỡ / Eat Clean (Low Carb, ưu tiên rau củ quả Đắk Lắk, cá hấp thảo mộc).
-     - *Persona 3:* Bệnh nhân tiểu đường type 2 / Tiền tiểu đường (Kiểm soát nghiêm ngặt chỉ số đường huyết Low-GI, gạo lứt, không đường tinh luyện).
+     - *Persona 3:* Bệnh nhân tiểu đường type 2 / Tiền tiểu đường (Hạn chế đường và tinh bột, ưu tiên gạo lứt, món ít đường tinh luyện; không hứa chữa bệnh).
      - *Persona 4:* Người bị trào ngược dạ dày / Tiêu hóa kém (Món canh thanh đạm, hấp luộc, xốt không ớt cay).
      - *Persona 5:* Gia đình hạt nhân trẻ (Vợ chồng + 1 con nhỏ 4 tuổi, cần mâm cơm nhanh 15 phút đủ canh rau thịt cá).
      - *Persona 6:* Đại gia đình tam đại đồng đường (Ông bà thích món truyền thống mềm nhừ, con cháu thích thịt bò bít tết).
@@ -66,7 +66,7 @@ Nghiên cứu        Frontend V2            Backend & Ops     AI Agents &
   - [ ] Module `AiOnboardingModal.vue`: Phễu khảo sát 5–6 câu hỏi nhanh.
   - [ ] Module `VietnameseFamilyMealBuilder.vue`: Gợi ý mâm cơm 5 món tự động (Đạm + Canh + Rau + Tinh bột + Trái cây).
   - [ ] Module `SubscriptionPlanSelector.vue`: Chọn gói 4 tuần, thiết lập 1–2 ngày giao cố định và khung giờ tránh kẹt xe.
-  - [ ] Module `FreshCreditTopup.vue`: Bảng nạp thẻ nhận giá trị thặng dư (Nạp 1.5M nhận 2.0M).
+  - [ ] Module `FreshCreditTopup.vue`: Bảng nạp thẻ nhận giá trị thặng dư (Nạp 1.5M nhận 1.65M; thưởng nạp cấu hình được).
 
 ---
 

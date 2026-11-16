@@ -11,7 +11,7 @@
 
 ### Giá trị cốt lõi giải quyết cho khách hàng
 1. **Tiết kiệm 1.5 – 2 tiếng mỗi ngày:** Xóa bỏ hoàn toàn gánh nặng suy nghĩ *"Hôm nay ăn gì?"*, đi chợ, rửa rau, nhặt củ, chặt thịt, thái cá. Mọi nguyên liệu đều được sơ chế sạch sẽ, đóng gói chân không chuẩn vệ sinh an toàn thực phẩm.
-2. **Cá nhân hóa bằng AI:** Bữa ăn thiết kế riêng theo thể trạng (tăng cơ, giảm mỡ, kiểm soát đường huyết/tiểu đường, dạ dày) và cấu trúc khẩu vị gia đình.
+2. **Cá nhân hóa bằng AI:** Bữa ăn thiết kế riêng theo thể trạng (tăng cơ, giảm mỡ, ít tinh bột / hạn chế đường, dạ dày nhạy cảm; không hứa chữa bệnh) và cấu trúc khẩu vị gia đình.
 3. **Chuẩn vị Mâm cơm Á Đông:** Gói xốt độc quyền định lượng chính xác từng gram, nấu nhanh trong 15–20 phút là có mâm cơm nóng hổi, chuẩn vị như mẹ nấu mà không thừa mứa đồ ăn hay vứt bỏ nguyên liệu hỏng cuối tuần.
 
 ---
@@ -22,7 +22,7 @@
 
 ```
 [Khách hàng Trả Tiền Trước 100%]
-   ├── Nạp trước gói Fresh Credit (Ưu đãi 10% - 25%)
+   ├── Nạp trước gói Fresh Credit (thưởng nạp ~10%)
    └── Subscription 4 tuần (Auto-debit trước 72 giờ)
               │
               ▼
@@ -36,8 +36,8 @@
 
 ### A. Đầu vào (Thu tiền của Khách hàng trước 100%)
 - **Gói nạp Fresh Credit trả trước:**
-  - Khách nạp tiền để nhận điểm bữa ăn với chiết khấu trực tiếp từ 10% đến 25%.
-  - *Tâm lý học hành vi:* Khách hàng cảm thấy được nhận giá trị thặng dư ngay lập tức (Ví dụ: nạp 1.500.000đ nhận hạn mức ăn trị giá 2.000.000đ; nạp 3.000.000đ nhận 4.000.000đ).
+  - Khách nạp tiền để nhận điểm bữa ăn kèm thưởng nạp thường xuyên khoảng 10%. Ưu đãi lớn hơn chỉ áp ở chu kỳ đầu, có trần tổng `maxFirstCycleDiscountPct` (ví dụ: bonus 25% cộng thẻ quà tặng 900k cho mức giảm thực khoảng 42%, làm margin chu kỳ sau về 0–5%).
+  - *Tâm lý học hành vi:* Khách hàng cảm thấy được nhận giá trị thặng dư ngay lập tức (Ví dụ minh họa: nạp 1.500.000đ nhận 1.650.000đ. Mức thưởng nằm trong `src/shared/config/business.js`, không viết cứng).
   - Thu tiền mặt ngay lập tức, khách hàng tự nguyện "gửi tiền" vào hệ sinh thái MOVA.
 - **Mô hình Subscription 4 tuần:**
   - Bắt buộc chu kỳ đăng ký tối thiểu 4 tuần.
@@ -57,7 +57,7 @@
 
 ### Cơ chế Gift Card / Voucher trải đều theo tuần (Staggered Discount)
 Thay vì giảm giá sâu 1 lần 50% ở tuần đầu tiên (khiến thợ săn deal hủy gói ngay tuần 2), MOVA thiết kế các gói ưu đãi rải đều:
-- **Ví dụ Gói quà tặng tân thủ 900.000đ:**
+- **Ví dụ Gói quà tặng tân thủ 900.000đ** (số minh họa theo HelloFresh, KHÔNG phải số đã chốt; số thật lấy từ nghiên cứu 200 hộ và nằm trong `src/shared/config/business.js`):
   - Tuần 1: Giảm **300.000đ** (Kích thích trải nghiệm tuần đầu tiên với rào cản giá thấp).
   - Tuần 2: Giảm **200.000đ** (Tiếp tục giữ chân để hình thành thói quen nấu ăn tại nhà).
   - Tuần 3: Giảm **200.000đ** (Giai đoạn chuyển đổi thói quen dinh dưỡng).

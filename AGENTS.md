@@ -14,7 +14,7 @@ Mọi AI Agent (Gemini, Claude, GPT, Cursor, Roo, v.v.) khi được kích hoạ
 3. [`.agent/03_OPERATIONS_FACTORY_AND_AGENTS.md`](file:///.agent/03_OPERATIONS_FACTORY_AND_AGENTS.md): Vận hành nhà máy Đắk Lắk, kho phụ TP.HCM, quy cách đóng gói, Dashboard sản xuất & hệ sinh thái AI Agents.
 4. [`.agent/04_TECH_ARCHITECTURE_AND_CONVENTIONS.md`](file:///.agent/04_TECH_ARCHITECTURE_AND_CONVENTIONS.md): Hiện trạng kiến trúc Vue 3 + Pinia, quy chuẩn UI/UX, bảng mã màu, typography, cấu trúc code.
 5. [`.agent/05_PROGRESS_AND_ROADMAP.md`](file:///.agent/05_PROGRESS_AND_ROADMAP.md): Bảng theo dõi tiến độ V1 $\rightarrow$ V2, kế hoạch 4 Tracks hành động (với trọng tâm Test Order 10 AI Personas tuần này).
-6. [`.agent/06_MEETING_DECISIONS_LOG.md`](file:///.agent/06_MEETING_DECISIONS_LOG.md): Biên bản các quyết định chiến lược đã chốt ngày 15/11/2026 của Ban sáng lập (không tranh luận lại).
+6. [`.agent/06_MEETING_DECISIONS_LOG.md`](file:///.agent/06_MEETING_DECISIONS_LOG.md): Biên bản các quyết định chiến lược đã chốt ngày 15/11/2026 của Ban sáng lập (không tranh luận lại). ĐỌC MỤC "ĐÍNH CHÍNH" Ở ĐẦU FILE: mục này thay thế mọi chỗ khác ghi "8 tiếng", thưởng nạp 25–40%, hoặc số thẻ quà tặng cố định.
 
 ---
 
@@ -26,7 +26,7 @@ Mọi AI Agent (Gemini, Claude, GPT, Cursor, Roo, v.v.) khi được kích hoạ
 - **Nguyên tắc dòng tiền tối thượng:** 
   $$\text{Tiền của khách hàng phải vào trước 100\%} \quad \times \quad \text{Công nợ với nhà máy \& nhà cung cấp trả sau}$$
 - Khách hàng trả tiền trước thông qua:
-  - **Fresh Credit** (chiết khấu trực tiếp 10–25% nạp trước).
+  - **Fresh Credit** (thưởng nạp thường xuyên khoảng 10%; ưu đãi lớn hơn chỉ áp ở chu kỳ đầu và có trần tổng — xem mục Đính chính trong `.agent/06`).
   - Hoặc **Subscription trọn gói 4 tuần** (hoặc cơ chế tự động trừ thẻ tín dụng trước ngày giao **72 tiếng**).
 - Nhà máy và nhà cung cấp nguyên liệu nhận thanh toán theo kỳ công nợ đàm phán gối đầu. Mô hình này tạo ra **Dòng tiền vận hành luôn dương (Positive Operating Cash Flow)** và triệt tiêu rủi ro tồn kho nông sản.
 
@@ -52,7 +52,7 @@ Mọi dòng code, UI component, API logic hoặc kịch bản trải nghiệm vi
 
 - **Subscription Length:** Tối thiểu 4 tuần.
 - **Auto-debit / Charge cutoff:** Trước giờ giao 72 tiếng.
-- **Dish customization cutoff:** Trước giờ giao 8 tiếng.
+- **Dish customization cutoff:** Giờ chốt sổ nhà máy của chuyến giao (mặc định 08:00 ngày D-2, cấu hình được). Giao diện luôn hiện ngày giờ cụ thể, không ghi "8 tiếng".
 - **Target Gross Margin:** 20% – 30%.
 - **Target Customer Retention Rate (Month 2+):** $\ge 50\%$.
 - **Operating Target:** Tối đa hóa tỷ lệ $\frac{\text{Doanh thu}}{\text{Nhân sự vận hành}}$ bằng AI Agents & quy trình tự động hóa.

@@ -5,9 +5,23 @@
 
 ---
 
+## ĐÍNH CHÍNH (16/11/2026, đối chiếu lại với bản ghi cuộc họp)
+
+Bản ghi chép trước đó có vài điểm khác với những gì cuộc họp thực sự nói. Các điểm dưới đây thay thế nội dung cũ ở mọi file trong repo:
+
+1. **Hạn đổi món.** Cuộc họp nói về "giờ chốt sổ của nhà máy" (39:51–40:32), và chị My hỏi "8 giờ của ngày nào?". Đó là một mốc giờ, không phải "8 tiếng trước giờ giao". Quy tắc: khóa đổi món lúc giờ chốt sổ của chuyến (mặc định 08:00 ngày D-2, cấu hình được). Chị My chỉ nói "nếu làm được thì tốt quá", tức là có điều kiện. Giao diện luôn hiện ngày giờ cụ thể.
+2. **Thưởng nạp.** Chị My nói "cắt 10% người ta nạp ngay" (31:36). Mức thưởng nạp thường xuyên là khoảng 10%. Ưu đãi lớn hơn chỉ áp ở chu kỳ đầu, có trần tổng `maxFirstCycleDiscountPct`, vì bonus 25% cộng thẻ quà tặng 900k cho mức giảm thực khoảng 42%, vượt xa margin mục tiêu 20–30%.
+3. **Số thẻ quà tặng 900k (300/200/200/200)** chỉ là ví dụ minh họa theo HelloFresh. Số thật phải ra từ nghiên cứu 200 hộ (33:33: "phải ra số thực chứ không phải giả định").
+4. **Mục tiêu sức khỏe.** Hỏi để xếp món, nhưng lời văn dùng "ít tinh bột", "hạn chế đường"; không hứa chữa bệnh (46:02). Các dòng chuyên sâu (không đường, không mì chính, chay) làm sau (48:24).
+5. **Thứ tự phễu.** Hồ sơ → xem thực đơn tuần 1 → trả tiền → tinh chỉnh. Khách thấy thực đơn trước khi chuyển tiền (12:15, 26:39).
+
+Mọi con số kinh doanh nằm trong `src/shared/config/business.js`, không viết cứng trong component.
+
+---
+
 ## THÔNG TIN CUỘC HỌP ĐỊNH HƯỚNG CHIẾN LƯỢC V2
 
-- **Thời gian:** 14:00 – 18:30, Ngày 15/11/2026.
+- **Thời gian:** 13:09, ngày 15/11/2026, kéo dài khoảng 62 phút (theo bản ghi Fireflies).
 - **Địa điểm:** Trực tiếp kết hợp Hybrid Online (TP. Hồ Chí Minh — Đắk Lắk — Quốc tế).
 - **Thành phần tham dự:**
   1. **Hà My Trần** — Founder (Chủ trì phiên họp, định hướng chiến lược kinh doanh & FinTech).
@@ -36,13 +50,13 @@
 - **Bối cảnh:** Đội dev quen gọi tính năng số dư tài khoản là "Ví điện tử / E-wallet".
 - **Quyết định chốt:** **TUYỆT ĐỐI KHÔNG DÙNG TỪ "VÍ ĐIỆN TỬ" TRÊN TOÀN BỘ HỆ THỐNG.**
   - Nghị định 52/2024/NĐ-CP quy định rất chặt chẽ về giấy phép tổ chức cung ứng dịch vụ trung gian thanh toán.
-  - Tên gọi pháp lý và thương mại duy nhất được phê duyệt: **Fresh Credit** hoặc **Điểm bữa ăn trả trước**. Khách nạp tiền là hình thức mua thẻ trả trước điểm ăn uống nội bộ, được hưởng chiết khấu giá trị thực nhận (10–25%).
+  - Tên gọi pháp lý và thương mại duy nhất được phê duyệt: **Fresh Credit** hoặc **Điểm bữa ăn trả trước**. Khách nạp tiền là hình thức mua thẻ trả trước điểm ăn uống nội bộ, được hưởng thưởng nạp (khoảng 10%; xem Đính chính).
 
 ### QUYẾT ĐỊNH 4: THỜI GIAN CAM KẾT SUBSCRIPTION TỐI THIỂU 4 TUẦN
 - **Bối cảnh:** Đề xuất cho phép khách mua thử gói 1 tuần rời rạc.
 - **Quyết định chốt:** **KHÔNG BÁN GÓI 1 TUẦN RỜI RẠC. BẮT BUỘC 4 TUẦN.**
   - Chi phí thu nạp khách hàng (CAC) tại TP.HCM khá cao. Nếu khách chỉ mua 1 tuần rồi rời bỏ, biên lợi nhuận bị âm.
-  - Phải duy trì tối thiểu 4 tuần để khách hàng hình thành thói quen nấu cơm nhà chuẩn dinh dưỡng. Để giảm rào cản tài chính ban đầu, triển khai mô hình Gift Card 900k phân bổ đều qua 4 tuần (Tuần 1: -300k, Tuần 2: -200k, Tuần 3: -200k, Tuần 4: -200k).
+  - Phải duy trì tối thiểu 4 tuần để khách hàng hình thành thói quen nấu cơm nhà chuẩn dinh dưỡng. Để giảm rào cản tài chính ban đầu, triển khai mô hình thẻ quà tặng phân bổ đều qua 4 tuần, học HelloFresh. Số 900k (Tuần 1: -300k, Tuần 2: -200k, Tuần 3: -200k, Tuần 4: -200k) chỉ là ví dụ minh họa; số thật chốt từ nghiên cứu 200 hộ (xem Đính chính).
 
 ### QUYẾT ĐỊNH 5: CẤU TRÚC BỮA ĂN GIA ĐÌNH CHUẨN "MÂM CƠM Á ĐÔNG"
 - **Bối cảnh:** V1 hiển thị các món Tây và món đĩa đơn lẻ như mì ý, bò lúc lắc...
