@@ -5,5 +5,6 @@ import '../assets/styles/main.css';
 import './ops.css';
 import './ops-factory.css';
 import './ops-procurement.css';
+import './ops-logistics.css';
 
 createApp(App).use(router).mount('#ops-app');

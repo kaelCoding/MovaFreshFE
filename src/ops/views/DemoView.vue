@@ -12,6 +12,7 @@
         <li>Mốc trừ tiền kế tiếp: <strong>{{ fmt(st.nextCharge) }}</strong></li>
         <li>Giờ chốt sổ kế tiếp: <strong>{{ fmt(st.nextCutoff) }}</strong></li>
         <li>Giờ giao kế tiếp: <strong>{{ fmt(st.nextDelivery) }}</strong></li>
+        <li>Xe về kho phụ kế tiếp (ngày giao D lúc 02:00): <strong>{{ fmt(st.nextHubArrival) }}</strong></li>
         <li>Đã chốt sổ: <strong>{{ st.plans }}</strong> ngày · PO đã lập: <strong>{{ st.purchaseOrders }}</strong></li>
       </ul>
       <p class="ops-muted">
@@ -23,6 +24,7 @@
         <button class="ops-btn ops-btn-primary" :disabled="!st.nextCharge" @click="jump('charge')">Tới mốc trừ tiền</button>
         <button class="ops-btn ops-btn-primary" :disabled="!st.nextCutoff" @click="jump('cutoff')">Tới giờ chốt sổ</button>
         <button class="ops-btn ops-btn-primary" :disabled="!st.nextDelivery" @click="jump('delivery')">Tới ngày giao</button>
+        <button class="ops-btn ops-btn-primary" :disabled="!st.nextHubArrival" data-testid="jump-hub" @click="jump('hub')">Tới D 02:00 (xe về kho phụ)</button>
       </div>
 
       <div class="ops-set">
@@ -35,6 +37,12 @@
       <p class="ops-muted">Cần đã chốt sổ ít nhất một ngày. Dựng hai lô nguyên liệu, mẻ túi, thùng và đơn ở đủ ba trạng thái (chưa xuất / đang giao / đã giao) để thử Kho phụ → Truy xuất và Thu hồi lô.</p>
       <div class="ops-actions">
         <button class="ops-btn" data-testid="seed-trace" :disabled="!st.plans" @click="seedTrace">Dựng dữ liệu truy xuất mẫu</button>
+      </div>
+
+      <h2>Dữ liệu mẫu cho kho phụ và giao hàng</h2>
+      <p class="ops-muted">Cần đã chốt sổ ít nhất một ngày. Xưởng đóng đủ thùng, lên xe và xuất bến cả hai chuyến (nhiệt độ 2,5°C, có số niêm phong). Sau đó: Tới D 02:00 → Kho phụ → Nhận xe (thử nhận thiếu 1 thùng) → Ghép hải sản → Chia khung/tuyến → Xuất kho → đăng nhập shipper (PIN 3333) giao hàng.</p>
+      <div class="ops-actions">
+        <button class="ops-btn" data-testid="seed-trips" :disabled="!st.plans" @click="seedTrips">Dựng chuyến xe mẫu (xuất bến)</button>
       </div>
 
       <p v-if="msg" class="ops-ok" role="status" data-testid="demo-msg">{{ msg }}</p>
@@ -84,6 +92,11 @@ const seedTrace = () =>
   run(
     () => api.demo.seedTrace(ctx.value),
     (r) => `Đã dựng ${r.skuName}: lô ${r.lotCodes.join(' và ')} trên ${r.orders} đơn (đã giao ${r.counts.delivered}, đang giao ${r.counts.shipped}, đang sản xuất ${r.counts.in_production}, chưa xuất ${r.counts.locked}).`
+  );
+const seedTrips = () =>
+  run(
+    () => api.demo.seedTrips(ctx.value),
+    (r) => `Đã đóng thùng, lên xe và xuất bến ${r.departed.length} chuyến của ngày ${r.day}: ${r.boxes} thùng.`
   );
 const jump = (kind) => run(() => api.demo.jumpTo(ctx.value, kind), summarize);
 const setNow = () => run(() => api.demo.setNow(ctx.value, new Date(at.value)), summarize);

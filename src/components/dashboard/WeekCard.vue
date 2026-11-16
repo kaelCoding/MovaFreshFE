@@ -57,6 +57,10 @@
       </li>
     </ul>
 
+    <ul v-if="week.boxes.length > 1 && week.boxes.some((b) => ['shipping', 'delivered'].includes(b.phase))" class="box-status" aria-label="Trạng thái từng thùng">
+      <li v-for="b in week.boxes" :key="'bs' + b.order_id" :data-phase="b.phase"><b>{{ b.delivery_label }}</b>: {{ b.phase_label }}</li>
+    </ul>
+
     <p v-for="b in week.boxes.filter((x) => x.delivery_issue)" :key="'iss' + b.order_id" class="pl-panel note issue" :data-issue="b.delivery_issue.kind">
       <b>{{ b.delivery_issue.label }}</b><br />{{ b.delivery_issue.detail }}
     </p>
@@ -143,6 +147,9 @@ const skipHint = computed(() => (props.week.editable && props.week.skip.code ===
 }
 .swap:hover { background: var(--green-soft); }
 
+.box-status { list-style: none; margin: 8px 0; padding: 0; display: grid; gap: 4px; font-size: 16px; }
+.box-status li { padding: 6px 10px; border-radius: 10px; background: var(--line-2); }
+.box-status li[data-phase="delivered"] { background: var(--green-soft); color: var(--green-d); }
 .proof { display: grid; gap: 8px; }
 .proof img { width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px; background: var(--line-2); }
 .foot { display: grid; }

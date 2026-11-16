@@ -8,12 +8,14 @@ import WorkshopLayout from './views/workshop/WorkshopLayout.vue';
 import PurchasingLayout from './views/purchasing/PurchasingLayout.vue';
 import HubLayout from './views/hub/HubLayout.vue';
 import SupplierPortalView from './views/supplier/SupplierPortalView.vue';
+import LogisticsLayout from './views/logistics/LogisticsLayout.vue';
+import ShipperView from './views/shipper/ShipperView.vue';
 import { MODULES } from './modules';
 import { session } from './session';
 import { ROLES } from '../shared/config/roles';
 
 // Màn thật đã làm: tổng quan (tạm), kế hoạch (P2A), xưởng (P2A). Các phân hệ còn lại là trang xem trước dữ liệu cho P2B-P2D.
-const COMPONENTS = { overview: HomeView, plan: PlanView, supplier: SupplierPortalView };
+const COMPONENTS = { overview: HomeView, plan: PlanView, supplier: SupplierPortalView, shipper: ShipperView };
 
 const workshopChildren = [
   { path: '', name: 'workshop', component: () => import('./views/workshop/TodayView.vue') },
@@ -40,10 +42,25 @@ const hubChildren = [
   { path: '', name: 'hub', component: () => import('./views/hub/ReceiveGoodsView.vue') },
   { path: 'ton-kho', name: 'hub-stock', component: () => import('./views/hub/StockView.vue') },
   { path: 'truy-xuat', name: 'hub-trace', component: () => import('./views/hub/TraceView.vue') },
-  { path: 'thu-hoi', name: 'hub-recall', component: () => import('./views/hub/RecallView.vue') }
+  { path: 'thu-hoi', name: 'hub-recall', component: () => import('./views/hub/RecallView.vue') },
+  // P2C: nhận xe lạnh, ghép hải sản, chia khung giờ / tuyến, xuất kho
+  { path: 'nhan-xe', name: 'hub-arrival', component: () => import('./views/hub/ArrivalView.vue'), meta: { roles: ['hub', 'admin'] } },
+  { path: 'ghep-hai-san', name: 'hub-seafood', component: () => import('./views/hub/SeafoodView.vue'), meta: { roles: ['hub', 'admin'] } },
+  { path: 'chia-tuyen', name: 'hub-sort', component: () => import('./views/hub/SortView.vue'), meta: { roles: ['hub', 'admin', 'dispatch'] } },
+  { path: 'xuat-kho', name: 'hub-dispatch', component: () => import('./views/hub/DispatchOutView.vue'), meta: { roles: ['hub', 'admin'] } }
 ];
 
-const LAYOUTS = { workshop: [WorkshopLayout, workshopChildren], purchasing: [PurchasingLayout, purchasingChildren], hub: [HubLayout, hubChildren] };
+// P2C: điều phối logistics
+const logisticsChildren = [
+  { path: '', name: 'logistics', component: () => import('./views/logistics/CapacityView.vue') },
+  { path: 'chuyen-xe', name: 'logistics-trips', component: () => import('./views/logistics/TripsView.vue') },
+  { path: 'lap-tuyen', name: 'logistics-routes', component: () => import('./views/logistics/RoutesView.vue') },
+  { path: 'giao-hang', name: 'logistics-exceptions', component: () => import('./views/logistics/ExceptionsView.vue') },
+  { path: 'chuoi-lanh', name: 'logistics-cold', component: () => import('./views/logistics/ColdChainView.vue') },
+  { path: 'chi-phi-kpi', name: 'logistics-cost', component: () => import('./views/logistics/CostKpiView.vue') }
+];
+
+const LAYOUTS = { workshop: [WorkshopLayout, workshopChildren], purchasing: [PurchasingLayout, purchasingChildren], hub: [HubLayout, hubChildren], logistics: [LogisticsLayout, logisticsChildren] };
 
 const moduleRoutes = MODULES.filter((m) => m.name !== 'demo').map((m) =>
   LAYOUTS[m.name]

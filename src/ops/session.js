@@ -14,7 +14,7 @@ function load() {
 export const session = ref(load());
 
 export const ctx = computed(() =>
-  session.value ? { role: session.value.role, supplierId: session.value.supplierId || null } : null
+  session.value ? { role: session.value.role, supplierId: session.value.supplierId || null, shipperId: session.value.shipperId || null } : null
 );
 
 export function setSession(s) {

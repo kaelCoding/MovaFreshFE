@@ -108,10 +108,14 @@ export function setCapacity(db, { zoneId, day, slotId, capacityBoxes, allowBelow
   if (!slot) return withMsg(bad('SLOT_NOT_FOUND'));
   const key = capacityKey(zoneId, day || '*', slotId);
   if (capacityBoxes == null) {
-    delete L.capacity[key];
+    // Bỏ ghi đè của một ngày mà đang có ghi đè "mọi ngày" thì ngày đó đặt rõ về số mặc định (không xóa luôn ghi đè mọi ngày)
+    if (day && day !== '*' && Number.isFinite(L.capacity[capacityKey(zoneId, '*', slotId)])) L.capacity[key] = slot.capacityBoxes;
+    else delete L.capacity[key];
     return good({ key, capacityBoxes: slot.capacityBoxes, reset: true, overbooked: 0 });
   }
-  const used = day && day !== '*' ? slotUsage(db.orders, zoneId, day, slotId) : 0;
+  // Một ngày: số đã đặt của ngày đó. Mọi ngày ('*'): số đã đặt nhiều nhất trong các ngày đang có đơn
+  const days = day && day !== '*' ? [day] : [...new Set(db.orders.filter((o) => o.zoneId === zoneId && o.slotId === slotId).map((o) => o.deliveryDay))];
+  const used = Math.max(0, ...days.map((d) => slotUsage(db.orders, zoneId, d, slotId)));
   const chk = checkCapacityChange({ capacityBoxes: Number(capacityBoxes), used, allowBelowUsed });
   if (!chk.ok) return withMsg(chk);
   L.capacity[key] = Number(capacityBoxes);

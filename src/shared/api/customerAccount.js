@@ -165,6 +165,7 @@ export function createAccountApi(server, cfg = BUSINESS) {
         box_index: o.boxIndex,
         status: o.status,
         phase: orderPhase(o, now),
+        phase_label: PHASE_LABEL[orderPhase(o, now)],
         delivery_date: o.deliveryDay,
         delivery_label: fmtDay(o.deliveryDay),
         delivery_at: o.deliveryAt,

@@ -25,6 +25,7 @@ import { useRouter } from 'vue-router';
 import { api } from '../../shared/api';
 import { ROLES } from '../../shared/config/roles';
 import { SUPPLIERS } from '../../shared/data/catalog';
+import { BUSINESS } from '../../shared/config/business';
 import { setSession } from '../session';
 
 const router = useRouter();
@@ -33,6 +34,7 @@ const error = ref('');
 
 const pins = [
   ...Object.values(ROLES).filter((r) => r.pin).map((r) => ({ pin: r.pin, label: r.label })),
+  ...BUSINESS.logistics.shippers.map((s) => ({ pin: s.pin, label: `Shipper · ${s.name}` })),
   ...Object.values(SUPPLIERS).map((s) => ({ pin: s.pin, label: `Nhà cung cấp · ${s.name}` }))
 ];
 
