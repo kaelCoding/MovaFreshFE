@@ -13,10 +13,12 @@ import { nextId } from './jobs';
  * Thẻ quà tặng (voucher) áp vào thùng đầu tiên của mỗi tuần.
  * - upsells: câu trả lời giá trị của khách (đạm, ít tinh bột, bữa Tây) áp cho cả các tuần sau tuần 1.
  * - lockWeeklyPrice: giá các tuần sau bằng giá tuần 1 (đúng với giá khách đã thấy khi đăng ký), dù AI đổi món.
+ * - startAfterDay / weekOffset: dựng chu kỳ GIA HẠN, chỉ lấy các ngày giao sau ngày đó, số tuần đánh tiếp từ weekOffset.
  */
 export function planOrders({
   customer, subscriptionId, profile, zoneId, slotId, dows, weeks, mealsPerWeek,
-  week1Meals = null, voucher = false, upsells = null, lockWeeklyPrice = false, paymentMethod, now, rand, cfg = BUSINESS
+  week1Meals = null, voucher = false, upsells = null, lockWeeklyPrice = false, startAfterDay = null, weekOffset = 0,
+  paymentMethod, now, rand, cfg = BUSINESS
 }) {
   const zone = getZone(zoneId);
   const slot = findSlot(zone, slotId);
@@ -24,8 +26,8 @@ export function planOrders({
   const perWeek = dows.length;
 
   // Các ngày giao còn kịp chốt sổ, theo thứ tự thời gian
-  const candidates = dayKeySequence(dows, dayKey(now), weeks * perWeek + 10).filter(
-    (k) => cutoffAtFor(k, cfg).getTime() > now.getTime()
+  const candidates = dayKeySequence(dows, startAfterDay && startAfterDay > dayKey(now) ? startAfterDay : dayKey(now), weeks * perWeek + 10).filter(
+    (k) => cutoffAtFor(k, cfg).getTime() > now.getTime() && (!startAfterDay || k > startAfterDay)
   );
   const days = candidates.slice(0, weeks * perWeek);
   if (days.length < weeks * perWeek) throw new Error('Không đủ ngày giao cho chu kỳ');
@@ -65,7 +67,7 @@ export function planOrders({
       deliveryAt: deliveryStartAt(day, slot).toISOString(),
       chargeAt: chargeAtFor(day, slot, cfg).toISOString(),
       cutoffAt: cutoffAtFor(day, cfg).toISOString(),
-      weekIndex: w,
+      weekIndex: weekOffset + w,
       boxIndex: j,
       meals: boxMeals,
       listPriceVnd,
@@ -80,7 +82,7 @@ export function planOrders({
   if (voucher) {
     const schedule = giftCardSchedule(listTotal, cfg);
     for (const d of drafts) {
-      if (d.boxIndex === 0) d.discountVnd = Math.min(schedule[d.weekIndex] || 0, d.listPriceVnd);
+      if (d.boxIndex === 0) d.discountVnd = Math.min(schedule[d.weekIndex - weekOffset] || 0, d.listPriceVnd);
     }
   }
   for (const d of drafts) d.amountVnd = d.listPriceVnd - d.discountVnd;

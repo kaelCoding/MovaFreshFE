@@ -5,14 +5,77 @@ import { aggregateBom } from './bom';
 import { draftPurchaseOrders } from './purchasing';
 import { cutoffAtFor, findSlot, remindAtFor } from './delivery';
 import { fmtDeadline } from '../utils/time';
+import { fmt } from '../utils/formatters';
+import { totalBalance } from './credit';
 
 export function nextId(db, prefix) {
   db.seq[prefix] = (db.seq[prefix] || 0) + 1;
   return `${prefix}-${String(db.seq[prefix]).padStart(5, '0')}`;
 }
 
-export function notify(db, { customerId, type, title, body, at }) {
-  db.notifications.push({ id: nextId(db, 'NTF'), customerId, type, title, body, createdAt: at, read: false });
+/**
+ * Ghi một thông báo cho khách. Dùng chung cho job của hệ thống và cho app vận hành (xem api.ops.*).
+ * type: payment_failed | week_skipped | delivery_reminder | charge_upcoming | low_credit | delivery_status |
+ *       substitution | week_postponed | plan_cancelled | plan_renewed | reward.
+ * meta: dữ liệu có cấu trúc để giao diện dựng thẻ (mã đơn, trạng thái giao, ảnh, khoản bù...).
+ */
+export function notify(db, { customerId, type, title, body, at, meta = null }) {
+  db.notifications.push({ id: nextId(db, 'NTF'), customerId, type, title, body, createdAt: at, read: false, meta });
+}
+
+/** Tên các món đạm của tuần, ghi gọn trong thông báo. */
+function weekMenuSummary(orders) {
+  const names = [];
+  for (const o of orders) for (const m of o.meals) if (m.dishes.protein) names.push(DISHES[m.dishes.protein].name);
+  const shown = names.slice(0, 3).join(', ');
+  return names.length > 3 ? `${shown} và ${names.length - 3} bữa khác` : shown;
+}
+
+/**
+ * Báo trước mốc trừ tiền: thực đơn tuần sắp trừ, số tiền, hạn đổi món. Mỗi tuần một thông báo.
+ * Fresh Credit không đủ cho tuần đó thì thêm một cảnh báo riêng (low_credit).
+ */
+function runChargeNotices(db, now, cfg) {
+  const nowMs = now.getTime();
+  const nowIso = now.toISOString();
+  const leadMs = cfg.timings.notifyBeforeChargeHours * 3600 * 1000;
+  const fired = [];
+  const seen = new Set();
+  for (const o of db.orders) {
+    if (o.status !== 'scheduled' || o.chargeNoticeAt) continue;
+    const chargeMs = Date.parse(o.chargeAt);
+    if (nowMs >= chargeMs || nowMs < chargeMs - leadMs) continue;
+    const key = `${o.subscriptionId}|${o.weekIndex}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const weekOrders = db.orders.filter((x) => x.subscriptionId === o.subscriptionId && x.weekIndex === o.weekIndex && x.status === 'scheduled');
+    for (const x of weekOrders) x.chargeNoticeAt = nowIso;
+    const amount = weekOrders.reduce((s, x) => s + x.amountVnd, 0);
+    const first = weekOrders.reduce((a, b) => (Date.parse(a.chargeAt) <= Date.parse(b.chargeAt) ? a : b));
+    const lastCutoff = weekOrders.reduce((a, b) => (Date.parse(a.cutoffAt) >= Date.parse(b.cutoffAt) ? a : b));
+    notify(db, {
+      customerId: o.customerId,
+      type: 'charge_upcoming',
+      title: `Tuần ${o.weekIndex + 1}: MOVA sắp trừ ${fmt(amount)}`,
+      body: `Trừ lúc ${fmtDeadline(new Date(first.chargeAt))}. Thực đơn: ${weekMenuSummary(weekOrders)}. Đổi món trước ${fmtDeadline(new Date(first.cutoffAt))}.`,
+      at: nowIso,
+      meta: { weekIndex: o.weekIndex, amountVnd: amount, chargeAt: first.chargeAt, cutoffAt: first.cutoffAt, lastCutoffAt: lastCutoff.cutoffAt }
+    });
+    fired.push({ job: 'charge_notice', ref: key });
+    const customer = db.customers.find((c) => c.id === o.customerId);
+    if (customer && o.paymentMethod === 'fresh_credit' && totalBalance(customer.credit) < amount) {
+      const short = amount - totalBalance(customer.credit);
+      notify(db, {
+        customerId: o.customerId,
+        type: 'low_credit',
+        title: 'Fresh Credit chưa đủ cho tuần giao tiếp theo',
+        body: `Còn thiếu ${fmt(short)}. Nạp thêm trước ${fmtDeadline(new Date(first.chargeAt))} để MOVA trừ được tiền, nếu không tuần ${o.weekIndex + 1} sẽ bị tạm hoãn.`,
+        at: nowIso,
+        meta: { weekIndex: o.weekIndex, shortVnd: short, chargeAt: first.chargeAt }
+      });
+    }
+  }
+  return fired;
 }
 
 function markPaid(db, order, nowIso, used, kind) {
@@ -123,6 +186,9 @@ export function runDueJobs(db, now, cfg = BUSINESS) {
   const nowMs = now.getTime();
   const nowIso = now.toISOString();
   const fired = [];
+
+  // 0) Báo khách trước mốc trừ tiền (phải chạy trước bước trừ tiền)
+  fired.push(...runChargeNotices(db, now, cfg));
 
   // 1) Trừ tiền D-3 (72h trước giờ giao)
   for (const o of db.orders) {

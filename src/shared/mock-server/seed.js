@@ -4,6 +4,7 @@ import { rng } from '../utils/formatters';
 import { planOrders, activateSubscription } from '../domain/subscription';
 import { emptyBalance } from '../domain/credit';
 import { nextId } from '../domain/jobs';
+import { SAMPLE_LOTS } from '../data/lots';
 
 export const DB_VERSION = 1;
 
@@ -37,7 +38,12 @@ export function emptyDb(now, running) {
     purchaseOrders: [],
     notifications: [],
     ledger: [],
-    leads: []
+    leads: [],
+    // P1B: lô nguyên liệu (xưởng ghi, trang /q/:code đọc), đánh giá món, lượt chia sẻ nhận thưởng, lượt mời bạn
+    lots: JSON.parse(JSON.stringify(SAMPLE_LOTS)),
+    ratings: [],
+    shares: [],
+    referrals: []
   };
 }
 

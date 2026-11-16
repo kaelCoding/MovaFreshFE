@@ -15,13 +15,16 @@ export const BUSINESS = {
     minWeeks: 4,
     defaultWeeks: 4,
     // Tạm hoãn tối đa bao nhiêu tuần trong một chu kỳ (giả định)
-    maxSkipWeeksPerCycle: 1
+    maxSkipWeeksPerCycle: 1,
+    // Còn từng này tuần (hoặc ít hơn) chưa giao thì app mời khách gia hạn. Gia hạn luôn cần khách đồng ý rõ ràng.
+    renewPromptAtRemainingWeeks: 1
   },
 
   // Đồng hồ vận hành. Mọi mốc tính theo giờ Việt Nam.
   timings: {
     chargeBeforeDeliveryHours: 72, // trừ tiền trước giờ giao 72 tiếng
     remindBeforeDeliveryHours: 24, // báo khách khung giờ giao trước 24 tiếng
+    notifyBeforeChargeHours: 24, // báo khách thực đơn tuần sau + số tiền + hạn đổi món trước mốc trừ tiền 24 tiếng
     cutoffDaysBeforeDelivery: 2, // chốt sổ vào D-2 (giả định, chờ chốt với nhà máy)
     cutoffHour: 8,
     cutoffMinute: 0,
@@ -49,7 +52,11 @@ export const BUSINESS = {
       share: 20000,
       referrer: 100000,
       referee: 100000
-    }
+    },
+    // Chia sẻ nhận thưởng tối đa bao nhiêu lần mỗi tuần (giả định, chống chia sẻ vòng)
+    maxShareRewardsPerWeek: 2,
+    // Mức nạp thêm tối thiểu ngoài các gói nạp
+    minTopUpVnd: 100000
   },
 
   // Phễu đăng ký /plans

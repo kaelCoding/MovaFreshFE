@@ -35,3 +35,28 @@ export function topUp(balance, payVnd, bonusVnd) {
 export function refundOnCancel(balance) {
   return { refundVnd: balance.real, forfeitedPromoVnd: balance.promo, balance: emptyBalance() };
 }
+
+/**
+ * Hoàn lại một khoản đã trừ: trả ngược về các ngăn đã trừ, theo thứ tự ngược của thứ tự trừ
+ * (đã trừ tiền thật trước thì hoàn khuyến mãi trước). Phần không rõ nguồn vào ngăn tiền thật.
+ * `used` = { real, promo } là phần đơn đã trừ từ mỗi ngăn.
+ */
+export function creditBack(balance, amount, used = null, spendOrder = ['real', 'promo']) {
+  if (amount < 0) throw new Error('Số tiền hoàn phải >= 0');
+  const next = { ...balance };
+  const back = { real: 0, promo: 0 };
+  let left = amount;
+  if (used) {
+    for (const bucket of [...spendOrder].reverse()) {
+      const give = Math.min(used[bucket] || 0, left);
+      next[bucket] += give;
+      back[bucket] += give;
+      left -= give;
+    }
+  }
+  if (left > 0) {
+    next.real += left;
+    back.real += left;
+  }
+  return { balance: next, back };
+}

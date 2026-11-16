@@ -3,6 +3,7 @@ import { ROLES } from '../config/roles';
 import { SKUS, SUPPLIERS, SAUCES } from '../data/catalog';
 import { getServer } from '../mock-server/server';
 import { cutoffAtFor } from '../domain/delivery';
+import { applyOrderStatus, applySubstitution, upsertLot } from '../domain/opsEvents';
 import { createCustomerApi } from './customer';
 import { ForbiddenError, viewOrder, viewSupplier } from './views';
 
@@ -13,7 +14,20 @@ const ROLE_CAN = {
   productionPlans: ['workshop', 'hub', 'dispatch', 'purchasing', 'accounting', 'admin'],
   purchaseOrders: ['purchasing', 'accounting', 'admin', 'supplier'],
   suppliers: ['purchasing', 'accounting', 'admin', 'supplier'],
-  demo: ['admin']
+  demo: ['admin'],
+  // Ghi trạng thái giao và thông báo cho khách (xưởng báo đang sản xuất, kho / shipper báo đang giao, đã giao)
+  fulfilment: ['workshop', 'hub', 'shipper', 'dispatch', 'admin'],
+  substitution: ['workshop', 'hub', 'dispatch', 'admin'],
+  lots: ['workshop', 'admin']
+};
+
+const fromEvent = (res) => {
+  if (!res.ok) {
+    const e = new Error(res.message);
+    e.code = res.code;
+    throw e;
+  }
+  return res;
 };
 
 function guard(ctx, action) {
@@ -84,6 +98,42 @@ export function createApi(server = getServer()) {
             .filter((s) => ctx.role !== 'supplier' || s.id === ctx.supplierId)
             .map(viewSupplier)
         );
+      },
+
+      /**
+       * Đổi trạng thái đơn sau chốt sổ: 'in_production' | 'shipped' | 'delivered' | 'redelivery' (giao lại).
+       * Ghi thông báo cho khách (đang giao, đã giao kèm ảnh, giao lại). P2A / P2C gọi hàm này.
+       * Ném Error có `code` nếu đơn không hợp lệ. Không trả về dữ liệu khách.
+       */
+      setOrderStatus(ctx, { orderId, status, photoUrl = null, note = '' }) {
+        guard(ctx, 'fulfilment');
+        return server.write((db, now) => {
+          const res = fromEvent(applyOrderStatus(db, { orderId, status, photoUrl, note }, now));
+          return { orderId: res.order.id, status: res.order.status };
+        });
+      },
+
+      /**
+       * Nhà máy thiếu hàng nên thay món. Đổi món trong đơn, bù vào Fresh Credit của khách (mặc định phần chênh giá)
+       * và báo khách. kind: 'protein' | 'veg' | 'soup' | 'carb' | 'dessert'.
+       */
+      substituteDish(ctx, { orderId, mealIndex, kind, toDishId, reason = '', compensationVnd = null }) {
+        guard(ctx, 'substitution');
+        return server.write((db, now) => {
+          const res = fromEvent(applySubstitution(db, { orderId, mealIndex, kind, toDishId, reason, compensationVnd }, now));
+          return { orderId: res.order.id, compensationVnd: res.compensationVnd };
+        });
+      },
+
+      /** Xưởng ghi lô nguyên liệu / nhãn QR vào db.lots (trang /q/:code đọc từ đây). Khóa là qr_code. */
+      saveLot(ctx, lot) {
+        guard(ctx, 'lots');
+        return server.write((db) => fromEvent(upsertLot(db, lot)).lot);
+      },
+
+      listLots(ctx) {
+        guard(ctx, 'lots');
+        return server.read((db) => [...(db.lots || [])]);
       },
 
       catalog(ctx) {

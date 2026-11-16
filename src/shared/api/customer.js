@@ -14,6 +14,8 @@ import { quotePackage, exactFreshCreditOffer, freshCreditOffer, largerFreshCredi
 import { emptyBalance, topUp } from '../domain/credit';
 import { nextId } from '../domain/jobs';
 import { normalizeContact, contactKey } from '../domain/leads';
+import { applyReferral } from '../domain/rewards';
+import { createAccountApi } from './customerAccount';
 
 const DOW_BY_NAME = { sunday: 0, monday: 1, tuesday: 2, wednesday: 3, thursday: 4, friday: 5, saturday: 6 };
 const NAME_BY_DOW = Object.fromEntries(Object.entries(DOW_BY_NAME).map(([k, v]) => [v, k]));
@@ -638,6 +640,12 @@ export function createCustomerApi(server, cfg = BUSINESS) {
         }
 
         touchLead(db, now, contact, { status: 'converted', customerId: customer.id, profileId: profile.id });
+
+        // Mã mời: người mời nhận thưởng khi khách mới trả gói đầu tiên; khách mới nhận thưởng trong trần ưu đãi chu kỳ đầu
+        const giftTotal = res.orders.reduce((s, o) => s + o.discountVnd, 0);
+        const referral = req.referral_code
+          ? applyReferral(db, now, { referee: customer, code: req.referral_code, packageValueVnd: listTotalVnd, discountSoFarVnd: giftTotal + (topupPlan ? topupPlan.bonusVnd : 0) }, cfg)
+          : { applied: false };
         const first = res.orders[0];
         const last = res.orders[res.orders.length - 1];
         const gift = req.voucher_code ? giftCardSchedule(listTotalVnd, cfg) : [0, 0, 0, 0];
@@ -657,6 +665,7 @@ export function createCustomerApi(server, cfg = BUSINESS) {
           charged_from_fresh_credit_vnd: method === 'fresh_credit' ? res.chargedNowVnd : 0,
           fresh_credit_balance_remaining_vnd: customer.credit.real + customer.credit.promo,
           topup: topupInfo,
+          referral: referral.applied ? { referee_bonus_vnd: referral.refereeBonusVnd } : null,
           auto_debit_cutoff_hours: cfg.timings.chargeBeforeDeliveryHours,
           // Khác contract cũ: không còn "dish_customization_cutoff_hours" (xem docs/contract-changes.md)
           dish_customization_cutoff_at: first.cutoffAt,
@@ -673,6 +682,9 @@ export function createCustomerApi(server, cfg = BUSINESS) {
 
     listNotifications(customerId) {
       return server.read((db) => db.notifications.filter((n) => n.customerId === customerId).reverse());
-    }
+    },
+
+    // ---------- Tài khoản khách (P1B): các tuần của tôi, đổi món, tạm hoãn, dừng gói, Fresh Credit, thưởng, QR ----------
+    ...createAccountApi(server, cfg)
   };
 }
