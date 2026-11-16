@@ -2,7 +2,7 @@
 
 > Repo web KHÔNG sửa `movafresh-platform/docs/api-contract.json`. Theo `movafresh-platform/AGENTS.md`, mọi thay đổi phải có cả Khôi và Hiếu đồng thuận và giữ tương thích ngược. File này ghi lại những chỗ lớp mock `src/shared/api/` đang khác contract hiện tại hoặc cần thêm, để đưa sang bên platform.
 
-Cập nhật: 16/11/2026 (P0, P1A)
+Cập nhật: 16/11/2026 (P0, P1A, P1B)
 
 ## 1. Đã khớp contract (không cần đổi)
 
@@ -117,8 +117,65 @@ Quy tắc: thẻ quà tặng + thưởng nạp không vượt `maxFirstCycleDisc
 - Mã lỗi mới: `INVALID_CONTACT`, `HOUSEHOLD_SIZE_INVALID`, `UPSELL_INVALID`, `MEAL_NOT_FOUND`, `DISH_NOT_ALLOWED`, `TOPUP_TOO_LOW`.
 - Danh mục thêm 3 món Tây (`western: true`, chỉ dùng cho bữa Tây), 2 món tinh bột (bánh mì nướng bơ tỏi, mì Ý xốt cà), SKU `NL-BO-02`, `NL-BANHMI-01`, `NL-MI-01`, xốt `XOT-06..08`.
 
+## 3c. Tài khoản khách và truy xuất QR (P1B)
+
+Các hàm nằm ở `src/shared/api/customerAccount.js`, gộp vào `api.customer.*`. Lỗi theo mục 3.1; mã lỗi mới: `CUSTOMER_NOT_FOUND`, `CUTOFF_PASSED`, `INSUFFICIENT_CREDIT` (kèm `short_vnd`), `NO_CHANGE`, `SKIP_LIMIT`, `ALREADY_POSTPONED`, `SUB_INACTIVE`, `CONFIRM_REQUIRED`, `CONSENT_REQUIRED`, `NOT_DUE`, `INVALID_AMOUNT`, `ORDER_NOT_DELIVERED`, `RATING_INVALID`, `ALREADY_CLAIMED`, `WEEKLY_LIMIT`, `LOT_NOT_FOUND`, `LOT_INVALID`.
+
+### Tài khoản và các tuần
+- Khách hiện tại: lấy `customer_id` từ kết quả phễu `/plans`, hoặc đăng nhập demo bằng SĐT / email đã đăng ký (`findCustomerByContact`, không mật khẩu). `sampleAccounts()` trả vài khách mẫu của hạt giống.
+- `getAccount(customerId)` trả `{ customer, subscription, credit{real_vnd,promo_vnd,total_vnd}, alert, unread_notifications, renewal }`.
+- `myWeeks(customerId)` trả `weeks[]`: `week_index`, `status` (`editable` | `charged` | `charge_failed` | `locked` | `in_production` | `shipping` | `delivered` | `postponed` | `cancelled`), `deadline_at` + `deadline_label` (ngày giờ cụ thể), `boxes[]`, `meals[]` (`dishes[]` có `sauce_name`), `amount_vnd`, `discount_vnd`, `charge{state,at,amount_vnd}`, `postponed_to_week`, `moved_from_week`, `skip{allowed,reason}`.
+- Trạng thái đơn mới: `postponed` (khách tạm hoãn, tuần được dời), `cancelled` (dừng gói). `skipped_unpaid` (hệ thống tạm hoãn vì chưa trừ được tiền) hiện ra là "Tạm hoãn".
+
+### Đổi món, tạm hoãn, dừng gói, gia hạn
+- `mealOptions`, `previewMealChange`, `changeMeal({ customer_id, week_index, meal_index, kind, dish_id })`. Chỉ đổi trước `cutoffAt` của đơn. Tuần ĐÃ trừ tiền (`paid`): chênh lệch trừ / hoàn qua Fresh Credit (`settle.mode` = `charge` | `refund`), hoàn trả ngược về các ngăn đã trừ; thiếu số dư thì `INSUFFICIENT_CREDIT`. Tuần chưa trừ: chỉ đổi số tiền sẽ trừ. Quyết định mặc định: mọi cách trả (thẻ, chuyển khoản) đều cộng/trừ chênh lệch vào Fresh Credit, đúng yêu cầu của prompt. Trái cây tráng miệng không đổi được.
+- `previewSkip` / `skipWeek({ customer_id, week_index })`: tuần cũ thành `postponed`, đơn của tuần được nhân bản ở cuối chu kỳ (cùng thứ, cùng khung, cùng thực đơn / giá / ưu đãi; đã trả thì mang theo `paid`). Giới hạn `subscription.maxSkipWeeksPerCycle` mỗi chu kỳ.
+- `previewCancel` / `cancelSubscription({ customer_id, confirm: true })`: hủy các đơn chưa chốt sổ, tiền các tuần đã trừ quay về Fresh Credit, rồi CHỈ phần tiền thật được hoàn (`refund_vnd`); khuyến mãi còn lại và thẻ quà tặng của các tuần chưa giao mất (`lost_incentives_vnd`). Sổ ghi `order_refund`, `cancel_refund`, `promo_forfeit`. Đơn đã chốt sổ vẫn giao.
+- `renewalOffer` / `renewSubscription({ customer_id, consent: true })`: không tự gia hạn; thiếu `consent` thì `CONSENT_REQUIRED`. Chỉ gia hạn khi còn `subscription.renewPromptAtRemainingWeeks` tuần hoặc ít hơn. Chu kỳ mới không có thẻ quà tặng; gói trả chuyển khoản chuyển sang trừ Fresh Credit.
+
+### Fresh Credit, thông báo
+- `creditSummary` trả `{ balance, alert, history[], packs[], min_topup_vnd }`. `alert` có khi đơn trả bằng Fresh Credit mà số dư không đủ cho tuần kế (`shortfall_vnd`, `charge_at`, `suggested_topup`).
+- `topUpCredit({ customer_id, pack_id | pay_vnd })`: tiền thật vào ngăn `real`, thưởng nạp (`topUpPacks[].bonusPct`, khoảng 10%) vào ngăn `promo`; chạy lại việc trừ các tuần đang `charge_failed`.
+- Thông báo (`db.notifications`) thêm `meta` và các loại: `charge_upcoming` (job mới, trước mốc trừ `timings.notifyBeforeChargeHours`), `low_credit`, `delivery_status` (`meta.status` = `shipped` | `delivered` | `redelivery`, `meta.photoUrl`), `substitution`, `week_postponed`, `plan_cancelled`, `plan_renewed`, `reward`. `notifications(customerId)`, `markNotificationsRead(customerId)`.
+- Phía vận hành ghi thông báo qua hàm dùng chung (P2A / P2C gọi): `api.ops.setOrderStatus(ctx, { orderId, status: 'in_production' | 'shipped' | 'delivered' | 'redelivery', photoUrl?, note? })` (xưởng, kho, shipper, điều phối, admin; trạng thái chỉ đi tới) và `api.ops.substituteDish(ctx, { orderId, mealIndex, kind, toDishId, reason?, compensationVnd? })` (xưởng, kho, điều phối, admin; khoản bù mặc định là phần chênh giá, vào ngăn khuyến mãi, ledger `compensation`).
+
+### Đánh giá, thưởng, mời bạn
+- `pendingRatings(customerId)`, `rateDish({ customer_id, order_id, dish_id, thumb: 'up'|'down', sauce_salt: 'salty'|'ok'|'bland', spice: 'low'|'ok'|'high' })` lưu vào `db.ratings[]` `{ customerId, orderId, dishId, sauceCode, thumb, sauceSalt, spice }`. Chỉ đơn `delivered`.
+- `rewards`, `saveProfile`, `claimShare({ customer_id, kind: 'menu'|'photo'|'qr', ref })`. Mức thưởng ở `incentives.rewards`; chia sẻ tối đa `incentives.maxShareRewardsPerWeek` lần mỗi tuần và mỗi (loại, mã) một lần. Thưởng vào ngăn `promo`. Ảnh món đã nấu được duyệt tự động trong bản demo.
+- Link mời `/plans?ref=MOVA-0007` (mã suy ra từ mã khách). `createSubscription` nhận `referral_code`: người mời nhận `rewards.referrer` khi khách mới trả gói đầu; khách mới nhận `rewards.referee` nhưng bị chặn bởi trần ưu đãi chu kỳ đầu (`maxFirstCycleDiscountPct`). Response thêm `referral: { referee_bonus_vnd } | null`. Lưu ở `db.referrals`.
+
+### Lô nguyên liệu / nhãn QR: `db.lots` (xưởng ghi ở P2A, trang `/q/:code` đọc)
+
+Hình dạng theo `ai-engine/traceability-waze/README.md`, thêm vài trường (đề xuất sang platform):
+
+```json
+{
+  "qr_code": "MOVA-TRACE-BO-202611-0912",
+  "kind": "beef | rice",
+  "sku": "NL-BO-01",
+  "product_name": "Thịt thăn bò ăn cỏ Đắk Lắk",
+  "farm_info": { "farm_name": "...", "location": "Krông Năng, Đắk Lắk", "region": "...", "coordinates": "12.9845, 108.2341" },
+  "trust_score": 98.5,
+  "verifications": { "mova_inspector": { "verified": true, "inspector_name": "...", "antibiotic_test": "NEGATIVE" }, "peer_validations_count": 8, "last_peer_check": "2026-11-14T09:30:00Z" },
+  "harvest_or_slaughter_timestamp": "2026-11-14T22:30:00Z",
+  "processed_timestamp": "2026-11-15T03:00:00Z",
+  "slaughter_and_packing_timestamp": "2026-11-15T03:00:00Z",
+  "temperature_log": "Duy trì liên tục 1.5°C - 3.2°C ...",
+  "temperature_readings": [{ "point": "Lên xe lạnh tại Đắk Lắk", "at": "2026-11-15T09:00:00Z", "celsius": 2.1 }],
+  "dish_ids": ["D-PRT-002"],
+  "sample": true
+}
+```
+
+- Trường thêm so với README: `sku`, `kind`, `region`, `harvest_or_slaughter_timestamp` (ngày giết mổ / thu hoạch) và `processed_timestamp` (ngày sơ chế) vì README gộp thành một mốc, `temperature_readings[]` (nhật ký nhiệt có cấu trúc, để kiểm ngưỡng `temperature.chill`), `dish_ids[]` (món dùng lô này; bỏ trống thì lấy món có nguyên liệu chính là `sku`), `sample` (dữ liệu mẫu, trang hiện chú thích).
+- Ghi: `api.ops.saveLot(ctx, lot)` (xưởng, admin), khóa là `qr_code`, kiểm tra bởi `validateLot`. Đọc cho khách: `api.customer.traceLot(code)` (không cần đăng nhập). Bản khách KHÔNG có `inspector_name` và `coordinates`.
+- `seed.js` có 3 lô mẫu (`src/shared/data/lots.js`): bò `MOVA-TRACE-BO-202611-0912`, `MOVA-TRACE-BO-202611-0913`, gạo `MOVA-TRACE-GAO-202611-0207`. Bộ nhớ cũ chưa có `db.lots` thì trang đọc dự phòng từ dữ liệu mẫu.
+- Công thức 15 phút theo món ở `src/shared/data/recipes.js` (chưa có trong catalog).
+
 ## 4. Câu hỏi mở cho Khôi và Hiếu
 
 1. Giờ chốt sổ mặc định 08:00 ngày D-2 có khớp lịch xe lạnh Đắk Lắk → TP.HCM không?
 2. `bom_raw_summary` trong contract đang dùng khóa kiểu `pork_belly_g`; mock dùng mã SKU (`NL-HEO-02`) để khớp `factory-requests`. Chọn một kiểu.
 3. Thuật toán gom BOM thật nằm ở `ai-engine/bom-aggregator`. Mock chỉ nhân gram theo số người và đếm túi xốt.
+4. Tạm hoãn một tuần: dời tuần đó xuống cuối chu kỳ (các tuần sau giữ ngày) hay đẩy cả lịch lên một tuần? Mock đang chọn dời xuống cuối.
+5. Chênh lệch khi đổi món sau mốc trừ tiền của khách trả thẻ: cộng/trừ Fresh Credit (mock) hay trừ / hoàn thẳng vào thẻ?
