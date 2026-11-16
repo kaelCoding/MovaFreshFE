@@ -3,16 +3,29 @@ import LoginView from './views/LoginView.vue';
 import HomeView from './views/HomeView.vue';
 import ModuleView from './views/ModuleView.vue';
 import DemoView from './views/DemoView.vue';
+import PlanView from './views/PlanView.vue';
+import WorkshopLayout from './views/workshop/WorkshopLayout.vue';
 import { MODULES } from './modules';
 import { session } from './session';
 import { ROLES } from '../shared/config/roles';
 
-const moduleRoutes = MODULES.filter((m) => m.name !== 'demo').map((m) => ({
-  path: m.path,
-  name: m.name,
-  component: m.name === 'overview' ? HomeView : ModuleView,
-  meta: { module: m }
-}));
+// Màn thật đã làm: tổng quan (tạm), kế hoạch (P2A), xưởng (P2A). Các phân hệ còn lại là trang xem trước dữ liệu cho P2B-P2D.
+const COMPONENTS = { overview: HomeView, plan: PlanView };
+
+const workshopChildren = [
+  { path: '', name: 'workshop', component: () => import('./views/workshop/TodayView.vue') },
+  { path: '7-ngay', name: 'workshop-week', component: () => import('./views/workshop/WeekView.vue') },
+  { path: 'nhan-nguyen-lieu', name: 'workshop-receive', component: () => import('./views/workshop/ReceiveView.vue') },
+  { path: 'dong-goi', name: 'workshop-pack', component: () => import('./views/workshop/PackView.vue') },
+  { path: 'xuat-xe', name: 'workshop-load', component: () => import('./views/workshop/LoadView.vue') },
+  { path: 'bao-thieu', name: 'workshop-shortage', component: () => import('./views/workshop/ShortageView.vue') }
+];
+
+const moduleRoutes = MODULES.filter((m) => m.name !== 'demo').map((m) =>
+  m.name === 'workshop'
+    ? { path: m.path, component: WorkshopLayout, meta: { module: m }, children: workshopChildren }
+    : { path: m.path, name: m.name, component: COMPONENTS[m.name] || ModuleView, meta: { module: m } }
+);
 
 const routes = [
   { path: '/login', name: 'login', component: LoginView },
