@@ -2,7 +2,7 @@
 
 > Repo web KHÔNG sửa `movafresh-platform/docs/api-contract.json`. Theo `movafresh-platform/AGENTS.md`, mọi thay đổi phải có cả Khôi và Hiếu đồng thuận và giữ tương thích ngược. File này ghi lại những chỗ lớp mock `src/shared/api/` đang khác contract hiện tại hoặc cần thêm, để đưa sang bên platform.
 
-Cập nhật: 16/11/2026 (P0, P1A, P1B, P2A, P2B, P2C)
+Cập nhật: 16/11/2026 (P0, P1A, P1B, P2A, P2B, P2C, P2D)
 
 ## 1. Đã khớp contract (không cần đổi)
 
@@ -391,6 +391,100 @@ Mỗi ngày giao một bản ghi, cập nhật mỗi khi lập chuyến, nhập 
 
 `orders-logistics` nên có: sức chứa khung giờ ghi đè theo ngày, bảng kê thùng đối chiếu ở kho phụ (thiếu / thừa / hỏng), ghép hải sản theo lô, tuyến giao theo shipper, nhật ký nhiệt độ 4 mốc kèm quyết định QC, thu hồi thùng xốp / túi gel, chi phí logistics mỗi thùng cho `cashflow-ledger` (hình dạng `db.logisticsCosts` ở trên), và webhook `DELIVERED` kèm ảnh. Điểm cần Hiếu / Khôi chọn: engine tối ưu tuyến thật (thay bản mock), nguồn phường / tọa độ.
 
+## 3g. Tài chính, kế toán, giám sát nhà cung cấp, tổng quan founder (P2D)
+
+Hàm nằm ở `src/shared/api/opsFinance.js`, gộp vào `api.ops.finance.*` (kế toán), `api.ops.monitoring.*` (thẻ điểm nhà cung cấp) và `api.ops.overview.*` (tổng quan founder). Logic thuần ở `domain/financeCredit.js` (sổ Fresh Credit), `financeRevenue.js` (giá vốn, VAT, doanh thu, margin, hóa đơn), `financePayables.js` (tuổi nợ, đợt chi, tiền mặt, bao phủ, dòng tiền), `financeBank.js` (đối soát), `financeJournal.js` (bút toán và CSV), `scorecard.js`; phần ghi và dựng ngữ cảnh ở `financeOps.js`.
+
+**Nguyên tắc.** MOVA không tự viết phần mềm kế toán: chỉ giữ sổ phụ nghiệp vụ và XUẤT bút toán (CSV) qua bảng ánh xạ tài khoản do kế toán cấu hình (`BUSINESS.finance.accountMap`, sửa ở Cài đặt; không có số tài khoản nào viết cứng, chưa ánh xạ thì cột mã ghi `?khóa`). Mọi con số tài chính là giả định chờ kế toán xác nhận.
+
+### Quyền
+
+| Nhóm | Vai trò |
+|---|---|
+| `financeRead`, `financeWrite` (sổ, đối soát, doanh thu, margin, công nợ, đợt chi, dòng tiền, bút toán, cài đặt) | kế toán, admin |
+| `adjustRequest` (đề nghị điều chỉnh Fresh Credit) | kế toán |
+| `adjustApprove` (duyệt / từ chối) | admin. Người đề nghị không tự duyệt |
+| `scorecard` (thẻ điểm nhà cung cấp, màn Giám sát) | mua hàng, admin |
+| `overview` (tổng quan founder) | admin |
+
+Dữ liệu trả ra chỉ có MÃ khách (`C-0007`), không có tên, số điện thoại, địa chỉ. Xưởng, kho phụ, shipper, điều phối, nhà cung cấp không đọc được gì ở nhóm này (`FORBIDDEN`); mua hàng không đọc tài chính, chỉ đọc thẻ điểm.
+
+### Sổ Fresh Credit: không thêm collection, dùng `db.ledger[]`
+
+Mỗi bút `{ id, customerId, orderId?, kind, amountVnd, real, promo, ref?, at, note?, backfill?, approvedBy? }`. `real` / `promo` là phần mỗi ngăn bị ảnh hưởng; dấu do `kind` quyết định (`CREDIT_KINDS` trong `financeCredit.js`):
+
+| Nhóm | `kind` | Ảnh hưởng số dư |
+|---|---|---|
+| Nạp (tiền thật) | `topup` | + real |
+| Thưởng nạp | `topup_bonus` | + promo |
+| Thưởng hồ sơ / chia sẻ / giới thiệu | `reward_profile`, `reward_share`, `reward_referrer`, `reward_referee` | + promo |
+| Trừ cho tuần | `credit_spend`, `swap_charge` | - real / - promo theo `credit.spendOrder` |
+| Bù sự cố | `compensation` | + promo |
+| Hoàn | `swap_refund`, `order_refund` (+ cả hai ngăn), `cancel_refund` (- real, là tiền trả khách), `promo_forfeit` (- promo, thu hồi) | |
+| Điều chỉnh | `adjustment` | `real` / `promo` CÓ DẤU, kèm `approvedBy`, `note` (lý do) |
+| Thu trực tiếp cho đơn (không qua số dư) | `card_charge`, `prepaid_cycle` | không đổi số dư |
+
+- **Bút lịch sử (backfill).** Hạt giống cũ đặt số dư Fresh Credit thẳng (không có bút nạp). `supplementFinance` (chạy khi dựng hạt giống và khi mở bộ nhớ cũ chưa có `db.finance.backfilledAt`, không đổi `DB_VERSION`) ghi bút `topup` / `topup_bonus` có `backfill: true` đặt trước bút đầu tiên của khách, để sổ dựng từ bút luôn bằng `customer.credit` (`creditTotals(...).drift` rỗng). `createSubscription` với `starting_credit` (chỉ có trong mock) cũng ghi bút tại chỗ.
+- **Mã đối soát nạp** (`topupRefFor`): `NAP` + số của mã khách (`C-0007` thành `NAP0007`), ghi ở `ledger[].ref` của `topup`; app khách hiện đúng mã này trong nội dung chuyển khoản (trước đây hiện "NAP <số điện thoại>" nên không khớp được). Mã gói đăng ký vẫn là `MOVA...` (`subscription.paymentRef`).
+- `finance.creditSummary(ctx)` trả `{ liabilityRealVnd (nợ Fresh Credit = tiền thật chưa dùng), promoOutstandingVnd (khuyến mãi còn treo), totalVnd, drift[], groups[] (7 nhóm), customers[], spendOrder, pendingAdjustments }`.
+- `finance.creditLedger(ctx, { customerId?, group?, limit? })` trả `{ rows[], balance, total }`; có `customerId` thì mỗi dòng kèm `balanceAfter` (số dư chạy sau bút).
+- **Điều chỉnh**: `finance.requestAdjustment(ctx, { customerId, bucket: 'real' | 'promo', deltaVnd (có dấu), reason })` tạo `db.finance.adjustments[]` trạng thái `pending`, KHÔNG đổi số dư; `finance.decideAdjustment(ctx, { id, approve, note? })` (admin) duyệt thì mới đổi số dư và ghi bút `adjustment`. Mã lỗi: `ADJUST_INVALID`, `ADJUST_NOT_FOUND`, `ADJUST_STATE`, `SELF_APPROVE`.
+
+### Collection mới `db.finance` (một lát cắt)
+
+`{ bankTxns[], einvoices[], adjustments[], settings { accountMap { khóa: mã }, openingCashVnd, issueOn }, seq, backfilledAt, backfillDrift[] }`.
+
+### Thu tiền và đối soát
+
+- **Webhook ngân hàng (mock).** `finance.bankWebhook(ctx, { txnId?, amountVnd, content, at?, accountNo? })` là hình dạng ngân hàng sẽ gọi vào; `finance.mockBankTransfer(ctx, { ledgerId?, scenario: 'exact' | 'wrong_content' | 'wrong_amount', amountVnd?, content? })` mô phỏng tiền về cho một khoản đang chờ (không truyền `ledgerId` là giao dịch lạ). Cũng có nút ở Bảng demo và ở màn Thu tiền & đối soát. `txnId` trùng thì trả giao dịch cũ (`duplicate: true`).
+- **Quy tắc tự khớp** (`matchBankTxn`): chuẩn hóa nội dung (chữ hoa, bỏ ký tự không phải chữ hoặc số) rồi tìm mã đối soát của một khoản đang chờ tiền về (bút `topup` hoặc `prepaid_cycle` có `ref`, không phải `backfill`). Khớp mã và đúng số tiền: `matched` (`matchedBy: 'auto'`). Khớp mã lệch số tiền: `amount_diff` (kèm `suggestedLedgerId`). Không thấy mã hoặc mã đã khớp rồi: `unmatched`. Hai loại sau vào HÀNG CHỜ KHỚP TAY.
+- `bankTxns[i] = { id 'BNK-nnnnn', txnId, amountVnd, content, accountNo, at, receivedAt, status, ledgerId, suggestedLedgerId, reason, matchedBy ('auto' | 'manual'), note?, diffVnd? }`.
+- `finance.manualMatch(ctx, { bankId, ledgerId, acceptDiff?, note? })`: lệch số tiền thì phải `acceptDiff` rồi ghi lý do (`AMOUNT_DIFF`, `NOTE_REQUIRED`). `finance.ignoreBankTxn(ctx, { bankId, note })` (không phải tiền của MOVA, cần lý do). Mã lỗi khác: `TXN_INVALID`, `TXN_NOT_FOUND`, `TXN_STATE`, `LEDGER_NOT_FOUND`, `ALREADY_MATCHED`.
+- `finance.reconciliation(ctx)` trả `{ bank, receipts[] (khoản chờ / đã nhận), waiting[], txns[], queue[], totals, cards { success[], failed[], totals }, card }`. Thẻ: mỗi lần trừ thành công có `feeVnd`, `netVnd`, `settleAt` (ngày tiền về); lần thất bại lấy từ đơn thẻ có `chargeFailedAt` kèm lý do.
+- Cấu hình: `BUSINESS.finance.bank` (tài khoản nhận, số giả), `BUSINESS.finance.card { feePct, feeFixedVnd, settleDays }` (giả định, chờ cổng thanh toán xác nhận).
+
+### Doanh thu, VAT, hóa đơn điện tử
+
+- **Doanh thu CHỈ ghi khi đơn đã giao** (`status: 'delivered'`, mốc `deliveredAt`), bằng GIÁ TRỊ TIỀN THẬT đã dùng của đơn (`paidFromOf`: phần `real` của các bút `credit_spend`; đơn trả thẻ hoặc chuyển khoản trọn gói coi toàn bộ là tiền thật). Phần KHUYẾN MÃI đã dùng không phải doanh thu tiền mặt. Cách xử lý đặt ở `BUSINESS.finance.promoTreatment`: `'net'` (mặc định) doanh thu chỉ phần tiền thật, khuyến mãi dùng là chi phí kéo khách ở báo cáo và không có bút toán; `'gross'` doanh thu ghi cả khuyến mãi nhưng TÁCH thành bút toán riêng (Nợ chi phí khuyến mãi / Có doanh thu từ khuyến mãi). Tiền đã thu cho các tuần chưa giao là nợ khách (`customer_prepaid`), không phải doanh thu.
+- **VAT** (`vatSplit`): giá bán và giá mua coi như đã gồm VAT; tách theo nhóm hàng của nguyên liệu trong đơn (`BUSINESS.tax.groups`, mọi mức vẫn ghi "chưa xác nhận"; `rate: null` coi như 0 và đánh dấu `unconfirmed`). Chưa tính VAT cho phần khuyến mãi ở chế độ `'gross'`: kế toán quyết định.
+- `finance.revenue(ctx, { from?, to? })` trả `{ rows[], totals, days[], deferred (thu trước chưa giao), treatment, vatUnconfirmed }`.
+- **Hóa đơn điện tử (mock)**, lớp tích hợp `issueDueInvoices`; thời điểm xuất là CẤU HÌNH (`BUSINESS.invoicing.issueOn`, đổi được ở Cài đặt cho tới khi có hóa đơn đầu tiên, sau đó khóa để không xuất trùng): `'delivery'` mỗi đơn đã giao một hóa đơn theo tiền thật đã dùng (xuất ngay khi giao, hoặc ở job định kỳ); `'topup'` mỗi lần nhận tiền (`topup`, `prepaid_cycle`, `card_charge`, không tính bút `backfill`) một hóa đơn, thuế suất theo `finance.topupInvoiceVatRate` (null: chưa tách VAT). `einvoices[i] = { id, number 'C26MFR-nnnnnnn', series, sourceKind ('order' | 'ledger'), sourceId, customerId, mode, eventAt, issuedAt, totalVnd, vatVnd, netVnd, vatUnconfirmed, description, status, provider: 'mock-einvoice', lookupCode }`. Hàm: `finance.invoices(ctx)`, `finance.issueInvoices(ctx)`.
+
+### Giá vốn và margin
+
+- **Giá vốn mỗi thùng** (`boxCost`) = SKU x giá PO (dòng PO của ngày giao, không có thì bảng giá theo ngày hiệu lực; số lượng mua = gram sơ chế / tỷ lệ thu hồi x (1 + dự phòng hao hụt của mua hàng)) + bao bì + túi xốt (`BUSINESS.finance.sauceCostPerPackVnd`, giả định; prompt chưa nêu xốt nhưng xưởng tự chiết rót nên có chi phí) + chi phí logistics phân bổ (`db.logisticsCosts[day].perBoxVnd` do P2C đẩy sang; chưa có bản ghi thì ước tính bằng `dayCost` và đánh dấu `estimated`).
+- `finance.margins(ctx, { from?, to? })` trả margin theo thùng, tuần (thứ Hai), loại gói (`solo` 1 người / `family` từ 2 người), khu; mỗi nhóm kèm `marginPct`, `productMarginPct` (trước logistics), `alert` khi dưới `alerts.minGrossMarginPct`. **Chu kỳ đầu tách riêng** như chi phí kéo khách (`firstCycle { acquisitionCostVnd = thẻ quà tặng + khuyến mãi đã dùng, ... }`) và không vào cảnh báo của các tuần thường. `finance.boxCost(ctx, orderId)` trả chi tiết từng SKU.
+
+### Công nợ, đợt chi, dòng tiền, bao phủ
+
+- **Tuổi nợ phải trả** (`payablesAging`) theo số ngày QUÁ hạn: chưa đến hạn / 1–7 / 8–15 / 16–30 / trên 30 (mốc `BUSINESS.finance.agingDays`). Khác `procurement.payables` của P2B (tính theo số ngày TỚI hạn); hàm P2B giữ nguyên và được dùng lại để dựng dòng công nợ (`payableRows`) và đối chiếu (`threeWayMatch`).
+- `finance.payables(ctx)` trả `{ rows[], aging { buckets[], items[], totalVnd, overdueVnd }, payRun (đề xuất đợt chi: quá hạn hoặc đến hạn trong `finance.payRun.leadDays` ngày), waitingMatch[], claims[], totals, cashLimitVnd }`. `finance.payRunFile(ctx, { poIds? })` trả CSV file chi (MOCK, mỗi khoản một dòng chuyển khoản: ngân hàng, số tài khoản, người thụ hưởng, số tiền, nội dung). `finance.executePayRun(ctx, { poIds, method: 'bank_transfer' | 'cash' })` ghi chi từng khoản qua `payPo` của P2B.
+- **Chi tiền mặt từ `alerts.cashPaymentVatLimitVnd` (5 triệu) trở lên**: giao diện cảnh báo mất quyền khấu trừ VAT đầu vào, `executePayRun` chặn khoản đó (`CASH_OVER_LIMIT`), giống `payPo` của P2B.
+- `finance.cashflow(ctx)` trả vị thế tiền (`position`: số dư đầu kỳ + nạp + chuyển khoản trọn gói + thẻ về đã trừ phí cổng - hoàn - trả nhà cung cấp - bảng kê), nợ Fresh Credit, `coverage { ratio = tiền mặt / nợ Fresh Credit phần tiền thật, alert khi dưới alerts.minCashCoverageRatio, shortfallVnd }`, và dự báo `horizonDays` ngày (`forecast.days[]`): tiền vào (lần trừ thẻ theo lịch; gia hạn dự kiến = bình quân chu kỳ x `finance.cashflow.renewalRate`), tiền ra (công nợ đã đối chiếu theo hạn, PO chưa đối chiếu theo hạn ước tính, chi phí logistics chưa trả sau `logisticsTermDays`). Fresh Credit và chuyển khoản trọn gói đã thu tiền nên không có tiền vào mới. Tuỳ chọn `finance.coverage.includePrepaidOrders` cộng cả tiền các đơn đã thu trước chưa giao vào nghĩa vụ.
+- Cấu hình: `BUSINESS.finance.openingCashVnd` (số dư đầu kỳ, kế toán sửa ở Cài đặt, mặc định 0).
+
+### Xuất bút toán
+
+`buildJournal` dựng chứng từ từ nghiệp vụ, mỗi chứng từ cân Nợ = Có (có test). Nhóm: `topup` (Nợ tiền gửi / Có khách hàng trả trước; thẻ có thêm Nợ phí cổng), `revenue` (Nợ khách hàng trả trước / Có doanh thu + VAT đầu ra, khi giao), `promo` (chỉ ở chế độ `gross`), `cogs` (Nợ giá vốn nguyên liệu + logistics / Có hàng tồn kho + phải trả logistics, khi giao), `refund` (hoàn tiền thật khi dừng gói), `supplier_invoice` (hóa đơn nhà cung cấp đã đối chiếu: Nợ hàng tồn kho + VAT đầu vào / Có phải trả nhà cung cấp, sau khi trừ khiếu nại), `payment` (trả nhà cung cấp), `statement` (bảng kê thu mua nông sản không hóa đơn, không VAT), `adjustment` (điều chỉnh tiền thật đã duyệt). Khóa tài khoản logic: `cash_bank`, `cash_hand`, `customer_prepaid`, `revenue`, `revenue_promo`, `vat_output`, `vat_input`, `cogs_materials`, `cogs_logistics`, `inventory`, `payable_supplier`, `payable_logistics`, `promo_expense`, `card_fee`, `other_expense`.
+
+Hàm: `finance.journal(ctx, { from?, to?, groups? })` (xem), `finance.journalCsv(ctx, ...)` (CSV có BOM UTF-8; cột: ngày, số chứng từ, nhóm, diễn giải, mã TK, tên TK, Nợ, Có, đối tượng, tham chiếu), `finance.statementsCsv(ctx)` (bảng kê thu mua), `finance.settings(ctx)` / `finance.saveSettings(ctx, { openingCashVnd?, issueOn?, accountMap? })`. Mã lỗi: `SETTINGS_INVALID`, `ISSUE_ON_LOCKED`. Chi phí logistics chưa có luồng thanh toán nên chỉ có `payable_logistics` tăng (tạm tính), chưa có bút chi trả.
+
+### Thẻ điểm nhà cung cấp (giám sát)
+
+`monitoring.scorecard(ctx, { from?, to? })` (mua hàng, admin) trả mỗi nhà cung cấp: `onTimeRate` (phiếu nhập đầu tiên không muộn hơn ngày giao PO; PO quá ngày giao mà chưa có hàng là trễ), `fillRate` (hàng đã giao / hàng đã đặt), `qcRate` (đạt / đã giao), `weightDiffPct` (có dấu), `tempBreaches / tempLines` (ngoài `BUSINESS.temperature`), `claimCount`, `claimVnd`, `marketDiffPct` (so giá thị trường mock, chỉ để xem), `score` 0–100 (trọng số `BUSINESS.finance.scorecard.weights`, chỉ các chỉ số có dữ liệu; chưa có dữ liệu thì `null` chứ không báo 0), `warn` khi dưới `scorecard.warnBelow`, `issues[]`.
+
+### Tổng quan founder
+
+`overview.founder(ctx)` (admin) trả `cash { inVnd, outVnd, netVnd, cashVnd }` (tuần T2–CN hiện tại), `liability`, `coverage`, `margin` (tuần hiện tại, chưa có thì tuần gần nhất có đơn giao; chu kỳ đầu ở `firstCycle`), `retention { renewed, cancelled, lapsed, pct }` (gia hạn / các gói đã kết thúc chu kỳ hoặc dừng; chưa có gói nào kết thúc thì `null`), `onTime` (KPI của P2C), `waste` (hao hụt tháng so với giá trị hàng nhận), `payables`, `alerts[]`.
+
+### Màn hình
+
+`/tai-chinh` (kế toán, admin; tab con `thu-tien`, `doanh-thu`, `gia-von`, `cong-no`, `dong-tien`, `xuat-but-toan`, `cai-dat`), `/giam-sat` (admin, mua hàng), `/tong-quan` (admin). Bảng demo thêm hai nút tiền về ngân hàng (mock).
+
+### Đề xuất sang platform
+
+`cashflow-ledger` nên có: các loại bút Fresh Credit ở bảng trên (kể cả `adjustment` có người duyệt), phân loại tiền thật / khuyến mãi, webhook đối soát VietQR theo mã trong nội dung chuyển khoản (quy tắc khớp ở trên), và ghi nhận doanh thu khi `DELIVERED` theo phần tiền thật. Điểm cần kế toán chọn: chế độ hạch toán khuyến mãi (`net` hay `gross`), thời điểm xuất hóa đơn (`topup` hay `delivery`), thuế suất từng nhóm, mã tài khoản theo TT 99/2025.
+
 ## 4. Câu hỏi mở cho Khôi và Hiếu
 
 1. Giờ chốt sổ mặc định 08:00 ngày D-2 có khớp lịch xe lạnh Đắk Lắk → TP.HCM không?
@@ -407,3 +501,6 @@ Mỗi ngày giao một bản ghi, cập nhật mỗi khi lập chuyến, nhập 
 12. Điểm giao thất bại có cần gọi khách trước khi báo "không liên lạc được" không (mock: ít nhất 1 lần gọi), và giữ lạnh ở kho phụ tối đa bao lâu (mock: 24 giờ)?
 13. Bù Fresh Credit khi không giao được: bao nhiêu % giá trị đơn (mock: 100%, vào ngăn khuyến mãi)?
 14. Thùng xốp / túi gel: thu ở lần giao sau, mỗi thùng giao kèm 1 thùng xốp + 2 túi gel (mock), bật / tắt ở `BUSINESS.logistics.recovery.enabled`.
+15. Tỷ lệ bao phủ: mẫu số có nên cộng cả tiền các tuần đã thu trước chưa giao (thẻ, chuyển khoản trọn gói) không? Mock: không, đổi bằng BUSINESS.finance.coverage.includePrepaidOrders.
+16. Khuyến mãi đã dùng khi giao hàng hạch toán net (không là doanh thu) hay gross (doanh thu khuyến mãi tách riêng kèm chi phí khuyến mãi)? Đổi bằng BUSINESS.finance.promoTreatment.
+17. Hóa đơn xuất khi nạp hay khi giao (BUSINESS.invoicing.issueOn), thuế suất từng nhóm hàng và VAT của khoản nạp (finance.topupInvoiceVatRate) cần kế toán xác nhận.
