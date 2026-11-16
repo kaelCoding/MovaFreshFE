@@ -36,6 +36,8 @@ export const BUSINESS = {
     giftCardMaxPctOfPackage: 0.2,
     // Trần tổng ưu đãi chu kỳ đầu = thẻ quà tặng + thưởng nạp (giả định)
     maxFirstCycleDiscountPct: 0.3,
+    // Mã thẻ quà tặng phễu /plans gửi kèm khi đăng ký (bản thật do chiến dịch quảng cáo cấp)
+    giftCardCode: 'THEQUATANG',
     // Thưởng nạp thường xuyên khoảng 10% (chị My, 31:36)
     topUpPacks: [
       { id: 'standard', label: 'Gói Tiêu chuẩn', payVnd: 1500000, bonusPct: 0.1 },
@@ -48,6 +50,22 @@ export const BUSINESS = {
       referrer: 100000,
       referee: 100000
     }
+  },
+
+  // Phễu đăng ký /plans
+  plan: {
+    householdMin: 1,
+    householdMax: 10,
+    householdDefault: 2,
+    mealsPerWeekMin: 3,
+    mealsPerWeekMax: 7,
+    mealsPerWeekDefault: 5,
+    // Số bữa Tây mỗi tuần khi khách chọn "Việt + 1–2 bữa Tây": từ 5 bữa/tuần trở lên thì 2 bữa
+    westernMealsWhenMixed: { base: 1, withMealsAtLeast: 5, extra: 2 },
+    // Hệ số khi khách trả lời các câu hỏi giá trị ở bước thực đơn
+    upsells: { proteinFactor: 1.3, lowCarbCarbFactor: 0.5, lowCarbVegFactor: 1.5 },
+    // Mức chi tiêu đi chợ mỗi tuần (câu tùy chọn): trần mềm cho AI, không hiện như tiêu đề
+    groceryBudgetChoicesVnd: [500000, 1000000, 1500000, 2500000]
   },
 
   credit: {
@@ -96,12 +114,14 @@ export const BUSINESS = {
     {
       id: 'Z7', name: 'Dĩ An – Thuận An (Bình Dương)',
       districts: ['Dĩ An', 'Thuận An'],
+      province: 'Bình Dương',
       deliveryDays: [2, 5],
       slots: [slot('evening', 20)]
     },
     {
       id: 'Z8', name: 'Biên Hòa (Đồng Nai)',
       districts: ['Biên Hòa'],
+      province: 'Đồng Nai',
       deliveryDays: [3, 6],
       slots: [slot('evening', 20)]
     }
@@ -159,6 +179,9 @@ export const BUSINESS = {
 export function getZone(zoneId) {
   return BUSINESS.zones.find((z) => z.id === zoneId) || null;
 }
+
+export const DEFAULT_PROVINCE = 'TP. Hồ Chí Minh';
+export const zoneProvince = (zone) => (zone && zone.province) || DEFAULT_PROVINCE;
 
 export function findZoneByDistrict(text = '') {
   const t = text.toLowerCase();

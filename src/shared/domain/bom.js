@@ -1,4 +1,5 @@
 import { PACKAGING_SKU } from '../data/catalog';
+import { dishFactor } from './mealPlan';
 
 /**
  * Thuật toán BOM Reverse Aggregator (bản mock): hàng trăm thực đơn cá nhân hóa của khách
@@ -20,7 +21,7 @@ export function aggregateBom(orders, dishes) {
       for (const dishId of Object.values(meal.dishes)) {
         const dish = dishes[dishId];
         if (!dish) throw new Error(`Món không có trong danh mục: ${dishId}`);
-        const factor = dish.kind === 'protein' ? meal.proteinFactor || 1 : 1;
+        const factor = dishFactor(meal, dish);
         for (const { sku, gramsPerPerson } of dish.bom) {
           skuGrams[sku] = (skuGrams[sku] || 0) + gramsPerPerson * people * factor;
         }

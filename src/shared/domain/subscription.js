@@ -3,6 +3,7 @@ import { dayKey, dayKeySequence } from '../utils/time';
 import { cutoffAtFor, chargeAtFor, deliveryStartAt, findSlot, slotUsage } from './delivery';
 import { generateMeals, mealsPriceVnd } from './mealPlan';
 import { giftCardSchedule } from './pricing';
+import { applyUpsells } from './upsells';
 import { spendCredit } from './credit';
 import { nextId } from './jobs';
 
@@ -10,10 +11,12 @@ import { nextId } from './jobs';
  * Dựng các đơn giao của một chu kỳ (thuần túy, chưa ghi vào db).
  * Mỗi lần giao là một đơn (một thùng). Gói `weeks` tuần x `dows.length` lần/tuần.
  * Thẻ quà tặng (voucher) áp vào thùng đầu tiên của mỗi tuần.
+ * - upsells: câu trả lời giá trị của khách (đạm, ít tinh bột, bữa Tây) áp cho cả các tuần sau tuần 1.
+ * - lockWeeklyPrice: giá các tuần sau bằng giá tuần 1 (đúng với giá khách đã thấy khi đăng ký), dù AI đổi món.
  */
 export function planOrders({
   customer, subscriptionId, profile, zoneId, slotId, dows, weeks, mealsPerWeek,
-  week1Meals = null, voucher = false, paymentMethod, now, rand, cfg = BUSINESS
+  week1Meals = null, voucher = false, upsells = null, lockWeeklyPrice = false, paymentMethod, now, rand, cfg = BUSINESS
 }) {
   const zone = getZone(zoneId);
   const slot = findSlot(zone, slotId);
@@ -30,10 +33,16 @@ export function planOrders({
   const drafts = [];
   const mealsByWeek = [];
   for (let w = 0; w < weeks; w++) {
-    const meals =
-      w === 0 && week1Meals
-        ? week1Meals
-        : generateMeals({ householdSize: profile.householdSize, goals: profile.goals, restrictions: profile.restrictions, mealsCount: mealsPerWeek, rand });
+    let meals;
+    if (w === 0 && week1Meals) {
+      meals = week1Meals;
+    } else {
+      meals = generateMeals({
+        householdSize: profile.householdSize, goals: profile.goals, restrictions: profile.restrictions,
+        mealsCount: mealsPerWeek, rand, westernCount: profile.westernCount || 0, weeklyBudgetVnd: profile.weeklyBudgetVnd || null
+      });
+      if (upsells) meals = applyUpsells(meals, upsells, { householdSize: profile.householdSize, restrictions: profile.restrictions, rand, cfg });
+    }
     mealsByWeek.push(meals);
   }
 
@@ -44,7 +53,7 @@ export function planOrders({
     const meals = mealsByWeek[w];
     const per = Math.ceil(meals.length / perWeek);
     const boxMeals = meals.slice(j * per, (j + 1) * per);
-    const listPriceVnd = mealsPriceVnd(boxMeals, profile.householdSize);
+    const listPriceVnd = lockWeeklyPrice && w > 0 ? drafts[j].listPriceVnd : mealsPriceVnd(boxMeals, profile.householdSize);
     listTotal += listPriceVnd;
     drafts.push({
       subscriptionId,
@@ -101,7 +110,7 @@ export function activateSubscription(db, { customer, subscription, orders, now, 
   if (subscription.paymentMethod === 'bank_transfer_4w') {
     const total = created.reduce((s, o) => s + o.amountVnd, 0);
     for (const o of created) { o.status = 'paid'; o.paidAt = nowIso; }
-    db.ledger.push({ id: nextId(db, 'LED'), customerId: customer.id, kind: 'prepaid_cycle', amountVnd: total, real: total, promo: 0, at: nowIso });
+    db.ledger.push({ id: nextId(db, 'LED'), customerId: customer.id, kind: 'prepaid_cycle', amountVnd: total, real: total, promo: 0, ref: subscription.paymentRef || null, at: nowIso });
     chargedNowVnd = total;
   } else {
     for (const o of created.filter((x) => x.weekIndex === 0)) {
