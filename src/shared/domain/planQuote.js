@@ -72,8 +72,8 @@ export function quotePackage({ weekValueVnd, mealsPerWeek, weeks = BUSINESS.subs
     weekly,
     week1PayVnd: weekly[0].payVnd,
     payAllUpfrontVnd: packageValueVnd - giftTotalVnd, // chuyển khoản một lần
-    perMealListVnd: totalMeals ? Math.round(packageValueVnd / totalMeals) : 0,
-    perMealPayVnd: totalMeals ? Math.round((packageValueVnd - giftTotalVnd) / totalMeals) : 0,
+    perMealListVnd: totalMeals ? roundTo(packageValueVnd / totalMeals) : 0,
+    perMealPayVnd: totalMeals ? roundTo((packageValueVnd - giftTotalVnd) / totalMeals) : 0,
     freshCredit: exact,
     // Tổng ưu đãi nhận được khi nạp Fresh Credit ở chu kỳ đầu (thẻ quà tặng + thưởng nạp), không vượt trần
     bestPayVnd: exact.payVnd,
