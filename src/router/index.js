@@ -1,17 +1,27 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import StoreView from '../views/StoreView.vue';
+import HomeView from '../views/HomeView.vue';
 import DashboardView from '../views/DashboardView.vue';
+import PlansView from '../views/PlansView.vue';
 
 const routes = [
   {
     path: '/',
-    name: 'store',
-    component: StoreView
+    name: 'home',
+    component: HomeView
+  },
+  {
+    path: '/plans',
+    name: 'plans',
+    component: PlansView
+  },
+  {
+    path: '/account',
+    name: 'account',
+    component: DashboardView
   },
   {
     path: '/dashboard',
-    name: 'dashboard',
-    component: DashboardView
+    redirect: '/account'
   },
   {
     path: '/:pathMatch(.*)*',

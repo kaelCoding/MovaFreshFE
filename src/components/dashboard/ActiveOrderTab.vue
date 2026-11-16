@@ -30,10 +30,10 @@
       <div style="font-size: 36px; margin-bottom: 8px">🧺</div>
       <h3>Hiện bạn không có đơn hàng nào đang chạy</h3>
       <p class="muted" style="font-size: 14px; margin-top: 4px">
-        Hãy chuyển sang Cửa hàng để chọn thực đơn tươi ngon cho tuần này.
+        Hãy để AI thiết kế thực đơn riêng cho nhà bạn.
       </p>
-      <router-link to="/" class="btn primary sm" style="margin-top: 16px">
-        Đặt món tuần này ngay
+      <router-link to="/plans" class="btn primary sm" style="margin-top: 16px">
+        Thiết kế thực đơn của tôi
       </router-link>
     </div>
 
@@ -62,7 +62,7 @@
           <span class="muted" style="font-size: 12.5px">Tổng thanh toán:</span>
           <div class="num total-pr">{{ fmt(ord.total) }}</div>
           <small class="muted" style="font-size: 12px">
-            {{ ord.payMethod === 'prepaid' ? 'Trừ vào Gói Đi Chợ' : (ord.payMethod === 'qr' ? 'Đã quét VietQR' : 'COD khi nhận') }}
+            {{ ord.payMethod === 'prepaid' ? 'Trừ vào Fresh Credit' : 'Đã chuyển khoản VietQR' }}
           </small>
         </div>
       </div>
@@ -101,36 +101,22 @@
         <div v-if="ord.note">📝 <b>Ghi chú shipper:</b> {{ ord.note }}</div>
       </div>
 
-      <!-- Phân loại bảo quản Ngăn Mát vs Ngăn Đông -->
+      <!-- Danh sách món trong đơn -->
       <div class="storage-box">
-        <h4>❄️ Hướng dẫn bảo quản ngay khi nhận thùng đá gel:</h4>
-        <div class="storage-grid">
-          <div class="store-col chill">
-            <div class="st-title">🥬 Cất Ngăn Mát (0 – 2°C) • Nấu trong 2–3 ngày</div>
-            <ul>
-              <li v-for="it in chillItems" :key="it.id">
-                • <b>{{ it.name }}</b> ({{ it.qty }} {{ it.isAddon ? 'phần' : 'suất' }})
-              </li>
-            </ul>
-          </div>
-          <div class="store-col freeze">
-            <div class="st-title">🧊 Cất Ngăn Đông (−18°C) • Rã đông trước khi nấu</div>
-            <ul>
-              <li v-for="it in freezeItems" :key="it.id">
-                • <b>{{ it.name }}</b> ({{ it.qty }} suất)
-              </li>
-              <li v-if="freezeItems.length === 0">• Không có món cần cấp đông sâu.</li>
-            </ul>
-          </div>
-        </div>
+        <h4>Các món trong đơn:</h4>
+        <ul class="dish-list">
+          <li v-for="it in allItems" :key="it.id">
+            <b>{{ it.name }}</b> ({{ it.qty }} {{ it.isAddon ? 'phần' : 'suất' }})
+          </li>
+        </ul>
       </div>
 
       <!-- Các nút thao tác thực tế -->
       <div class="order-acts">
         <template v-if="!store.cutoffPassed">
-          <button class="btn primary sm" @click="handleEditOrder">
-            ✏️ Sửa món / Thêm món
-          </button>
+          <router-link class="btn primary sm" to="/plans">
+            Thiết kế lại thực đơn
+          </router-link>
           <button class="btn sm" @click="handleDelayOrder">
             ⏳ Hoãn đợt giao này
           </button>
@@ -152,12 +138,10 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useRouter } from 'vue-router';
 import { useMovaStore } from '../../stores/useMovaStore';
 import { fmt } from '../../shared/utils/formatters';
 
 const store = useMovaStore();
-const router = useRouter();
 
 const ord = computed(() => store.activeOrder);
 
@@ -170,40 +154,14 @@ const statusLabel = computed(() => {
     : 'Trước giờ chốt sổ 20:00 (Cho phép sửa/hoãn/hủy)';
 });
 
-const chillItems = computed(() => {
+const allItems = computed(() => {
   if (!ord.value) return [];
-  const list = ord.value.items.filter((it) => it.storage === 'chill');
+  const list = [...ord.value.items];
   if (ord.value.addons) {
     ord.value.addons.forEach((a) => list.push({ ...a, isAddon: true }));
   }
   return list;
 });
-
-const freezeItems = computed(() => {
-  if (!ord.value) return [];
-  return ord.value.items.filter((it) => it.storage === 'freeze');
-});
-
-const handleEditOrder = () => {
-  if (!ord.value) return;
-  const newCart = {};
-  ord.value.items.forEach((it) => {
-    newCart[it.id] = it.qty;
-  });
-  const newAddons = {};
-  if (ord.value.addons) {
-    ord.value.addons.forEach((a) => {
-      newAddons[a.id] = a.qty;
-    });
-  }
-  store.cartA = newCart;
-  store.addonsA = newAddons;
-  store.mode = 'A';
-  store.sauce = ord.value.sauce;
-  store.carb = ord.value.carb;
-  store.toast('Đã nạp lại đơn vào giỏ hàng để bạn chỉnh sửa.');
-  router.push('/');
-};
 
 // BUG 3 FIX: Kích hoạt delayActiveOrder()
 const handleDelayOrder = () => {
@@ -213,7 +171,7 @@ const handleDelayOrder = () => {
 };
 
 const handleCancelOrder = () => {
-  if (confirm('Bạn muốn hủy đơn hàng này? Toàn bộ số tiền sẽ được hoàn 100% vào Gói Đi Chợ Trả Trước.')) {
+  if (confirm('Bạn muốn hủy đơn hàng này? Phần Fresh Credit tiền thật chưa dùng sẽ được hoàn lại.')) {
     store.cancelActiveOrder();
   }
 };
@@ -426,7 +384,7 @@ const handleCancelOrder = () => {
   gap: 6px;
 }
 
-/* Storage guide */
+/* Danh sách món */
 .storage-box {
   background: var(--bg);
   border: 1px solid var(--line);
@@ -444,46 +402,11 @@ const handleCancelOrder = () => {
   gap: 6px;
 }
 
-.storage-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.store-col {
-  border-radius: 12px;
-  padding: 12px;
-  background: var(--card);
-  border: 1px solid var(--line);
-}
-
-.store-col.chill {
-  border-left: 4px solid var(--blue);
-}
-
-.store-col.freeze {
-  border-left: 4px solid var(--green);
-}
-
-.store-col .st-title {
-  font-size: 13.5px;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.store-col.chill .st-title {
-  color: var(--blue);
-}
-
-.store-col.freeze .st-title {
-  color: var(--green);
-}
-
-.store-col ul {
+.dish-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   display: grid;
   gap: 4px;
 }
@@ -525,9 +448,6 @@ const handleCancelOrder = () => {
   }
   .t-icon {
     margin: 0;
-  }
-  .storage-grid {
-    grid-template-columns: 1fr;
   }
 }
 </style>

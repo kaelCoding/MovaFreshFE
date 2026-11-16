@@ -2,38 +2,52 @@
   <section class="journey" id="hanh-trinh">
     <div class="wrap">
       <div class="sec-h">
-        <h2>Hành trình tươi 16 giờ</h2>
-        <p>Mô hình thu hoạch và sơ chế theo đơn: thịt được cắt tại nhà máy Đắk Lắk và chạy xe lạnh thẳng về TP.HCM trong đêm, không qua kho trung chuyển.</p>
+        <h2>Từ Đắk Lắk đến bếp nhà bạn</h2>
+        <p>Nhà máy sơ chế theo đơn đã trả tiền, xe lạnh chạy xuyên đêm thẳng về TP.HCM, nên nguyên liệu tới tay bạn còn tươi.</p>
       </div>
       <ol class="steps">
-        <li>
-          <span class="dot">1</span>
-          <span class="when">Trước 20:00 T5 hoặc CN</span>
-          <b>Bạn chốt đơn</b>
-          <p>Không ép mua cả tuần. Chọn số bữa vừa túi tiền (đơn tối thiểu 250.000đ).</p>
-        </li>
-        <li>
-          <span class="dot">2</span>
-          <span class="when">Sáng sớm tại Đắk Lắk</span>
-          <b>Thu hoạch và sơ chế</b>
-          <p>Nhà máy cắt định lượng, ướp thảo mộc nền nhạt, đóng gói gia vị tươi băm trong ngày.</p>
-        </li>
-        <li>
-          <span class="dot">3</span>
-          <span class="when">22:00 – 05:00</span>
-          <b>Xe lạnh xuyên đêm</b>
-          <p>Thùng giữ nhiệt đá gel −18°C chạy 1 chuyến xuyên đêm về điểm tập kết TP.HCM lúc 05:00 sáng.</p>
-        </li>
-        <li>
-          <span class="dot">4</span>
-          <span class="when">Giao 3 ca linh hoạt</span>
-          <b>Shipper giao tận cửa</b>
-          <p>Giao linh hoạt theo 3 khung giờ bạn chọn: Ca Sáng sớm (06:30–08:30), Ca Sáng (08:30–10:00), hoặc Ca Chiều Tối (17:30–20:00 tăng cường đá gel).</p>
+        <li v-for="(s, i) in steps" :key="s.title">
+          <span class="dot">{{ i + 1 }}</span>
+          <span class="when">{{ s.when }}</span>
+          <b>{{ s.title }}</b>
+          <p>{{ s.text }}</p>
         </li>
       </ol>
     </div>
   </section>
 </template>
+
+<script setup>
+import { BUSINESS } from '../../shared/config/business';
+
+const t = BUSINESS.timings;
+const pad = (n) => String(n).padStart(2, '0');
+const slotLabels = [...new Set(BUSINESS.zones.flatMap((z) => z.slots.map((s) => s.label)))];
+
+// Mọi mốc giờ lấy từ cấu hình vận hành
+const steps = [
+  {
+    when: `${pad(t.cutoffHour)}:${pad(t.cutoffMinute)}, ${t.cutoffDaysBeforeDelivery} ngày trước ngày giao`,
+    title: 'Bạn chốt thực đơn',
+    text: 'Thực đơn AI xếp riêng cho nhà bạn. Bạn đổi món thoải mái cho tới giờ chốt sổ của chuyến giao; app luôn ghi rõ ngày giờ cụ thể.'
+  },
+  {
+    when: 'Tại Đắk Lắk',
+    title: 'Sơ chế và đóng gói',
+    text: 'Nhà máy cắt, định lượng đúng số người ăn nhà bạn, đóng kèm gói xốt công thức riêng của MOVA.'
+  },
+  {
+    when: `${pad(t.truckDepartHour)}:00 ngày trước tới ${pad(t.hubArrivalHour)}:00 sáng`,
+    title: 'Xe lạnh xuyên đêm',
+    text: 'Một chuyến xe lạnh chạy thẳng từ Đắk Lắk về kho TP.HCM, giữ nguyên chuỗi lạnh suốt hành trình.'
+  },
+  {
+    when: 'Giao tận cửa',
+    title: 'Shipper giao đúng khung giờ',
+    text: `Bạn chọn khung giờ tiện nhất: ${slotLabels.join('; ')}. MOVA báo lại trước ${BUSINESS.timings.remindBeforeDeliveryHours} giờ.`
+  }
+];
+</script>
 
 <style scoped>
 .journey {

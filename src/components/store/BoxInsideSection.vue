@@ -14,8 +14,8 @@
             <rect x="18" y="37" width="20" height="10" rx="5" fill="#7B3520"/>
             <path d="M14 18c4-6 32-6 36 0" fill="none" stroke="#146C43" stroke-width="2"/>
           </svg>
-          <b>Khay thịt, trứng sơ chế sạch</b>
-          <p>Cắt miếng chuẩn cỡ, ướp nền thảo mộc tự nhiên. Mở hộp ra là nấu.</p>
+          <b>Đạm sơ chế sạch</b>
+          <p>Thịt, cá cắt miếng chuẩn cỡ, định lượng đúng số người ăn. Mở hộp ra là nấu.</p>
         </div>
 
         <div class="bx">
@@ -26,8 +26,8 @@
             <rect x="24" y="40" width="16" height="4" rx="2" fill="#9DBB5B"/>
             <path d="M33 22l6 4" stroke="#D3352B" stroke-width="3" stroke-linecap="round"/>
           </svg>
-          <b>Túi gia vị tươi trong ngày</b>
-          <p>Hành tím, tỏi, sả, ớt tươi băm sẵn trong ngày để phi thơm dậy mùi bếp nhà.</p>
+          <b>Rau củ và trái cây</b>
+          <p>Rau củ rửa sạch, cắt sẵn; trái cây theo mùa. Nấu xong là có mâm cơm đủ sắc.</p>
         </div>
 
         <div class="bx">
@@ -36,8 +36,8 @@
             <path d="M14 22h36" stroke="#D9531E" stroke-width="2" stroke-dasharray="3 3"/>
             <path d="M22 38c4-6 16-6 20 0-4 6-16 6-20 0z" fill="#B5542A"/>
           </svg>
-          <b>Gói sốt gia vị đóng rời</b>
-          <p>Tách riêng hoàn toàn để người ăn đậm hay ăn nhạt tự gia giảm theo ý thích.</p>
+          <b>Gói xốt công thức riêng</b>
+          <p>Mỗi món một gói xốt của MOVA. Mắm, muối, đường, dầu ăn bếp nhà bạn đã có nên MOVA không đóng kèm.</p>
         </div>
 
         <div class="bx">

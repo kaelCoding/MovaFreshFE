@@ -126,7 +126,7 @@
             Chuyến xe lạnh Đắk Lắk – Sài Gòn sẽ chốt danh sách sơ chế lúc <b>20:00 tối nay</b>. Số dư Gói Đi Chợ của chị hiện còn <b>{{ fmt(store.user.prepaidBalance) }}</b>.
           </p>
           <div class="zalo-acts">
-            <!-- BUG 2 FIX: Chuyển sang router.push('/') rồi scrollIntoView('#thuc-don') -->
+            <!-- Mở phễu thiết kế thực đơn -->
             <button
               class="btn sm primary"
               style="font-size: 12px; padding: 5px 10px"
@@ -216,13 +216,8 @@ const savePreferences = () => {
   });
 };
 
-// BUG 2 FIX: Điều hướng mượt về Cửa hàng và scroll xuống #thuc-don
 const confirmMenuFromZalo = async () => {
-  await router.push('/');
-  setTimeout(() => {
-    const el = document.getElementById('thuc-don');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  }, 100);
+  await router.push('/plans');
 };
 
 const handleDelayFromZalo = () => {

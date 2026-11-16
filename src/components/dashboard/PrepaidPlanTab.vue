@@ -20,7 +20,7 @@
     <div class="legal-notice">
       <b>⚖️ Minh bạch quyền lợi theo Nghị định 52/2024/NĐ-CP:</b>
       <p style="margin-top: 4px">
-        “Gói Đi Chợ Trả Trước” là hình thức trả trước tiền nguyên liệu thực phẩm định kỳ, giúp tối ưu chi phí vận hành tuyến lạnh Đắk Lắk – TP.HCM và nhận giá trị tặng thêm (lên đến 120.000đ). Giá trị trong gói <b>chỉ dùng để đổi nguyên liệu sơ chế tại MOVA FRESH</b>, không phải ví điện tử và không hỗ trợ rút tiền mặt. Toàn bộ số dư được cam kết bảo lưu giá trị trong vòng 60 ngày.
+        “Gói Đi Chợ Trả Trước” là hình thức trả trước tiền nguyên liệu thực phẩm định kỳ, giúp tối ưu chi phí vận hành tuyến lạnh Đắk Lắk – TP.HCM và nhận giá trị tặng thêm (lên đến 120.000đ). Giá trị trong gói <b>chỉ dùng để đổi bữa ăn sơ chế tại MOVA FRESH</b>, không rút ra tiền mặt và không chuyển cho người khác. Toàn bộ số dư được cam kết bảo lưu giá trị trong vòng 60 ngày.
       </p>
     </div>
 

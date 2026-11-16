@@ -25,18 +25,28 @@
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
             <polyline points="9 22 9 12 15 12 15 22"/>
           </svg>
-          <span class="lbl">Cửa hàng</span>
+          <span class="lbl">Trang chủ</span>
         </router-link>
         <router-link
-          to="/dashboard"
+          to="/plans"
           class="nav-tab"
-          :class="{ active: route.path === '/dashboard' }"
+          :class="{ active: route.path === '/plans' }"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 5h16M4 12h16M4 19h10"/>
+          </svg>
+          <span class="lbl">Thiết kế thực đơn</span>
+        </router-link>
+        <router-link
+          to="/account"
+          class="nav-tab"
+          :class="{ active: route.path === '/account' }"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="7" r="4"/>
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
           </svg>
-          <span class="lbl">Đơn của tôi</span>
+          <span class="lbl">Tài khoản</span>
           <span v-if="store.activeOrder" class="badge-dot" title="Có đơn đang xử lý"></span>
         </router-link>
       </nav>
@@ -59,6 +69,12 @@
         </button>
 
         <!-- 2. Nút Tài khoản -->
+        <button class="icon-btn acct-icon" aria-label="Tài khoản của tôi" @click="openAccount">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="7" r="4"/>
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          </svg>
+        </button>
         <button
           v-if="!store.user.isLoggedIn"
           class="btn sm primary login-hdr-btn"
@@ -77,14 +93,11 @@
           <span class="uname-line">{{ userLineText }}</span>
         </button>
 
-        <!-- 3. Nút Giỏ Hàng (Ẩn trên mobile vì đã có Bottom Nav) -->
-        <button class="cartbtn" @click="handleCartClick" aria-label="Mở giỏ hàng">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/>
-            <path d="M9 8V6a3 3 0 0 1 6 0v2"/>
-          </svg>
-          <span class="num">{{ cartText }}</span>
-        </button>
+        <!-- 3. Nút chính: vào phễu thiết kế thực đơn -->
+        <router-link to="/plans" class="cartbtn">
+          <span class="long">Thiết kế thực đơn</span>
+          <span class="short">Bắt đầu</span>
+        </router-link>
       </div>
     </div>
   </header>
@@ -94,43 +107,27 @@
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useMovaStore } from '../../stores/useMovaStore';
-import { fmt } from '../../shared/utils/formatters';
 
 const store = useMovaStore();
 const route = useRoute();
 const router = useRouter();
 
+// Trên mobile: chưa đăng nhập thì mở đăng nhập, rồi vào tài khoản
+const openAccount = () => {
+  if (store.user.isLoggedIn) router.push('/account');
+  else store.openModal('login');
+};
+
 const userAvatar = computed(() => {
   return (store.user.name || 'U').charAt(0);
 });
 
-// Hiển thị gọn 1 dòng duy nhất: "Chị Lan • 850k" hoặc "Anh Minh • 30k"
+// Hiển thị gọn 1 dòng: "Chị Lan • 850k"
 const userLineText = computed(() => {
   const rawName = store.user.name.replace(/\(.*?\)/g, '').trim();
   const balK = Math.round(store.user.prepaidBalance / 1000) + 'k';
   return `${rawName} • ${balK}`;
 });
-
-// Giỏ hàng hiển thị 1 dòng nowrap: "0 bữa" hoặc "2 bữa • 307k"
-const cartText = computed(() => {
-  const c = store.calcAll;
-  if (!c.meals) return '0 bữa';
-  return `${c.meals} bữa • ${fmt(c.total)}`;
-});
-
-const handleCartClick = async () => {
-  if (window.matchMedia('(max-width:980px)').matches) {
-    store.mobileCartOpen = true;
-  } else {
-    if (route.path !== '/') {
-      await router.push('/');
-    }
-    setTimeout(() => {
-      const el = document.getElementById('thuc-don');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-  }
-};
 </script>
 
 <style scoped>
@@ -242,8 +239,8 @@ const handleCartClick = async () => {
 
 .icon-btn {
   position: relative;
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   border-radius: 11px;
   border: 1px solid var(--line);
   background: var(--card);
@@ -274,12 +271,14 @@ const handleCartClick = async () => {
 }
 
 .login-hdr-btn {
+  min-height: 44px;
   padding: 7px 14px;
   font-size: 13px;
   white-space: nowrap;
 }
 
 .user-btn {
+  min-height: 44px;
   display: flex;
   align-items: center;
   gap: 7px;
@@ -315,6 +314,8 @@ const handleCartClick = async () => {
 }
 
 .cartbtn {
+  text-decoration: none;
+  min-height: 44px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -338,6 +339,9 @@ const handleCartClick = async () => {
   flex-shrink: 0;
 }
 
+.cartbtn .short { display: none; }
+.acct-icon { display: none; text-decoration: none; }
+
 /* Mobile responsive (<= 768px): clean App style */
 @media (max-width: 768px) {
   .hdr .wrap {
@@ -347,9 +351,22 @@ const handleCartClick = async () => {
   .nav-views {
     display: none;
   }
-  .cartbtn {
+  .login-hdr-btn,
+  .user-btn,
+  .nav-views {
     display: none;
   }
+  .acct-icon {
+    display: grid;
+  }
+  .cartbtn .long { display: none; }
+  .cartbtn .short { display: inline; }
+  .cartbtn {
+    padding: 8px 14px;
+    font-size: 15px;
+  }
+  .logo b { font-size: 16px; }
+  .logo svg { width: 32px; height: 32px; }
   .city-tag {
     display: none;
   }

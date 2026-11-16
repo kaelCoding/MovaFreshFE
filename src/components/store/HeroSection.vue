@@ -1,257 +1,63 @@
 <template>
   <section class="hero">
     <div class="wrap">
-      <div>
-        <span class="kicker">TƯƠI TỪ TRANG TRẠI ĐẮK LẮK • XE LẠNH XUYÊN ĐÊM GIAO SÁNG SỚM TP.HCM</span>
-        <h1>Thịt tươi Đắk Lắk sơ chế sẵn. Giao tận bếp Sài Gòn, 15 phút xong bữa cơm nhà.</h1>
-        <p class="anchor">Chỉ từ <b class="num">38.000đ</b> / người • Thu hoạch & sơ chế theo đơn, không trữ hàng tồn lâu ngày</p>
-        <ul class="promises">
-          <li>⏱ Chuẩn 15 phút – 1 chảo</li>
-          <li>❄️ Xe lạnh xuyên đêm Đắk Lắk – TP.HCM</li>
-          <li>🌿 Tách riêng gói sốt & giảm 50% tinh bột</li>
-        </ul>
+      <div class="copy">
+        <span class="kicker">NGUYÊN LIỆU SƠ CHẾ SẴN TỪ ĐẮK LẮK, GIAO TẬN CỬA TP.HCM</span>
+        <h1>Mâm cơm nhà bạn, do AI thiết kế riêng, nấu xong trong 15 phút.</h1>
+        <p class="sub">
+          Đắk Lắk, xe lạnh xuyên đêm, tận cửa nhà bạn. MOVA xếp thực đơn theo số người ăn, khẩu vị và nhu cầu của gia đình bạn, rồi sơ chế sẵn cho bạn.
+        </p>
         <div class="cta">
-          <button class="btn primary" @click="scrollToMenu">Chọn món tuần này</button>
-          <button class="btn" @click="chooseBudgetMode">Xếp theo ngân sách của tôi</button>
+          <router-link to="/plans" class="pl-btn primary big">Thiết kế thực đơn của tôi</router-link>
+          <p class="hint">Mất khoảng 2 phút. Bạn xem thực đơn trước, hài lòng rồi mới trả tiền.</p>
         </div>
       </div>
 
-      <!-- Khung gỗ 3 món bán chạy tuần này có hiệu ứng khói -->
-      <div class="board" aria-label="3 món bán chạy tuần này">
-        <div class="board-t">
-          <span>Bán chạy tuần này</span>
-          <span>Giá mỗi suất</span>
-        </div>
-        <div class="trio">
-          <div
-            v-for="(id, index) in trioIds"
-            :key="id"
-            class="hd"
-          >
-            <div class="plate">
-              <DishPlateSvg
-                :dish="byId[id]"
-                :uid="'h' + id"
-                :steam="index === 0"
-                :size="index === 0 ? 105 : 84"
-              />
-            </div>
-            <div>
-              <b>{{ byId[id].name }}</b>
-              <div class="meta">⏱ {{ byId[id].time }}p, {{ byId[id].meat[0] }}{{ byId[id].meat[1] }}</div>
-              <div class="act-row">
-                <span class="pr num">{{ fmt(byId[id].price) }}</span>
-                <button class="btn sm" @click="quickAdd(id)">+ Thêm</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ol class="route" aria-label="Hành trình của nguyên liệu">
+        <li>
+          <span class="pin">1</span>
+          <div><b>Đắk Lắk</b><small>Nhà máy sơ chế theo đơn của bạn</small></div>
+        </li>
+        <li>
+          <span class="pin">2</span>
+          <div><b>Xe lạnh xuyên đêm</b><small>Chạy thẳng về kho TP.HCM</small></div>
+        </li>
+        <li>
+          <span class="pin">3</span>
+          <div><b>Tận cửa nhà bạn</b><small>Giao đúng khung giờ bạn chọn</small></div>
+        </li>
+        <li>
+          <span class="pin pot" aria-hidden="true"></span>
+          <div><b>Nấu 15 phút</b><small>Một chảo, xốt công thức có sẵn</small></div>
+        </li>
+      </ol>
     </div>
   </section>
 </template>
 
-<script setup>
-import DishPlateSvg from '../common/DishPlateSvg.vue';
-import { byId } from '../../data/mockData';
-import { fmt } from '../../shared/utils/formatters';
-import { useMovaStore } from '../../stores/useMovaStore';
-
-const store = useMovaStore();
-const trioIds = ['bo-luclac', 'ga-sa', 'heo-gung'];
-
-const scrollToMenu = () => {
-  const el = document.getElementById('thuc-don');
-  if (el) el.scrollIntoView({ behavior: 'smooth' });
-};
-
-const chooseBudgetMode = () => {
-  store.setMode('B');
-  scrollToMenu();
-};
-
-const quickAdd = (id) => {
-  const cur = store.cart[id] || 0;
-  const n = store.mode === 'B' ? store.n : 2;
-  const target = cur ? cur + 1 : n;
-  if (store.tryChangeDish(id, target)) {
-    store.toast(`Đã thêm ${byId[id].name}`);
-  }
-};
-</script>
-
 <style scoped>
-.hero {
-  padding: 38px 0 32px;
-}
+.hero { padding: 38px 0 34px; }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 40px; align-items: center; }
+.kicker { display: inline-block; font-size: 13px; font-weight: 700; color: var(--orange-ink); background: var(--orange-soft); border-radius: 999px; padding: 6px 12px; margin-bottom: 14px; }
+.hero h1 { font-size: clamp(28px, 4.4vw, 46px); font-weight: 800; line-height: 1.15; letter-spacing: -0.025em; }
+.sub { margin-top: 14px; font-size: 17px; color: var(--muted); max-width: 52ch; }
+.cta { margin-top: 24px; display: grid; gap: 10px; justify-items: start; }
+.big { min-height: 56px; font-size: 18px; padding: 14px 28px; }
+.hint { font-size: 15px; color: var(--muted); }
 
-.hero .wrap {
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-  gap: 40px;
-  align-items: center;
-}
+.route { list-style: none; margin: 0; padding: 22px; display: grid; gap: 0; background: var(--card); border: 1px solid var(--line); border-radius: 22px; position: relative; }
+.route li { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: center; padding: 12px 0; position: relative; }
+.route li:not(:last-child)::after { content: ''; position: absolute; left: 21px; top: 50px; bottom: -12px; width: 2px; background: repeating-linear-gradient(180deg, var(--green) 0 6px, transparent 6px 11px); opacity: .6; }
+.pin { width: 44px; height: 44px; border-radius: 50%; background: var(--green-soft); border: 2px solid var(--green); color: var(--green-d); font-weight: 800; font-size: 18px; display: grid; place-items: center; }
+.pin.pot { background: var(--orange); border-color: var(--orange); position: relative; }
+.pin.pot::after { content: ''; width: 18px; height: 10px; border: 3px solid #fff; border-top: 0; border-radius: 0 0 10px 10px; }
+.route b { display: block; font-size: 18px; }
+.route small { display: block; font-size: 15px; color: var(--muted); }
 
-.kicker {
-  display: inline-block;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--orange-ink);
-  background: var(--orange-soft);
-  border-radius: 999px;
-  padding: 5px 12px;
-  margin-bottom: 14px;
+@media (max-width: 900px) {
+  .hero .wrap { grid-template-columns: minmax(0, 1fr); gap: 24px; }
 }
-
-.hero h1 {
-  font-size: clamp(28px, 4.2vw, 46px);
-  font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: -0.025em;
-}
-
-.anchor {
-  margin-top: 14px;
-  font-size: 16px;
-  color: var(--muted);
-}
-
-.anchor b {
-  color: var(--ink);
-  font-weight: 700;
-  font-size: 19px;
-}
-
-.promises {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 18px;
-  padding: 0;
-  list-style: none;
-}
-
-.promises li {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 7px 11px;
-  font-size: 13.5px;
-  font-weight: 500;
-}
-
-.cta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 22px;
-}
-
-/* board & trio */
-.board {
-  position: relative;
-  border-radius: 24px;
-  padding: 20px;
-  background:
-    repeating-linear-gradient(97deg, rgba(150, 110, 60, .06) 0 2px, transparent 2px 19px),
-    repeating-linear-gradient(93deg, rgba(150, 110, 60, .05) 0 1px, transparent 1px 31px),
-    linear-gradient(160deg, #F2E5CE, #E5D2B3);
-  box-shadow: inset 0 0 0 1px rgba(120, 85, 40, .12), 0 16px 36px -20px rgba(90, 60, 20, .4);
-}
-
-.board-t {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin: 0 4px 10px;
-  font-size: 13px;
-  color: #6f5a3c;
-  font-weight: 700;
-}
-
-.trio {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.trio .hd {
-  background: rgba(255, 255, 255, .9);
-  border-radius: 16px;
-  padding: 12px;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.trio .hd:first-child {
-  grid-column: 1 / -1;
-  padding: 12px 14px;
-}
-
-.trio .plate {
-  width: 90px;
-  height: 90px;
-  flex-shrink: 0;
-  position: relative;
-}
-
-.trio .hd:first-child .plate {
-  width: 120px;
-  height: 120px;
-}
-
-.trio .hd:not(:first-child) {
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.trio .hd:not(:first-child) .plate {
-  align-self: center;
-}
-
-.trio .hd b {
-  display: block;
-  font-size: 14.5px;
-  line-height: 1.3;
-}
-
-.trio .hd:first-child b {
-  font-size: 16.5px;
-}
-
-.trio .meta {
-  font-size: 12.5px;
-  color: var(--muted);
-  margin: 3px 0 6px;
-}
-
-.trio .pr {
-  font-weight: 700;
-  font-size: 14.5px;
-}
-
-.act-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-@media (max-width: 980px) {
-  .hero .wrap {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 24px;
-  }
-}
-
-@media (max-width: 520px) {
-  .trio {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .trio .hd:first-child .plate {
-    width: 100px;
-    height: 100px;
-  }
+@media (max-width: 480px) {
+  .big { width: 100%; }
 }
 </style>

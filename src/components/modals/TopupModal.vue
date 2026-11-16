@@ -53,9 +53,9 @@ import { fmt } from '../../shared/utils/formatters';
 const store = useMovaStore();
 
 const transferContent = computed(() => {
-  const code = Math.round(store.pendingTopup.amount / 1e6);
+  const millions = Math.round(store.pendingTopup.amount / 1e6);
   const phone = store.user.phone.replace(/\s/g, '');
-  return `NAP${code}TR ${phone}`;
+  return `NAP${millions}TR ${phone}`;
 });
 
 const confirmTopup = () => {
