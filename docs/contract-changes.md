@@ -2,7 +2,7 @@
 
 > Repo web KHÔNG sửa `movafresh-platform/docs/api-contract.json`. Theo `movafresh-platform/AGENTS.md`, mọi thay đổi phải có cả Khôi và Hiếu đồng thuận và giữ tương thích ngược. File này ghi lại những chỗ lớp mock `src/shared/api/` đang khác contract hiện tại hoặc cần thêm, để đưa sang bên platform.
 
-Cập nhật: 16/11/2026 (P0, P1A, P1B)
+Cập nhật: 16/11/2026 (P0, P1A, P1B, P2A)
 
 ## 1. Đã khớp contract (không cần đổi)
 
@@ -172,6 +172,61 @@ Hình dạng theo `ai-engine/traceability-waze/README.md`, thêm vài trường 
 - `seed.js` có 3 lô mẫu (`src/shared/data/lots.js`): bò `MOVA-TRACE-BO-202611-0912`, `MOVA-TRACE-BO-202611-0913`, gạo `MOVA-TRACE-GAO-202611-0207`. Bộ nhớ cũ chưa có `db.lots` thì trang đọc dự phòng từ dữ liệu mẫu.
 - Công thức 15 phút theo món ở `src/shared/data/recipes.js` (chưa có trong catalog).
 
+## 3d. Kế hoạch và xưởng Đắk Lắk (P2A)
+
+Các hàm nằm ở `src/shared/api/opsFactory.js`, gộp vào `api.ops.*` (kế hoạch `api.ops.planning.*`, xưởng `api.ops.factory.*`). Logic thuần ở `src/shared/domain/factory.js`. Không hàm nào trả tên, SĐT, địa chỉ hay mã khách: đơn chỉ có mã đơn, khu, khung giờ, số túi.
+
+### Quyền
+
+`planning`: điều phối, mua hàng, admin. `factory` (ghi và ảnh chụp): xưởng, admin. `factoryRead` (danh mục, dự kiến): thêm điều phối, mua hàng. Sai vai trò: `FORBIDDEN`.
+
+### Đọc
+
+| Hàm | Trả về |
+|---|---|
+| `planning.overview(ctx, day?)` | `days[{ day, closed, closedAt, cutoffAt, boxes, skippedUnpaid, atRisk }]`, `detail` của ngày chọn (`source: 'closed' \| 'forecast'`, `counts`, `items[{ key, type, name, temp, bags, bagGrams, kg }]`, `hub[]` hải sản kho phụ), `sheet` (phiếu sản xuất 3 bảng), `weeks[4]`, `weekRows[]` (kg theo tuần, kèm phần đã chốt), `weekSauces[]`, `capacity` (xưởng báo cho từng tuần), `skippedTotal` |
+| `factory.catalog(ctx)` | `items` (tên, nhóm nhiệt, `bagGrams`, `shelfDays`, `requiresLot`, `hub`), `sources`, `trips`, `stickers`, `temperature`, `quickAdds`, `photoMaxPx` |
+| `factory.snapshot(ctx, day?)` | `day`, `days[]` (ngày đã chốt kèm tóm tắt từng chuyến), `plan`, `trips[]`, `orders[]` (phiếu nhặt từng đơn: `orderId, zoneId, slotId, tripId, status, items[{ key, type, temp, bags, bagGrams, grams, hub }], bagsByTemp, workshopBags`), `lotCodes[]`, `factory` (cả lát cắt `db.factory`) |
+| `factory.forecast(ctx)` | 7 ngày tới và tuần sau: `days[]`, `rows[{ key, perDay, nextWeekBags }]`, `nextWeek`, `capacity` |
+| `factory.impact(ctx, shortageId)` | `affected[{ orderId, zoneId, slotId, tripId, deliveryDay, grams, hits[{ mealIndex, kind, dishId, dishName, options[{ dishId, name, priceDeltaVnd, compensationVnd }], suggestedDishId }] }]`, `handled[]`, `needGrams`, `coveredGrams`. Kiêng cữ của khách được đọc ở server để lọc món thay, không trả ra ngoài |
+
+### Ghi: một cửa `factory.apply(ctx, op)`
+
+`op = { type, opId, at, ... }`. `opId` do máy xưởng sinh, server khử trùng (gửi lại không áp hai lần); `at` là giờ nghiệp vụ lúc bấm (gửi muộn vẫn đúng giờ). Mã lỗi: `OP_INVALID`, `LOT_CODE_TAKEN`, `LOT_REQUIRED`, `LOT_MISMATCH`, `TEMP_OUT_OF_RANGE`, `BOXES_MISSING` (kèm `missing[]`), `TRIP_DEPARTED`, `ORDER_NOT_FOUND`, `WRONG_TRIP`, `PLAN_NOT_FOUND`.
+
+| `type` | Tham số chính | Ghi chú |
+|---|---|---|
+| `progress` | `scope` (`day\|tripId`), `key`, `delta` hoặc `set` | số túi / túi xốt đã làm |
+| `receipt` | `sku, sourceId, weightKg, tempC, photo, verdict: 'pass' \| 'fail', failReason, lotCode` | tạo mã lô. Đạt thì ghi `db.lots` (qr_code = `lotCode`, `sample:false`, `source_kind`, `weight_kg`, `received_at`, chưa có `mova_inspector.verified`); ngăn mát phải <= 4°C, ngăn đông <= -18°C mới được Đạt; cần 1 ảnh |
+| `batch` | `id, key, bags, lotCode, expiresAt, scope` | mẻ túi gán lô. Bò và gạo (`requiresLot`) bắt buộc có lô đạt đúng SKU |
+| `printed` | `batchId` | đánh dấu đã in nhãn túi |
+| `tick` / `closeBox` / `reopenBox` | `orderId, key, count` | tích từng túi vào thùng. Túi đầu tiên của một đơn đổi đơn `locked` thành `in_production` (qua `applyOrderStatus`) |
+| `load` | `scope, orderId, loaded` | thùng lên xe; đúng chuyến mới được |
+| `depart` | `scope, tempC, sealNo, confirmMissing, expected` | xuất xe. Thiếu thùng thì `BOXES_MISSING` trừ khi `confirmMissing`; server tự tính lại `expected` |
+| `capacity` | `weekStart, key, status: 'ok' \| 'short', shortBags` | xưởng xác nhận năng lực tuần sau |
+| `shortage` / `closeShortage` | `id, key, qty, unit: 'bag' \| 'kg', kind: 'short' \| 'damaged', day, photo, note` | báo thiếu / hỏng; hỏng cần ảnh |
+
+`ops.substituteDish` (P1B) mở rộng: nhận thêm `shortageId` (ghi đơn đã báo khách vào báo cáo; hết lượng thiếu thì báo cáo thành `resolved`) và `opId` (khử trùng, không bù Fresh Credit hai lần khi gửi lại).
+
+### `db.factory` (mới, một lát cắt)
+
+`{ progress: { 'day\|tripId': { [key]: n } }, receipts[], batches[], boxes: { orderId: { ticks, startedAt, packedAt } }, loads: { 'day\|tripId': { loaded: { orderId: at }, tempC, sealNo, departedAt, missing[], tempOk } }, shortages[], capacity: { weekStart: { [key]: { status, shortBags, at } } }, opIds[] }`. Bộ nhớ cũ chưa có thì tạo khi ghi lần đầu.
+
+### Cấu hình và dữ liệu mới
+
+- `BUSINESS.factory`: `trips` (Chuyến 1 rời 16:00 chở khung sáng sớm, Chuyến 2 rời 20:00 chở khung trưa và tối, giả định), `defaultBagGrams`, `shelfDaysByTemp`, `quickAdds`, `photoMaxPx`.
+- `src/shared/data/packaging.js`: quy cách sơ chế, cỡ túi chuẩn (gram) và hạn dùng theo SKU. `src/shared/data/sources.js`: nguồn nguyên liệu (HTX, nông hộ, lò mổ). Tất cả là số minh họa chờ quản đốc xác nhận.
+- Số túi cần làm: mỗi đơn, mỗi SKU làm tròn LÊN theo cỡ túi chuẩn rồi cộng các đơn; túi xốt đếm theo món. Hải sản (`S-SEAFOOD`) do kho phụ ghép nên không tính vào túi của xưởng.
+- Mã lô `MOVA-TRACE-<SKU>-<YYYYMM>-<NNNN>` (nối số thứ tự đang có), mã mẻ `B-YYYYMMDD-NNN`, mã báo cáo `SH-YYYYMMDD-NNN` sinh trên máy xưởng để dùng được khi mất mạng; trùng mã thì server báo lỗi và mục đó nằm ở hàng đợi chờ quản đốc xử lý.
+
+### Hàng đợi offline (chỉ phía app vận hành)
+
+`src/shared/domain/offlineQueue.js` (thuần, có test) và `src/ops/queue.js`: mọi thao tác ghi của xưởng lưu vào localStorage `mova_ops_queue_v1` với nhãn "chưa gửi", tự gửi khi có sự kiện `online`. Lỗi mạng giữ lại để gửi sau; lỗi nghiệp vụ đánh dấu "Lỗi" kèm lý do để quản đốc gửi lại hoặc bỏ. Màn hình = ảnh chụp server + các thao tác chưa gửi (cùng hàm `applyFactoryOp`), nên mất mạng vẫn thấy kết quả ngay.
+
+### Đề xuất sang platform
+
+Hai API `GET /api/v2/factory/daily-bom` và `POST /api/v2/factory/mark-batch-completed`, `report-spoilage` của `factory-portal` nên bổ sung: nhận nguyên liệu kèm mã lô, mẻ túi gán lô, xuất xe (nhiệt độ, niêm phong), năng lực tuần sau và khử trùng theo `opId` cho máy khách mất mạng.
+
 ## 4. Câu hỏi mở cho Khôi và Hiếu
 
 1. Giờ chốt sổ mặc định 08:00 ngày D-2 có khớp lịch xe lạnh Đắk Lắk → TP.HCM không?
@@ -179,3 +234,5 @@ Hình dạng theo `ai-engine/traceability-waze/README.md`, thêm vài trường 
 3. Thuật toán gom BOM thật nằm ở `ai-engine/bom-aggregator`. Mock chỉ nhân gram theo số người và đếm túi xốt.
 4. Tạm hoãn một tuần: dời tuần đó xuống cuối chu kỳ (các tuần sau giữ ngày) hay đẩy cả lịch lên một tuần? Mock đang chọn dời xuống cuối.
 5. Chênh lệch khi đổi món sau mốc trừ tiền của khách trả thẻ: cộng/trừ Fresh Credit (mock) hay trừ / hoàn thẳng vào thẻ?
+6. Chuyến xe lạnh: một chuyến (16:00) hay hai chuyến (16:00 và 20:00)? Mock chia theo khung giờ giao (sáng sớm đi chuyến 1, trưa và tối đi chuyến 2).
+7. Cỡ túi chuẩn của xưởng theo từng SKU (mock: `src/shared/data/packaging.js`) cần quản đốc xác nhận, kèm hạn dùng từng loại.
