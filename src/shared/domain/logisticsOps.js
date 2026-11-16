@@ -694,7 +694,7 @@ export function deliverStop(db, { orderId, shipperId, photo = '', tempC = null, 
   if (!chk.ok) return withMsg(chk);
 
   const nowIso = nowIsoOf(now);
-  const st = applyOrderStatus(db, { orderId, status: 'delivered', photoUrl: photo }, now);
+  const st = applyOrderStatus(db, { orderId, status: 'delivered', photoUrl: photo }, now, cfg);
   if (!st.ok) return withMsg(bad(st.code, st.message));
   order.deliveryIssue = null;
   order.redelivery = null;

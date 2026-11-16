@@ -9,6 +9,7 @@ import { createCustomerApi } from './customer';
 import { createOpsFactoryApi } from './opsFactory';
 import { createProcurementApi } from './opsProcurement';
 import { createLogisticsApi } from './opsLogistics';
+import { createFinanceApi } from './opsFinance';
 import { seedTraceScenario } from '../data/traceScenario';
 import { seedTripsScenario } from '../data/logisticsScenario';
 import { atDay } from '../utils/time';
@@ -53,7 +54,14 @@ const ROLE_CAN = {
   costRead: ['dispatch', 'accounting', 'admin'],
   // P2C: app shipper (shipper ghi; điều phối chỉ xem thử; admin thao tác thay)
   shipperApp: ['shipper', 'dispatch', 'admin'],
-  shipperWrite: ['shipper', 'admin']
+  shipperWrite: ['shipper', 'admin'],
+  // P2D: tài chính & kế toán (xem, ghi); kế toán đề nghị điều chỉnh Fresh Credit, admin duyệt; thẻ điểm nhà cung cấp; tổng quan founder
+  financeRead: ['accounting', 'admin'],
+  financeWrite: ['accounting', 'admin'],
+  adjustRequest: ['accounting'],
+  adjustApprove: ['admin'],
+  scorecard: ['purchasing', 'admin'],
+  overview: ['admin']
 };
 
 const fromEvent = (res) => {
@@ -78,6 +86,7 @@ export function createApi(server = getServer()) {
 
   const procurement = createProcurementApi(server, cfg, (ctx, action) => guard(ctx, action));
   const logistics = createLogisticsApi(server, cfg, (ctx, action) => guard(ctx, action));
+  const finance = createFinanceApi(server, cfg, (ctx, action) => guard(ctx, action));
 
   const api = {
     // ---------- Đăng nhập app vận hành (PIN demo) ----------
@@ -103,6 +112,7 @@ export function createApi(server = getServer()) {
       ...createOpsFactoryApi(server, cfg, (ctx, action) => guard(ctx, action)),
       ...procurement,
       ...logistics,
+      ...finance,
       // P2C thêm các hàm kho phụ vào cùng nhóm `hub` của P2B
       hub: { ...procurement.hub, ...logistics.hub },
 
@@ -155,7 +165,7 @@ export function createApi(server = getServer()) {
       setOrderStatus(ctx, { orderId, status, photoUrl = null, note = '' }) {
         guard(ctx, 'fulfilment');
         return server.write((db, now) => {
-          const res = fromEvent(applyOrderStatus(db, { orderId, status, photoUrl, note }, now));
+          const res = fromEvent(applyOrderStatus(db, { orderId, status, photoUrl, note }, now, cfg));
           return { orderId: res.order.id, status: res.order.status };
         });
       },

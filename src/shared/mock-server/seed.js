@@ -8,6 +8,7 @@ import { SAMPLE_LOTS } from '../data/lots';
 import { emptyFactory } from '../domain/factory';
 import { emptyLogistics } from '../domain/logisticsOps';
 import { supplementProcurement } from '../data/procurementSeed';
+import { emptyFinance, supplementFinance } from '../domain/financeOps';
 
 export const DB_VERSION = 1;
 
@@ -51,7 +52,9 @@ export function emptyDb(now, running) {
     factory: emptyFactory(),
     // P2C: sức chứa ghi đè, chuyến xe, nhận xe, ghép hải sản, tuyến, giao hàng, ngoại lệ, nhiệt độ; chi phí đẩy cho Tài chính
     logistics: emptyLogistics(),
-    logisticsCosts: []
+    logisticsCosts: [],
+    // P2D: giao dịch ngân hàng, hóa đơn điện tử, yêu cầu điều chỉnh Fresh Credit, cài đặt của kế toán
+    finance: emptyFinance()
   };
 }
 
@@ -129,6 +132,8 @@ export function buildSeed(now, { running = true, cfg = BUSINESS } = {}) {
 
   // P2B: hồ sơ nhà cung cấp, bảng giá, tồn kho, PO cũ, bảng kê (bộ nhớ cũ được bù ở server.js, không đổi DB_VERSION)
   supplementProcurement(db, now, cfg);
+  // P2D: bút đầu kỳ cho số dư Fresh Credit có từ trước (hạt giống đặt số dư thẳng, chưa có bút nạp)
+  supplementFinance(db, now);
 
   return db;
 }

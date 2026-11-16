@@ -8,6 +8,7 @@ import { cutoffAtFor, findSlot, remindAtFor } from './delivery';
 import { fmtDeadline } from '../utils/time';
 import { fmt } from '../utils/formatters';
 import { totalBalance } from './credit';
+import { issueDueInvoices } from './financeOps';
 
 export function nextId(db, prefix) {
   db.seq[prefix] = (db.seq[prefix] || 0) + 1;
@@ -240,6 +241,9 @@ export function runDueJobs(db, now, cfg = BUSINESS) {
       fired.push({ job: 'remind', ref: o.id });
     }
   }
+
+  // 4) Xuất hóa đơn điện tử còn thiếu theo cấu hình thời điểm xuất (P2D). Không thêm vào danh sách job đã chạy.
+  issueDueInvoices(db, now, cfg);
 
   return fired;
 }

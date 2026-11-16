@@ -300,6 +300,66 @@ export const BUSINESS = {
     issueOn: 'delivery'
   },
 
+  // Tài chính & kế toán (P2D). MOVA KHÔNG tự viết phần mềm kế toán: chỉ giữ sổ phụ nghiệp vụ và xuất bút toán (CSV)
+  // qua bảng ánh xạ tài khoản do kế toán cấu hình. Mọi số dưới đây là giả định chờ kế toán xác nhận.
+  finance: {
+    // Số dư tiền (ngân hàng + quỹ) tại thời điểm bắt đầu theo dõi. Kế toán nhập số thật ở Cài đặt.
+    openingCashVnd: 0,
+    // Cách xử lý phần KHUYẾN MÃI đã dùng khi giao hàng:
+    //   'net'   = doanh thu chỉ ghi theo phần TIỀN THẬT đã dùng; khuyến mãi dùng là chi phí kéo khách ở báo cáo, không hạch toán doanh thu.
+    //   'gross' = doanh thu ghi cả phần khuyến mãi, nhưng phần khuyến mãi tách thành bút toán riêng:
+    //             Nợ chi phí khuyến mãi / Có doanh thu từ khuyến mãi (MOVA tài trợ).
+    promoTreatment: 'net',
+    // Giá bán và giá mua coi như ĐÃ GỒM VAT; VAT tách ra theo thuế suất của nhóm hàng (BUSINESS.tax.groups, chưa xác nhận).
+    // Thuế suất của khoản nạp Fresh Credit khi xuất hóa đơn lúc nạp. null = chưa xác nhận (không tách VAT)
+    topupInvoiceVatRate: null,
+    // Cổng thẻ: phí = % x số tiền + phí cố định; tiền về sau ngần này ngày
+    card: { feePct: 0.025, feeFixedVnd: 1100, settleDays: 2 },
+    // Giá vốn một túi xốt (xưởng tự chiết rót nên chưa có PO riêng). Giả định.
+    sauceCostPerPackVnd: 3500,
+    // Tài khoản nhận tiền chuyển khoản (số giả). Nội dung chuyển khoản phải chứa mã đối soát.
+    bank: { bankName: 'Vietcombank', accountNo: '0071000000000', accountName: 'CONG TY MOVA FRESH' },
+    // Đề xuất đợt chi: các khoản phải trả đã quá hạn hoặc đến hạn trong ngần này ngày tới
+    payRun: { leadDays: 3 },
+    // Dòng tiền dự kiến
+    cashflow: {
+      horizonDays: 30,
+      // Tỷ lệ khách gia hạn dùng để ước tiền vào từ gia hạn (mục tiêu giữ chân tháng 2+ >= 50%)
+      renewalRate: 0.5,
+      // Chi phí logistics chưa có hóa đơn: coi như trả sau ngần này ngày kể từ ngày giao
+      logisticsTermDays: 15
+    },
+    // Tỷ lệ bao phủ: mặc định chỉ tính nợ Fresh Credit phần tiền thật. true = cộng thêm tiền các đơn đã thu trước nhưng chưa giao.
+    coverage: { includePrepaidOrders: false },
+    // Mốc tuổi nợ theo số ngày QUÁ hạn: chưa đến hạn / 1–7 / 8–15 / 16–30 / >30
+    agingDays: [7, 15, 30],
+    // Thẻ điểm nhà cung cấp: trọng số (tổng 1) và ngưỡng cảnh báo điểm tổng (giả định, chờ mua hàng chốt)
+    scorecard: {
+      weights: { onTime: 0.25, fill: 0.2, qc: 0.25, weight: 0.1, temp: 0.1, claims: 0.1 },
+      warnBelow: 80,
+      weightTolerancePct: 0.03
+    },
+    // Bảng ánh xạ tài khoản: KHÔNG viết cứng số tài khoản (chế độ kế toán đổi từ 2026: TT 99/2025 thay TT 200).
+    // Kế toán nhập mã tài khoản của phần mềm kế toán ở Cài đặt. Chưa nhập thì CSV dùng mã nội bộ (key) và báo "chưa ánh xạ".
+    accountMap: {
+      cash_bank: { label: 'Tiền gửi ngân hàng', code: '' },
+      cash_hand: { label: 'Tiền mặt', code: '' },
+      customer_prepaid: { label: 'Khách hàng trả trước (Fresh Credit tiền thật)', code: '' },
+      revenue: { label: 'Doanh thu bán hàng', code: '' },
+      revenue_promo: { label: 'Doanh thu từ khuyến mãi (MOVA tài trợ)', code: '' },
+      vat_output: { label: 'Thuế GTGT đầu ra', code: '' },
+      vat_input: { label: 'Thuế GTGT đầu vào', code: '' },
+      cogs_materials: { label: 'Giá vốn nguyên liệu, bao bì', code: '' },
+      cogs_logistics: { label: 'Giá vốn logistics', code: '' },
+      inventory: { label: 'Hàng tồn kho', code: '' },
+      payable_supplier: { label: 'Phải trả nhà cung cấp', code: '' },
+      payable_logistics: { label: 'Phải trả logistics (tạm tính)', code: '' },
+      promo_expense: { label: 'Chi phí khuyến mãi', code: '' },
+      card_fee: { label: 'Phí cổng thanh toán', code: '' },
+      other_expense: { label: 'Chi phí khác (điều chỉnh)', code: '' }
+    }
+  },
+
   alerts: {
     minGrossMarginPct: 0.2,
     // Tỷ lệ bao phủ = tiền mặt / nợ Fresh Credit (phần tiền thật)

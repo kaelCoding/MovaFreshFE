@@ -3,6 +3,7 @@ import { runDueJobs } from '../domain/jobs';
 import { defaultStorage } from './storage';
 import { buildSeed, DB_VERSION } from './seed';
 import { supplementProcurement } from '../data/procurementSeed';
+import { supplementFinance } from '../domain/financeOps';
 
 export const STORAGE_KEY = 'mova_shared_db_v1';
 
@@ -43,6 +44,11 @@ export function createServer({ storage = defaultStorage(), key = STORAGE_KEY, st
     } else if (!db.procurement || !db.procurement.suppliers || !Object.keys(db.procurement.suppliers).length) {
       // Bộ nhớ demo cũ (trước P2B) chưa có dữ liệu mua hàng / kho phụ: bù hạt giống mà không đổi DB_VERSION
       supplementProcurement(db, simNow(db), cfg);
+      persist(db);
+    }
+    if (!db.finance || !db.finance.backfilledAt) {
+      // Bộ nhớ demo cũ (trước P2D) chưa có lát cắt tài chính: bù bút đầu kỳ cho số dư Fresh Credit có từ trước
+      supplementFinance(db, simNow(db));
       persist(db);
     }
     return db;

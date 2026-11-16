@@ -631,6 +631,13 @@ export function createCustomerApi(server, cfg = BUSINESS) {
 
         db.customers.push(customer);
         db.subscriptions.push(subscription);
+        // Số dư thử nghiệm (starting_credit, chỉ có trong mock) cũng phải có bút để sổ Fresh Credit khớp số dư
+        if (req.starting_credit) {
+          const at = now.toISOString();
+          const sc = req.starting_credit;
+          if ((sc.real || 0) > 0) db.ledger.push({ id: nextId(db, 'LED'), customerId: customer.id, kind: 'topup', amountVnd: sc.real, real: sc.real, promo: 0, at, note: 'Số dư thử nghiệm (starting_credit)' });
+          if ((sc.promo || 0) > 0) db.ledger.push({ id: nextId(db, 'LED'), customerId: customer.id, kind: 'topup_bonus', amountVnd: sc.promo, real: 0, promo: sc.promo, at, note: 'Số dư thử nghiệm (starting_credit)' });
+        }
         const res = activateSubscription(db, { customer, subscription, orders, now, cfg });
         if (!res.ok) {
           db.customers.pop();

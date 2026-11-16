@@ -1,10 +1,11 @@
 import { DISHES } from '../data/catalog';
 import { fmt } from '../utils/formatters';
-import { getZone } from '../config/business';
+import { BUSINESS, getZone } from '../config/business';
 import { findSlot } from './delivery';
 import { mealPriceVnd, swapOptionsFor } from './mealPlan';
 import { nextId, notify } from './jobs';
 import { validateLot } from './trace';
+import { issueDueInvoices } from './financeOps';
 
 /**
  * Các việc phía vận hành ghi vào dữ liệu dùng chung mà khách cần thấy. P2A (xưởng) và P2C (giao hàng) gọi qua
@@ -27,7 +28,7 @@ const err = (code, message) => ({ ok: false, code, message: message || FULFILMEN
  * Đổi trạng thái đơn sau chốt sổ: in_production | shipped | delivered, hoặc sự kiện 'redelivery' (giao lại, trạng thái giữ nguyên).
  * Giao hàng ghi thông báo cho khách (đang giao, đã giao kèm ảnh, giao lại).
  */
-export function applyOrderStatus(db, { orderId, status, photoUrl = null, note = '' }, now) {
+export function applyOrderStatus(db, { orderId, status, photoUrl = null, note = '' }, now, cfg = BUSINESS) {
   const order = db.orders.find((o) => o.id === orderId);
   if (!order) return err('ORDER_NOT_FOUND');
   const nowIso = now.toISOString();
@@ -71,6 +72,8 @@ export function applyOrderStatus(db, { orderId, status, photoUrl = null, note = 
       meta: { orderId: order.id, weekIndex: order.weekIndex, status, photoUrl: status === 'delivered' ? photoUrl : null }
     });
   }
+  // P2D: giao hàng là lúc ghi nhận doanh thu; nếu cấu hình xuất hóa đơn khi giao thì xuất ngay
+  if (status === 'delivered') issueDueInvoices(db, now, cfg);
   return { ok: true, order };
 }
 
