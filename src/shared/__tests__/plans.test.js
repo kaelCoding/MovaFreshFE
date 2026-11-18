@@ -184,6 +184,17 @@ describe('thực đơn tuần 1', () => {
     expect(capped.data.meals).toHaveLength(free.data.meals.length);
     expect(capped.data.week_value_vnd).toBeLessThanOrEqual(free.data.week_value_vnd);
   });
+
+  it('chi tiêu đi chợ tùy chọn (Khác): nhận số tiền tùy chỉnh 1.800.000đ và 3.000.000đ làm trần mềm', () => {
+    const { api } = setup();
+    const customBudget1 = start(api, { household_size: 2, weekly_grocery_budget_vnd: 1800000 });
+    expect(customBudget1.plan.status).toBe('success');
+    expect(customBudget1.plan.data.meals).toHaveLength(5);
+
+    const customBudget2 = start(api, { household_size: 4, weekly_grocery_budget_vnd: 3000000 });
+    expect(customBudget2.plan.status).toBe('success');
+    expect(customBudget2.plan.data.meals).toHaveLength(5);
+  });
 });
 
 describe('giá trị gói và trần ưu đãi chu kỳ đầu', () => {

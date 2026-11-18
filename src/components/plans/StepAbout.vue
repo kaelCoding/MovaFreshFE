@@ -207,10 +207,53 @@
             :key="v"
             type="button"
             class="pl-chip num"
-            :class="{ on: store.answers.budget === v }"
-            :aria-pressed="store.answers.budget === v"
-            @click="store.setAnswer('budget', store.answers.budget === v ? null : v)"
+            :class="{ on: store.answers.budget === v && !isCustomBudget }"
+            :aria-pressed="store.answers.budget === v && !isCustomBudget"
+            @click="pickStandardBudget(v)"
           >Đến {{ fmt(v) }}</button>
+          <button
+            type="button"
+            class="pl-chip"
+            :class="{ on: isCustomBudget }"
+            :aria-pressed="isCustomBudget"
+            @click="toggleCustomBudget"
+          >Khác (nhập mức chi tiêu cụ thể)</button>
+        </div>
+
+        <!-- Khung nhập chi tiêu tùy chỉnh -->
+        <div v-if="isCustomBudget" class="custom-budget-box" role="group" aria-label="Nhập mức chi tiêu cụ thể">
+          <label class="pl-label" for="customBudgetInput">Mức chi tiêu dự kiến mỗi tuần (VNĐ):</label>
+          <div class="custom-budget-stepper">
+            <button
+              type="button"
+              class="budget-step-btn"
+              :disabled="customBudgetValue <= MIN_BUDGET"
+              aria-label="Giảm 100.000đ"
+              @click="stepBudget(-BUDGET_STEP)"
+            >−</button>
+            <div class="budget-input-wrap">
+              <input
+                id="customBudgetInput"
+                v-model="customBudgetText"
+                class="pl-input budget-num-input"
+                type="text"
+                inputmode="numeric"
+                placeholder="1.800.000đ"
+                @input="onBudgetTextInput"
+                @blur="onBudgetTextBlur"
+              />
+            </div>
+            <button
+              type="button"
+              class="budget-step-btn"
+              :disabled="customBudgetValue >= MAX_BUDGET"
+              aria-label="Tăng 100.000đ"
+              @click="stepBudget(BUDGET_STEP)"
+            >+</button>
+          </div>
+          <p class="budget-hint">
+            Bước nhảy 100.000đ (từ {{ fmt(MIN_BUDGET) }} đến {{ fmt(MAX_BUDGET) }}). Định mức trần mềm để Đầu bếp MOVA gợi ý thực đơn hợp lý.
+          </p>
         </div>
       </div>
 
@@ -282,6 +325,11 @@ const districts = api.customer.serviceAreas().flatMap((z) => z.districts).filter
 const customOpen = ref(false);
 const customText = ref('');
 const outOfZone = ref(false);
+const MIN_BUDGET = 200000;
+const MAX_BUDGET = 20000000;
+const BUDGET_STEP = 100000;
+const DEFAULT_CUSTOM_BUDGET = 1800000;
+
 const budgetChoices = BUSINESS.plan.groceryBudgetChoicesVnd;
 const giftMax = BUSINESS.incentives.giftCardWeeklyVnd.reduce((a, b) => a + b, 0);
 
@@ -293,6 +341,17 @@ const needAnalysisTags = ref([]);
 const showCustomAvoidInput = ref(false);
 const customAvoidText = ref('');
 const avoidAnalysisTags = ref([]);
+
+// Chi tiêu đi chợ tự nhập
+const isCustomBudget = ref(
+  store.answers.budget !== null &&
+  store.answers.budget !== undefined &&
+  !budgetChoices.includes(store.answers.budget)
+);
+const customBudgetValue = ref(
+  isCustomBudget.value && store.answers.budget ? store.answers.budget : DEFAULT_CUSTOM_BUDGET
+);
+const customBudgetText = ref(fmt(customBudgetValue.value));
 
 const canNext = computed(() => {
   if (q.value === 1) return customOpen.value ? customText.value.trim().length > 1 : Boolean(store.answers.district);
@@ -460,7 +519,82 @@ function next() {
   go(q.value + 1);
 }
 
+function parseBudgetString(str) {
+  const digits = String(str || '').replace(/[^\d]/g, '');
+  return digits ? parseInt(digits, 10) : 0;
+}
+
+function pickStandardBudget(v) {
+  isCustomBudget.value = false;
+  const nextVal = store.answers.budget === v ? null : v;
+  store.setAnswer('budget', nextVal);
+}
+
+function toggleCustomBudget() {
+  if (isCustomBudget.value) {
+    isCustomBudget.value = false;
+    store.setAnswer('budget', null);
+  } else {
+    isCustomBudget.value = true;
+    let val = customBudgetValue.value;
+    if (!val || val < MIN_BUDGET || val > MAX_BUDGET) {
+      val = DEFAULT_CUSTOM_BUDGET;
+    }
+    customBudgetValue.value = val;
+    customBudgetText.value = fmt(val);
+    store.setAnswer('budget', val);
+  }
+}
+
+function stepBudget(delta) {
+  let val = (customBudgetValue.value || DEFAULT_CUSTOM_BUDGET) + delta;
+  if (val < MIN_BUDGET) val = MIN_BUDGET;
+  if (val > MAX_BUDGET) val = MAX_BUDGET;
+  customBudgetValue.value = val;
+  customBudgetText.value = fmt(val);
+  store.setAnswer('budget', val);
+}
+
+function onBudgetTextInput(e) {
+  const raw = e.target.value;
+  let num = parseBudgetString(raw);
+  if (e.inputType === 'deleteContentBackward' && !raw.endsWith('đ')) {
+    num = Math.floor(num / 10);
+  }
+  if (!num) {
+    customBudgetValue.value = 0;
+    customBudgetText.value = '';
+    store.setAnswer('budget', null);
+    return;
+  }
+  if (num > MAX_BUDGET) num = MAX_BUDGET;
+  customBudgetValue.value = num;
+  customBudgetText.value = fmt(num);
+  if (num >= MIN_BUDGET && num <= MAX_BUDGET) {
+    store.setAnswer('budget', num);
+  } else {
+    store.setAnswer('budget', null);
+  }
+}
+
+function onBudgetTextBlur() {
+  let val = customBudgetValue.value || 0;
+  if (val < MIN_BUDGET) val = MIN_BUDGET;
+  if (val > MAX_BUDGET) val = MAX_BUDGET;
+  customBudgetValue.value = val;
+  customBudgetText.value = fmt(val);
+  store.setAnswer('budget', val);
+}
+
 function finish() {
+  if (isCustomBudget.value) {
+    let val = customBudgetValue.value || 0;
+    if (val < MIN_BUDGET) val = MIN_BUDGET;
+    if (val > MAX_BUDGET) val = MAX_BUDGET;
+    customBudgetValue.value = val;
+    customBudgetText.value = fmt(val);
+    store.setAnswer('budget', val);
+  }
   const r = store.submitProfile();
   if (r === 'ok') router.push({ path: '/plans', query: { step: '2' } });
   else if (r === 'out_of_zone') {
@@ -470,6 +604,7 @@ function finish() {
 }
 
 function clearBudgetAndFinish() {
+  isCustomBudget.value = false;
   store.setAnswer('budget', null);
   finish();
 }
@@ -562,5 +697,60 @@ function clearBudgetAndFinish() {
   font-size: 13px;
   color: var(--green-d);
   margin: 0;
+}
+
+.custom-budget-box {
+  margin-top: 10px;
+  padding: 16px;
+  background: var(--bg);
+  border: 1.5px dashed var(--green);
+  border-radius: 14px;
+  display: grid;
+  gap: 10px;
+}
+.custom-budget-stepper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.budget-step-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  border: 1.5px solid var(--green);
+  background: var(--card);
+  color: var(--green);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s ease;
+  flex-shrink: 0;
+}
+.budget-step-btn:hover:not(:disabled) {
+  background: var(--green-soft);
+}
+.budget-step-btn:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+.budget-input-wrap {
+  flex: 1;
+}
+.budget-num-input {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.5px;
+}
+.budget-hint {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.4;
 }
 </style>
