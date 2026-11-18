@@ -3,7 +3,7 @@
     <header class="m-head">
       <h1 class="pl-h1">Thực đơn tuần 1 của bạn</h1>
       <p class="pl-lead">
-        AI đã xếp {{ plan.meals_per_week }} bữa cho {{ plan.household_size }} người. Bạn xem và đổi món trước, hài lòng rồi mới trả tiền.
+        Đầu bếp MOVA đã tuyển chọn {{ plan.meals_per_week }} bữa cho {{ plan.household_size }} người. Bạn xem và đổi món trước, hài lòng rồi mới trả tiền.
       </p>
     </header>
 
@@ -31,6 +31,7 @@
           :key="m.meal_index"
           :meal="m"
           :plan-id="plan.plan_id"
+          :household-size="plan.household_size"
           editable
           @swap="(i, kind, id) => store.swap(i, kind, id)"
         />
@@ -44,8 +45,8 @@
 
     <div class="cta">
       <div class="cta-sum">
-        <small>Gói {{ plan.quote.weeks }} tuần trị giá</small>
-        <b class="num">{{ fmt(plan.quote.package_value_vnd) }}</b>
+        <small>Gói {{ plan.quote.weeks }} tuần trị giá {{ fmt(plan.quote.package_value_vnd) }}</small>
+        <b class="num">{{ fmt(plan.quote.per_meal_list_vnd) }} <span class="pl-unit">/ bữa</span></b>
       </div>
       <button class="pl-btn primary" type="button" @click="$emit('next')">Tiếp tục: giao hàng và thanh toán</button>
     </div>
@@ -98,6 +99,7 @@ const staples = computed(() => {
 .cta-sum { display: grid; line-height: 1.15; }
 .cta-sum small { font-size: 14px; color: var(--muted); }
 .cta-sum b { font-size: 22px; }
+.pl-unit { font-size: 15px; font-weight: 500; color: var(--muted); }
 
 @media (max-width: 900px) {
   .m-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'people' 'side' 'meals'; }

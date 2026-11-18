@@ -13,7 +13,7 @@
         </li>
         <li>
           <span class="n">2</span>
-          <b>Xem thực đơn AI xếp cho bạn</b>
+          <b>Xem thực đơn do Đầu bếp tuyển chọn cho bạn</b>
           <p>Mâm cơm Việt đủ món đạm, rau, canh, tinh bột, trái cây. Đổi món, thêm đạm hay thêm một bữa Tây ngay trên màn hình.</p>
         </li>
         <li>

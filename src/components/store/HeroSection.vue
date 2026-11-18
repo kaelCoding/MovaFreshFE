@@ -3,9 +3,9 @@
     <div class="wrap">
       <div class="copy">
         <span class="kicker">NGUYÊN LIỆU SƠ CHẾ SẴN TỪ ĐẮK LẮK, GIAO TẬN CỬA TP.HCM</span>
-        <h1>Mâm cơm nhà bạn, do AI thiết kế riêng, nấu xong trong 15 phút.</h1>
+        <h1>Mâm cơm nhà bạn, do Đầu bếp thiết kế riêng, nấu xong trong 15 phút.</h1>
         <p class="sub">
-          Đắk Lắk, xe lạnh xuyên đêm, tận cửa nhà bạn. MOVA xếp thực đơn theo số người ăn, khẩu vị và nhu cầu của gia đình bạn, rồi sơ chế sẵn cho bạn.
+          Đắk Lắk, xe lạnh xuyên đêm, tận cửa nhà bạn. Đầu bếp MOVA tuyển chọn thực đơn theo số người ăn, khẩu vị và thể trạng gia đình bạn, sơ chế sạch sẽ 100% và giao tận cửa.
         </p>
         <div class="cta">
           <router-link to="/plans" class="pl-btn primary big">Thiết kế thực đơn của tôi</router-link>

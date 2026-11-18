@@ -23,6 +23,9 @@ const freshCheckout = () => ({
   slotId: '',
   name: '',
   phone: '',
+  phoneVerified: false,
+  newsletterOptin: false,
+  voucherCode: '',
   street: '',
   district: '',
   method: 'fresh_credit',
@@ -262,6 +265,9 @@ export const usePlanFlowStore = defineStore('planFlow', {
         duration_weeks: BUSINESS.subscription.defaultWeeks,
         payment_method: c.method,
         auto_debit_enabled: c.method !== 'bank_transfer_4w',
+        phone_verified: Boolean(c.phoneVerified),
+        newsletter_optin: Boolean(c.newsletterOptin),
+        voucher_code: c.voucherCode || BUSINESS.incentives.giftCardCode,
         schedule
       });
       if (c.method === 'fresh_credit') req.topup_pay_vnd = this.selectedTopupPay();

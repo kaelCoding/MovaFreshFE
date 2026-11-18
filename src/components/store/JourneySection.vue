@@ -29,7 +29,7 @@ const steps = [
   {
     when: `${pad(t.cutoffHour)}:${pad(t.cutoffMinute)}, ${t.cutoffDaysBeforeDelivery} ngày trước ngày giao`,
     title: 'Bạn chốt thực đơn',
-    text: 'Thực đơn AI xếp riêng cho nhà bạn. Bạn đổi món thoải mái cho tới giờ chốt sổ của chuyến giao; app luôn ghi rõ ngày giờ cụ thể.'
+    text: 'Thực đơn do Đầu bếp thiết kế riêng cho nhà bạn. Bạn đổi món thoải mái cho tới giờ chốt sổ của chuyến giao; app luôn ghi rõ ngày giờ cụ thể.'
   },
   {
     when: 'Tại Đắk Lắk',

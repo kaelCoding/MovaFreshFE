@@ -59,7 +59,15 @@ export function boxCost(order, env) {
   const packagingVnd = env.priceFor(PACKAGING_SKU, order.deliveryDay) || 0;
   byTaxGroup[SKUS[PACKAGING_SKU].taxGroup] = (byTaxGroup[SKUS[PACKAGING_SKU].taxGroup] || 0) + packagingVnd;
   const saucePacks = Object.values(bom.sauces).reduce((s, n) => s + n, 0);
-  const sauceVnd = saucePacks * cfg.finance.sauceCostPerPackVnd;
+  let sauceVnd = 0;
+  if (typeof cfg.finance.sauceCostPerPackVnd === 'object' && cfg.finance.sauceCostPerPackVnd !== null) {
+    for (const [sCode, count] of Object.entries(bom.sauces)) {
+      const unit = cfg.finance.sauceCostPerPackVnd[sCode] ?? cfg.finance.sauceCostPerPackVnd.default ?? 4500;
+      sauceVnd += count * unit;
+    }
+  } else {
+    sauceVnd = saucePacks * Number(cfg.finance.sauceCostPerPackVnd || 0);
+  }
   byTaxGroup.sauce = (byTaxGroup.sauce || 0) + sauceVnd;
   const logistics = env.logisticsFor(order.deliveryDay);
   const materialsVnd = round(skuVnd) + round(packagingVnd) + round(sauceVnd);

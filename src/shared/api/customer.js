@@ -25,16 +25,23 @@ const GOAL_ALIASES = {
   reduce_fat: 'low_carb',
   lose_weight: 'low_carb'
 };
-// Người cần lưu ý trong nhà → mục tiêu / kiêng cho AI xếp món. Không hứa chữa bệnh: chỉ "ít tinh bột", "hạn chế đường".
+// Người cần lưu ý trong nhà → mục tiêu / kiêng cho Đầu bếp xếp món. Không hứa chữa bệnh: chỉ "ít tinh bột", "hạn chế đường".
 const NEED_TO_GOALS = {
-  gym: [],
+  balanced: [],
+  gym: [], // gym chỉ ghi nhận, đạm tăng khi trả lời câu hỏi giá trị (upsell)
   weight_loss: ['low_carb'],
   limit_sugar: ['limit_sugar'],
   elderly: ['gentle_digestion'],
   young_child: [],
-  sensitive_stomach: ['gentle_digestion']
+  sensitive_stomach: ['gentle_digestion'],
+  gout: ['low_purine'],
+  meat_lover: []
 };
-const NEED_TO_RESTRICTIONS = { young_child: ['no_spicy'], sensitive_stomach: ['no_spicy'] };
+const NEED_TO_RESTRICTIONS = {
+  young_child: ['no_spicy'],
+  sensitive_stomach: ['no_spicy'],
+  gout: ['no_seafood']
+};
 const WEEKDAY_NAMES = DOW_LABELS;
 
 const ok = (data) => ({ status: 'success', data });
@@ -630,6 +637,13 @@ export function createCustomerApi(server, cfg = BUSINESS) {
         }
 
         db.customers.push(customer);
+        if (req.phone_verified) customer.phoneVerified = true;
+        if (req.newsletter_optin) {
+          customer.newsletterOptin = true;
+          customer.credit = topUp(customer.credit, 0, 15000);
+          const at = now.toISOString();
+          db.ledger.push({ id: nextId(db, 'LED'), customerId: customer.id, kind: 'reward', amountVnd: 15000, real: 0, promo: 15000, ref: paymentRef, at, note: 'Tặng đăng ký bản tin công thức nấu ăn Đầu bếp MOVA' });
+        }
         db.subscriptions.push(subscription);
         // Số dư thử nghiệm (starting_credit, chỉ có trong mock) cũng phải có bút để sổ Fresh Credit khớp số dư
         if (req.starting_credit) {

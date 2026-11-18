@@ -2,24 +2,68 @@
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="swap-title" @click.self="$emit('close')">
     <div class="mbox box">
       <button class="mclose" type="button" @click="$emit('close')" aria-label="Đóng">×</button>
-      <h2 id="swap-title" class="pl-h2">Đổi món</h2>
+      <h2 id="swap-title" class="pl-h2">Đổi món linh hoạt</h2>
       <p class="pl-note">Tuần {{ week.number }}, bữa {{ target.meal.meal_index }}. Đang chọn: <b>{{ target.dish.name }}</b></p>
 
       <p v-if="loadError" class="pl-error" role="alert">{{ loadError }}</p>
 
       <template v-else-if="!preview">
         <p class="pl-note">Đổi được đến <b>{{ deadline }}</b>.</p>
+
+        <!-- Tìm kiếm và Mở rộng -->
+        <div class="swap-search-bar">
+          <input
+            v-model="searchQuery"
+            type="text"
+            class="pl-input search-box"
+            placeholder="Tìm kiếm món hoặc nguyên liệu (bò, gà, cá, tôm, heo...)"
+          />
+        </div>
+
+        <!-- Gợi ý chéo nguyên liệu -->
+        <div v-if="!searchQuery && crossSuggestions.length" class="cross-box">
+          <span class="cross-title">Gợi ý đổi nguyên liệu chính khác:</span>
+          <div class="cross-chips">
+            <button
+              v-for="o in crossSuggestions"
+              :key="o.dish_id"
+              type="button"
+              class="sugg-chip"
+              @click="choose(o)"
+            >
+              <b>{{ o.name }}</b>
+              <span class="num sugg-delta" :class="{ up: o.price_delta_vnd > 0, down: o.price_delta_vnd < 0 }">
+                {{ deltaText(o.price_delta_vnd) }}
+              </span>
+            </button>
+          </div>
+        </div>
+
         <div class="pl-chips col" role="list">
-          <button
-            v-for="o in options" :key="o.dish_id" type="button" class="pl-chip big" :class="{ on: o.current }"
-            :disabled="o.current" role="listitem" @click="choose(o)"
-          >
-            <b>{{ o.name }}</b>
-            <small>
-              <template v-if="o.sauce_name">{{ o.sauce_name }} · </template>
-              <span class="num" :class="{ up: o.price_delta_vnd > 0, down: o.price_delta_vnd < 0 }">{{ o.current ? 'Đang chọn' : deltaText(o.price_delta_vnd) }}</span>
-            </small>
-          </button>
+          <div v-for="o in filteredOptions" :key="o.dish_id" class="opt-row">
+            <button
+              type="button"
+              class="pl-chip big flex-1"
+              :class="{ on: o.current }"
+              :disabled="o.current"
+              role="listitem"
+              @click="choose(o)"
+            >
+              <b>{{ o.name }}</b>
+              <small>
+                <template v-if="o.sauce_name">{{ o.sauce_name }} · </template>
+                <span class="num" :class="{ up: o.price_delta_vnd > 0, down: o.price_delta_vnd < 0 }">
+                  {{ o.current ? 'Đang chọn' : deltaText(o.price_delta_vnd) }}
+                </span>
+              </small>
+            </button>
+            <button
+              type="button"
+              class="detail-mini-btn"
+              title="Xem chi tiết"
+              @click.stop="openDetail(o.dish_id)"
+            >ℹ️</button>
+          </div>
         </div>
       </template>
 
@@ -59,15 +103,34 @@
           <button class="pl-btn" type="button" @click="preview = null">Chọn món khác</button>
         </div>
       </template>
+
+      <!-- Mini Modal Chi tiết món -->
+      <div v-if="selectedDishDetail" class="sub-modal" @click.self="selectedDishDetail = null">
+        <div class="sub-modal-box">
+          <button class="mclose" type="button" @click="selectedDishDetail = null">×</button>
+          <span class="terroir-pill">📍 {{ selectedDishDetail.terroir || 'Đắk Lắk' }}</span>
+          <h3 class="detail-name">{{ selectedDishDetail.name }}</h3>
+          <p v-if="selectedDishDetail.spec" class="spec-line"><b>Quy cách:</b> {{ selectedDishDetail.spec }}</p>
+          <div class="nutri-bar">
+            <span>{{ selectedDishDetail.nutrition?.kcal || 0 }} kcal</span> ·
+            <span>Đạm: {{ selectedDishDetail.nutrition?.protein || 0 }}g</span> ·
+            <span>Béo: {{ selectedDishDetail.nutrition?.fat || 0 }}g</span>
+          </div>
+          <div class="detail-actions">
+            <button class="pl-btn primary" type="button" @click="chooseFromDetail(selectedDishDetail)">Chọn món này</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { api } from '../../shared/api';
 import { fmt } from '../../shared/utils/formatters';
 import { useMovaStore } from '../../stores/useMovaStore';
+import { DISHES, SKUS } from '../../shared/data/catalog';
 
 const props = defineProps({
   week: { type: Object, required: true },
@@ -84,9 +147,40 @@ const deadline = res.status === 'success' ? res.data.deadline_label : '';
 const preview = ref(null);
 const error = ref('');
 const busy = ref(false);
+const searchQuery = ref('');
+const selectedDishDetail = ref(null);
 let picked = null;
 
 const deltaText = (v) => (v === 0 ? 'Cùng giá' : `${v > 0 ? '+' : '−'}${fmt(Math.abs(v))}`);
+
+const crossSuggestions = computed(() => {
+  const curDish = DISHES[props.target.dish.dish_id];
+  if (!curDish) return [];
+  const curSku = curDish.bom?.[0]?.sku;
+  const curTag = curDish.tags?.[0];
+
+  return options.value
+    .filter((o) => {
+      if (o.dish_id === props.target.dish.dish_id) return false;
+      const d = DISHES[o.dish_id];
+      if (!d) return true;
+      return d.bom?.[0]?.sku !== curSku && d.tags?.[0] !== curTag;
+    })
+    .slice(0, 4);
+});
+
+const filteredOptions = computed(() => {
+  if (!searchQuery.value.trim()) return options.value;
+  const q = searchQuery.value.trim().toLowerCase();
+  return options.value.filter((o) => {
+    const d = DISHES[o.dish_id];
+    return (
+      o.name.toLowerCase().includes(q) ||
+      (o.sauce_name && o.sauce_name.toLowerCase().includes(q)) ||
+      d?.bom?.some((b) => (SKUS[b.sku]?.name || '').toLowerCase().includes(q))
+    );
+  });
+});
 
 function choose(o) {
   error.value = '';
@@ -94,6 +188,16 @@ function choose(o) {
   const p = api.customer.previewMealChange({ ...base, dish_id: o.dish_id });
   if (p.status === 'error') error.value = p.error.message;
   else preview.value = p.data;
+}
+
+function openDetail(dishId) {
+  selectedDishDetail.value = DISHES[dishId] || null;
+}
+
+function chooseFromDetail(dish) {
+  const o = options.value.find((x) => x.dish_id === dish.id);
+  selectedDishDetail.value = null;
+  if (o) choose(o);
 }
 
 function confirm() {
@@ -116,11 +220,80 @@ function topup() {
 </script>
 
 <style scoped>
-.box { max-width: 520px; padding: 26px 20px; display: grid; gap: 14px; }
+.box { max-width: 540px; padding: 26px 20px; display: grid; gap: 14px; position: relative; }
 .sum { display: grid; gap: 6px; font-size: 17px; }
 .big { font-size: 22px; }
 .btns { display: grid; gap: 10px; }
 .up { color: var(--orange-ink); font-weight: 700; }
 .down { color: var(--green-d); font-weight: 700; }
 .pl-chip.big:disabled { opacity: 1; cursor: default; }
+
+.swap-search-bar { margin: -4px 0 4px; }
+.search-box { width: 100%; border-radius: 10px; font-size: 14px; padding: 8px 12px; }
+
+.cross-box {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px;
+  display: grid;
+  gap: 6px;
+}
+.cross-title { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; }
+.cross-chips { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+.sugg-chip {
+  padding: 6px 8px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+.sugg-chip:hover { border-color: var(--green); background: var(--green-soft); }
+.sugg-chip b { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sugg-delta { font-size: 12px; font-weight: 700; white-space: nowrap; }
+
+.opt-row { display: flex; gap: 6px; align-items: stretch; width: 100%; }
+.flex-1 { flex: 1; }
+.detail-mini-btn {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0 10px;
+  cursor: pointer;
+  font-size: 16px;
+}
+.detail-mini-btn:hover { background: #e2e8f0; }
+
+.sub-modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 10;
+}
+.sub-modal-box {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  width: 100%;
+  max-width: 420px;
+  display: grid;
+  gap: 8px;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+.terroir-pill { font-size: 12px; font-weight: 700; color: var(--green-d); background: var(--green-soft); padding: 2px 8px; border-radius: 6px; width: fit-content; }
+.detail-name { font-size: 18px; font-weight: 800; margin: 0; }
+.spec-line { font-size: 13px; color: var(--muted); margin: 0; }
+.nutri-bar { font-size: 13px; color: var(--ink); background: var(--bg); padding: 6px 10px; border-radius: 6px; }
+.detail-actions { margin-top: 6px; }
 </style>

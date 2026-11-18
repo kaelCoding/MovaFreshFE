@@ -437,7 +437,7 @@ describe('trạng thái giao từ app vận hành và thay món do thiếu hàng
   it('thay món do thiếu hàng: bù vào ngăn khuyến mãi và báo khách', () => {
     const { api, server } = setup();
     const o = orderOf(server, CREDIT_OK).find((x) => x.weekIndex === 1);
-    const meal = o.meals.find((m) => DISHES[m.dishes.protein].pricePerPersonVnd > 40000);
+    const meal = o.meals.find((m) => DISHES[m.dishes.protein].pricePerPersonVnd > 20000);
     const cheap = Object.values(DISHES).find((d) => d.kind === 'protein' && !d.western && d.pricePerPersonVnd < DISHES[meal.dishes.protein].pricePerPersonVnd);
     const before = credit(server, CREDIT_OK);
     const res = api.ops.substituteDish({ role: 'workshop' }, { orderId: o.id, mealIndex: meal.index, kind: 'protein', toDishId: cheap.id, reason: 'nhà máy thiếu hàng' });

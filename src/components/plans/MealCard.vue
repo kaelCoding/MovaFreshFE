@@ -16,29 +16,131 @@
             {{ p.dish.name }}
             <small v-if="p.note" class="muted">{{ p.note }}</small>
           </span>
-          <button
-            v-if="editable && p.swappable"
-            type="button"
-            class="swap-btn"
-            :aria-expanded="open === p.kind"
-            @click="toggle(p.kind)"
-          >{{ open === p.kind ? 'Đóng' : 'Đổi' }}</button>
+          <div class="action-btns">
+            <button
+              type="button"
+              class="detail-btn"
+              title="Xem định lượng, quy cách & công thức"
+              @click="openDishDetail(p.dish.dish_id)"
+            >Chi tiết</button>
+            <button
+              v-if="editable && p.swappable"
+              type="button"
+              class="swap-btn"
+              :aria-expanded="open === p.kind"
+              @click="toggle(p.kind)"
+            >{{ open === p.kind ? 'Đóng' : 'Đổi' }}</button>
+          </div>
         </div>
 
-        <ul v-if="open === p.kind" class="opts" :aria-label="'Món có thể đổi: ' + p.label">
-          <li v-for="o in options" :key="o.dish_id">
-            <button type="button" class="opt" :class="{ cur: o.current }" :disabled="o.current" @click="choose(p.kind, o.dish_id)">
-              <span>{{ o.name }}<small v-if="o.sauce_name" class="muted"> · {{ o.sauce_name }}</small></span>
-              <span class="num delta">{{ o.current ? 'Đang chọn' : deltaText(o.price_delta_vnd) }}</span>
+        <!-- Khung đổi món nâng cao -->
+        <div v-if="open === p.kind" class="swap-panel" :aria-label="'Đổi món: ' + p.label">
+          <div class="swap-header">
+            <div class="search-box">
+              <input
+                v-model="searchQuery"
+                type="text"
+                class="search-input"
+                placeholder="Tìm món hoặc nguyên liệu (bò, gà, cá, tôm, heo...)"
+              />
+            </div>
+            <button
+              type="button"
+              class="view-all-btn"
+              :class="{ on: showAllDishes }"
+              @click="showAllDishes = !showAllDishes"
+            >
+              {{ showAllDishes ? 'Thu gọn' : 'Mở toàn bộ thực đơn nhà máy' }}
             </button>
-          </li>
-        </ul>
+          </div>
+
+          <!-- Gợi ý đổi chéo nguyên liệu chính -->
+          <div v-if="!searchQuery && crossIngredientOptions.length" class="cross-suggestions">
+            <span class="sugg-label">Gợi ý đổi nguyên liệu chính khác:</span>
+            <div class="sugg-grid">
+              <button
+                v-for="o in crossIngredientOptions"
+                :key="o.dish_id"
+                type="button"
+                class="sugg-item"
+                @click="choose(p.kind, o.dish_id)"
+              >
+                <b class="sugg-name">{{ o.name }}</b>
+                <span class="num sugg-delta" :class="{ up: o.price_delta_vnd > 0, down: o.price_delta_vnd < 0 }">
+                  {{ deltaText(o.price_delta_vnd) }}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <ul class="opts">
+            <li v-for="o in displayedOptions" :key="o.dish_id">
+              <button type="button" class="opt" :class="{ cur: o.current }" :disabled="o.current" @click="choose(p.kind, o.dish_id)">
+                <div class="opt-left">
+                  <span class="opt-name">{{ o.name }}</span>
+                  <small v-if="o.sauce_name" class="muted">Xốt: {{ o.sauce_name }}</small>
+                </div>
+                <span class="num delta" :class="{ up: o.price_delta_vnd > 0, down: o.price_delta_vnd < 0 }">
+                  {{ o.current ? 'Đang chọn' : deltaText(o.price_delta_vnd) }}
+                </span>
+              </button>
+            </li>
+          </ul>
+        </div>
       </li>
     </ul>
 
     <footer v-if="meal.highlight_sauce" class="sauce">
-      Điểm nhấn: <b>{{ meal.highlight_sauce.name }}</b>
+      Gói xốt công thức: <b>{{ meal.highlight_sauce.name }}</b>
     </footer>
+
+    <!-- Modal Chi tiết món -->
+    <div v-if="detailDish" class="modal" role="dialog" aria-modal="true" @click.self="detailDish = null">
+      <div class="modal-box">
+        <button class="mclose" type="button" @click="detailDish = null" aria-label="Đóng">×</button>
+        <div class="modal-content">
+          <div class="detail-header">
+            <span class="terroir-badge">📍 Vùng nguyên liệu: {{ detailDish.terroir || 'Đắk Lắk' }}</span>
+            <h3 class="dish-title">{{ detailDish.name }}</h3>
+          </div>
+
+          <div class="detail-grid">
+            <!-- 1. Định lượng & Quy cách -->
+            <div class="info-card">
+              <h4 class="card-title">⚖️ Định lượng & Quy cách (cho {{ effectiveHouseholdSize }} người)</h4>
+              <ul class="bom-list">
+                <li v-for="(b, idx) in detailDish.bom" :key="idx">
+                  <b>{{ formatBomGrams(b.gramsPerPerson) }}</b>
+                  <span class="sku-name"> {{ getSkuName(b.sku) }}</span>
+                </li>
+              </ul>
+              <p v-if="detailDish.spec" class="spec-text"><b>Quy cách sơ chế:</b> {{ detailDish.spec }}</p>
+            </div>
+
+            <!-- 2. Dinh dưỡng -->
+            <div class="info-card">
+              <h4 class="card-title">🥗 Dinh dưỡng khẩu phần</h4>
+              <div class="nutri-grid">
+                <div class="nutri-item"><b class="num">{{ detailDish.nutrition?.kcal || 0 }}</b><span>Calo (kcal)</span></div>
+                <div class="nutri-item"><b class="num">{{ detailDish.nutrition?.protein || 0 }}g</b><span>Đạm (protein)</span></div>
+                <div class="nutri-item"><b class="num">{{ detailDish.nutrition?.carb || 0 }}g</b><span>Tinh bột</span></div>
+                <div class="nutri-item"><b class="num">{{ detailDish.nutrition?.fat || 0 }}g</b><span>Chất béo</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Công thức 3 bước 15 phút -->
+          <div class="recipe-card">
+            <h4 class="card-title">⏱️ 3 bước nấu nhanh trong 15 phút</h4>
+            <ol class="recipe-steps">
+              <li v-for="(step, sIdx) in dishSteps" :key="sIdx">
+                <span>{{ step }}</span>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
   </article>
 </template>
 
@@ -46,19 +148,27 @@
 import { computed, ref } from 'vue';
 import { api } from '../../shared/api';
 import { fmt } from '../../shared/utils/formatters';
+import { DISHES, SKUS } from '../../shared/data/catalog';
+import { recipeFor } from '../../shared/data/recipes';
 
 const props = defineProps({
   meal: { type: Object, required: true },
   planId: { type: String, default: '' },
   editable: { type: Boolean, default: false },
-  showPrice: { type: Boolean, default: true }
+  showPrice: { type: Boolean, default: true },
+  householdSize: { type: Number, default: 2 }
 });
 const emit = defineEmits(['swap']);
 
 const open = ref('');
 const options = ref([]);
+const searchQuery = ref('');
+const showAllDishes = ref(false);
+const detailDish = ref(null);
 
 const RICE = 'D-CRB-001';
+
+const effectiveHouseholdSize = computed(() => props.householdSize || 2);
 
 const parts = computed(() => {
   const s = props.meal.meal_structure;
@@ -70,7 +180,7 @@ const parts = computed(() => {
     const rice = s.carb_dish.dish_id === RICE;
     list.push({
       kind: 'carb', label: 'Tinh bột', dish: s.carb_dish,
-      swappable: props.meal.carb_choices.length > 1,
+      swappable: props.meal.carb_choices && props.meal.carb_choices.length > 1,
       note: rice ? '· gạo tính theo tuần' : ''
     });
   }
@@ -83,10 +193,56 @@ function toggle(kind) {
     open.value = '';
     return;
   }
+  searchQuery.value = '';
+  showAllDishes.value = false;
   const res = api.customer.swapOptions({ plan_id: props.planId, meal_index: props.meal.meal_index, kind });
   options.value = res.status === 'success' ? res.data.options : [];
   open.value = kind;
 }
+
+const currentDishId = computed(() => {
+  const p = parts.value.find((x) => x.kind === open.value);
+  return p ? p.dish.dish_id : '';
+});
+
+// Gợi ý 3-4 món khác hẳn nguyên liệu gốc
+const crossIngredientOptions = computed(() => {
+  const curId = currentDishId.value;
+  const curDish = DISHES[curId];
+  if (!curDish) return [];
+
+  const curSku = curDish.bom?.[0]?.sku;
+  const curTag = curDish.tags?.[0];
+
+  return options.value
+    .filter((o) => {
+      if (o.dish_id === curId) return false;
+      const d = DISHES[o.dish_id];
+      if (!d) return true;
+      const otherSku = d.bom?.[0]?.sku;
+      const otherTag = d.tags?.[0];
+      return otherSku !== curSku && otherTag !== curTag;
+    })
+    .slice(0, 4);
+});
+
+const displayedOptions = computed(() => {
+  let list = options.value;
+  if (searchQuery.value.trim()) {
+    const q = searchQuery.value.trim().toLowerCase();
+    list = list.filter((o) => {
+      const d = DISHES[o.dish_id];
+      const matchName = o.name.toLowerCase().includes(q);
+      const matchSauce = o.sauce_name && o.sauce_name.toLowerCase().includes(q);
+      const matchSku = d?.bom?.some((b) => (SKUS[b.sku]?.name || '').toLowerCase().includes(q));
+      return matchName || matchSauce || matchSku;
+    });
+  } else if (!showAllDishes.value && crossIngredientOptions.value.length) {
+    // Chỉ hiện các món nổi bật hoặc món đang chọn
+    list = list.slice(0, 6);
+  }
+  return list;
+});
 
 function choose(kind, dishId) {
   open.value = '';
@@ -97,6 +253,32 @@ function deltaText(v) {
   if (!v) return 'Giá như nhau';
   return `${v > 0 ? '+' : '−'}${fmt(Math.abs(v))}`;
 }
+
+function openDishDetail(dishId) {
+  const d = DISHES[dishId];
+  if (d) {
+    detailDish.value = d;
+  }
+}
+
+const dishSteps = computed(() => {
+  if (!detailDish.value) return [];
+  const r = recipeFor(detailDish.value.id);
+  return r?.steps || [
+    'Sơ chế và để ráo nguyên liệu đã cắt sẵn.',
+    'Làm nóng chảo, cho nguyên liệu và xốt định lượng vào nấu trong 10-12 phút.',
+    'Dọn ra đĩa và thưởng thức nóng hổi cùng gia đình.'
+  ];
+});
+
+function formatBomGrams(gramsPerPerson) {
+  const total = (gramsPerPerson || 0) * effectiveHouseholdSize.value;
+  return `${total}g`;
+}
+
+function getSkuName(skuId) {
+  return SKUS[skuId]?.name || skuId;
+}
 </script>
 
 <style scoped>
@@ -106,20 +288,195 @@ function deltaText(v) {
 .meal-h > div { display: grid; gap: 6px; justify-items: start; }
 .meal-t { font-size: 17px; }
 .meal-price { font-size: 16px; font-weight: 700; white-space: nowrap; }
-.parts { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
-.part-row { display: grid; grid-template-columns: 84px 1fr auto; gap: 10px; align-items: center; min-height: 44px; }
+.parts { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.part-row { display: grid; grid-template-columns: 76px 1fr auto; gap: 10px; align-items: center; min-height: 44px; }
 .kind { font-size: 14px; font-weight: 700; color: var(--green-d); }
 .dish { font-size: 16px; line-height: 1.35; }
-.dish small { display: block; font-size: 14px; }
-.swap-btn { min-width: 64px; min-height: 44px; border: 1.5px solid var(--green); background: var(--card); color: var(--green-d); border-radius: 12px; font-size: 16px; font-weight: 700; }
+.dish small { display: block; font-size: 13px; }
+
+.action-btns { display: flex; gap: 6px; align-items: center; }
+.detail-btn {
+  padding: 6px 10px;
+  min-height: 38px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink);
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.detail-btn:hover { background: #e2e8f0; }
+
+.swap-btn {
+  min-width: 58px;
+  min-height: 38px;
+  border: 1.5px solid var(--green);
+  background: var(--card);
+  color: var(--green-d);
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
 .swap-btn:hover { background: var(--green-soft); }
-.opts { list-style: none; margin: 4px 0 8px; padding: 8px; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; display: grid; gap: 6px; }
-.opt { width: 100%; min-height: 48px; display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: left; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; font-size: 16px; }
+
+.swap-panel {
+  margin: 8px 0 12px;
+  padding: 12px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  display: grid;
+  gap: 10px;
+}
+.swap-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.search-box { flex: 1; min-width: 180px; }
+.search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fff;
+}
+.view-all-btn {
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px dashed var(--green);
+  color: var(--green-d);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.view-all-btn.on { background: var(--green-soft); border-style: solid; }
+
+.cross-suggestions {
+  background: #fff;
+  border: 1px solid var(--line-2);
+  border-radius: 10px;
+  padding: 10px;
+  display: grid;
+  gap: 6px;
+}
+.sugg-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; }
+.sugg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px; }
+.sugg-item {
+  padding: 6px 8px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  text-align: left;
+  display: grid;
+  gap: 2px;
+  cursor: pointer;
+}
+.sugg-item:hover { border-color: var(--green); background: var(--green-soft); }
+.sugg-name { font-size: 13px; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sugg-delta { font-size: 12px; font-weight: 700; }
+
+.opts { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.opt {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
 .opt:hover:not(:disabled) { border-color: var(--green); background: var(--green-soft); }
 .opt.cur { background: var(--green-soft); border-color: var(--green); font-weight: 600; }
-.delta { font-size: 15px; font-weight: 700; white-space: nowrap; }
-.sauce { font-size: 15px; background: var(--orange-soft); color: var(--orange-ink); border-radius: 10px; padding: 8px 12px; }
+.opt-left { display: grid; gap: 2px; }
+.opt-name { font-size: 15px; font-weight: 600; }
+.delta { font-size: 14px; font-weight: 700; white-space: nowrap; }
+.delta.up { color: var(--orange-ink); }
+.delta.down { color: var(--green-d); }
+
+.sauce { font-size: 14px; background: var(--orange-soft); color: var(--orange-ink); border-radius: 10px; padding: 8px 12px; }
+
+/* Modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+.modal-box {
+  background: var(--card);
+  border-radius: 20px;
+  max-width: 580px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 24px 20px;
+  position: relative;
+  box-shadow: 0 16px 36px rgba(0,0,0,0.25);
+}
+.mclose {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: transparent;
+  border: 0;
+  font-size: 28px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.detail-header { margin-bottom: 16px; display: grid; gap: 4px; }
+.terroir-badge {
+  display: inline-block;
+  background: var(--green-soft);
+  color: var(--green-d);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  width: fit-content;
+}
+.dish-title { font-size: 20px; font-weight: 800; margin: 0; }
+
+.detail-grid { display: grid; gap: 12px; margin-bottom: 14px; }
+.info-card {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.card-title { font-size: 15px; font-weight: 700; margin: 0 0 8px; }
+.bom-list { list-style: none; padding: 0; margin: 0 0 6px; display: grid; gap: 4px; font-size: 14px; }
+.spec-text { font-size: 14px; margin: 6px 0 0; color: var(--muted); }
+
+.nutri-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center; }
+.nutri-item { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 6px 4px; display: flex; flex-direction: column; }
+.nutri-item b { font-size: 16px; color: var(--green-d); }
+.nutri-item span { font-size: 11px; color: var(--muted); }
+
+.recipe-card {
+  background: #FFFBF6;
+  border: 1px solid #F1C7B1;
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.recipe-steps { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; line-height: 1.4; }
+
 @media (max-width: 480px) {
-  .part-row { grid-template-columns: 72px 1fr auto; gap: 8px; }
+  .part-row { grid-template-columns: 60px 1fr auto; gap: 6px; }
+  .detail-btn, .swap-btn { padding: 4px 6px; font-size: 13px; }
 }
 </style>

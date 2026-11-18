@@ -43,7 +43,7 @@ const faqs = [
   },
   {
     q: 'Nhà tôi có người cần ăn ít tinh bột hoặc hạn chế đường thì sao?',
-    a: 'Bạn nói với MOVA ngay ở câu hỏi đầu tiên. AI sẽ xếp món ít tinh bột, hạn chế đường, đổi cơm sang khoai khi cần. Đây là thực đơn dinh dưỡng cho bữa cơm nhà, không thay thế điều trị của bác sĩ.'
+    a: 'Bạn nói với MOVA ngay ở câu hỏi đầu tiên. Đầu bếp MOVA sẽ thiết kế món ít tinh bột, hạn chế đường, đổi cơm sang khoai khi cần. Đây là thực đơn dinh dưỡng cho bữa cơm nhà, không thay thế điều trị của bác sĩ.'
   }
 ];
 </script>

@@ -400,7 +400,15 @@ describe('giá vốn và margin', () => {
     }
     expect(c.skuVnd).toBe(Math.round(sku));
     expect(c.packagingVnd).toBe(poPrice('BB-THUNG-01'));
-    expect(c.sauceVnd).toBe(c.saucePacks * BUSINESS.finance.sauceCostPerPackVnd);
+    let expectedSauce = 0;
+    if (typeof BUSINESS.finance.sauceCostPerPackVnd === 'object' && BUSINESS.finance.sauceCostPerPackVnd !== null) {
+      for (const [sCode, count] of Object.entries(bom.sauces)) {
+        expectedSauce += count * (BUSINESS.finance.sauceCostPerPackVnd[sCode] || 4500);
+      }
+    } else {
+      expectedSauce = c.saucePacks * BUSINESS.finance.sauceCostPerPackVnd;
+    }
+    expect(c.sauceVnd).toBe(expectedSauce);
     const lc = db.logisticsCosts.find((x) => x.day === day);
     expect(c.logisticsVnd).toBe(lc ? lc.perBoxVnd : c.logisticsVnd);
     expect(c.totalVnd).toBe(c.skuVnd + c.packagingVnd + c.sauceVnd + c.logisticsVnd);

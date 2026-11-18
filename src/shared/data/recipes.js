@@ -90,8 +90,8 @@ export const RECIPES = {
     'Luộc mì trong nước sôi 7 phút, vớt ra để ráo.',
     'Trộn mì với xốt cà nóng, dọn kèm món chính.'
   ]),
-  'D-DST-001': r(1, ['Bổ đôi quả bơ, bỏ hạt, múc ra bát. Có thể rưới chút sữa đặc hoặc ăn nguyên vị.']),
-  'D-DST-002': r(1, ['Bóc vỏ chuối, ăn tráng miệng sau bữa chính.'])
+  'D-DST-002': r(1, ['Bóc vỏ chuối, ăn tráng miệng sau bữa chính.']),
+  'D-DST-003': r(1, ['Cho vải thiều IQF vào đĩa, quay lò vi sóng 1 phút ở mức trung bình (hoặc rã đông tự nhiên 5 phút) để thưởng thức trọn vẹn vị ngọt thanh tươi 90%.'])
 };
 
 /** Công thức của một món, hoặc null nếu chưa có. */

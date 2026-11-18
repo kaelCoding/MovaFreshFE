@@ -18,8 +18,8 @@ export const SKU_PACKING = {
   'NL-GAO-01': { prep: 'Đóng túi hút chân không', bagGrams: 500, shelfDays: 180 },
   'NL-BUN-01': { prep: 'Đóng túi', bagGrams: 350, shelfDays: 180 },
   'NL-KHOAI-01': { prep: 'Rửa sạch, cắt khúc', bagGrams: 600, shelfDays: 10 },
-  'NL-TRAI-01': { prep: 'Chọn quả chín đều, đóng khay', bagGrams: 300, shelfDays: 4 },
   'NL-TRAI-02': { prep: 'Chuối tiêu chín cây, bó nải nhỏ', bagGrams: 480, shelfDays: 5 },
+  'NL-TRAI-03': { prep: 'Vải thiều IQF bóc vỏ tách hạt, đóng túi hút chân không', bagGrams: 200, shelfDays: 60 },
   'NL-BANHMI-01': { prep: 'Đóng túi', bagGrams: 240, shelfDays: 3 },
   'NL-MI-01': { prep: 'Đóng túi', bagGrams: 320, shelfDays: 180 },
   // Hải sản do kho phụ TP.HCM ghép, không đóng ở Đắk Lắk

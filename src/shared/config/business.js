@@ -11,6 +11,30 @@ const SLOTS = {
 const slot = (key, capacityBoxes) => ({ ...SLOTS[key], capacityBoxes });
 
 export const BUSINESS = {
+  unitEconomics: {
+    maxMaterialsAndShippingPct: 0.50, // Ràng buộc cốt lõi: Tổng chi phí Nguyên liệu + Vận chuyển <= 50% giá bán
+    maxCogsPct: 0.55, // Hệ số giá vốn tối đa 55% (bao gồm sơ chế & bao bì)
+    opexAndMktPct: 0.15, // Opex & MKT 15%
+    targetNetMarginPct: 0.30, // Giữ Lợi nhuận ròng mục tiêu ~30%
+    standardFillMealsPerDelivery: 6, // Định mức lấp đầy chuẩn: 6 bữa / 1 lần giao
+    boxPackaging: {
+      sku: 'BB-THUNG-01',
+      totalVnd: 14000, // 14.000đ / hộp
+      carton3LayersVnd: 5500, // Thùng carton 3 lớp 5.500đ
+      foamSilverBagVnd: 3200, // Túi xốp bạc giữ nhiệt 3.200đ
+      iceGelVnd: 5300 // Đá gel giữ lạnh 5.300đ
+    },
+    lastMileDeliveryVnd: 25000, // Phí giao chặng cuối nội thành TP.HCM (Ahamove 4H / Lalamove Van 3H gom tuyến): 25.000đ / lần giao
+    allocatedPackagingAndShippingPerMealVnd: 6500, // (14.000 + 25.000) / 6 = 6.500đ / bữa
+    allocationRatio: {
+      protein: 0.50,
+      veg: 0.15,
+      soup: 0.15,
+      carb: 0.10,
+      dessert: 0.10
+    }
+  },
+
   subscription: {
     minWeeks: 4,
     defaultWeeks: 4,
@@ -256,7 +280,7 @@ export const BUSINESS = {
     // Chi phí kho phụ TP.HCM mỗi ngày khi kế toán / điều phối chưa nhập
     hubDailyCostVnd: { laborVnd: 1200000, rentVnd: 600000, iceVnd: 350000, otherVnd: 0 },
     // Chặng cuối: mỗi tuyến một khoản cố định, mỗi điểm giao một khoản, mỗi lần giao hụt thêm một khoản
-    lastMile: { routeBaseVnd: 120000, perStopVnd: 15000, perFailedAttemptVnd: 10000 },
+    lastMile: { routeBaseVnd: 120000, perStopVnd: 25000, perFailedAttemptVnd: 10000, standardDeliveryVnd: 25000 },
     // Ước tính thời gian tuyến (bản mock): phút làm việc tại một điểm và di chuyển giữa hai điểm liên tiếp
     minutesPerStop: 8,
     travelMinutes: { sameWard: 4, otherWard: 10, otherZone: 20 },
@@ -315,8 +339,18 @@ export const BUSINESS = {
     topupInvoiceVatRate: null,
     // Cổng thẻ: phí = % x số tiền + phí cố định; tiền về sau ngần này ngày
     card: { feePct: 0.025, feeFixedVnd: 1100, settleDays: 2 },
-    // Giá vốn một túi xốt (xưởng tự chiết rót nên chưa có PO riêng). Giả định.
-    sauceCostPerPackVnd: 3500,
+    // Giá vốn một túi xốt (xưởng tự chiết rót / OEM sachet). Cập nhật bảng giá thực tế V2.2.
+    sauceCostPerPackVnd: {
+      'XOT-01': 4500, // Xốt Kho Tàu Củ Sen, 80g
+      'XOT-02': 4500, // Xốt Tiêu Đen Tây Nguyên, 60g
+      'XOT-03': 4500, // Xốt Canh Chua Nam Bộ, 90g
+      'XOT-04': 3500, // Xốt Xào Tỏi Gừng, 50g
+      'XOT-05': 4000, // Xốt Kho Tộ, 70g
+      'XOT-06': 6500, // Xốt Kem Nấm Bơ Tỏi, 80g
+      'XOT-07': 6500, // Xốt Rượu Vang Đỏ, 60g
+      'XOT-08': 5000, // Xốt BBQ Khói, 70g
+      default: 4500
+    },
     // Tài khoản nhận tiền chuyển khoản (số giả). Nội dung chuyển khoản phải chứa mã đối soát.
     bank: { bankName: 'Vietcombank', accountNo: '0071000000000', accountName: 'CONG TY MOVA FRESH' },
     // Đề xuất đợt chi: các khoản phải trả đã quá hạn hoặc đến hạn trong ngần này ngày tới

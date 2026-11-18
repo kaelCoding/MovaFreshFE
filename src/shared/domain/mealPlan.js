@@ -1,7 +1,14 @@
 import { DISHES } from '../data/catalog';
 import { BUSINESS } from '../config/business';
 
-const BLOCKING_TAG = { no_beef: 'beef', no_pork: 'pork', no_seafood: 'seafood', no_spicy: 'spicy' };
+const BLOCKING_TAG = {
+  no_beef: 'beef',
+  no_pork: 'pork',
+  no_seafood: 'seafood',
+  no_spicy: 'spicy',
+  no_gluten: 'gluten',
+  no_lactose: 'lactose'
+};
 
 export const DEFAULT_CARB = 'D-CRB-001'; // cơm gạo ST25: tinh bột mặc định
 export const LOW_CARB_CARB = 'D-CRB-003'; // khoai lang thay cơm cho người cần ít tinh bột
@@ -26,9 +33,12 @@ export function dishFactor(meal, dish) {
 
 /** Số bữa Tây mỗi tuần theo khẩu vị khách chọn. */
 export function westernCountFor(cuisine, mealsCount, cfg = BUSINESS) {
-  if (cuisine !== 'viet_western') return 0;
-  const w = cfg.plan.westernMealsWhenMixed;
-  return mealsCount >= w.withMealsAtLeast ? w.extra : w.base;
+  if (cuisine === 'western') return mealsCount >= 5 ? 3 : 2;
+  if (cuisine === 'viet_western') {
+    const w = cfg.plan.westernMealsWhenMixed;
+    return mealsCount >= w.withMealsAtLeast ? w.extra : w.base;
+  }
+  return 0;
 }
 
 /**
