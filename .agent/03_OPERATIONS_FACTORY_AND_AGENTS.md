@@ -1,7 +1,7 @@
-# 03. VẬN HÀNH NHÀ MÁY, KHO BÃI & HỆ THỐNG AI AGENTS
+# 03. VẬN HÀNH NHÀ MÁY, KHO BÃI & HỆ THỐNG VẬN HÀNH `/ops.html`
 
-> **Quy định quy trình sản xuất thực phẩm, đóng gói, điều phối chuỗi cung ứng Đắk Lắk – TP.HCM và các tác tử AI tự động.**
-> Phiên bản: V2.0 | Cập nhật: 15/11/2026
+> **Quy định quy trình sản xuất thực phẩm, đóng gói, điều phối chuỗi cung ứng Đắk Lắk – TP.HCM, phân quyền 8 vai trò vận hành và các tác tử AI tự động.**
+> Phiên bản: V2.2 | Cập nhật: 18/11/2026 (Đồng bộ toàn diện Hạ tầng & Vận hành)
 
 ---
 
@@ -13,20 +13,21 @@ MOVA Fresh giải quyết bằng thuật toán **BOM (Bill of Materials) Reverse
 
 ```
 [1,000 Thực đơn Cá nhân hóa của Khách hàng]
-  (Bò lúc lắc, Bò xào cần tây, Bò né bông cải, Canh thịt bò cà chua...)
+  (Bò lúc lắc, Bò áp chảo xốt vang, Gà nướng sả mật ong, Canh bí đỏ sườn non...)
                   │
                   ▼
 [Thuật toán BOM Reverse Aggregator]
                   │
                   ▼
 [Tập Nguyên Liệu Thô Tối Giản Cho Nhà Máy]
-  - Thịt bò nạc đùi thái vuông: 145 kg
-  - Thịt bò phi lê thái lát mỏng: 210 kg
-  - Bông cải xanh cắt khúc: 180 kg
-  - Cần tây sơ chế sạch: 95 kg
-  - Cà chua rửa sạch: 120 kg
-  - Gói xốt số 3 (Xốt tiêu đen): 620 gói
-  - Gói xốt số 7 (Xốt tỏi chua ngọt): 510 gói
+  - Thịt bò đùi nạc thái mỏng (NL-BO-01, yield 0.95): 145 kg
+  - Thăn bò cắt steak (NL-BO-02, yield 0.95): 85 kg
+  - Ba rọi heo thảo mộc (NL-HEO-02, yield 0.97): 160 kg
+  - Sườn non heo cắt khúc (NL-SUON-04, yield 0.85): 110 kg
+  - Ức gà phi lê (NL-GA-03, yield 0.95): 95 kg
+  - Bông cải xanh baby (NL-RAU-01, yield 0.75): 120 kg
+  - Cải ngọt Đắk Lắk (NL-RAU-02, yield 0.75): 140 kg
+  - Gói xốt OEM sachet: XOT-01 (Kho tàu), XOT-02 (Tiêu đen), XOT-04 (Tỏi gừng)...
 ```
 
 - **Nguyên lý:** Phía khách hàng nhìn thấy hàng trăm món phong phú. Phía nhà máy Đắk Lắk chỉ nhìn thấy **bảng tổng hợp nguyên liệu thô theo quy cách cắt thái đồng nhất** kèm mã gói xốt tương ứng.
@@ -37,78 +38,64 @@ MOVA Fresh giải quyết bằng thuật toán **BOM (Bill of Materials) Reverse
 
 ### A. Phân định nguồn cung ứng:
 1. **Nhà máy sơ chế trung tâm Đắk Lắk:**
-   - Đảm nhận toàn bộ: Thịt heo, Gà thả vườn Đắk Lắk, Bò ăn cỏ Tây Nguyên, Rau củ quả xứ lạnh/nhiệt đới, Gạo ST25 / nếp lứt, Khoai lang mật, Trái cây theo mùa.
+   - Đảm nhận toàn bộ: Thịt heo thảo mộc, Gà đồi Đắk Lắk, Bò ăn cỏ Tây Nguyên, Rau củ quả xứ lạnh/nhiệt đới, Gạo ST25, Khoai lang mật, Trái cây tráng miệng (Chuối tiêu chín cây, Vải thiều IQF).
    - Sơ chế sạch 100%, đóng gói hút chân không (Vacuum packaging) định lượng theo gram.
-   - Sản xuất và đóng gói các túi xốt tiêu chuẩn (Sauce pouches).
+   - Chiết rót và đóng gói các túi xốt tiêu chuẩn (Sauce sachets: XOT-01 đến XOT-08).
 2. **Kho phụ trung chuyển TP.HCM (Secondary Cold Hub):**
-   - Đảm nhận: Cá tươi biển (thu mua cảng Vũng Tàu/Phan Thiết), Tôm, Mực, Hải sản tươi sống (để đảm bảo độ tươi tuyệt đối, tránh rủi ro bảo quản đường dài từ Đắk Lắk).
+   - Đảm nhận: Cá tươi biển (Cá bớp cắt khoanh Vũng Tàu), Tôm sú bóc nõn rút chỉ (để đảm bảo độ tươi tuyệt đối, tránh rủi ro bảo quản đường dài từ Đắk Lắk).
    - Tiếp nhận xe đông lạnh hàng ngày từ Đắk Lắk $\rightarrow$ Ghép bộ Hải sản $\rightarrow$ Đóng thùng tổng hợp giao cho shipper chặng cuối.
 
 ### B. Phạm vi đóng gói hộp Meal-Kit:
 - **Thành phần BẮT BUỘC có trong hộp:**
   - [x] Thịt / Cá / Tôm (đóng chân không, nhãn mác rõ ràng).
   - [x] Rau củ rửa sạch, cắt khúc sẵn sàng vào nồi.
-  - [x] Tinh bột (túi gạo hút chân không định lượng, bún khô, mì, khoai lang...).
-  - [x] Gói xốt công thức chuẩn của đầu bếp MOVA.
-  - [x] Trái cây tráng miệng theo mùa.
+  - [x] Tinh bột (túi gạo ST25 hút chân không, bún gạo khô, mì Ý, khoai lang mật...).
+  - [x] Gói xốt công thức độc quyền của Đầu bếp MOVA.
+  - [x] Trái cây tráng miệng (Chuối tiêu chín cây hoặc Vải thiều cấp đông IQF). *Tuyệt đối không dùng Bơ sáp 034*.
 - **Thành phần TUYỆT ĐỐI KHÔNG ĐÓNG GÓI:**
   - [ ] Nước mắm, Muối ăn, Bột ngọt, Đường, Dầu ăn cơ bản. (Căn bếp của mọi gia đình Việt đều đã có sẵn. Đóng gói các loại này vừa lãng phí bao bì, vừa tăng nguy cơ rách vỡ dung dịch ra hộp).
 - **Quy chuẩn dán nhãn phân loại nhiệt độ:**
-  - *Không hiển thị hướng dẫn rườm rà trên app.* Nhà máy dán trực tiếp **Sticker màu phân loại**:
+  - *Không hiển thị hướng dẫn rườm rà trên app khách.* Nhà máy dán trực tiếp **Sticker màu phân loại**:
     - 🟢 **Sticker Xanh (Ngăn mát 0°C – 4°C):** Rau củ quả, gói xốt, thịt dùng trong ngày.
-    - 🔵 **Sticker Xanh Dương (Ngăn đông -18°C):** Thịt cá dự trữ cho các bữa sau trong tuần.
-- **Lộ trình mở rộng dòng xốt:**
-  - 6 tháng đầu: Chỉ tập trung 8–10 vị xốt chuẩn quốc dân (Kho quẹt, Sốt tiêu đen, Sốt chua ngọt, Sốt nướng mắc khén, Sốt cà chua thì là...).
-  - Sau 6 tháng: Triển khai thử nghiệm các dòng xốt chuyên sâu (Không đường / Low GI, Không mì chính MSG, Thuần chay hữu cơ).
+    - 🔵 **Sticker Xanh Dương (Ngăn đông -18°C):** Thịt cá dự trữ cho các bữa sau trong tuần, Vải thiều IQF.
+- **Quy chuẩn Thùng cách nhiệt & Vận chuyển chặng cuối:**
+  - Bộ thùng cách nhiệt (`BB-THUNG-01`): `14.000đ / hộp` (Carton 3 lớp 5.500đ + Túi xốp bạc 3.200đ + Đá gel 5.300đ).
+  - Phí giao hàng chặng cuối (`lastMile`): `25.000đ / lần giao`.
+  - Phí hộp + ship phân bổ: $(14.000 + 25.000) / 6 = \mathbf{6.500đ / \text{bữa}}$.
 
 ---
 
-## 3. DASHBOARD NHÀ MÁY (ULTRA-MINIMALIST FACTORY UI)
+## 3. HỆ THỐNG VẬN HÀNH `/ops.html` — PHÂN QUYỀN 8 VAI TRÒ & BẢO MẬT PII
 
-Công nhân và quản đốc phân xưởng không cần biết thông tin cá nhân khách hàng. Giao diện bảng điều khiển nhà máy được thiết kế tối giản đến cực hạn:
+Ứng dụng vận hành được đóng gói thành một Single Page độc lập tại **`/ops.html`** với hash router, phục vụ 8 nhóm tác nhân chuyên trách. Mặc định ẩn danh sách mã PIN demo khi chạy production (chỉ bật khi `VITE_SHOW_DEMO_PINS=true` hoặc chạy dev):
 
-- **Bộ lọc duy nhất:** `Hôm nay` / `Ngày mai` / `Tuần này`.
-- **Cột 1 — Tổng sản lượng nguyên liệu cần chuẩn bị:**
-  - Thịt heo nạc dăm xay: `120 kg`
-  - Ức gà phi lê: `85 kg`
-  - Cải thìa baby: `140 kg`
-  - Bí đỏ gọt vỏ: `90 kg`
-- **Cột 2 — Tổng số gói xốt cần đóng:**
-  - Mã X01 (Kho tàu): `350 túi`
-  - Mã X04 (Xào tỏi): `420 túi`
-- **Cột 3 — Tổng số thùng cần xuất bến theo khung giờ:**
-  - Xe lạnh Chuyến 1 (18:00 về TP.HCM): `650 thùng`
-  - Xe lạnh Chuyến 2 (22:00 về TP.HCM): `400 thùng`
+| Mã PIN | Nhóm vai trò | Phạm vi chức năng & Bảo mật dữ liệu |
+|---|---|---|
+| **`1111`** | **Quản đốc phân xưởng (Factory Manager)** | Xem kế hoạch sản xuất tuần, in phiếu chế bản in ấn (Printable Work Order), cân đối định mức BOM nguyên liệu thô theo ngày chốt sổ `08:00 D-2`. |
+| **`2222`** | **Bếp phân xưởng (Factory Workshop)** | Màn hình thao tác tại chỗ: Kế hoạch hôm nay, 7 ngày tới, trạm sơ chế/đóng gói, đóng thùng, xuất xe lạnh Đắk Lắk $\rightarrow$ TP.HCM. Tích hợp Offline Queue lưu trữ khi mất mạng. |
+| **`3333–3336`** | **Mua hàng & Kho (Procurement)** | Quản lý Đơn mua hàng (PO), đối soát 3 chiều (3-way match: PO - GRN - Hóa đơn), quản lý kho theo nguyên tắc FEFO, xử lý thu hồi lô hàng sự cố (Lot Recall). Không hiển thị mã khách hàng cá nhân. |
+| **`4001–4005`** | **Cổng Nhà cung cấp (Supplier Portal)** | Dành cho 5 nhà cung ứng chính (`S-FACTORY`, `S-SEAFOOD`, `S-TRUCK`, `S-LASTMILE`, `S-PACK`): Xem đơn đặt hàng, xác nhận giao hàng, đối soát công nợ gối đầu. |
+| **`5555`** | **Điều phối vận hành & Xe lạnh (Logistics)** | Quản lý công suất tuyến (Capacity overrides), hành trình xe lạnh xuyên đêm, kiểm soát chuỗi lạnh (Cold chain sensor: nhiệt độ thùng $-18^\circ\text{C}$ / $0–4^\circ\text{C}$), ghi nhận KPI giao đúng giờ và chi phí logistics theo thùng. |
+| **`6666`** | **Kho phụ trung chuyển TP.HCM (Secondary Hub)** | Tiếp nhận xe lạnh từ Đắk Lắk, ghép hải sản tươi Vũng Tàu, phân loại đơn theo tuyến phường/quận, in phiếu giao hàng. Được phép thấy tên & SĐT người nhận để in nhãn. |
+| **`7777`** | **Shipper chặng cuối (Delivery)** | Giao diện mobile tối giản: Danh sách điểm dừng theo tuyến, SĐT che một phần (`0987***321`), không thấy thông tin tiền bạc hay mã khách hàng. Thao tác 1 chạm: Đã giao / Báo giao thất bại. |
+| **`9999`** | **Kế toán & Quản trị dòng tiền (Finance & Accounting)** | Sổ cái Fresh Credit 2 ngăn (`real_vnd` vs `promo_vnd`), đối soát ngân hàng VietQR, xuất hóa đơn VAT, báo cáo biên lợi nhuận gộp, lịch thanh toán công nợ nhà cung cấp, dự báo dòng tiền 13 tuần, export file CSV hạch toán chuẩn MISA / Fast. |
 
 ---
 
 ## 4. HỆ THỐNG TRUY XUẤT NGUỒN GỐC KIỂU "WAZE" (CỘNG ĐỒNG XÁC NHẬN CHÉO)
 
-Thay vì chi hàng triệu USD cho hệ thống Blockchain cồng kềnh khó áp dụng thực tế, MOVA Fresh áp dụng mô hình xác thực phân tán giống như ứng dụng giao thông **Waze**:
+Thay vì chi phí đắt đỏ cho Blockchain xa vời, MOVA Fresh triển khai mô hình xác thực phân tán:
 
-### Thí điểm trước cho 2 nông sản chủ lực: THỊT BÒ & GẠO ST25
-1. **Lớp 1 — Giám sát độc lập của MOVA:** Cán bộ nguồn hàng cắm chốt tại trại bò và cánh đồng lúa, định kỳ quét mã lô hàng, kiểm tra xét nghiệm tồn dư kháng sinh, thuốc trừ sâu.
-2. **Lớp 2 — Cơ chế nông dân / trang trại lân cận xác nhận chéo (Peer Validation):**
-   - Các hộ nông dân trong cùng hợp tác xã có app xác nhận: *"Hôm nay đàn bò của trại A ăn cỏ tự nhiên tại đồng cỏ X"*, *"Ruộng lúa B thu hoạch đúng quy chuẩn hữu cơ"*.
-   - Người xác nhận nhận điểm thưởng Fresh Credit hoặc phụ cấp nông nghiệp.
-   - Nếu phát hiện gian lận, cả cụm hợp tác xã bị phạt uy tín thương mại. Khách hàng quét mã QR trên hộp cơm có thể thấy hình ảnh nhật ký nông hộ được 3 bên xác nhận.
+### Thí điểm cho: THỊT BÒ ĂN CỎ TÂY NGUYÊN & GẠO HỮU CƠ ST25
+1. **Lớp 1 — Giám sát của cán bộ MOVA:** Quét mã lô hàng, kiểm tra mẫu tồn dư thuốc BVTV / kháng sinh.
+2. **Lớp 2 — Xác nhận chéo cộng đồng (Peer Validation):**
+   - Nông dân các hộ lân cận trong cùng hợp tác xã quét xác nhận nhật ký canh tác thực tế.
+   - Nhận điểm thưởng Fresh Credit khi đóng góp dữ liệu trung thực.
+   - Người tiêu dùng quét mã QR trên hộp cơm xem hình ảnh nhật ký nông hộ được 3 bên xác nhận.
 
 ---
 
 ## 5. HỆ SINH THÁI AI AGENTS TỰ ĐỘNG HÓA
 
-Nhằm giữ đội ngũ tinh gọn và biên lợi nhuận cao, MOVA vận hành 2 tác tử AI chuyên trách:
-
-### A. Pricing Agent (Tác tử định giá thông minh)
-- **Cơ chế hoạt động:** Chạy định kỳ vào 00:00 Chủ Nhật hàng tuần.
-- **Nhiệm vụ:**
-  - Web scraping tự động giá niêm yết các mặt hàng thịt heo, bò, gà, rau củ tại các chuỗi bán lẻ lớn (WinMart, Bách Hóa Xanh, Co.opmart).
-  - So sánh giá vốn đầu vào từ nhà máy Đắk Lắk.
-  - Tự động điều chỉnh bảng giá điểm bữa ăn / gợi ý gói Fresh Credit để **đảm bảo biên lợi nhuận gộp Gross Margin luôn nằm trong dải 20% – 30%**, đồng thời không để mức giá bị lệch quá xa so với cảm quan chi tiêu của khách hàng.
-
-### B. Marketing Agent (Tác tử sản xuất nội dung tự động)
-- **Nhiệm vụ:** Thay thế cho việc đốt tiền ngân sách chạy ads thô sơ.
-- **Quy trình:**
-  - Tự động lấy danh sách 10 món ăn nổi bật trong tuần từ bếp trưởng.
-  - Sinh kịch bản video TikTok 15 giây, bài viết Facebook *"Cơm nhà chuẩn vị chỉ 15 phút"*, email newsletter gợi ý thực đơn cho từng phân khúc khách hàng (Gym, Tiểu đường, Gia đình có con nhỏ).
-  - Tự động lên lịch đăng bài và phản hồi các câu hỏi thường gặp của khách hàng về thời gian giao và công thức nấu.
+- **Pricing Agent:** Tự động đối chiếu giá thị trường, giá vốn đầu vào từ nhà máy Đắk Lắk, cân chỉnh đề xuất giá để bảo vệ **Gross Margin 20% – 30%** và Net Margin ~30%.
+- **Marketing Agent:** Tự động tạo kịch bản video nấu 15 phút, hình ảnh mâm cơm theo mùa và bản tin công thức nấu ăn gửi khách hàng.

@@ -1,148 +1,142 @@
-# MOVA FRESH – Web-App Khách Hàng (Vue 3 + Vite + Pinia)
+# MOVA FRESH — Web-App Khách Hàng & Vận Hành (Vue 3 + Vite + Pinia)
 
-> Nền tảng đặt thực đơn nguyên liệu sơ chế sẵn (**Ready-to-Cook - RTC**) từ vùng nguyên liệu **Đắk Lắk & Tây Nguyên**, đóng thùng giữ nhiệt đá gel $-18^\circ\text{C}$ vận chuyển xe lạnh xuyên đêm (22:00 – 05:00) giao thẳng tới tận bếp tại **TP.HCM** trước 10:00 sáng. Chuẩn bữa cơm nhà tươi sạch: **15 phút – 1 chảo**.
-
----
-
-## 🌟 Tính Năng Chính Của Dự Án
-
-1. **Storefront & Giỏ Hàng Thông Minh:**
-   - Cam kết giá neo: *"Chỉ từ 38.000đ / người • Thu hoạch & sơ chế theo đơn, không trữ hàng tồn lâu ngày"*.
-   - Khung gỗ 3 món bán chạy tuần này có hiệu ứng khói nóng bốc lên (`.steam`).
-   - Hai chế độ mua hàng: **Tự chọn theo món ngon** (Mode A) và **Soạn thực đơn theo ngân sách** (Mode B - tự động giải bài toán tối ưu tổ hợp món ăn vừa túi tiền).
-   - Thanh tiến trình 3 mốc ưu đãi: `250k (Đủ đơn tối thiểu MOV)` $\rightarrow$ `400k (Giảm 20k VietQR)` $\rightarrow$ `600k + 4 bữa (Freeship & Tách 2 đợt giao)`.
-   - Chọn đợt nhận hàng đầu tiên: `Sáng Chủ Nhật tới` hoặc `Sáng Thứ Tư tới`.
-   - Sản phẩm mua thêm đi cùng xe lạnh (Add-ons): Trứng gà đồi, combo rau củ Đà Lạt, bơ sáp Đắk Lắk, chanh dây tươi.
-   - Nút gạt quy cách nhà máy: **`Tách riêng gói sốt gia vị`** và **`Giảm 50% lượng tinh bột`**.
-
-2. **User Dashboard (Tài Khoản & Đơn Của Tôi) — 4 Tab:**
-   - **Tab 1: Đơn hàng đang chạy & Quản lý lịch giao:**
-     - Công tắc mô phỏng thời gian thực: `Trước giờ chốt sổ 20:00` vs `Đã qua giờ chốt 20:00`.
-     - Thanh theo dõi hành trình 4 bước từ Đắk Lắk về TP.HCM.
-     - Hướng dẫn bảo quản khi nhận thùng hàng: phân loại món cất **Ngăn mát (0–2°C)** và món cất **Ngăn đông (−18°C)**.
-     - Thao tác thực tế: Sửa/Thêm món (nạp lại đơn vào giỏ), Hoãn đợt giao (lưu cờ `delayed`), Hủy đơn (hoàn tiền 100% vào Gói Đi Chợ Trả Trước), Báo cáo độ tươi / Hoàn tiền ngay.
-   - **Tab 2: Lịch sử đơn hàng & Đánh giá khẩu vị:**
-     - 2 đơn mẫu đã giao thành công tuần trước.
-     - Nút **`Đặt lại thực đơn này (1 chạm)`** đưa toàn bộ món cũ vào giỏ hàng.
-     - Đánh giá nhanh: `👍 Vừa miệng`, `🧂 Hơi mặn`, `💧 Hơi nhạt`. Khi chọn *Hơi mặn*, hệ thống tự động ghi nhận và bật *"Tách riêng gói sốt gia vị"* cho lần đặt sau.
-   - **Tab 3: Gói Đi Chợ Trả Trước (Prepaid Meal Plan):**
-     - Thẻ thành viên VIP, số dư suất ăn, hạn sử dụng 60 ngày.
-     - Tuân thủ minh bạch **Nghị định 52/2024/NĐ-CP** (giá trị bữa ăn chỉ đổi nguyên liệu MOVA, không phải ví điện tử, không rút tiền mặt).
-     - Đăng ký / Nạp thêm gói (Gói 1tr nhận 1,05tr; Gói 2tr nhận 2,12tr) kèm mã VietQR và xác nhận cộng số dư ngay.
-     - Sổ cái lịch sử biến động số dư chi tiết.
-   - **Tab 4: Hồ sơ Gia đình, Sổ địa chỉ & Zalo OA:**
-     - Sổ địa chỉ nhận hàng TP.HCM (Thêm, xóa, chọn mặc định).
-     - Cài đặt khẩu vị gia đình (số người ăn, dị ứng, quy cách) tự động đồng bộ sang Cửa hàng.
-     - Kết nối Zalo OA: Nhắc lịch chốt đơn trước 3 giờ + Khung xem trước tin nhắn Zalo OA trực quan. Nút *"Xác nhận thực đơn tuần này"* điều hướng mượt về Cửa hàng.
+> Nền tảng đặt thực đơn nguyên liệu sơ chế sẵn (**Ready-to-Cook - RTC**) do **Đầu bếp MOVA tuyển chọn**, kết nối trực tiếp nông sản trù phú từ vùng nguyên liệu **Đắk Lắk & Tây Nguyên** cùng kho phụ trung chuyển TP.HCM. Nguyên liệu sơ chế sạch 100%, đóng thùng cách nhiệt đá gel vận chuyển xe lạnh xuyên đêm giao thẳng tới tận bếp tại **TP. Hồ Chí Minh** và vùng Đông Nam Bộ. Chuẩn bữa cơm nhà tươi ngon: **15 phút – 1 chảo**.
+>
+> 🌐 **Production URL:** [https://movafresh-web.netlify.app](https://movafresh-web.netlify.app)  
+> 📦 **Repository chính thức:** `github.com/movafresh-vn/movafresh-web`  
+> 🌿 **Nhánh phát triển V2:** `feat/v2-customer-and-ops-apps`
 
 ---
 
-## 🛠️ 5 Lỗi Đã Được Vá Triệt Để Trong Bản Vue 3
+## 🌟 Tính Năng Cốt Lõi V2.2
 
-1. **CSS `.okhead` cho Modal Đặt hàng thành công:** Đã bổ sung đầy đủ style với nền xanh rừng (`#146C43`), chữ trắng và nút đóng `×` màu trắng nổi bật, bo góc mượt mà.
-2. **Sửa nút "Xác nhận thực đơn tuần này" (Zalo OA - Tab 4):** Sử dụng `router.push('/')` kết hợp `scrollIntoView({ behavior: 'smooth' })` cuộn chính xác xuống khu vực `#thuc-don`.
-3. **Cập nhật trạng thái thực tế khi bấm "⏳ Hoãn đợt giao này":** Kích hoạt action `delayActiveOrder()`, cập nhật cờ `delayed = true`, đổi nhãn trạng thái sang *"Đã hoãn sang chuyến xe tuần kế tiếp — Bảo lưu 100% giá trị"*, đồng thời đẩy thông báo vào `notifications`.
-4. **Khóa trần ngân sách cho cả sản phẩm mua thêm (Add-ons) khi ở Mode B:** Trong `tryChangeAddon()`, nếu khách ở Mode B và việc thêm addon làm tổng thanh toán vượt quá `budget`, hệ thống sẽ chặn lại và báo `toast()` cảnh báo số tiền vượt.
-5. **Đồng bộ sạch dữ liệu khi chuyển sang "Demo Khách mới: Anh Minh":** Thiết lập địa chỉ tại *Căn hộ Landmark 4, Vinhomes Central Park, Bình Thạnh*, đặt `activeOrder = null`, và reset `ledger` chỉ gồm 1 dòng `+30.000đ Quà tặng thành viên mới`.
+### 1. Web App Khách Hàng (`index.html`)
+- **Trang chủ & Video Hook 10 giây (Grand Frais Style):** Khung video tỷ lệ 16:9 / 4:3 cận cảnh nguyên liệu tươi sống chuyển động thật với 3 nhịp: `00:00 Mở hộp Đắk Lắk` $\rightarrow$ `00:05 Đảo 1 chảo & rưới xốt` $\rightarrow$ `00:15 Xong mâm cơm 5 món`.
+- **Đăng nhập nhanh 1 chạm:** Tích hợp Google, Zalo, Facebook điền tự động thông tin liên hệ.
+- **Phễu khảo sát Đầu bếp (`/plans`):** Nút tăng/giảm `−` / `+` cho số người ăn (1–10) và số bữa/tuần (3–7); 9 nhu cầu thể trạng + 6 kiêng cữ dị ứng kèm ô *"Khác (tự nhập)"* có bộ phân tích từ khóa thời gian thực; 3 phong cách ẩm thực (Thuần Việt, Đồ Tây, Đồ Á).
+- **Thực đơn Mâm cơm Á Đông 5 món:** Đạm chính + Canh nóng + Rau xanh + Tinh bột lành mạnh + Trái cây tráng miệng theo mùa (Chuối tiêu chín cây, Vải thiều cấp đông nhanh IQF tách hạt).
+- **Đổi món linh hoạt & Modal Chi tiết món:**
+  - Gợi ý đổi 3–4 món khác biệt nguồn đạm kèm thanh tìm kiếm thực đơn nhà máy.
+  - Modal Chi tiết: Ảnh/màu nhóm tươi sống, Huy hiệu vùng miền `terroir_region`, Câu chuyện thổ nhưỡng `terroir_story`, Mẹo ngon `chef_note`, Bảng định lượng nhân theo số người ăn, Quy cách sơ chế, Hướng dẫn bảo quản, 4 chỉ số dinh dưỡng (Calo, Đạm, Tinh bột, Béo), 3 bước nấu 15 phút.
+- **Thanh toán FinTech & Giao hàng:**
+  - Khung giờ xanh (06:00 – 08:00): Tặng ngay -15.000đ Freeship né kẹt xe.
+  - Tần suất 1 lần/tuần (Badge khuyên dùng tối ưu phí thùng 39.000đ/hộp).
+  - Xác thực SĐT qua OTP (demo mã 1234) tích hợp vào validation.
+  - 3 Hình thức trả trước (Zero COD): Nạp Fresh Credit (~10% thưởng nạp, Nghị định 52/2024), Chuyển khoản VietQR 4 tuần, Liên kết thẻ tín dụng (tự trừ trước 72 giờ).
+  - Hộp nhập Voucher (`THEQUATANG`, `MOVA20`, `FREESHIP`).
+  - Checkbox pháp lý thông tin cá nhân & Newsletter nhận bản tin (+15.000đ Fresh Credit).
+- **Dashboard Quản lý Tài khoản (`/account`):** Đổi món trước giờ chốt sổ nhà máy (08:00 ngày D-2), tạm hoãn (Skip), quản lý số dư Fresh Credit 2 ngăn (`real_vnd` vs `promo_vnd`), Cook & Share, Mời bạn bè nhận thưởng.
+
+---
+
+### 2. Web App Vận Hành 8 Vai Trò (`ops.html`)
+Ứng dụng Single Page độc lập qua hash router phục vụ 8 nhóm tác nhân, ẩn thông tin PII khách hàng:
+- **`1111` — Quản đốc phân xưởng (Factory Manager):** Kế hoạch sản xuất tuần, phiếu chế bản in ấn (Printable Work Order), cân đối BOM nguyên liệu thô theo mốc chốt sổ `08:00 D-2`.
+- **`2222` — Bếp phân xưởng (Factory Workshop):** Kế hoạch hôm nay, 7 ngày, đóng gói, xuất xe lạnh Đắk Lắk $\rightarrow$ TP.HCM, Offline Queue lưu trữ khi mất mạng.
+- **`3333–3336` — Mua hàng & Kho (Procurement):** Đơn mua hàng (PO), đối soát 3-way match, kho FEFO, thu hồi lô hàng sự cố (Lot Recall).
+- **`4001–4005` — Cổng Nhà cung cấp (Supplier Portal):** Dành cho 5 nhà cung ứng (`S-FACTORY`, `S-SEAFOOD`, `S-TRUCK`, `S-LASTMILE`, `S-PACK`).
+- **`5555` — Điều phối vận hành & Xe lạnh (Logistics):** Quản lý công suất tuyến, giám sát cảm biến chuỗi lạnh Cold Chain, tính chi phí logistics theo thùng và KPI đúng giờ.
+- **`6666` — Kho phụ trung chuyển TP.HCM (Secondary Hub):** Nhận xe lạnh Đắk Lắk, ghép hải sản tươi Vũng Tàu, chia tuyến giao, in nhãn thùng.
+- **`7777` — Shipper chặng cuối (Delivery):** Giao diện mobile tối giản, danh sách điểm dừng, SĐT che một phần, 1 chạm xác nhận Đã giao / Thất bại.
+- **`9999` — Kế toán & Quản trị dòng tiền (Finance & Accounting):** Sổ cái Fresh Credit 2 ngăn, đối soát ngân hàng VietQR, xuất hóa đơn VAT, biên lợi nhuận, công nợ NCC, dự báo dòng tiền 13 tuần, export CSV chuẩn MISA / Fast.
+
+---
+
+## 📊 Ràng Buộc Kinh Tế Đơn Vị (Unit Economics V2.2)
+
+- **Ràng buộc cốt lõi:**
+  $$\text{Tổng chi phí Nguyên liệu} + \text{Vận chuyển} \le 50\% \text{ giá bán lẻ}$$
+- **Giá vốn trực tiếp (COGS) tối đa:** **55%** (gồm nguyên liệu thô, tỷ lệ hao hụt yield, túi xốt OEM sachet và bao bì thùng cách nhiệt).
+- **Định mức đóng gói & Giao hàng nội thành (6 bữa/lần giao):**
+  + Bộ thùng cách nhiệt (`BB-THUNG-01`): `14.000đ / hộp` (Carton 3 lớp + Xốp bạc + Đá gel).
+  + Vận chuyển chặng cuối nội thành TP.HCM: `25.000đ / lần giao`.
+  + Phí hộp + ship phân bổ: $(14.000 + 25.000) / 6 = \mathbf{6.500đ / \text{bữa}}$.
+- **Chi phí vận hành & Marketing (OPEX & MKT):** **15%**.
+- **Biên lợi nhuận gộp (Gross Margin):** **20% – 30%**.
+- **Lợi nhuận ròng mục tiêu (Net Margin):** **~30%**.
 
 ---
 
 ## 📂 Cấu Trúc Thư Mục Dự Án
 
 ```text
-mova-fresh-web/
-├── public/
-│   └── favicon.svg                 # Icon logo MOVA Fresh
-├── netlify.toml                    # Cấu hình redirect SPA chuẩn cho Netlify
-├── src/
-│   ├── assets/
-│   │   └── styles/
-│   │       └── main.css            # Toàn bộ CSS Variables (Warm Light Mode), reset, layout & responsive
-│   ├── data/
-│   │   └── mockData.js             # Dữ liệu DISHES (12 món), ADDONS (4 món), BG colors & DEFAULT_STATE
-│   ├── utils/
-│   │   ├── formatters.js           # Các hàm fmt(), pad(), rng(), hash()
-│   │   └── schedule.js             # Logic tính lịch giao Chủ Nhật / Thứ Tư & đếm ngược 20:00
-│   ├── stores/
-│   │   └── useMovaStore.js         # Pinia Store quản lý state tập trung + persist localStorage
-│   ├── router/
-│   │   └── index.js                # Vue Router dùng createWebHistory() với smooth scroll
-│   ├── components/
-│   │   ├── common/
-│   │   │   ├── AppHeader.vue       # Sticky Header, chuyển đổi Store/Dashboard, Chuông thông báo, User & Giỏ hàng
-│   │   │   ├── AppFooter.vue       # Footer thông tin MOVA Fresh TP.HCM & Nghị định 52/2024
-│   │   │   ├── DishPlateSvg.vue    # Component vẽ SVG đĩa thức ăn động từ hàm plate() + hiệu ứng khói .steam
-│   │   │   ├── VietQrSvg.vue       # Component vẽ SVG mã VietQR động từ hàm qrSVG()
-│   │   │   ├── NotificationDrawer.vue # Ngăn kéo thông báo thời gian thực bên phải
-│   │   │   ├── MobileCartBar.vue   # Thanh giỏ hàng nổi ở đáy màn hình trên Mobile
-│   │   │   ├── FloatingZaloBtn.vue # Nút nổi Chat Zalo hỗ trợ góc dưới
-│   │   │   └── ToastMessage.vue    # Thông báo Toast toàn cục
-│   │   ├── store/
-│   │   │   ├── HeroSection.vue     # Banner mở đầu + Giá neo 38k + Bảng gỗ 3 món bán chạy
-│   │   │   ├── JourneySection.vue  # Hành trình tươi 16 giờ (4 bước từ Đắk Lắk về TP.HCM)
-│   │   │   ├── BudgetPlanner.vue   # Bộ điều khiển Chế độ Ngân sách (Slider, Input, Quick chips, Số người)
-│   │   │   ├── DishCard.vue        # Thẻ món ăn trong lưới thực đơn
-│   │   │   ├── AddonsSection.vue   # Khu vực "Mua thêm đi cùng chuyến xe lạnh"
-│   │   │   ├── StickyCart.vue      # Giỏ hàng cố định: Tiến trình 3 mốc (250k/400k/600k), chọn đợt giao, tách sốt/tinh bột
-│   │   │   ├── BoxInsideSection.vue# Giải phẫu 4 thành phần bên trong hộp MOVA
-│   │   │   └── FaqSection.vue      # Các câu hỏi thường gặp (Accordion)
-│   │   ├── dashboard/
-│   │   │   ├── DashHeader.vue      # Thông tin tài khoản, số dư Gói Đi Chợ, thống kê nhanh
-│   │   │   ├── ActiveOrderTab.vue  # Tab 1: Công tắc Trước/Sau 20:00, Tracker 4 bước, Phân loại Mát/Đông, Sửa/Hoãn/Hủy/Báo bù
-│   │   │   ├── OrderHistoryTab.vue # Tab 2: Lịch sử đơn, Đặt lại 1 chạm, Đánh giá vị (Vừa/Mặn/Nhạt -> tự bật tách sốt)
-│   │   │   ├── PrepaidPlanTab.vue  # Tab 3: Thẻ Prepaid, Pháp lý NĐ 52/2024, Nạp gói 1tr/2tr, Sổ cái biến động số dư
-│   │   │   └── ProfileAddressTab.vue # Tab 4: Sổ địa chỉ TP.HCM, Khẩu vị mặc định đồng bộ sang Store, Zalo OA Preview & Reset Demo
-│   │   └── modals/
-│   │       ├── DishDetailModal.vue # Chi tiết nguyên liệu theo số suất & 3 bước nấu 15 phút
-│   │       ├── LoginDemoModal.vue  # Đăng nhập SĐT/OTP + 2 nút chuyển nhanh Demo Chị Lan / Anh Minh
-│   │       ├── CheckoutModal.vue   # Form địa chỉ TP.HCM, khung giờ sáng, tính tự động số dư Gói trả trước & phần bù VietQR
-│   │       ├── OrderSuccessModal.vue # Xác nhận mã đơn, lịch giao & mã VietQR
-│   │       ├── RefundModal.vue     # Báo cáo sự cố độ tươi + giả lập đính kèm ảnh + hoàn tiền tự động
-│   │       ├── TopupModal.vue      # Quét VietQR nạp Gói Đi Chợ Trả Trước
-│   │       └── AddressModal.vue    # Thêm mới địa chỉ nhận hàng TP.HCM
-│   ├── views/
-│   │   ├── StoreView.vue           # Trang chủ Cửa hàng & Thực đơn (Route: /)
-│   │   └── DashboardView.vue       # Trang Quản lý Tài khoản & Đơn hàng (Route: /dashboard)
-│   ├── App.vue                     # Layout gốc kết nối Header, RouterView, Footer, Modals & Toast
-│   └── main.js                     # Khởi tạo Vue App, Pinia & Router
-├── index.html                      # Nạp Google Font Be Vietnam Pro & mount #app
-├── vite.config.js                  # Cấu hình base: '/' tối ưu tuyệt đối cho Netlify SPA
-├── .gitignore
-├── package.json
-└── README.md
+movafresh-web/
+├── .agent/                             # Toàn bộ tài liệu nghiệp vụ, kiến trúc & roadmap cho AI
+│   ├── 01_PRODUCT_SOUL_AND_BUSINESS_MODEL.md
+│   ├── 02_USER_FLOW_AND_UX_SPEC.md
+│   ├── 03_OPERATIONS_FACTORY_AND_AGENTS.md
+│   ├── 04_TECH_ARCHITECTURE_AND_CONVENTIONS.md
+│   ├── 05_PROGRESS_AND_ROADMAP.md
+│   └── 06_MEETING_DECISIONS_LOG.md
+├── AGENTS.md                           # Chỉ thị khởi động & danh sách cấm bắt buộc cho AI
+├── index.html                          # Entry HTML cho Web Khách Hàng
+├── ops.html                            # Entry HTML cho Web Vận Hành 8 Vai Trò
+├── netlify.toml                        # Cấu hình Netlify redirects (/ops -> /ops.html, /* -> /index.html)
+├── package.json                        # Cấu hình dependencies & test scripts
+├── vite.config.js                      # Cấu hình Vite build multi-input & Vitest
+└── src/
+    ├── main.js                         # Entry point App Khách Hàng (Vue Router + Pinia)
+    ├── App.vue                         # Root component Web Khách
+    ├── router/                         # Vue Router cho Web Khách (/, /plans, /account, /q/:code)
+    ├── stores/                         # Pinia stores: usePlanFlowStore, useMovaStore
+    ├── views/                          # Các View màn hình chính: HomeView, PlansView, DashboardView, QrTraceView
+    ├── components/
+    │   ├── common/                     # AppHeader, AppFooter, VietQrSvg, NotificationDrawer...
+    │   ├── store/                      # HeroSection, MealKitVideoHook, SampleMeals, HowItWorks...
+    │   ├── plans/                      # StepAbout, StepMenu, StepCheckout, StepDone, MealCard, PriceBlock...
+    │   └── dashboard/                  # ActiveOrderTab, MealChangeSheet, ProfileTab, RewardsTab...
+    ├── ops/                            # Ứng dụng Vận hành 8 vai trò (/ops.html)
+    │   ├── main.js                     # Entry point Ops
+    │   ├── OpsApp.vue                  # Root layout Ops, chuyển đổi vai trò qua PIN
+    │   ├── views/                      # Màn hình: TodayView, PoView, LoadView, FinanceView, ShipperView...
+    │   └── styles/ops.css              # Theme CSS chuyên biệt cho bảng vận hành
+    └── shared/                         # Thư mục dùng chung (Single Source of Truth)
+        ├── config/
+        │   └── business.js             # Cấu hình Unit Economics, timings, limits, zones
+        ├── data/
+        │   ├── catalog.js              # 18 SKU thô, 8 túi xốt, 21 món Terroir & 10 AI Personas
+        │   ├── packaging.js            # Quy cách bao bì thùng cách nhiệt & khay hút chân không
+        │   ├── recipes.js              # 21 công thức 3 bước 15 phút (chuẩn Grand Frais)
+        │   └── sources.js              # Bản đồ nông trại đối tác Đắk Lắk & Vũng Tàu
+        ├── domain/                     # Logic nghiệp vụ thuần túy (Subscription, Credit, Logistics, Finance)
+        ├── api/                        # Client API & Mock handlers (customer, factory, logistics, finance...)
+        ├── mock-server/                # In-memory Database mô phỏng Backend thực tế
+        └── __tests__/                  # 10 test suites Vitest với 256 unit tests
 ```
 
 ---
 
-## 🚀 Cài Đặt & Chạy Thử Tại Local
+## 🚀 Hướng Dẫn Cài Đặt & Phát Triển
 
+### Yêu cầu môi trường
+- **Node.js:** $\ge 18.0.0$
+- **NPM:** $\ge 9.0.0$
+
+### Lệnh thực thi
 ```bash
-# 1. Cài đặt các thư viện cần thiết
+# 1. Cài đặt thư viện dependencies
 npm install
 
-# 2. Chạy môi trường Development (HMR cực nhanh)
+# 2. Khởi chạy máy chủ phát triển (Dev server)
 npm run dev
+# -> App Khách hàng: http://localhost:5173/
+# -> App Vận hành:   http://localhost:5173/ops.html
 
-# 3. Build mã nguồn ra thư mục dist/
+# 3. Chạy toàn bộ 256 unit tests tự động
+npm test
+
+# 4. Build đóng gói production cho cả 2 ứng dụng
 npm run build
-
-# 4. Preview bản build trước khi deploy
-npm run preview
+# -> Kết xuất thư mục dist/ chứa cả index.html và ops.html
 ```
 
 ---
 
-## 🚢 Hướng Dẫn Deploy Lên Netlify
+## 🚢 Triển Khai (Deployment trên Netlify)
 
-1. Đẩy code lên GitHub:
-   ```bash
-   git add .
-   git commit -m "chore: configure project exclusively for Netlify deployment"
-   git push -u origin main
-   ```
-2. Trên **Netlify Dashboard**, bấm **"Add new site"** $\rightarrow$ **"Import an existing project"** $\rightarrow$ chọn repository `MovaFreshFE`.
-3. Netlify sẽ tự động nhận diện file `netlify.toml`:
-   - **Build command:** `npm run build`
-   - **Publish directory:** `dist`
-   - **Redirect rule:** `/* -> /index.html (200)` cho SPA
-4. Bấm **"Deploy site"** để nhận URL truy cập trực tiếp ngay lập tức!
+1. Repository được cấu hình CI/CD tự động trên **Netlify**:
+   - Nhánh kích hoạt: `feat/v2-customer-and-ops-apps` (và `main` khi hợp nhất).
+   - Lệnh build: `npm run build`.
+   - Thư mục publish: `dist`.
+2. Biến môi trường:
+   - `VITE_SHOW_DEMO_PINS`: Đặt là `true` nếu muốn hiển thị thanh chọn nhanh mã PIN demo ở trang `/ops.html` trên môi trường staging; để trống hoặc `false` trên production.

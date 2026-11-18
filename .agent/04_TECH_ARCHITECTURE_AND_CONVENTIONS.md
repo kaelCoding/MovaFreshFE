@@ -1,20 +1,27 @@
 # 04. KIẾN TRÚC KỸ THUẬT & QUY CHUẨN LẬP TRÌNH (TECH SPEC)
 
-> **Tài liệu đặc tả toàn bộ ngăn xếp công nghệ, quy chuẩn mã nguồn, thiết kế giao diện và cấu trúc thư mục hiện hành.**
-> Cập nhật: 15/11/2026 | Tech Lead: Nguyễn Công Khôi
+> **Tài liệu đặc tả toàn bộ ngăn xếp công nghệ, kiến trúc Multi-Page App, quy chuẩn mã nguồn, kiểm thử và cấu trúc thư mục dự án.**
+> Phiên bản: V2.2 | Cập nhật: 18/11/2026 | Tech Lead: Nguyễn Công Khôi
+> Repository: `github.com/movafresh-vn/movafresh-web` | Branch: `feat/v2-customer-and-ops-apps`
+> Production URL: `https://movafresh-web.netlify.app`
 
 ---
 
-## 1. TECH STACK HIỆN TẠI
+## 1. TECH STACK V2.2 HIỆN TẠI
 
+- **Kiến trúc ứng dụng:** **Multi-Page Application (MPA)** đóng gói 2 app riêng biệt trong cùng 1 repository:
+  1. **App Khách hàng (`index.html`):** Sử dụng `vue-router` chế độ HTML5 History (`createWebHistory`), gồm Landing Page (`/`), Phễu onboarding khảo sát & đăng ký gói (`/plans`), Bảng điều khiển tài khoản & thực đơn (`/account`), và Cổng tra cứu nguồn gốc nông sản theo lô (`/q/:code`).
+  2. **App Vận hành (`ops.html`):** Ứng dụng nội bộ cho 8 vai trò phân quyền qua mã PIN, sử dụng hash router (`#/factory`, `#/workshop`, `#/procurement`, `#/supplier`, `#/logistics`, `#/hub`, `#/shipper`, `#/finance`).
 - **Frontend Framework:** **Vue 3** (100% sử dụng **Composition API** với cú pháp `<script setup>`).
-- **Build Tool:** **Vite 6** (`@vitejs/plugin-vue`).
-- **State Management:** **Pinia 3** (`src/stores/useMovaStore.js`) với cơ chế tự động đồng bộ hóa trạng thái vào `localStorage` (`mova_fresh_v1_state`).
-- **Routing:** **Vue Router 4** (`createWebHistory`, các route chính: `/` cho StoreView và `/dashboard` cho DashboardView).
-- **Styling:** CSS thuần hiện đại (Modern Vanilla CSS) dựa trên hệ thống biến toàn cục `:root` đặt tại `src/assets/styles/main.css`. Không sử dụng Tailwind hay UI framework nặng nề bên thứ 3 nhằm đảm bảo tốc độ tải trang tức thì (< 1s).
+- **Build Tool:** **Vite 6** (`@vitejs/plugin-vue`) với cấu hình `rollupOptions.input` đa cổng vào (`main` & `ops`).
+- **State Management:** **Pinia** kết hợp lưu trữ cục bộ `localStorage` & phát đồng bộ realtime qua `BroadcastChannel`.
+- **Test Runner:** **Vitest** với 10 suites kiểm thử tự động, **256 unit tests** bao phủ 100% logic miền và API mock (`npm test`).
+- **Styling:** CSS thuần hiện đại (Modern Vanilla CSS) dựa trên hệ thống biến toàn cục `:root` đặt tại `src/assets/styles/main.css` và `src/ops/styles/ops.css`.
 - **Deployment & CI/CD:**
-  - Kho lưu trữ: GitHub [`kaelCoding/MovaFreshFE`](https://github.com/kaelCoding/MovaFreshFE) (nhánh `main`).
-  - Hosting tự động: **Netlify** liên kết CI/CD với GitHub, tự động build và deploy tại production URL: [https://movafresh.netlify.app](https://movafresh.netlify.app).
+  - Repo GitHub: [`github.com/movafresh-vn/movafresh-web`](https://github.com/movafresh-vn/movafresh-web).
+  - Nhánh phát triển V2 chính thức: **`feat/v2-customer-and-ops-apps`**.
+  - Hosting: **Netlify** liên kết CI/CD với nhánh `feat/v2-customer-and-ops-apps`, production URL: [https://movafresh-web.netlify.app](https://movafresh-web.netlify.app).
+  - Biến môi trường: `VITE_SHOW_DEMO_PINS` cho `/ops.html` (mặc định ẩn danh sách mã PIN demo trên production).
 
 ---
 
@@ -27,45 +34,42 @@ Hệ thống giao diện của MOVA Fresh được thiết kế theo trường p
 
 ```css
 :root {
-  --bg: #FAF9F5;          /* Nền tổng thể: Trắng ngà ấm, không dùng trắng tinh #FFF gây mỏi mắt */
+  --bg: #FAF9F5;          /* Nền tổng thể: Trắng ngà ấm */
   --card: #FFFFFF;        /* Nền thẻ nội dung */
   --line: #E6E2D6;        /* Đường kẻ viền phân cách */
-  --line-2: #EFEBE0;      /* Đường kẻ viền phụ mờ */
-  --ink: #1E241D;         /* Màu chữ chính: Đen rêu than đậm, tương phản cao */
-  --muted: #626B60;       /* Chữ phụ, mô tả mờ */
+  --ink: #1E241D;         /* Màu chữ chính: Đen rêu than đậm */
+  --muted: #626B60;       /* Chữ phụ, mô tả */
   
   /* Màu thương hiệu & Điểm nhấn */
   --green: #146C43;       /* Xanh lá đậm nông sản Tây Nguyên (Primary Action, Brand) */
   --green-d: #0F5534;     /* Xanh lá đậm khi hover button */
   --green-soft: #E4F0E8;  /* Nền xanh nhạt cho badge, tag */
-  --orange: #D9531E;      /* Cam gốm / ớt lửa (Accent, CTA nổi bật, Sale tag) */
+  --orange: #D9531E;      /* Cam gốm / ớt lửa (Accent, CTA nổi bật) */
   --orange-soft: #FCEDE4; /* Nền cam nhạt */
   --orange-ink: #A33C12;  /* Chữ cam đậm */
   
   /* Màu hỗ trợ ẩm thực */
   --wood: #E9D9BF;        /* Màu gỗ tự nhiên */
   --butter: #FBF1D6;      /* Vàng bơ béo ngậy */
-  --red: #B3261E;         /* Đỏ cảnh báo, hết hàng, hủy đơn */
-  --blue: #1D6FA5;        /* Xanh dương thông tin, trạng thái giao vận */
-  --blue-soft: #E5F2FB;   /* Nền xanh dương nhạt */
+  --red: #B3261E;         /* Đỏ cảnh báo */
+  --blue: #1D6FA5;        /* Xanh dương thông tin vận chuyển */
 }
 ```
 
 ### B. Typography & Định dạng số
-- **Font chữ chính:** `"Be Vietnam Pro", system-ui, -apple-system, sans-serif`. Được nạp trực tiếp qua Google Fonts tại `index.html`.
-- **Hiển thị tiền tệ:** Mọi con số liên quan đến tài chính, tiền tệ, số lượng bữa ăn, phần trăm chiết khấu **BẮT BUỘC** phải có thuộc tính CSS:
+- **Font chữ chính:** `"Be Vietnam Pro", system-ui, -apple-system, sans-serif`. Nạp trực tiếp qua Google Fonts tại `index.html` và `ops.html`.
+- **Hiển thị tiền tệ:** Mọi con số liên quan đến tài chính, tiền tệ, số lượng bữa ăn **BẮT BUỘC** có:
   ```css
   font-variant-numeric: tabular-nums;
   ```
-  giúp các chữ số có độ rộng bằng nhau tuyệt đối, tránh hiện tượng nhảy layout khi số tăng giảm.
-- **Hàm format tiền tệ chuẩn:** Luôn dùng `formatVnd(amount)` trong `src/utils/formatters.js` để hiển thị định dạng `1.500.000 đ`.
+- **Hàm format tiền tệ chuẩn:** Luôn dùng `fmt(amount)` trong `src/shared/utils/formatters.js` để hiển thị `1.500.000 đ`.
 
 ---
 
-## 3. CẤU TRÚC THƯ MỤC DỰ ÁN (PROJECT DIRECTORY TREE)
+## 3. CẤU TRÚC THƯ MỤC DỰ ÁN THỰC TẾ (PROJECT DIRECTORY TREE)
 
 ```
-movaFresh/
+movafresh-web/
 ├── .agent/                             # Toàn bộ tài liệu nghiệp vụ, kiến trúc & roadmap cho AI
 │   ├── 01_PRODUCT_SOUL_AND_BUSINESS_MODEL.md
 │   ├── 02_USER_FLOW_AND_UX_SPEC.md
@@ -74,77 +78,37 @@ movaFresh/
 │   ├── 05_PROGRESS_AND_ROADMAP.md
 │   └── 06_MEETING_DECISIONS_LOG.md
 ├── AGENTS.md                           # Chỉ thị khởi động & danh sách cấm bắt buộc cho AI
-├── index.html                          # Entry HTML nạp Be Vietnam Pro font & favicon
-├── netlify.toml                        # Cấu hình Netlify SPA redirect
-├── package.json                        # Cấu hình dependencies & script
-├── vite.config.js                      # Cấu hình Vite & plugin Vue
+├── index.html                          # Entry HTML cho Web Khách Hàng
+├── ops.html                            # Entry HTML cho Web Vận Hành 8 Vai Trò
+├── netlify.toml                        # Cấu hình Netlify redirects (/ops -> /ops.html, /* -> /index.html)
+├── package.json                        # Cấu hình dependencies & test scripts
+├── vite.config.js                      # Cấu hình Vite build multi-input & Vitest
 └── src/
-    ├── main.js                         # Khởi tạo Vue app, Pinia và Vue Router
-    ├── App.vue                         # Root component, quản lý Modal layer & Toast layer
-    ├── router/
-    │   └── index.js                    # Vue Router định nghĩa / và /dashboard
-    ├── stores/
-    │   └── useMovaStore.js             # Pinia store duy nhất quản lý Cart, Credit, Orders, Schedule
-    ├── data/
-    │   └── mockData.js                 # Dữ liệu mẫu (món ăn, gói trả trước, danh mục)
-    ├── assets/
-    │   └── styles/
-    │       └── main.css                # CSS design system toàn cục
-    ├── utils/
-    │   ├── formatters.js               # Hàm formatVnd, formatDate, formatShortDate
-    │   └── schedule.js                 # Tiện ích tính toán lịch giao hàng
-    ├── views/
-    │   ├── StoreView.vue               # Trang chủ giới thiệu sản phẩm & chọn món
-    │   └── DashboardView.vue           # Trang quản lý khách hàng, gói trả trước & lịch giao
-    └── components/
-        ├── common/                     # Component dùng chung toàn app
-        │   ├── AppHeader.vue           # Thanh điều hướng trên cùng, hiển thị số dư Fresh Credit
-        │   ├── AppFooter.vue           # Chân trang giới thiệu nguồn gốc Đắk Lắk
-        │   ├── ToastMessage.vue        # Thông báo Toast góc màn hình
-        │   ├── NotificationDrawer.vue  # Drawer thông báo đẩy
-        │   ├── FloatingZaloBtn.vue     # Nút liên hệ nhanh Zalo CSKH
-        │   ├── MobileCartBar.vue       # Thanh giỏ hàng nổi trên màn hình di động
-        │   ├── VietQrSvg.vue           # Component sinh mã QR VietQR động
-        │   └── DishPlateSvg.vue        # SVG đồ họa minh họa đĩa thức ăn
-        ├── store/                      # Các thành phần giao diện của StoreView
-        │   ├── HeroSection.vue         # Hero banner giới thiệu định vị
-        │   ├── BudgetPlanner.vue       # Công cụ tính ngân sách & số người ăn
-        │   ├── DishCard.vue            # Thẻ hiển thị từng món ăn
-        │   ├── BoxInsideSection.vue    # Khám phá thành phần bên trong hộp Meal-kit
-        │   ├── AddonsSection.vue       # Món ăn kèm, tráng miệng
-        │   ├── JourneySection.vue      # Hành trình từ nông trại Đắk Lắk đến bàn ăn
-        │   ├── FaqSection.vue          # Câu hỏi thường gặp
-        │   └── StickyCart.vue          # Giỏ hàng ghim bên phải màn hình desktop
-        ├── dashboard/                  # Các Tab của trang Dashboard
-        │   ├── DashHeader.vue          # Header thông tin người dùng, số dư ví Fresh Credit
-        │   ├── ActiveOrderTab.vue      # Đơn hàng đang giao, trạng thái lộ trình xe lạnh
-        │   ├── PrepaidPlanTab.vue      # Quản lý gói nạp Fresh Credit và chiết khấu
-        │   ├── OrderHistoryTab.vue     # Lịch sử các bữa ăn đã hoàn thành
-        │   └── ProfileAddressTab.vue   # Địa chỉ nhận hàng & thiết lập khung giờ giao
-        └── modals/                     # Hệ thống hộp thoại tương tác
-            ├── DishDetailModal.vue     # Chi tiết món, dinh dưỡng, nguyên liệu
-            ├── TopupModal.vue          # Nạp Fresh Credit (chuyển khoản VietQR)
-            ├── CheckoutModal.vue       # Thanh toán đơn hàng qua Fresh Credit
-            ├── OrderSuccessModal.vue   # Chúc mừng đặt hàng thành công
-            ├── AddressModal.vue        # Chỉnh sửa địa chỉ nhận hàng
-            ├── RefundModal.vue         # Hỗ trợ yêu cầu đổi trả / khiếu nại
-            └── LoginDemoModal.vue      # Giả lập đăng nhập nhanh cho testing
+    ├── main.js                         # Entry point App Khách Hàng (Vue Router + Pinia)
+    ├── App.vue                         # Root component Web Khách
+    ├── router/                         # Vue Router cho Web Khách (/, /plans, /account, /q/:code)
+    ├── stores/                         # Pinia stores: usePlanFlowStore, useMovaStore
+    ├── views/                          # Các View màn hình chính: HomeView, PlansView, DashboardView, QrTraceView
+    ├── components/
+    │   ├── common/                     # AppHeader, AppFooter, VietQrSvg, NotificationDrawer...
+    │   ├── store/                      # HeroSection, MealKitVideoHook, SampleMeals, HowItWorks...
+    │   ├── plans/                      # StepAbout, StepMenu, StepCheckout, StepDone, MealCard, PriceBlock...
+    │   └── dashboard/                  # ActiveOrderTab, MealChangeSheet, ProfileTab, RewardsTab...
+    ├── ops/                            # Ứng dụng Vận hành 8 vai trò (/ops.html)
+    │   ├── main.js                     # Entry point Ops
+    │   ├── OpsApp.vue                  # Root layout Ops, chuyển đổi vai trò qua PIN
+    │   ├── views/                      # Màn hình: TodayView, PoView, LoadView, FinanceView, ShipperView...
+    │   └── styles/ops.css              # Theme CSS chuyên biệt cho bảng vận hành
+    └── shared/                         # Thư mục dùng chung (Single Source of Truth)
+        ├── config/
+        │   └── business.js             # Cấu hình Unit Economics, timings, limits, zones
+        ├── data/
+        │   ├── catalog.js              # 18 SKU thô, 8 túi xốt, 21 món Terroir & 10 AI Personas
+        │   ├── packaging.js            # Quy cách bao bì thùng cách nhiệt & khay hút chân không
+        │   ├── recipes.js              # 21 công thức 3 bước 15 phút (chuẩn Grand Frais)
+        │   └── sources.js              # Bản đồ nông trại đối tác Đắk Lắk & Vũng Tàu
+        ├── domain/                     # Logic nghiệp vụ thuần túy (Subscription, Credit, Logistics, Finance)
+        ├── api/                        # Client API & Mock handlers (customer, factory, logistics, finance...)
+        ├── mock-server/                # In-memory Database mô phỏng Backend thực tế
+        └── __tests__/                  # 10 test suites Vitest với 256 unit tests
 ```
-
----
-
-## 4. QUY ƯỚC LẬP TRÌNH BẮT BUỘC (CODING CONVENTIONS)
-
-1. **Nguyên tắc Vue 3:**
-   - 100% sử dụng `<script setup>` với cú pháp Composition API.
-   - Luôn sử dụng `ref()`, `computed()`, `watch()` rõ ràng; tránh dùng `reactive()` bừa bãi gây mất tính phản ứng khi destructure.
-2. **Quy chuẩn Props & Emits:**
-   - Sử dụng `defineProps<{ ... }>()` hoặc `defineProps({ ... })` có định nghĩa kiểu dữ liệu và giá trị mặc định `default`.
-   - Sử dụng `defineEmits(['event-name'])` tường minh.
-3. **Quy chuẩn Naming:**
-   - Component: PascalCase (Ví dụ: `MealPlanSelector.vue`, `CreditCardModal.vue`).
-   - Store: `use<Name>Store.js` (Ví dụ: `useMovaStore.js`).
-   - CSS Class: Kebab-case ngữ nghĩa theo khối BEM đơn giản (Ví dụ: `.mova-hero`, `.mova-hero__badge`, `.btn-primary`).
-4. **Không phụ thuộc thư viện ngoài không cần thiết:**
-   - Ưu tiên Vanilla JS/CSS cho animations, modal dialogs, date helpers.
-   - Mọi icon dùng SVG inline hoặc SVG component sạch, không cài thư viện icon trọn gói vài MB.

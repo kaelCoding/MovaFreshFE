@@ -1,81 +1,67 @@
 # 06. BIÊN BẢN CÁC QUYẾT ĐỊNH CHIẾN LƯỢC (MEETING DECISIONS LOG)
 
-> **Tài liệu lưu trữ các quyết định then chốt đã được thống nhất tuyệt đối bởi Ban sáng lập MOVA Fresh trong phiên họp chiến lược ngày 15/11/2026.**
+> **Tài liệu lưu trữ các quyết định then chốt đã được thống nhất tuyệt đối bởi Ban sáng lập MOVA Fresh trong các phiên họp chiến lược.**
 > **Quy định bất biến:** Mọi AI Agent và thành viên kỹ thuật KHÔNG tranh luận lại các vấn đề đã được đóng dấu quyết định tại đây.
 
 ---
 
-## ĐÍNH CHÍNH (16/11/2026, đối chiếu lại với bản ghi cuộc họp)
+## BIÊN BẢN CUỘC HỌP BAN SÁNG LẬP NGÀY 17/11/2026 (PHIÊN HỌP CHIẾN LƯỢC V2.2)
 
-Bản ghi chép trước đó có vài điểm khác với những gì cuộc họp thực sự nói. Các điểm dưới đây thay thế nội dung cũ ở mọi file trong repo:
+- **Thời gian:** Ngày 17/11/2026
+- **Thành phần tham dự:**
+  1. **Hà My Trần** — Founder (Chủ trì, định hướng chiến lược trải nghiệm, thương hiệu & FinTech).
+  2. **Trung Quốc Phạm** — Co-founder (Vận hành, kho bãi & chuỗi logistics).
+  3. **Nguyễn Công Khôi** — Technical Lead (Kiến trúc hệ thống, multi-page app, security).
+  4. **Hiếu** — AI & Data Lead (Bảng giá Excel thị trường, BOM & phân tích dữ liệu).
 
-1. **Hạn đổi món.** Cuộc họp nói về "giờ chốt sổ của nhà máy" (39:51–40:32), và chị My hỏi "8 giờ của ngày nào?". Đó là một mốc giờ, không phải "8 tiếng trước giờ giao". Quy tắc: khóa đổi món lúc giờ chốt sổ của chuyến (mặc định 08:00 ngày D-2, cấu hình được). Chị My chỉ nói "nếu làm được thì tốt quá", tức là có điều kiện. Giao diện luôn hiện ngày giờ cụ thể.
-2. **Thưởng nạp.** Chị My nói "cắt 10% người ta nạp ngay" (31:36). Mức thưởng nạp thường xuyên là khoảng 10%. Ưu đãi lớn hơn chỉ áp ở chu kỳ đầu, có trần tổng `maxFirstCycleDiscountPct`, vì bonus 25% cộng thẻ quà tặng 900k cho mức giảm thực khoảng 42%, vượt xa margin mục tiêu 20–30%.
-3. **Số thẻ quà tặng 900k (300/200/200/200)** chỉ là ví dụ minh họa theo HelloFresh. Số thật phải ra từ nghiên cứu 200 hộ (33:33: "phải ra số thực chứ không phải giả định").
-4. **Mục tiêu sức khỏe.** Hỏi để xếp món, nhưng lời văn dùng "ít tinh bột", "hạn chế đường"; không hứa chữa bệnh (46:02). Các dòng chuyên sâu (không đường, không mì chính, chay) làm sau (48:24).
-5. **Thứ tự phễu.** Hồ sơ → xem thực đơn tuần 1 → trả tiền → tinh chỉnh. Khách thấy thực đơn trước khi chuyển tiền (12:15, 26:39).
+### TỔNG HỢP CÁC QUYẾT ĐỊNH V2.2 (CHỐT NGÀY 17/11/2026)
 
-Mọi con số kinh doanh nằm trong `src/shared/config/business.js`, không viết cứng trong component.
+1. **Thay thế 100% nhãn "AI" bằng "Đầu bếp" (Chef) trên toàn bộ App Khách (`/`, `/plans`, `/account`):**
+   - Không dùng từ "AI" trên giao diện người dùng cuối vì tạo cảm giác thức ăn nhân tạo, công nghiệp. Đổi thành: **"Thực đơn do Đầu bếp thiết kế riêng"**, **"Đầu bếp MOVA tuyển chọn"**.
+   - *Phân định ranh giới kỹ thuật:* Thư mục code backend bên `movafresh-platform` vẫn giữ tên kỹ thuật là `ai-engine/`, nhưng lớp hiển thị và copywriting khách hàng 100% dùng hình tượng **Đầu bếp**.
+2. **Tôn vinh nguồn gốc thổ nhưỡng (Terroir) & Bỏ hoàn toàn Bơ sáp 034:**
+   - 100% món ăn phải gắn xuất xứ đặc sản vùng miền rõ ràng (Đắk Lắk, Chư Sê, Buôn Đôn, Đà Lạt, Biển Vũng Tàu, Sóc Trăng...).
+   - **Xóa bỏ hoàn toàn Bơ sáp 034** khỏi nhóm tráng miệng: Khách phải tự dùng dao gọt vỏ, xay sinh tố và rửa cối lích kích, đi ngược lại tôn chỉ *"Nấu xong trong 15 phút — Chỉ 1 chảo"*.
+   - Nhóm tráng miệng chỉ dùng trái cây ăn liền (Chuối tiêu chín cây Đắk Lắk) hoặc **trái cây cấp đông nhanh IQF** (như *Vải thiều cấp đông nhanh IQF tách hạt — quay lò vi sóng 1 phút tươi 90%*).
+3. **Nâng cấp Khảo sát Hồ sơ (`/plans` — Bước 1):**
+   - Đăng nhập nhanh 1 chạm bằng Google, Zalo, Facebook để tự động điền contact.
+   - Số người ăn (1–10) và số bữa/tuần (3–7) chỉ dùng nút bấm to rõ `− / +`, không bắt nhập tay hay dùng dropdown.
+   - Mở rộng 9 nhu cầu sức khỏe và 6 kiêng cữ dị ứng, bổ sung lựa chọn **"Khác (tự nhập)"** với bộ phân tích từ khóa thời gian thực (gõ *"gout"* $\rightarrow$ tag `Ít đạm purin`; *"không hải sản"* $\rightarrow$ tag `Kiêng hải sản`; *"ít dầu"* $\rightarrow$ tag `Thanh đạm`).
+   - 3 phong cách ẩm thực rõ ràng: **Thuần Việt**, **Đồ Tây (Pháp, Ý, Mỹ...)**, **Đồ Á (Hàn Quốc, Trung Quốc, Đài Loan...)**.
+4. **Đổi món linh hoạt & Modal Chi tiết món (Trang chủ, `/plans` và `/account`):**
+   - Cơ chế đổi món không chỉ gợi ý món cùng nguyên liệu gốc (tránh đổi gà sang gà), mà đưa ra **3–4 gợi ý khác hẳn nguồn đạm** kèm chênh lệch giá hộ gia đình, tích hợp ô tìm kiếm toàn bộ thực đơn nhà máy.
+   - Nút **`Chi tiết`** mở modal hiển thị đầy đủ: Ảnh/màu nhóm tươi sống, Huy hiệu vùng miền `terroir_region`, Câu chuyện thổ nhưỡng `terroir_story`, Mẹo ngon `chef_note`, Bảng định lượng tịnh nhân đúng theo số thành viên đang chọn, Quy cách sơ chế `size_detail`, Hướng dẫn bảo quản `storage_guide`, 4 chỉ số dinh dưỡng (Calo, Đạm, Tinh bột, Béo) và 3 bước nấu 15 phút.
+5. **Giao hàng Khung giờ xanh (06:00 – 08:00):**
+   - Khuyến khích khách nhận hàng sáng sớm né tắc đường bằng badge **`Freeship / Ưu đãi khung giờ xanh -15.000đ`**, giảm trực tiếp 15.000đ vào tổng tiền thanh toán tuần đầu tiên.
+   - Huy hiệu khuyên dùng tần suất **1 lần mỗi tuần** để tối ưu chi phí thùng & vận chuyển (39.000đ/lần giao).
+6. **Xác thực Số điện thoại bằng OTP tại bước Thanh toán:**
+   - Cạnh ô nhập SĐT có nút **`Xác thực SĐT (OTP)`** mở modal xác thực OTP (mô phỏng demo mã `1234`), thành công hiển thị huy hiệu xanh `✓ Đã xác thực OTP`. Bắt buộc xác thực SĐT trước khi bấm thanh toán.
+7. **Đổi tiêu đề & Hộp Voucher giảm giá:**
+   - Đổi tên phần 3 thành **"3. Thanh toán"** (thay vì "Cách trả trước"), mô tả rõ ràng chu kỳ tự động trừ thẻ trước 72 giờ.
+   - Thêm hộp nhập Voucher hỗ trợ các mã: `THEQUATANG` (thẻ quà tặng HelloFresh), `MOVA20` (giảm 20.000đ), `FREESHIP` (miễn phí ship 25.000đ) trừ trực tiếp vào số tiền thanh toán hôm nay.
+8. **Quy chuẩn pháp lý Checkbox:**
+   - Checkbox 1 (Bắt buộc): Đồng ý cho phép MOVA xử lý thông tin cá nhân và địa chỉ phục vụ đơn hàng.
+   - Checkbox 2 (Tùy chọn): Đăng ký nhận bản tin công thức nấu ăn Đầu bếp MOVA tặng ngay **+15.000đ Fresh Credit** vào tài khoản.
+9. **Kinh tế đơn vị (Unit Economics) từ bảng giá Excel của Hiếu:**
+   - **Ràng buộc cốt lõi:** $\text{Tổng chi phí Nguyên liệu} + \text{Vận chuyển} \le 50\%$ giá bán lẻ.
+   - Giá vốn trực tiếp (COGS) tối đa: **55%** (nguyên liệu, sơ chế, bao bì thùng cách nhiệt 14.000đ + ship nội thành 25.000đ = 39.000đ / 6 bữa = 6.500đ/bữa).
+   - Chi phí vận hành & Marketing (OPEX & MKT): **15%**.
+   - **Lợi nhuận ròng mục tiêu (Net Margin): ~30%** (Gross Margin 20% – 30%).
 
 ---
 
-## THÔNG TIN CUỘC HỌP ĐỊNH HƯỚNG CHIẾN LƯỢC V2
+## BIÊN BẢN CUỘC HỌP BAN SÁNG LẬP NGÀY 15/11/2026 (PHIÊN HỌP KHỞI ĐỘNG V2)
 
 - **Thời gian:** 13:09, ngày 15/11/2026, kéo dài khoảng 62 phút (theo bản ghi Fireflies).
-- **Địa điểm:** Trực tiếp kết hợp Hybrid Online (TP. Hồ Chí Minh — Đắk Lắk — Quốc tế).
-- **Thành phần tham dự:**
-  1. **Hà My Trần** — Founder (Chủ trì phiên họp, định hướng chiến lược kinh doanh & FinTech).
-  2. **Trung Quốc Phạm** — Co-founder (Phụ trách vận hành, logistics & pháp lý thanh toán).
-  3. **Nguyễn Công Khôi** — Technical Lead (Kiến trúc phần mềm & triển khai kỹ thuật).
-  4. **Hiếu** — AI & Data Lead (Mô hình AI dự báo, định giá & chuỗi cung ứng nông sản).
+- **Thành phần tham dự:** Hà My Trần (Founder), Trung Quốc Phạm (Co-founder), Nguyễn Công Khôi (Tech Lead), Hiếu (AI & Data Lead).
 
----
+### CÁC QUYẾT ĐỊNH ĐÃ THỐNG NHẤT TỪ 15/11/2026 (LƯU TRỮ LỊCH SỬ)
 
-## TỔNG HỢP CÁC QUYẾT ĐỊNH ĐÃ THỐNG NHẤT (RESOLVED DECISIONS)
-
-### QUYẾT ĐỊNH 1: BẢN CHẤT MÔ HÌNH KINH DOANH LÀ FINTECH DÒNG TIỀN
-- **Bối cảnh tranh luận:** Có ý kiến ban đầu đề xuất làm sàn thương mại điện tử thực phẩm sạch, cho khách mua lẻ từng món để dễ tiếp cận khách hàng mới.
-- **Quyết định chốt:** **BÁC BỎ HOÀN TOÀN TƯ DUY SÀN BÁN LẺ TMĐT.**
-  - MOVA Fresh là **FinTech Cash-Flow Business** kết hợp **AI Meal-Kit Subscription**.
-  - Mô hình bán lẻ thực phẩm tươi sống truyền thống có tỷ lệ hao hụt (spoilage) 15–20% và chết vì vốn lưu động. MOVA chỉ sản xuất khi khách hàng đã trả tiền trước 100%.
-  - Cơ chế dòng tiền: Thu tiền trước của khách (qua gói nạp Fresh Credit hoặc trừ tiền thẻ trước 72 giờ) và trả tiền nhà cung ứng/nhà máy theo công nợ gối đầu 15–30 ngày. Vốn lưu động vận hành luôn dương.
-
-### QUYẾT ĐỊNH 2: KHAI TỬ HOÀN TOÀN PHƯƠNG THỨC THANH TOÁN COD
-- **Bối cảnh:** Lo ngại thị trường Việt Nam chuộng COD (nhận hàng trả tiền mặt).
-- **Quyết định chốt:** **ZERO COD — 100% THANH TOÁN TRƯỚC.**
-  - Thực phẩm sơ chế và meal-kit tươi sống nếu bị boom hàng hoặc không nhận hàng sẽ thành phế phẩm bỏ đi 100%, gây thâm hụt tài chính nặng nề.
-  - Khách hàng của MOVA là tầng lớp văn phòng, gia đình trung lưu quan tâm đến sức khỏe, sẵn sàng thanh toán trước nếu thấy rõ giá trị và sự tiện lợi.
-
-### QUYẾT ĐỊNH 3: TUÂN THỦ NGHỊ ĐỊNH 52/2024 — KHÔNG DÙNG TỪ "VÍ ĐIỆN TỬ"
-- **Bối cảnh:** Đội dev quen gọi tính năng số dư tài khoản là "Ví điện tử / E-wallet".
-- **Quyết định chốt:** **TUYỆT ĐỐI KHÔNG DÙNG TỪ "VÍ ĐIỆN TỬ" TRÊN TOÀN BỘ HỆ THỐNG.**
-  - Nghị định 52/2024/NĐ-CP quy định rất chặt chẽ về giấy phép tổ chức cung ứng dịch vụ trung gian thanh toán.
-  - Tên gọi pháp lý và thương mại duy nhất được phê duyệt: **Fresh Credit** hoặc **Điểm bữa ăn trả trước**. Khách nạp tiền là hình thức mua thẻ trả trước điểm ăn uống nội bộ, được hưởng thưởng nạp (khoảng 10%; xem Đính chính).
-
-### QUYẾT ĐỊNH 4: THỜI GIAN CAM KẾT SUBSCRIPTION TỐI THIỂU 4 TUẦN
-- **Bối cảnh:** Đề xuất cho phép khách mua thử gói 1 tuần rời rạc.
-- **Quyết định chốt:** **KHÔNG BÁN GÓI 1 TUẦN RỜI RẠC. BẮT BUỘC 4 TUẦN.**
-  - Chi phí thu nạp khách hàng (CAC) tại TP.HCM khá cao. Nếu khách chỉ mua 1 tuần rồi rời bỏ, biên lợi nhuận bị âm.
-  - Phải duy trì tối thiểu 4 tuần để khách hàng hình thành thói quen nấu cơm nhà chuẩn dinh dưỡng. Để giảm rào cản tài chính ban đầu, triển khai mô hình thẻ quà tặng phân bổ đều qua 4 tuần, học HelloFresh. Số 900k (Tuần 1: -300k, Tuần 2: -200k, Tuần 3: -200k, Tuần 4: -200k) chỉ là ví dụ minh họa; số thật chốt từ nghiên cứu 200 hộ (xem Đính chính).
-
-### QUYẾT ĐỊNH 5: CẤU TRÚC BỮA ĂN GIA ĐÌNH CHUẨN "MÂM CƠM Á ĐÔNG"
-- **Bối cảnh:** V1 hiển thị các món Tây và món đĩa đơn lẻ như mì ý, bò lúc lắc...
-- **Quyết định chốt:** **ĐỐI VỚI HỘ GIA ĐÌNH ($\ge 2$ NGƯỜI), THỰC ĐƠN BẮT BUỘC THEO CẤU TRÚC 5 CẤU PHẦN:**
-  - 1 Món Đạm chính + 1 Món Rau xanh + 1 Món Canh nóng + Tinh bột (Gạo ST25/Bún/Khoai) + Trái cây tráng miệng theo mùa.
-  - Đây là thói quen ẩm thực ăn sâu vào văn hóa gia đình Việt. Meal-kit chỉ thành công khi giải quyết trọn vẹn cả mâm cơm, không phải chỉ gửi 1 đĩa thịt bắt khách tự đi chợ nấu canh.
-
-### QUYẾT ĐỊNH 6: PHẠM VI SẢN XUẤT NHÀ MÁY & PHÂN LOẠI NHÃN
-- **Bối cảnh:** Thảo luận về việc có nên cho muối, mắm, hạt nêm vào hộp và cách hiển thị hướng dẫn bảo quản trên website.
-- **Quyết định chốt:**
-  - **LOẠI BỎ GIA VỊ BẾP CƠ BẢN:** Không đóng gói mắm, muối, đường, dầu ăn. Chỉ đóng gói nguyên liệu sạch định lượng và xốt độc quyền của MOVA.
-  - **DÁN STICKER MÀU VẬT LÝ:** Bỏ toàn bộ badge "ngăn mát/ngăn đông" rườm rà trên web. Nhà máy dán trực tiếp Sticker Xanh (Ngăn mát) và Sticker Xanh Dương (Ngăn đông) lên từng khay nguyên liệu.
-
-### QUYẾT ĐỊNH 7: TRUY XUẤT NGUỒN GỐC KIỂU WAZE THAY VÌ BLOCKCHAIN
-- **Bối cảnh:** Đề xuất làm hệ thống Blockchain Hyperledger tốn kém và xa rời thực tế nông dân Đắk Lắk.
-- **Quyết định chốt:** **Áp dụng cơ chế cộng đồng xác nhận chéo kiểu Waze (Peer Validation).**
-  - Thí điểm trước cho **Thịt bò ăn cỏ Tây Nguyên** và **Gạo ST25**.
-  - Cán bộ hiện trường của MOVA kết hợp cùng nông dân các hộ lân cận xác nhận chéo nhật ký canh tác. Nông dân nhận điểm thưởng Fresh Credit khi đóng góp dữ liệu trung thực.
-
-### QUYẾT ĐỊNH 8: MỤC TIÊU MỐC THỜI GIAN LAUNCH SẢN PHẨM THẬT
-- **Thời hạn chốt:** **Tháng 12/2026.**
-- Toàn bộ các thử nghiệm từ nay đến trước mốc Launch đều phải xoay quanh mục tiêu hoàn thiện hạ tầng dòng tiền và chuỗi cung ứng thực tế kết nối Đắk Lắk – TP.HCM.
+1. **Bản chất mô hình là FinTech dòng tiền:** Bác bỏ hoàn toàn tư duy sàn bán lẻ TMĐT. Tiền khách hàng vào trước 100%, trả nhà máy và NCC sau theo công nợ gối đầu 15–30 ngày. Vốn lưu động luôn dương.
+2. **Khai tử hoàn toàn COD (Zero COD):** 100% thanh toán trước qua Fresh Credit, thẻ tín dụng hoặc chuyển khoản định kỳ.
+3. **Tuân thủ Nghị định 52/2024/NĐ-CP:** Không bao giờ dùng từ "ví điện tử". Chỉ dùng thuật ngữ **Fresh Credit** hoặc **Điểm bữa ăn trả trước**.
+4. **Subscription tối thiểu 4 tuần:** Không bán lẻ từng tuần rời rạc. Áp dụng cơ chế voucher trải đều theo tuần (học HelloFresh) để đạt Retention $\ge 50\%$.
+5. **Cấu trúc mâm cơm Á Đông:** Bữa ăn gia đình gồm 5 cấu phần: Đạm + Rau + Canh + Tinh bột + Trái cây.
+6. **Loại bỏ gia vị bếp cơ bản & Dán sticker nhiệt độ:** Không đóng gói mắm, muối, đường, dầu ăn. Nhà máy dán trực tiếp Sticker Xanh (Mát) và Xanh Dương (Đông) lên khay nguyên liệu, không hiển thị rối trên web.
+7. **Hạn đổi món:** Khóa đổi món lúc **giờ chốt sổ nhà máy của chuyến giao (mặc định 08:00 sáng ngày D-2)**. Giao diện luôn hiện ngày giờ cụ thể, không ghi "8 tiếng trước giờ giao".
+8. **Mốc Launch Sản Phẩm Thật:** **Tháng 12/2026**.
