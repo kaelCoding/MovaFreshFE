@@ -271,7 +271,8 @@ export const usePlanFlowStore = defineStore('planFlow', {
         schedule
       });
       if (c.method === 'fresh_credit') req.topup_pay_vnd = this.selectedTopupPay();
-      if (this.refCode) req.referral_code = this.refCode;
+      const ref = this.refCode || (c.voucherCode && c.voucherCode.startsWith('MOVA-') ? c.voucherCode : null);
+      if (ref) req.referral_code = ref;
       const res = api.customer.createSubscription(req);
       if (res.status === 'error') return { ok: false, kind: errorKind(res), message: res.error.message };
       this.result = { ...res.data, planSummary: this.summary() };

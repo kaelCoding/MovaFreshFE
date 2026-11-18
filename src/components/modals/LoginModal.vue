@@ -14,6 +14,42 @@
 
       <template v-else>
         <p class="pl-lead">Nhập số điện thoại hoặc email bạn đã dùng khi đăng ký gói. Bản demo không cần mật khẩu.</p>
+
+        <!-- Nút tiếp tục nhanh MXH chuẩn Shopee / Grab / Notion -->
+        <div class="social-fast-actions">
+          <button type="button" class="social-btn zalo-primary" @click="quickSocialLogin('Zalo')">
+            <div class="social-btn-content">
+              <svg class="social-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.03 2 11c0 2.87 1.5 5.42 3.84 7.02l-.84 3.08a.5.5 0 0 0 .68.58l3.6-1.55c.87.24 1.78.37 2.72.37 5.52 0 10-4.03 10-9s-4.48-9-10-9zm-3.2 12.3h-1.6l3.1-4.7H8.8v-1.1h3.3v1.1l-3.3 4.7zm4.4 0h-1.4v-5.8h1.4v5.8zm4.3 0h-1.4v-4.6c-.3.4-.8.7-1.3.8v-1.1c.7-.2 1.3-.7 1.4-1.3h1.3v6.2z"/>
+              </svg>
+              <span class="btn-text">Tiếp tục với Zalo</span>
+            </div>
+            <span class="rec-badge">Khuyên dùng</span>
+          </button>
+          <div class="social-grid">
+            <button type="button" class="social-btn google-btn" @click="quickSocialLogin('Google')">
+              <svg class="social-icon" width="20" height="20" viewBox="0 0 24 24">
+                <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"/>
+                <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>
+                <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 10.8 0 12.5s.7 2.8 1.9 5.2l3.7-2.9z"/>
+                <path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 17C3.7 20.7 7.5 24 12 24z"/>
+              </svg>
+              <span class="btn-text">Google</span>
+            </button>
+            <button type="button" class="social-btn facebook-btn" @click="quickSocialLogin('Facebook')">
+              <svg class="social-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="12" fill="#1877F2"/>
+                <path d="M15.15 12.5l.5-3.35h-3.2v-2.17c0-.92.45-1.82 1.9-1.82h1.47V2.3a17.8 17.8 0 00-2.61-.23c-2.66 0-4.4 1.61-4.4 4.53v2.55H5.8v3.35h3.01V20.5c.6.1 1.22.15 1.84.15s1.25-.05 1.85-.15v-7.99h2.65z" fill="#FFFFFF"/>
+              </svg>
+              <span class="btn-text">Facebook</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="divider">
+          <span>Hoặc đăng nhập bằng số điện thoại / email</span>
+        </div>
+
         <form class="stack" @submit.prevent="submit">
           <label class="pl-label" for="login-contact">Số điện thoại hoặc email</label>
           <input id="login-contact" v-model="contact" class="pl-input" inputmode="email" autocomplete="username" placeholder="0908 123 456" />
@@ -48,6 +84,15 @@ function submit() {
   error.value = store.loginWithContact(contact.value);
 }
 
+function quickSocialLogin(provider) {
+  if (samples.length) {
+    store.loginAs(samples[0].customer_id);
+    store.closeModal();
+  } else {
+    submit();
+  }
+}
+
 function logout() {
   store.logout();
 }
@@ -59,4 +104,104 @@ function logout() {
 .samples { margin-top: 20px; display: grid; gap: 10px; }
 .samples h3 { font-size: 16px; font-weight: 700; color: var(--muted); }
 .sample { width: 100%; }
+
+.social-fast-actions {
+  display: grid;
+  gap: 12px;
+  margin: 16px 0 14px;
+}
+.social-btn {
+  height: 48px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease, border-color .15s ease;
+  user-select: none;
+}
+.social-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+}
+.social-btn:active {
+  transform: scale(0.99);
+}
+
+.social-btn.zalo-primary {
+  width: 100%;
+  background: #0068FF;
+  border: none;
+  color: #FFFFFF;
+  padding: 0 16px;
+  position: relative;
+  justify-content: space-between;
+}
+.social-btn.zalo-primary:hover {
+  background: #0056D6;
+  box-shadow: 0 4px 14px rgba(0, 104, 255, 0.35);
+}
+.social-btn-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.rec-badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 99px;
+  letter-spacing: 0.02em;
+}
+
+.social-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  height: 48px;
+}
+.social-btn.google-btn,
+.social-btn.facebook-btn {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  color: #1E293B;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+  padding: 0 16px;
+}
+.social-btn.google-btn:hover,
+.social-btn.facebook-btn:hover {
+  background: #F8FAFC;
+  border-color: #CBD5E1;
+}
+
+.social-icon {
+  flex-shrink: 0;
+  display: block;
+}
+.btn-text {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 14px 0 16px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--line);
+}
+.divider span {
+  padding: 0 10px;
+}
 </style>

@@ -34,7 +34,7 @@ const steps = [
   {
     when: 'Tại Đắk Lắk',
     title: 'Sơ chế và đóng gói',
-    text: 'Nhà máy cắt, định lượng đúng số người ăn nhà bạn, đóng kèm gói xốt công thức riêng của MOVA.'
+    text: 'Nhà máy cắt, định lượng đúng số người ăn nhà bạn, đóng kèm gói xốt MOVA đặc biệt riêng.'
   },
   {
     when: `${pad(t.truckDepartHour)}:00 ngày trước tới ${pad(t.hubArrivalHour)}:00 sáng`,

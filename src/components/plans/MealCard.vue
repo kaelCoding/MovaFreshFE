@@ -91,7 +91,7 @@
     </ul>
 
     <footer v-if="meal.highlight_sauce" class="sauce">
-      Gói xốt công thức: <b>{{ meal.highlight_sauce.name }}</b>
+      Gói xốt MOVA đặc biệt: <b>{{ meal.highlight_sauce.name }}</b>
     </footer>
 
     <!-- Modal Chi tiết món -->
@@ -309,13 +309,30 @@ function kindLabel(kind) {
 </script>
 
 <style scoped>
-.meal { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; display: grid; gap: 10px; }
+.meal {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 10px;
+}
 .meal.west { background: #FFFBF6; border-color: #F1C7B1; }
 .meal-h { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
 .meal-h > div { display: grid; gap: 6px; justify-items: start; }
 .meal-t { font-size: 17px; }
 .meal-price { font-size: 16px; font-weight: 700; white-space: nowrap; }
-.parts { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.parts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 6px;
+}
 .part-row { display: grid; grid-template-columns: 76px 1fr auto; gap: 10px; align-items: center; min-height: 44px; }
 .kind { font-size: 14px; font-weight: 700; color: var(--green-d); }
 .dish { font-size: 16px; line-height: 1.35; }
@@ -431,7 +448,14 @@ function kindLabel(kind) {
 .delta.up { color: var(--orange-ink); }
 .delta.down { color: var(--green-d); }
 
-.sauce { font-size: 14px; background: var(--orange-soft); color: var(--orange-ink); border-radius: 10px; padding: 8px 12px; }
+.sauce {
+  font-size: 14px;
+  background: var(--orange-soft);
+  color: var(--orange-ink);
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-top: auto;
+}
 
 /* Modal */
 .modal {

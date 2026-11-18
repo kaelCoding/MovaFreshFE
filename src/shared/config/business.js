@@ -57,7 +57,7 @@ export const BUSINESS = {
   },
 
   incentives: {
-    // Thẻ quà tặng trải đều theo tuần, học HelloFresh. Số 900k chỉ là ví dụ (giả định).
+    // Thẻ quà tặng trải đều theo tuần. Số 900k chỉ là ví dụ (giả định).
     giftCardWeeklyVnd: [300000, 200000, 200000, 200000],
     // Thẻ quà tặng tối đa bao nhiêu % giá trị gói 4 tuần (gói nhỏ không được miễn phí trọn tuần 1)
     giftCardMaxPctOfPackage: 0.2,

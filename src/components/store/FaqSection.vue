@@ -39,7 +39,7 @@ const faqs = [
   },
   {
     q: 'Trong hộp có mắm, muối, đường, dầu ăn không?',
-    a: 'Không. Bếp nhà bạn đã có sẵn. Hộp MOVA gồm đạm, rau củ, tinh bột, trái cây sơ chế sạch, định lượng đúng số người, cùng gói xốt công thức riêng cho từng món.'
+    a: 'Không. Bếp nhà bạn đã có sẵn. Hộp MOVA gồm đạm, rau củ, tinh bột, trái cây sơ chế sạch, định lượng đúng số người, cùng gói xốt MOVA đặc biệt riêng cho từng món.'
   },
   {
     q: 'Nhà tôi có người cần ăn ít tinh bột hoặc hạn chế đường thì sao?',

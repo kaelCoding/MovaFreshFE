@@ -259,8 +259,12 @@
           <span>Ưu đãi voucher ({{ appliedVoucher.code }}):</span>
           <b class="num">-{{ fmt(voucherDiscountVnd) }}</b>
         </div>
+        <div v-if="referralDiscountVnd > 0" class="pay-line green">
+          <span>Ưu đãi người quen giới thiệu ({{ activeRefCode }}):</span>
+          <b class="num">-{{ fmt(referralDiscountVnd) }}</b>
+        </div>
         <div class="pay-sum">
-          <small>Hôm nay bạn trả</small>
+          <small>Hôm nay bạn trả <span class="rate-note">(~{{ fmt(servingPayToday) }}/suất • {{ fmt(mealPayToday) }}/bữa)</span></small>
           <b class="num">{{ fmt(payToday) }}</b>
         </div>
       </div>
@@ -325,6 +329,17 @@ const slots = computed(() => (options.value && options.value.options[c.optionInd
 const fc = computed(() => preview.value.fresh_credit);
 const qrSeed = computed(() => Math.abs(hash(preview.value ? preview.value.payment_ref : 'mova')));
 
+const householdSize = computed(() => store.plan?.household_size || 2);
+const mealsCount = computed(() => store.plan?.quote?.meals_per_week || 5);
+
+const activeRefCode = computed(() => {
+  return store.refCode || (appliedVoucher.value?.code?.startsWith('MOVA-') ? appliedVoucher.value.code : '');
+});
+
+const referralDiscountVnd = computed(() => {
+  return activeRefCode.value ? 100000 : 0;
+});
+
 const slotDiscountVnd = computed(() => {
   return c.slotId === 'early_morning_06_08' ? 15000 : 0;
 });
@@ -335,7 +350,7 @@ const voucherDiscountVnd = computed(() => {
 });
 
 const totalDiscountsTodayVnd = computed(() => {
-  return slotDiscountVnd.value + voucherDiscountVnd.value;
+  return slotDiscountVnd.value + voucherDiscountVnd.value + referralDiscountVnd.value;
 });
 
 const rawPayToday = computed(() => {
@@ -348,6 +363,17 @@ const rawPayToday = computed(() => {
 
 const payToday = computed(() => {
   return Math.max(0, rawPayToday.value - totalDiscountsTodayVnd.value);
+});
+
+const mealPayToday = computed(() => {
+  if (!payToday.value) return 0;
+  const weeks = c.method === 'card' ? 1 : 4;
+  const count = (mealsCount.value || 5) * weeks;
+  return Math.round(payToday.value / count);
+});
+
+const servingPayToday = computed(() => {
+  return Math.round(mealPayToday.value / (householdSize.value || 1));
 });
 
 const payLabel = computed(() => {
@@ -411,11 +437,20 @@ function applyVoucher() {
   if (code === 'THEQUATANG') {
     appliedVoucher.value = {
       code: 'THEQUATANG',
-      name: 'Thẻ quà tặng HelloFresh (trải đều 4 tuần)',
+      name: 'Thẻ quà tặng MOVA Fresh (trải đều 4 tuần)',
       discountVnd: 0
     };
     c.voucherCode = 'THEQUATANG';
     voucherMsg.value = '✓ Đã kích hoạt thẻ quà tặng 4 tuần!';
+  } else if (code.startsWith('MOVA-')) {
+    store.setRef(code);
+    appliedVoucher.value = {
+      code,
+      name: `Ưu đãi người quen giới thiệu (${code})`,
+      discountVnd: 0
+    };
+    c.voucherCode = code;
+    voucherMsg.value = `✓ Áp dụng mã giới thiệu ${code}: Giảm ngay 100.000đ vào đơn đầu!`;
   } else if (code === 'MOVA20') {
     appliedVoucher.value = {
       code: 'MOVA20',
@@ -439,6 +474,9 @@ function applyVoucher() {
 }
 
 function removeVoucher() {
+  if (appliedVoucher.value?.code?.startsWith('MOVA-')) {
+    store.setRef('');
+  }
   appliedVoucher.value = null;
   c.voucherCode = '';
   voucherInput.value = '';
@@ -518,6 +556,9 @@ onMounted(() => {
   if (c.voucherCode) {
     voucherInput.value = c.voucherCode;
     applyVoucher();
+  } else if (store.refCode) {
+    voucherInput.value = store.refCode;
+    applyVoucher();
   }
   autoPick();
   refresh();
@@ -572,6 +613,7 @@ watch(() => c.packId, save);
 .applied-voucher { display: flex; justify-content: space-between; align-items: center; background: var(--green-soft); color: var(--green-d); padding: 8px 12px; border-radius: 8px; font-size: 15px; font-weight: 700; }
 .v-amt { font-size: 16px; }
 .v-success { color: var(--green-d); font-weight: 600; }
+.rate-note { font-size: 13px; font-weight: 600; color: var(--green-d); margin-left: 4px; }
 
 .rules { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: 16px; }
 .deadlines { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 4px; }

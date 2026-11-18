@@ -1,10 +1,39 @@
 <template>
   <div v-if="data" class="rewards">
+    <!-- Bảng số dư ví Fresh Credit đa năng -->
+    <section v-if="creditSum" class="pl-card fc-card">
+      <div class="fc-head">
+        <div>
+          <span class="wallet-badge">VÍ BỮA ĂN TRẢ TRƯỚC</span>
+          <h2 class="pl-h2">Số dư Fresh Credit của bạn</h2>
+        </div>
+        <p class="total-amt num">{{ fmt(creditSum.balance.total_vnd) }}</p>
+      </div>
+
+      <div class="fc-split">
+        <div class="fc-part">
+          <small>Tiền thật nạp vào</small>
+          <b class="num">{{ fmt(creditSum.balance.real_vnd) }}</b>
+          <span>Tiền nạp trực tiếp, được hoàn lại 100% khi dừng gói.</span>
+        </div>
+        <div class="fc-part promo">
+          <small>Điểm thưởng khuyến mãi</small>
+          <b class="num">{{ fmt(creditSum.balance.promo_vnd) }}</b>
+          <span>Thưởng mời bạn (100k), thưởng bản tin (15k), thưởng chia sẻ (20k).</span>
+        </div>
+      </div>
+
+      <div class="fc-note">
+        <p>
+          💡 <b>Cơ chế hoạt động linh hoạt:</b> Dù bạn chọn thanh toán định kỳ bằng <b>VietQR</b> hay <b>Thẻ tín dụng tự động</b>, ví <b>Fresh Credit</b> vẫn luôn hoạt động để tích lũy điểm thưởng giới thiệu, thưởng thành viên và tự động khấu trừ làm giảm số tiền khi đổi món hoặc gia hạn chu kỳ tiếp theo.
+        </p>
+      </div>
+    </section>
+
     <section class="pl-card">
       <h2 class="pl-h2">Mời bạn bè</h2>
       <p class="pl-lead">
-        Bạn của bạn trả gói đầu tiên, bạn nhận <b class="num">{{ fmt(r.referral.referrer_vnd) }}</b> Fresh Credit và bạn của bạn nhận
-        <b class="num">{{ fmt(r.referral.referee_vnd) }}</b>.
+        Bạn của bạn đăng ký qua link mời được giảm ngay <b class="num">{{ fmt(r.referral.referee_vnd) }} Fresh Credit</b> vào đơn đầu tiên; sau khi bạn của bạn thanh toán gói đầu, bạn nhận ngay <b class="num">+{{ fmt(r.referral.referrer_vnd) }} Fresh Credit</b> vào ví.
       </p>
       <label class="pl-label" for="invite-link">Link mời riêng của bạn</label>
       <input id="invite-link" class="pl-input link" type="text" readonly :value="inviteUrl" @focus="$event.target.select()" />
@@ -52,6 +81,7 @@ import { useMovaStore } from '../../stores/useMovaStore';
 defineEmits(['tab']);
 const store = useMovaStore();
 const data = ref(null);
+const creditSum = ref(null);
 const copiedInvite = ref(false);
 const message = ref('');
 const busy = ref(false);
@@ -62,6 +92,8 @@ const inviteUrl = computed(() => `${location.origin}${data.value.invite_path}`);
 function load() {
   const res = api.customer.rewards(store.customerId);
   if (res.status === 'success') data.value = res.data;
+  const cRes = api.customer.creditSummary(store.customerId);
+  if (cRes.status === 'success') creditSum.value = cRes.data;
 }
 load();
 watch(() => store.version, load);
@@ -121,6 +153,82 @@ function sharePhoto(e) {
 <style scoped>
 .rewards { display: grid; gap: 16px; max-width: 760px; }
 .rewards > section { display: grid; gap: 12px; }
+.fc-card {
+  background: #ffffff;
+  border: 1px solid var(--line-2);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+.fc-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.wallet-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--green-d);
+  background: var(--green-soft);
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+.total-amt {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--green);
+}
+.fc-split {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 14px;
+}
+@media (max-width: 540px) {
+  .fc-split { grid-template-columns: 1fr; }
+  .total-amt { font-size: 28px; }
+}
+.fc-part {
+  background: var(--green-soft);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: grid;
+  gap: 4px;
+}
+.fc-part.promo {
+  background: var(--butter);
+}
+.fc-part small {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.fc-part b {
+  font-size: 20px;
+}
+.fc-part span {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.fc-note {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #334155;
+}
+.fc-note p {
+  margin: 0;
+}
 .link { font-size: 15px; }
 .btns { display: grid; gap: 10px; }
 @media (min-width: 641px) { .btns { grid-auto-flow: column; justify-content: start; } }

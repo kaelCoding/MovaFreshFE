@@ -1,9 +1,9 @@
 <template>
   <section class="pb" aria-label="Giá trị gói 4 tuần">
-    <p class="pb-label">Gói {{ quote.weeks }} tuần chuẩn HelloFresh</p>
+    <p class="pb-label">GÓI {{ quote.weeks }} TUẦN CỦA BẠN</p>
     <div class="pb-price-main">
       <p class="pb-value num">{{ fmt(quote.package_value_vnd) }}</p>
-      <span class="pb-avg-meal num">({{ fmt(quote.per_meal_list_vnd) }}/bữa)</span>
+      <span class="pb-avg-meal num">(~{{ fmt(Math.round(quote.per_meal_list_vnd / (householdSize || 1))) }}/suất • {{ fmt(quote.per_meal_list_vnd) }}/bữa)</span>
     </div>
 
     <div class="pb-week1-box">
@@ -23,7 +23,7 @@
           <b class="pay">{{ fmt(w.pay_vnd) }}</b>
           <span class="per-meal">({{ mealRate(w.pay_vnd) }})</span>
         </div>
-        <span v-if="w.gift_vnd" class="num sub">Thẻ quà tặng HelloFresh −{{ fmt(w.gift_vnd) }}</span>
+        <span v-if="w.gift_vnd" class="num sub">Thẻ quà tặng MOVA Fresh −{{ fmt(w.gift_vnd) }}</span>
       </li>
     </ol>
 
@@ -32,7 +32,8 @@
       <p>
         Gốc <s class="num">{{ fmt(quote.per_meal_list_vnd) }}</s> → Bạn chỉ trả
         <b class="num text-green">{{ fmt(quote.per_meal_pay_vnd) }}</b>
-        <span class="muted"> (đã gồm sơ chế sạch 100%, định lượng chuẩn & gói xốt công thức)</span>
+        <span class="serving-rate"> (~{{ fmt(Math.round(quote.per_meal_pay_vnd / (householdSize || 1))) }}/suất)</span>
+        <span class="muted"> (đã gồm sơ chế sạch 100%, định lượng chuẩn & gói xốt MOVA đặc biệt)</span>
       </p>
     </div>
 
@@ -46,14 +47,18 @@
 <script setup>
 import { fmt } from '../../shared/utils/formatters';
 
-const props = defineProps({ quote: { type: Object, required: true } });
+const props = defineProps({
+  quote: { type: Object, required: true },
+  householdSize: { type: Number, default: 2 }
+});
 
 const mealsCount = props.quote.meals_per_week || 5;
 
 function mealRate(vnd) {
   if (!vnd) return '';
-  const per = Math.round(vnd / mealsCount);
-  return `${fmt(per)}/bữa`;
+  const perMeal = Math.round(vnd / mealsCount);
+  const perServing = Math.round(perMeal / (props.householdSize || 1));
+  return `~${fmt(perServing)}/suất (${fmt(perMeal)}/bữa)`;
 }
 </script>
 

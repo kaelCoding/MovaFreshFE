@@ -36,8 +36,8 @@
             <path d="M14 22h36" stroke="#D9531E" stroke-width="2" stroke-dasharray="3 3"/>
             <path d="M22 38c4-6 16-6 20 0-4 6-16 6-20 0z" fill="#B5542A"/>
           </svg>
-          <b>Gói xốt công thức riêng</b>
-          <p>Mỗi món một gói xốt của MOVA. Mắm, muối, đường, dầu ăn bếp nhà bạn đã có nên MOVA không đóng kèm.</p>
+          <b>Gói xốt MOVA đặc biệt</b>
+          <p>Mỗi món một gói xốt đặc biệt của MOVA. Mắm, muối, đường, dầu ăn bếp nhà bạn đã có nên MOVA không đóng kèm.</p>
         </div>
 
         <div class="bx">

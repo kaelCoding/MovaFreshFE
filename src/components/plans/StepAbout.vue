@@ -9,20 +9,39 @@
         chia theo từng tuần. Bắt đầu ngay, không cần mật khẩu rườm rà.
       </p>
 
-      <!-- Nút tiếp tục nhanh MXH -->
+      <!-- Nút tiếp tục nhanh MXH chuẩn Shopee / Grab / Notion -->
       <div class="social-fast-actions">
-        <button type="button" class="social-btn google" @click="quickSocialLogin('Google')">
-          <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/><path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 10.8 0 12.5s.7 2.8 1.9 5.2l3.7-2.9z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 17C3.7 20.7 7.5 24 12 24z"/></svg>
-          <span>Đăng nhập với Google</span>
+        <!-- Hàng 1: Nút Zalo chính toàn chiều rộng -->
+        <button type="button" class="social-btn zalo-primary" @click="quickSocialLogin('Zalo')">
+          <div class="social-btn-content">
+            <svg class="social-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.03 2 11c0 2.87 1.5 5.42 3.84 7.02l-.84 3.08a.5.5 0 0 0 .68.58l3.6-1.55c.87.24 1.78.37 2.72.37 5.52 0 10-4.03 10-9s-4.48-9-10-9zm-3.2 12.3h-1.6l3.1-4.7H8.8v-1.1h3.3v1.1l-3.3 4.7zm4.4 0h-1.4v-5.8h1.4v5.8zm4.3 0h-1.4v-4.6c-.3.4-.8.7-1.3.8v-1.1c.7-.2 1.3-.7 1.4-1.3h1.3v6.2z"/>
+            </svg>
+            <span class="btn-text">Tiếp tục với Zalo</span>
+          </div>
+          <span class="rec-badge">Khuyên dùng</span>
         </button>
-        <button type="button" class="social-btn zalo" @click="quickSocialLogin('Zalo')">
-          <span class="zalo-badge">Zalo</span>
-          <span>Đăng nhập với Zalo</span>
-        </button>
-        <button type="button" class="social-btn facebook" @click="quickSocialLogin('Facebook')">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-          <span>Đăng nhập với Facebook</span>
-        </button>
+
+        <!-- Hàng 2: Lưới 2 cột Google & Facebook -->
+        <div class="social-grid">
+          <button type="button" class="social-btn google-btn" @click="quickSocialLogin('Google')">
+            <svg class="social-icon" width="20" height="20" viewBox="0 0 24 24">
+              <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"/>
+              <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>
+              <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 10.8 0 12.5s.7 2.8 1.9 5.2l3.7-2.9z"/>
+              <path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 17C3.7 20.7 7.5 24 12 24z"/>
+            </svg>
+            <span class="btn-text">Google</span>
+          </button>
+
+          <button type="button" class="social-btn facebook-btn" @click="quickSocialLogin('Facebook')">
+            <svg class="social-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="12" fill="#1877F2"/>
+              <path d="M15.15 12.5l.5-3.35h-3.2v-2.17c0-.92.45-1.82 1.9-1.82h1.47V2.3a17.8 17.8 0 00-2.61-.23c-2.66 0-4.4 1.61-4.4 4.53v2.55H5.8v3.35h3.01V20.5c.6.1 1.22.15 1.84.15s1.25-.05 1.85-.15v-7.99h2.65z" fill="#FFFFFF"/>
+            </svg>
+            <span class="btn-text">Facebook</span>
+          </button>
+        </div>
       </div>
 
       <div class="divider">
@@ -121,18 +140,28 @@
         </div>
       </div>
 
-      <!-- 4. 3 Phong cách ẩm thực chuẩn xác -->
+      <!-- 4. Phong cách ẩm thực (multi-select + nút chọn tất cả) -->
       <div v-else-if="q === 4" class="pl-stack">
         <h2 class="pl-h2">Phong cách ẩm thực bạn mong muốn?</h2>
         <div class="pl-chips col">
+          <button
+            type="button"
+            class="pl-chip big select-all-btn"
+            :class="{ on: isAllCuisinesSelected }"
+            :aria-pressed="isAllCuisinesSelected"
+            @click="toggleSelectAllCuisines"
+          >
+            <b>✨ Chọn tất cả (Đa dạng Việt – Á – Tây)</b>
+            <small>Đầu bếp MOVA sẽ luân phiên kết hợp các món ngon 3 phong cách trong tuần</small>
+          </button>
           <button
             v-for="c in CUISINES"
             :key="c.id"
             type="button"
             class="pl-chip big"
-            :class="{ on: store.answers.cuisine === c.id }"
-            :aria-pressed="store.answers.cuisine === c.id"
-            @click="store.setAnswer('cuisine', c.id)"
+            :class="{ on: isCuisineSelected(c.id) }"
+            :aria-pressed="isCuisineSelected(c.id)"
+            @click="toggleCuisine(c.id)"
           >
             <b>{{ c.label }}</b>
             <small>{{ c.hint }}</small>
@@ -142,7 +171,10 @@
 
       <!-- 5. Kiêng cữ / Dị ứng & ô Khác tự nhập -->
       <div v-else-if="q === 5" class="pl-stack">
-        <h2 class="pl-h2">Nhà bạn có kiêng món nào không?</h2>
+        <h2 class="pl-h2">Nhà bạn có kiêng cữ hay dị ứng thực phẩm nào không?</h2>
+        <p class="allergy-notice">
+          ⚠️ Lưu ý an toàn sức khỏe: Đầu bếp MOVA sẽ loại bỏ tuyệt đối các nguyên liệu bạn chọn hoặc nhập bên dưới.
+        </p>
         <div class="pl-chips">
           <button
             v-for="a in AVOIDS"
@@ -352,6 +384,58 @@ const customBudgetValue = ref(
   isCustomBudget.value && store.answers.budget ? store.answers.budget : DEFAULT_CUSTOM_BUDGET
 );
 const customBudgetText = ref(fmt(customBudgetValue.value));
+
+// Phong cách ẩm thực (chọn nhiều)
+const selectedCuisines = ref([]);
+if (Array.isArray(store.answers.cuisines)) {
+  selectedCuisines.value = [...store.answers.cuisines];
+} else if (store.answers.cuisine === 'viet_western') {
+  selectedCuisines.value = ['viet', 'western', 'asian'];
+} else if (store.answers.cuisine) {
+  selectedCuisines.value = [store.answers.cuisine];
+} else {
+  selectedCuisines.value = ['viet'];
+}
+
+const isAllCuisinesSelected = computed(() => {
+  return CUISINES.length > 0 && CUISINES.every((c) => selectedCuisines.value.includes(c.id));
+});
+
+function isCuisineSelected(id) {
+  return selectedCuisines.value.includes(id);
+}
+
+function syncCuisineToStore() {
+  const sel = selectedCuisines.value;
+  store.setAnswer('cuisines', sel);
+  if (sel.includes('western') && (sel.includes('viet') || sel.includes('asian') || sel.length >= 2)) {
+    store.setAnswer('cuisine', 'viet_western');
+  } else if (sel.includes('western') && sel.length === 1) {
+    store.setAnswer('cuisine', 'western');
+  } else if (sel.length === 0) {
+    store.setAnswer('cuisine', 'viet_western');
+  } else {
+    store.setAnswer('cuisine', 'viet');
+  }
+}
+
+function toggleCuisine(id) {
+  if (selectedCuisines.value.includes(id)) {
+    selectedCuisines.value = selectedCuisines.value.filter((x) => x !== id);
+  } else {
+    selectedCuisines.value.push(id);
+  }
+  syncCuisineToStore();
+}
+
+function toggleSelectAllCuisines() {
+  if (isAllCuisinesSelected.value) {
+    selectedCuisines.value = [];
+  } else {
+    selectedCuisines.value = CUISINES.map((c) => c.id);
+  }
+  syncCuisineToStore();
+}
 
 const canNext = computed(() => {
   if (q.value === 1) return customOpen.value ? customText.value.trim().length > 1 : Boolean(store.answers.district);
@@ -611,6 +695,25 @@ function clearBudgetAndFinish() {
 </script>
 
 <style scoped>
+.allergy-notice {
+  font-size: 14px;
+  color: var(--orange-ink);
+  background: var(--orange-soft);
+  padding: 8px 12px;
+  border-radius: 10px;
+  margin: -4px 0 6px;
+  line-height: 1.35;
+}
+
+.select-all-btn {
+  border: 1.5px dashed var(--green);
+  background: rgba(45, 90, 61, 0.04);
+}
+.select-all-btn.on {
+  border-style: solid;
+  background: var(--green-soft);
+}
+
 .about { max-width: 640px; margin: 0 auto; }
 .q-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .q-count { font-size: 14px; color: var(--muted); font-weight: 600; }
@@ -638,34 +741,85 @@ function clearBudgetAndFinish() {
 
 .social-fast-actions {
   display: grid;
-  gap: 10px;
-  margin: 16px 0;
+  gap: 12px;
+  margin: 18px 0;
 }
 .social-btn {
+  height: 48px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  min-height: 48px;
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 700;
-  border: 1px solid var(--line);
-  background: var(--card);
+  gap: 10px;
   cursor: pointer;
-  transition: background .15s ease, border-color .15s ease;
+  transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease, border-color .15s ease;
+  user-select: none;
 }
 .social-btn:hover {
-  background: var(--bg);
-  border-color: var(--muted);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
 }
-.zalo-badge {
+.social-btn:active {
+  transform: scale(0.99);
+}
+
+.social-btn.zalo-primary {
+  width: 100%;
   background: #0068FF;
-  color: #fff;
+  border: none;
+  color: #FFFFFF;
+  padding: 0 16px;
+  position: relative;
+  justify-content: space-between;
+}
+.social-btn.zalo-primary:hover {
+  background: #0056D6;
+  box-shadow: 0 4px 14px rgba(0, 104, 255, 0.35);
+}
+.social-btn-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.rec-badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
   font-size: 11px;
-  font-weight: 800;
-  padding: 2px 6px;
-  border-radius: 4px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 99px;
+  letter-spacing: 0.02em;
+}
+
+.social-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  height: 48px;
+}
+.social-btn.google-btn,
+.social-btn.facebook-btn {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  color: #1E293B;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+  padding: 0 16px;
+}
+.social-btn.google-btn:hover,
+.social-btn.facebook-btn:hover {
+  background: #F8FAFC;
+  border-color: #CBD5E1;
+}
+
+.social-icon {
+  flex-shrink: 0;
+  display: block;
+}
+.btn-text {
+  font-size: 15px;
+  font-weight: 600;
 }
 .divider {
   display: flex;

@@ -21,7 +21,7 @@
       </section>
 
       <aside class="side" style="grid-area: side">
-        <PriceBlock :quote="plan.quote" />
+        <PriceBlock :quote="plan.quote" :household-size="plan.household_size" />
         <ValueQuestions :questions="plan.value_questions" @answer="(id, v) => store.answerUpsell(id, v)" />
       </aside>
 
@@ -46,7 +46,11 @@
     <div class="cta">
       <div class="cta-sum">
         <small>Gói {{ plan.quote.weeks }} tuần trị giá {{ fmt(plan.quote.package_value_vnd) }}</small>
-        <b class="num">{{ fmt(plan.quote.per_meal_list_vnd) }} <span class="pl-unit">/ bữa</span></b>
+        <b class="num">
+          ~{{ fmt(Math.round(plan.quote.per_meal_list_vnd / (plan.household_size || 1))) }}
+          <span class="pl-unit">/ suất</span>
+          <span class="pl-sub-unit"> ({{ fmt(plan.quote.per_meal_list_vnd) }}/bữa)</span>
+        </b>
       </div>
       <button class="pl-btn primary" type="button" @click="$emit('next')">Tiếp tục: giao hàng và thanh toán</button>
     </div>

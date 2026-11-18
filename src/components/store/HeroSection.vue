@@ -11,6 +11,47 @@
           <router-link to="/plans" class="pl-btn primary big">Thiết kế thực đơn của tôi</router-link>
           <p class="hint">Mất khoảng 2 phút. Bạn xem thực đơn trước, hài lòng rồi mới trả tiền.</p>
         </div>
+
+        <!-- 3 Thẻ giá trị cốt lõi -->
+        <div class="value-cards">
+          <div class="val-card">
+            <span class="val-icon">🍳</span>
+            <div class="val-text">
+              <b>Chuẩn 15 phút – 1 chảo</b>
+              <p>Sơ chế sạch 100%, tẩm ướp sẵn, không cần đi chợ hay nhặt rau.</p>
+            </div>
+          </div>
+          <div class="val-card">
+            <span class="val-icon">❄️</span>
+            <div class="val-text">
+              <b>Chuỗi xe lạnh 16 giờ</b>
+              <p>Giữ mát 0°C – 4°C xuyên đêm từ Đắk Lắk tận cửa bếp.</p>
+            </div>
+          </div>
+          <div class="val-card">
+            <span class="val-icon">🥣</span>
+            <div class="val-text">
+              <b>Gói xốt MOVA đặc biệt</b>
+              <p>Định lượng chuẩn gram, gia vị độc quyền tách riêng.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dải 3 chỉ số nổi bật -->
+        <div class="hero-stats">
+          <div class="stat-col">
+            <b class="stat-num num">16h</b>
+            <span class="stat-label">Từ trại về bếp HCM</span>
+          </div>
+          <div class="stat-col">
+            <b class="stat-num num">100%</b>
+            <span class="stat-label">Sơ chế sạch ATTP</span>
+          </div>
+          <div class="stat-col">
+            <b class="stat-num num">2 Giờ</b>
+            <span class="stat-label">Tiết kiệm mỗi ngày</span>
+          </div>
+        </div>
       </div>
 
       <div class="hero-visual">
@@ -30,7 +71,7 @@
           </li>
           <li>
             <span class="pin pot" aria-hidden="true"></span>
-            <div><b>Nấu 15 phút</b><small>Một chảo, xốt công thức có sẵn</small></div>
+            <div><b>Nấu 15 phút</b><small>Một chảo, gói xốt MOVA đặc biệt có sẵn</small></div>
           </li>
         </ol>
       </div>
@@ -44,14 +85,88 @@ import MealKitVideoHook from './MealKitVideoHook.vue';
 
 <style scoped>
 .hero { padding: 38px 0 34px; }
-.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 40px; align-items: start; }
-.hero-visual { display: grid; gap: 16px; }
-.kicker { display: inline-block; font-size: 13px; font-weight: 700; color: var(--orange-ink); background: var(--orange-soft); border-radius: 999px; padding: 6px 12px; margin-bottom: 14px; }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 40px; align-items: stretch; }
+.copy { display: flex; flex-direction: column; justify-content: space-between; }
+.hero-visual { display: flex; flex-direction: column; gap: 16px; justify-content: space-between; }
+.kicker { display: inline-block; font-size: 13px; font-weight: 700; color: var(--orange-ink); background: var(--orange-soft); border-radius: 999px; padding: 6px 12px; margin-bottom: 14px; align-self: flex-start; }
 .hero h1 { font-size: clamp(28px, 4.4vw, 46px); font-weight: 800; line-height: 1.15; letter-spacing: -0.025em; }
 .sub { margin-top: 14px; font-size: 17px; color: var(--muted); max-width: 52ch; }
-.cta { margin-top: 24px; display: grid; gap: 10px; justify-items: start; }
+.cta { margin-top: 20px; display: grid; gap: 10px; justify-items: start; }
 .big { min-height: 56px; font-size: 18px; padding: 14px 28px; }
 .hint { font-size: 15px; color: var(--muted); }
+
+.value-cards {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+}
+.val-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+  transition: transform .15s ease, border-color .15s ease;
+}
+.val-card:hover {
+  border-color: var(--green);
+  transform: translateY(-1px);
+}
+.val-icon {
+  font-size: 20px;
+  line-height: 1;
+  background: var(--green-soft);
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.val-text b {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+.val-text p {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(28, 51, 37, 0.05) 0%, rgba(45, 90, 61, 0.08) 100%);
+  border: 1px solid var(--green-soft);
+  border-radius: 16px;
+  text-align: center;
+}
+.stat-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.stat-num {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--green-d);
+}
+.stat-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  line-height: 1.25;
+}
 
 .route { list-style: none; margin: 0; padding: 22px; display: grid; gap: 0; background: var(--card); border: 1px solid var(--line); border-radius: 22px; position: relative; }
 .route li { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: center; padding: 12px 0; position: relative; }
@@ -67,5 +182,6 @@ import MealKitVideoHook from './MealKitVideoHook.vue';
 }
 @media (max-width: 480px) {
   .big { width: 100%; }
+  .hero-stats { grid-template-columns: 1fr; gap: 8px; }
 }
 </style>

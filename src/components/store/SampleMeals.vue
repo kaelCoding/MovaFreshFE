@@ -23,9 +23,26 @@
       </div>
 
       <div class="grid">
-        <div v-for="s in samples" :key="s.title" class="sample">
-          <p class="tag">{{ s.title }}</p>
-          <MealCard :meal="s.meal" :show-price="false" />
+        <div v-for="s in samples" :key="s.title" class="sample-card">
+          <div class="sample-media">
+            <img
+              :src="s.image"
+              :alt="s.imageAlt"
+              class="sample-img"
+              loading="lazy"
+              @error="(e) => (e.target.style.display = 'none')"
+            />
+            <div class="sample-fallback-gradient" aria-hidden="true">
+              <span class="fallback-icon">🍲</span>
+            </div>
+            <div class="img-badge-overlay">
+              <span class="theme-badge">{{ s.theme }}</span>
+            </div>
+          </div>
+          <div class="sample-content">
+            <p class="tag">{{ s.title }}</p>
+            <MealCard :meal="s.meal" :show-price="false" />
+          </div>
         </div>
       </div>
 
@@ -78,11 +95,14 @@ const showVideoModal = ref(false);
 
 const dishView = (id) => (id ? { dish_id: id, name: DISHES[id].name } : undefined);
 
-function build(title, opts, seed, theme) {
+function build(title, opts, seed, theme, image, imageAlt) {
   const m = generateMeals({ mealsCount: 1, rand: rng(seed), ...opts })[0];
   const protein = DISHES[m.dishes.protein];
   return {
     title,
+    theme,
+    image,
+    imageAlt,
     meal: {
       meal_index: 1,
       day_label: 'Mâm mẫu',
@@ -102,9 +122,30 @@ function build(title, opts, seed, theme) {
 }
 
 const samples = [
-  build('Cho 1 người', { householdSize: 1 }, 11, 'Suất ăn nấu 1 chảo'),
-  build('Cho cặp đôi', { householdSize: 2 }, 23, 'Mâm cơm Việt 5 phần'),
-  build('Cho gia đình, ít tinh bột', { householdSize: 4, goals: ['low_carb'] }, 37, 'Mâm cơm Việt 5 phần')
+  build(
+    'Cho 1 người',
+    { householdSize: 1 },
+    11,
+    'Suất ăn nấu 1 chảo',
+    'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=700&q=80',
+    'Suất ăn nấu 1 chảo cho 1 người'
+  ),
+  build(
+    'Cho cặp đôi',
+    { householdSize: 2 },
+    23,
+    'Mâm cơm Việt 5 phần',
+    'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=700&q=80',
+    'Mâm cơm Việt 5 phần cho cặp đôi'
+  ),
+  build(
+    'Cho gia đình, ít tinh bột',
+    { householdSize: 4, goals: ['low_carb'] },
+    37,
+    'Mâm cơm Việt 5 phần',
+    'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=700&q=80',
+    'Mâm cơm Việt 5 phần cho gia đình'
+  )
 ];
 </script>
 
@@ -185,9 +226,95 @@ const samples = [
   max-width: 58ch;
 }
 
-.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: start; }
-.tag { font-size: 16px; font-weight: 800; margin-bottom: 8px; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+.sample-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.sample-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+.sample-media {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #2D5A3D 0%, #1C3325 100%);
+}
+.sample-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .3s ease;
+}
+.sample-card:hover .sample-img {
+  transform: scale(1.03);
+}
+.sample-fallback-gradient {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 0;
+}
+.fallback-icon {
+  font-size: 38px;
+  opacity: 0.8;
+}
+.img-badge-overlay {
+  position: absolute;
+  bottom: 10px;
+  left: 12px;
+  z-index: 2;
+}
+.theme-badge {
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.02em;
+}
+.sample-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.sample-content .tag {
+  font-size: 17px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  color: var(--ink);
+}
+.sample-content :deep(.meal) {
+  border: none;
+  padding: 0;
+  background: transparent;
+  flex: 1;
+}
 .more { margin-top: 24px; text-align: center; }
+
+@media (max-width: 900px) {
+  .grid { grid-template-columns: 1fr; }
+}
 
 /* Modal */
 .modal {
