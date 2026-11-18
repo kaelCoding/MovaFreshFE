@@ -13,31 +13,39 @@
         </div>
       </div>
 
-      <ol class="route" aria-label="Hành trình của nguyên liệu">
-        <li>
-          <span class="pin">1</span>
-          <div><b>Đắk Lắk</b><small>Nhà máy sơ chế theo đơn của bạn</small></div>
-        </li>
-        <li>
-          <span class="pin">2</span>
-          <div><b>Xe lạnh xuyên đêm</b><small>Chạy thẳng về kho TP.HCM</small></div>
-        </li>
-        <li>
-          <span class="pin">3</span>
-          <div><b>Tận cửa nhà bạn</b><small>Giao đúng khung giờ bạn chọn</small></div>
-        </li>
-        <li>
-          <span class="pin pot" aria-hidden="true"></span>
-          <div><b>Nấu 15 phút</b><small>Một chảo, xốt công thức có sẵn</small></div>
-        </li>
-      </ol>
+      <div class="hero-visual">
+        <MealKitVideoHook />
+        <ol class="route" aria-label="Hành trình của nguyên liệu">
+          <li>
+            <span class="pin">1</span>
+            <div><b>Đắk Lắk</b><small>Nhà máy sơ chế theo đơn của bạn</small></div>
+          </li>
+          <li>
+            <span class="pin">2</span>
+            <div><b>Xe lạnh xuyên đêm</b><small>Chạy thẳng về kho TP.HCM</small></div>
+          </li>
+          <li>
+            <span class="pin">3</span>
+            <div><b>Tận cửa nhà bạn</b><small>Giao đúng khung giờ bạn chọn</small></div>
+          </li>
+          <li>
+            <span class="pin pot" aria-hidden="true"></span>
+            <div><b>Nấu 15 phút</b><small>Một chảo, xốt công thức có sẵn</small></div>
+          </li>
+        </ol>
+      </div>
     </div>
   </section>
 </template>
 
+<script setup>
+import MealKitVideoHook from './MealKitVideoHook.vue';
+</script>
+
 <style scoped>
 .hero { padding: 38px 0 34px; }
-.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 40px; align-items: center; }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 40px; align-items: start; }
+.hero-visual { display: grid; gap: 16px; }
 .kicker { display: inline-block; font-size: 13px; font-weight: 700; color: var(--orange-ink); background: var(--orange-soft); border-radius: 999px; padding: 6px 12px; margin-bottom: 14px; }
 .hero h1 { font-size: clamp(28px, 4.4vw, 46px); font-weight: 800; line-height: 1.15; letter-spacing: -0.025em; }
 .sub { margin-top: 14px; font-size: 17px; color: var(--muted); max-width: 52ch; }

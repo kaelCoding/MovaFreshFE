@@ -100,38 +100,54 @@
         <button class="mclose" type="button" @click="detailDish = null" aria-label="Đóng">×</button>
         <div class="modal-content">
           <div class="detail-header">
-            <span class="terroir-badge">📍 Vùng nguyên liệu: {{ detailDish.terroir || 'Đắk Lắk' }}</span>
+            <div class="badge-row">
+              <span class="category-pill" :class="detailDish.kind">{{ kindLabel(detailDish.kind) }}</span>
+              <span class="terroir-badge">📍 Vùng nguyên liệu: {{ detailDish.terroir_region || detailDish.terroir || 'Đắk Lắk' }}</span>
+            </div>
             <h3 class="dish-title">{{ detailDish.name }}</h3>
+          </div>
+
+          <!-- Terroir Story & Chef's Tip (Grand Frais & Pizza 4P's style) -->
+          <div v-if="detailDish.terroir_story" class="terroir-story-box">
+            <p class="story-text">🌿 {{ detailDish.terroir_story }}</p>
+            <p v-if="detailDish.chef_note" class="chef-tip">
+              <b>👨‍🍳 Mẹo từ Đầu bếp MOVA:</b> {{ detailDish.chef_note }}
+            </p>
           </div>
 
           <div class="detail-grid">
             <!-- 1. Định lượng & Quy cách -->
             <div class="info-card">
-              <h4 class="card-title">⚖️ Định lượng & Quy cách (cho {{ effectiveHouseholdSize }} người)</h4>
+              <h4 class="card-title">⚖️ Định lượng chuẩn (cho {{ effectiveHouseholdSize }} người)</h4>
               <ul class="bom-list">
                 <li v-for="(b, idx) in detailDish.bom" :key="idx">
                   <b>{{ formatBomGrams(b.gramsPerPerson) }}</b>
                   <span class="sku-name"> {{ getSkuName(b.sku) }}</span>
                 </li>
               </ul>
-              <p v-if="detailDish.spec" class="spec-text"><b>Quy cách sơ chế:</b> {{ detailDish.spec }}</p>
+              <p v-if="detailDish.portion_specs?.size_detail || detailDish.spec" class="spec-text">
+                <b>Quy cách:</b> {{ detailDish.portion_specs?.size_detail || detailDish.spec }}
+              </p>
+              <p v-if="detailDish.portion_specs?.storage_guide" class="storage-text">
+                <b>Bảo quản:</b> {{ detailDish.portion_specs.storage_guide }}
+              </p>
             </div>
 
             <!-- 2. Dinh dưỡng -->
             <div class="info-card">
-              <h4 class="card-title">🥗 Dinh dưỡng khẩu phần</h4>
+              <h4 class="card-title">🥗 Dinh dưỡng (1 khẩu phần)</h4>
               <div class="nutri-grid">
-                <div class="nutri-item"><b class="num">{{ detailDish.nutrition?.kcal || 0 }}</b><span>Calo (kcal)</span></div>
-                <div class="nutri-item"><b class="num">{{ detailDish.nutrition?.protein || 0 }}g</b><span>Đạm (protein)</span></div>
-                <div class="nutri-item"><b class="num">{{ detailDish.nutrition?.carb || 0 }}g</b><span>Tinh bột</span></div>
-                <div class="nutri-item"><b class="num">{{ detailDish.nutrition?.fat || 0 }}g</b><span>Chất béo</span></div>
+                <div class="nutri-item"><b class="num">{{ detailDish.nutrition_per_serving?.calories || detailDish.nutrition?.kcal || 0 }}</b><span>Calo (kcal)</span></div>
+                <div class="nutri-item"><b class="num">{{ detailDish.nutrition_per_serving?.protein_g || detailDish.nutrition?.protein || 0 }}g</b><span>Đạm</span></div>
+                <div class="nutri-item"><b class="num">{{ detailDish.nutrition_per_serving?.carbs_g || detailDish.nutrition?.carb || 0 }}g</b><span>Tinh bột</span></div>
+                <div class="nutri-item"><b class="num">{{ detailDish.nutrition_per_serving?.fat_g || detailDish.nutrition?.fat || 0 }}g</b><span>Chất béo</span></div>
               </div>
             </div>
           </div>
 
           <!-- 3. Công thức 3 bước 15 phút -->
           <div class="recipe-card">
-            <h4 class="card-title">⏱️ 3 bước nấu nhanh trong 15 phút</h4>
+            <h4 class="card-title">⏱️ 3 bước nấu nhanh trong 15 phút — 1 chảo</h4>
             <ol class="recipe-steps">
               <li v-for="(step, sIdx) in dishSteps" :key="sIdx">
                 <span>{{ step }}</span>
@@ -278,6 +294,17 @@ function formatBomGrams(gramsPerPerson) {
 
 function getSkuName(skuId) {
   return SKUS[skuId]?.name || skuId;
+}
+
+function kindLabel(kind) {
+  switch (kind) {
+    case 'protein': return '🥩 Đạm tươi sống';
+    case 'veg': return '🥬 Rau hữu cơ';
+    case 'soup': return '🍲 Canh ngọt nước';
+    case 'carb': return '🍚 Tinh bột lành mạnh';
+    case 'dessert': return '🍇 Trái cây tráng miệng';
+    default: return 'Món ngon nhà MOVA';
+  }
 }
 </script>
 
@@ -438,7 +465,22 @@ function getSkuName(skuId) {
   color: var(--muted);
   cursor: pointer;
 }
-.detail-header { margin-bottom: 16px; display: grid; gap: 4px; }
+.detail-header { margin-bottom: 14px; display: grid; gap: 6px; }
+.badge-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.category-pill {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--muted-bg, #f1f5f9);
+  color: var(--ink);
+}
+.category-pill.protein { background: #fee2e2; color: #991b1b; }
+.category-pill.veg { background: #dcfce7; color: #166534; }
+.category-pill.soup { background: #e0f2fe; color: #075985; }
+.category-pill.carb { background: #fef3c7; color: #92400e; }
+.category-pill.dessert { background: #f3e8ff; color: #6b21a8; }
+
 .terroir-badge {
   display: inline-block;
   background: var(--green-soft);
@@ -450,6 +492,19 @@ function getSkuName(skuId) {
   width: fit-content;
 }
 .dish-title { font-size: 20px; font-weight: 800; margin: 0; }
+
+.terroir-story-box {
+  background: #f8fafc;
+  border-left: 3px solid var(--green);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  display: grid;
+  gap: 6px;
+}
+.story-text { font-size: 14px; color: #334155; line-height: 1.5; margin: 0; }
+.chef-tip { font-size: 13px; color: #0f766e; background: #f0fdfa; padding: 6px 10px; border-radius: 6px; margin: 0; line-height: 1.4; }
+.storage-text { font-size: 13px; color: #0284c7; margin: 4px 0 0; }
 
 .detail-grid { display: grid; gap: 12px; margin-bottom: 14px; }
 .info-card {

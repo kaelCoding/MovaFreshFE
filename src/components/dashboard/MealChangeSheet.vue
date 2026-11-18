@@ -108,14 +108,40 @@
       <div v-if="selectedDishDetail" class="sub-modal" @click.self="selectedDishDetail = null">
         <div class="sub-modal-box">
           <button class="mclose" type="button" @click="selectedDishDetail = null">×</button>
-          <span class="terroir-pill">📍 {{ selectedDishDetail.terroir || 'Đắk Lắk' }}</span>
-          <h3 class="detail-name">{{ selectedDishDetail.name }}</h3>
-          <p v-if="selectedDishDetail.spec" class="spec-line"><b>Quy cách:</b> {{ selectedDishDetail.spec }}</p>
-          <div class="nutri-bar">
-            <span>{{ selectedDishDetail.nutrition?.kcal || 0 }} kcal</span> ·
-            <span>Đạm: {{ selectedDishDetail.nutrition?.protein || 0 }}g</span> ·
-            <span>Béo: {{ selectedDishDetail.nutrition?.fat || 0 }}g</span>
+          <div class="detail-header">
+            <span class="terroir-pill">📍 Vùng nguyên liệu: {{ selectedDishDetail.terroir_region || selectedDishDetail.terroir || 'Đắk Lắk' }}</span>
+            <h3 class="detail-name">{{ selectedDishDetail.name }}</h3>
           </div>
+
+          <div v-if="selectedDishDetail.terroir_story" class="detail-story">
+            <p>🌿 {{ selectedDishDetail.terroir_story }}</p>
+            <p v-if="selectedDishDetail.chef_note" class="chef-note">
+              <b>👨‍🍳 Đầu bếp MOVA:</b> {{ selectedDishDetail.chef_note }}
+            </p>
+          </div>
+
+          <div class="detail-section">
+            <b>⚖️ Định lượng &amp; Quy cách:</b>
+            <p class="spec-line">{{ selectedDishDetail.portion_specs?.size_detail || selectedDishDetail.spec }}</p>
+            <p v-if="selectedDishDetail.portion_specs?.storage_guide" class="storage-line">
+              {{ selectedDishDetail.portion_specs.storage_guide }}
+            </p>
+          </div>
+
+          <div class="nutri-bar">
+            <span><b>{{ selectedDishDetail.nutrition_per_serving?.calories || selectedDishDetail.nutrition?.kcal || 0 }}</b> kcal</span> ·
+            <span>Đạm: <b>{{ selectedDishDetail.nutrition_per_serving?.protein_g || selectedDishDetail.nutrition?.protein || 0 }}g</b></span> ·
+            <span>Carb: <b>{{ selectedDishDetail.nutrition_per_serving?.carbs_g || selectedDishDetail.nutrition?.carb || 0 }}g</b></span> ·
+            <span>Béo: <b>{{ selectedDishDetail.nutrition_per_serving?.fat_g || selectedDishDetail.nutrition?.fat || 0 }}g</b></span>
+          </div>
+
+          <div v-if="detailSteps.length" class="detail-steps">
+            <b>⏱️ 3 bước nấu nhanh (15 phút):</b>
+            <ol>
+              <li v-for="(st, idx) in detailSteps" :key="idx">{{ st }}</li>
+            </ol>
+          </div>
+
           <div class="detail-actions">
             <button class="pl-btn primary" type="button" @click="chooseFromDetail(selectedDishDetail)">Chọn món này</button>
           </div>
@@ -131,6 +157,7 @@ import { api } from '../../shared/api';
 import { fmt } from '../../shared/utils/formatters';
 import { useMovaStore } from '../../stores/useMovaStore';
 import { DISHES, SKUS } from '../../shared/data/catalog';
+import { recipeFor } from '../../shared/data/recipes';
 
 const props = defineProps({
   week: { type: Object, required: true },
@@ -193,6 +220,12 @@ function choose(o) {
 function openDetail(dishId) {
   selectedDishDetail.value = DISHES[dishId] || null;
 }
+
+const detailSteps = computed(() => {
+  if (!selectedDishDetail.value) return [];
+  const r = recipeFor(selectedDishDetail.value.id);
+  return r?.steps || [];
+});
 
 function chooseFromDetail(dish) {
   const o = options.value.find((x) => x.dish_id === dish.id);
@@ -285,15 +318,25 @@ function topup() {
   border-radius: 16px;
   padding: 20px;
   width: 100%;
-  max-width: 420px;
+  max-width: 440px;
+  max-height: 85vh;
+  overflow-y: auto;
   display: grid;
-  gap: 8px;
+  gap: 10px;
   position: relative;
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
+.detail-header { display: grid; gap: 4px; }
 .terroir-pill { font-size: 12px; font-weight: 700; color: var(--green-d); background: var(--green-soft); padding: 2px 8px; border-radius: 6px; width: fit-content; }
 .detail-name { font-size: 18px; font-weight: 800; margin: 0; }
+.detail-story { background: #f8fafc; border-left: 3px solid var(--green); padding: 8px 10px; border-radius: 6px; font-size: 13px; line-height: 1.45; color: #334155; display: grid; gap: 4px; }
+.detail-story p { margin: 0; }
+.chef-note { color: #0f766e; background: #f0fdfa; padding: 4px 8px; border-radius: 4px; }
+.detail-section { font-size: 13px; display: grid; gap: 2px; }
 .spec-line { font-size: 13px; color: var(--muted); margin: 0; }
+.storage-line { font-size: 12px; color: #0284c7; margin: 0; }
 .nutri-bar { font-size: 13px; color: var(--ink); background: var(--bg); padding: 6px 10px; border-radius: 6px; }
+.detail-steps { font-size: 13px; background: #fffbf6; border: 1px solid #fed7aa; padding: 8px 10px; border-radius: 8px; }
+.detail-steps ol { margin: 4px 0 0; padding-left: 18px; display: grid; gap: 4px; }
 .detail-actions { margin-top: 6px; }
 </style>
