@@ -14,8 +14,9 @@
         <!-- Hàng 1: Nút Zalo chính toàn chiều rộng -->
         <button type="button" class="social-btn zalo-primary" @click="quickSocialLogin('Zalo')">
           <div class="social-btn-content">
-            <svg class="social-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.03 2 11c0 2.87 1.5 5.42 3.84 7.02l-.84 3.08a.5.5 0 0 0 .68.58l3.6-1.55c.87.24 1.78.37 2.72.37 5.52 0 10-4.03 10-9s-4.48-9-10-9zm-3.2 12.3h-1.6l3.1-4.7H8.8v-1.1h3.3v1.1l-3.3 4.7zm4.4 0h-1.4v-5.8h1.4v5.8zm4.3 0h-1.4v-4.6c-.3.4-.8.7-1.3.8v-1.1c.7-.2 1.3-.7 1.4-1.3h1.3v6.2z"/>
+            <svg class="social-icon zalo-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <rect width="24" height="24" rx="5" fill="#FFFFFF"/>
+              <text x="12" y="15.8" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="9.5" font-weight="900" fill="#0068FF" letter-spacing="-0.3px">Zalo</text>
             </svg>
             <span class="btn-text">Tiếp tục với Zalo</span>
           </div>
@@ -37,7 +38,7 @@
           <button type="button" class="social-btn facebook-btn" @click="quickSocialLogin('Facebook')">
             <svg class="social-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
               <circle cx="12" cy="12" r="12" fill="#1877F2"/>
-              <path d="M15.15 12.5l.5-3.35h-3.2v-2.17c0-.92.45-1.82 1.9-1.82h1.47V2.3a17.8 17.8 0 00-2.61-.23c-2.66 0-4.4 1.61-4.4 4.53v2.55H5.8v3.35h3.01V20.5c.6.1 1.22.15 1.84.15s1.25-.05 1.85-.15v-7.99h2.65z" fill="#FFFFFF"/>
+              <path d="M16 12.3h-2.5v7.7h-3.2v-7.7H8.5V9.6h1.8V7.5c0-2.3 1.4-3.5 3.5-3.5 1 0 1.9.1 2.2.1v2.5h-1.5c-1.1 0-1.3.5-1.3 1.3v1.7H16l-.4 2.7z" fill="#FFFFFF"/>
             </svg>
             <span class="btn-text">Facebook</span>
           </button>
@@ -779,17 +780,18 @@ function clearBudgetAndFinish() {
   box-shadow: 0 4px 14px rgba(0, 104, 255, 0.35);
 }
 .social-btn-content {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
 }
 .rec-badge {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.22);
   color: #FFFFFF;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 99px;
+  padding: 3px 10px;
+  border-radius: 999px;
   letter-spacing: 0.02em;
 }
 

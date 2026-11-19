@@ -47,10 +47,9 @@
             <button
               type="button"
               class="view-all-btn"
-              :class="{ on: showAllDishes }"
-              @click="showAllDishes = !showAllDishes"
+              @click="openFactoryModal(p.kind, p.dish?.dish_id)"
             >
-              {{ showAllDishes ? 'Thu gọn' : 'Mở toàn bộ thực đơn nhà máy' }}
+              🏪 Mở toàn bộ thực đơn nhà máy
             </button>
           </div>
 
@@ -157,6 +156,17 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal Toàn bộ thực đơn nhà máy -->
+    <FactoryMenuModal
+      v-if="activeFactoryKind"
+      :current-dish-id="activeFactoryDishId"
+      :current-kind="activeFactoryKind"
+      :household-size="effectiveHouseholdSize"
+      :options="options"
+      @close="activeFactoryKind = ''"
+      @select="onFactorySelect"
+    />
   </article>
 </template>
 
@@ -166,6 +176,7 @@ import { api } from '../../shared/api';
 import { fmt } from '../../shared/utils/formatters';
 import { DISHES, SKUS } from '../../shared/data/catalog';
 import { recipeFor } from '../../shared/data/recipes';
+import FactoryMenuModal from '../modals/FactoryMenuModal.vue';
 
 const props = defineProps({
   meal: { type: Object, required: true },
@@ -181,6 +192,19 @@ const options = ref([]);
 const searchQuery = ref('');
 const showAllDishes = ref(false);
 const detailDish = ref(null);
+const activeFactoryKind = ref('');
+const activeFactoryDishId = ref('');
+
+function openFactoryModal(kind, dishId) {
+  activeFactoryKind.value = kind;
+  activeFactoryDishId.value = dishId || '';
+}
+
+function onFactorySelect(dish) {
+  const kind = activeFactoryKind.value;
+  activeFactoryKind.value = '';
+  choose(kind, dish.id);
+}
 
 const RICE = 'D-CRB-001';
 
@@ -390,16 +414,21 @@ function kindLabel(kind) {
   background: #fff;
 }
 .view-all-btn {
-  padding: 6px 12px;
-  background: transparent;
-  border: 1px dashed var(--green);
+  padding: 7px 12px;
+  background: var(--green-soft);
+  border: 1px solid var(--green);
   color: var(--green-d);
   border-radius: 8px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
-.view-all-btn.on { background: var(--green-soft); border-style: solid; }
+.view-all-btn:hover {
+  background: var(--green-d);
+  color: #FFFFFF;
+}
 
 .cross-suggestions {
   background: #fff;

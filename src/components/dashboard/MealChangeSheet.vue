@@ -18,6 +18,13 @@
             class="pl-input search-box"
             placeholder="Tìm kiếm món hoặc nguyên liệu (bò, gà, cá, tôm, heo...)"
           />
+          <button
+            type="button"
+            class="open-factory-btn"
+            @click="showFactoryModal = true"
+          >
+            🏪 Mở toàn bộ thực đơn nhà máy
+          </button>
         </div>
 
         <!-- Gợi ý chéo nguyên liệu -->
@@ -147,6 +154,17 @@
           </div>
         </div>
       </div>
+
+      <!-- Modal Danh sách thực đơn toàn bộ nhà máy -->
+      <FactoryMenuModal
+        v-if="showFactoryModal"
+        :current-dish-id="target.dish.dish_id"
+        :current-kind="target.dish.kind"
+        :household-size="target.meal.household_size || 2"
+        :options="options"
+        @close="showFactoryModal = false"
+        @select="onFactorySelect"
+      />
     </div>
   </div>
 </template>
@@ -158,6 +176,7 @@ import { fmt } from '../../shared/utils/formatters';
 import { useMovaStore } from '../../stores/useMovaStore';
 import { DISHES, SKUS } from '../../shared/data/catalog';
 import { recipeFor } from '../../shared/data/recipes';
+import FactoryMenuModal from '../modals/FactoryMenuModal.vue';
 
 const props = defineProps({
   week: { type: Object, required: true },
@@ -175,8 +194,15 @@ const preview = ref(null);
 const error = ref('');
 const busy = ref(false);
 const searchQuery = ref('');
+const showFactoryModal = ref(false);
 const selectedDishDetail = ref(null);
 let picked = null;
+
+function onFactorySelect(dish) {
+  showFactoryModal.value = false;
+  const o = options.value.find((x) => x.dish_id === dish.id) || { dish_id: dish.id, name: dish.name };
+  choose(o);
+}
 
 const deltaText = (v) => (v === 0 ? 'Cùng giá' : `${v > 0 ? '+' : '−'}${fmt(Math.abs(v))}`);
 
@@ -261,8 +287,24 @@ function topup() {
 .down { color: var(--green-d); font-weight: 700; }
 .pl-chip.big:disabled { opacity: 1; cursor: default; }
 
-.swap-search-bar { margin: -4px 0 4px; }
-.search-box { width: 100%; border-radius: 10px; font-size: 14px; padding: 8px 12px; }
+.swap-search-bar { margin: -4px 0 4px; display: flex; gap: 8px; flex-wrap: wrap; }
+.search-box { flex: 1; min-width: 200px; border-radius: 10px; font-size: 14px; padding: 8px 12px; }
+.open-factory-btn {
+  padding: 8px 12px;
+  background: var(--green-soft);
+  color: var(--green-d);
+  border: 1px solid var(--green);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.open-factory-btn:hover {
+  background: var(--green-d);
+  color: #FFFFFF;
+}
 
 .cross-box {
   background: var(--bg);
