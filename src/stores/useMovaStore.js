@@ -30,6 +30,7 @@ export const useMovaStore = defineStore('mova', {
   state: () => ({
     customerId: null,
     account: null, // kết quả api.customer.getAccount
+    authUser: null,
     notifications: [],
     loaded: false,
     version: 0, // tăng mỗi lần dữ liệu tải lại; các tab theo dõi để tự cập nhật
@@ -45,6 +46,7 @@ export const useMovaStore = defineStore('mova', {
 
   getters: {
     isLoggedIn: (s) => Boolean(s.customerId && s.account),
+    hasMovaSession: (s) => Boolean((s.customerId && s.account) || s.authUser),
     userName: (s) => (s.account ? s.account.customer.name : ''),
     unreadNotifsCount: (s) => s.notifications.filter((n) => !n.read).length,
     balance: (s) => (s.account ? s.account.credit : { real_vnd: 0, promo_vnd: 0, total_vnd: 0 }),
@@ -53,6 +55,10 @@ export const useMovaStore = defineStore('mova', {
   },
 
   actions: {
+    setAuthUser(user) {
+      this.authUser = user;
+    },
+
     toast(msg) {
       this.toastMessage = msg;
       this.toastVisible = true;

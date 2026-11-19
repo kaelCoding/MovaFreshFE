@@ -76,7 +76,7 @@
           </svg>
         </button>
         <button
-          v-if="!store.isLoggedIn"
+          v-if="!store.hasMovaSession"
           class="btn sm primary login-hdr-btn"
           @click="store.openModal('login')"
         >
@@ -118,11 +118,13 @@ const openAccount = () => {
   else store.openModal('login');
 };
 
-const userAvatar = computed(() => (store.userName || 'U').trim().split(/\s+/).pop().charAt(0));
+const displayName = computed(() => store.userName || store.authUser?.email || store.authUser?.phone || 'MOVA');
+const userAvatar = computed(() => displayName.value.trim().split(/\s+/).pop().charAt(0));
 
 // Hiển thị gọn 1 dòng: "Lan • 850k"
 const userLineText = computed(() => {
-  const given = (store.userName || '').trim().split(/\s+/).pop();
+  if (!store.isLoggedIn) return displayName.value;
+  const given = store.userName.trim().split(/\s+/).pop();
   return `${given} • ${Math.round(store.balance.total_vnd / 1000)}k`;
 });
 </script>

@@ -39,6 +39,7 @@ const freshState = () => ({
   answers: freshAnswers(),
   profileId: null,
   planId: null,
+  chefMenuApplied: false,
   checkout: freshCheckout(),
   result: null,
   waitlist: null,
@@ -77,8 +78,8 @@ export const usePlanFlowStore = defineStore('planFlow', {
   actions: {
     persist() {
       try {
-        const { contact, leadId, answers, profileId, planId, checkout, result, waitlist, refCode } = this;
-        localStorage.setItem(KEY, JSON.stringify({ contact, leadId, answers, profileId, planId, checkout, result, waitlist, refCode }));
+        const { contact, leadId, answers, profileId, planId, chefMenuApplied, checkout, result, waitlist, refCode } = this;
+        localStorage.setItem(KEY, JSON.stringify({ contact, leadId, answers, profileId, planId, chefMenuApplied, checkout, result, waitlist, refCode }));
       } catch {
         // chế độ riêng tư: bỏ qua
       }
@@ -149,6 +150,7 @@ export const usePlanFlowStore = defineStore('planFlow', {
       }
       this.planId = planRes.data.plan_id;
       this.plan = planRes.data;
+      this.chefMenuApplied = false;
       this.checkout = freshCheckout();
       this.options = null;
       this.preview = null;
@@ -196,6 +198,40 @@ export const usePlanFlowStore = defineStore('planFlow', {
 
     swap(mealIndex, kind, dishId) {
       return this.configure({ swap: { meal_index: mealIndex, kind, dish_id: dishId } });
+    },
+
+    setChefMenuApplied(value) {
+      this.chefMenuApplied = Boolean(value);
+      this.persist();
+    },
+
+    applyChefMenu(meals) {
+      const res = api.customer.applyChefMenu({ plan_id: this.planId, meals });
+      if (res.status === 'error') {
+        this.error = res.error.message;
+        return false;
+      }
+      this.plan = res.data;
+      this.chefMenuApplied = true;
+      this.error = '';
+      this.persist();
+      return true;
+    },
+
+    useSuggestedMenu() {
+      const res = api.customer.generateMealPlan({
+        profile_id: this.profileId,
+        week_number: this.plan?.week_number || 1
+      });
+      if (res.status === 'error') {
+        this.error = res.error.message;
+        return false;
+      }
+      this.plan = res.data;
+      this.chefMenuApplied = false;
+      this.error = '';
+      this.persist();
+      return true;
     },
 
     loadOptions() {

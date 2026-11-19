@@ -144,11 +144,11 @@ function carbAlternatives(meal) {
 export function swapOptionsFor(meal, kind, restrictions = []) {
   if (kind === 'carb') return carbOptionsFor(meal).map((id) => DISHES[id]);
   if (!meal.dishes[kind]) return [];
-  return allowedDishes(kind, restrictions, { western: Boolean(meal.western) });
+  return allowedDishes(kind, restrictions, { western: kind === 'protein' && Boolean(meal.western) });
 }
 
 /**
- * Áp các lần đổi món của khách: swaps = { [meal.index]: { protein?, veg?, soup?, carb? } }.
+ * Áp các lần đổi món của khách: swaps = { [meal.index]: { protein?, veg?, soup?, carb?, dessert? } }.
  * Món không hợp lệ (bị kiêng, sai loại, tinh bột không hợp) bị bỏ qua; đổi đạm xong mà tinh bột
  * đang chọn không còn hợp thì quay về cơm.
  */
@@ -157,7 +157,7 @@ export function applySwaps(meals, swaps = {}, restrictions = []) {
     const sw = swaps[m.index];
     if (!sw) return m;
     const next = { ...m, dishes: { ...m.dishes } };
-    for (const kind of ['protein', 'veg', 'soup']) {
+    for (const kind of ['protein', 'veg', 'soup', 'dessert']) {
       const id = sw[kind];
       if (!id || !next.dishes[kind]) continue;
       if (swapOptionsFor(next, kind, restrictions).some((d) => d.id === id)) next.dishes[kind] = id;

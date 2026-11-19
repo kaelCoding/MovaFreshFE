@@ -67,19 +67,92 @@
         </div>
         <router-link to="/plans" class="pl-btn ghost" @click="store.closeModal">Chưa có gói? Thiết kế thực đơn</router-link>
       </template>
+
+      <section class="web-auth" aria-labelledby="web-auth-title">
+        <div class="divider">
+          <span id="web-auth-title">Đăng nhập tài khoản MOVA bằng mã OTP</span>
+        </div>
+        <p class="pl-note">
+          Không cần đăng nhập để dùng Bếp trưởng. Đăng nhập giúp Gu lưu khẩu vị theo tài khoản web của bạn.
+        </p>
+        <template v-if="store.authUser">
+          <p class="web-auth-status">Đang đăng nhập MOVA bằng {{ store.authUser.phone || store.authUser.email }}.</p>
+          <button class="pl-btn" type="button" @click="logoutMova">Đăng xuất MOVA</button>
+        </template>
+        <form v-else-if="supabase" class="stack" @submit.prevent="submitMovaOtp">
+          <label class="pl-label" for="mova-login-contact">Số điện thoại hoặc email</label>
+          <input
+            id="mova-login-contact"
+            v-model="authContact"
+            class="pl-input"
+            type="text"
+            autocomplete="username"
+            placeholder="0908 123 456 hoặc ten@email.com"
+            :disabled="otpSent || authLoading"
+            required
+          />
+          <template v-if="otpSent">
+            <label class="pl-label" for="mova-login-otp">Mã OTP</label>
+            <input
+              id="mova-login-otp"
+              v-model="otp"
+              class="pl-input"
+              type="text"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+              maxlength="10"
+              placeholder="Nhập mã OTP"
+              required
+            />
+          </template>
+          <p v-if="authError" class="pl-error" role="alert">{{ authError }}</p>
+          <button class="pl-btn primary" type="submit" :disabled="authLoading">
+            {{ authLoading ? 'Đang xử lý…' : otpSent ? 'Xác thực OTP' : 'Gửi mã OTP' }}
+          </button>
+          <button v-if="otpSent" class="pl-btn" type="button" :disabled="authLoading" @click="resetOtp">
+            Đổi số điện thoại
+          </button>
+        </form>
+        <p v-else class="pl-note">Cần cấu hình Supabase Auth để đăng nhập và đồng bộ Gu theo tài khoản.</p>
+      </section>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { api } from '../../shared/api';
+import { requestOtp, supabase, verifyOtp } from '../../services/supabase';
 import { useMovaStore } from '../../stores/useMovaStore';
 
 const store = useMovaStore();
 const contact = ref('');
 const error = ref('');
 const samples = api.customer.sampleAccounts();
+const authContact = ref('');
+const normalizedAuthContact = ref('');
+const otp = ref('');
+const otpSent = ref(false);
+const authLoading = ref(false);
+const authError = ref('');
+let authSubscription;
+
+onMounted(async () => {
+  if (!supabase) return;
+  const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+    store.setAuthUser(session?.user ?? null);
+  });
+  authSubscription = data.subscription;
+  try {
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError) throw sessionError;
+    store.setAuthUser(sessionData.session?.user ?? null);
+  } catch (cause) {
+    authError.value = cause instanceof Error ? cause.message : 'Không thể tải phiên đăng nhập MOVA.';
+  }
+});
+
+onUnmounted(() => authSubscription?.unsubscribe());
 
 function submit() {
   error.value = store.loginWithContact(contact.value);
@@ -97,6 +170,60 @@ function quickSocialLogin(provider) {
 function logout() {
   store.logout();
 }
+
+function normalizedContact(value) {
+  const raw = value.trim();
+  if (raw.includes('@')) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw)) throw new Error('Email chưa đúng định dạng.');
+    return raw.toLowerCase();
+  }
+  const phone = raw.replace(/[()\s-]/g, '');
+  if (/^0\d{9,10}$/.test(phone)) return `+84${phone.slice(1)}`;
+  if (/^\+[1-9]\d{7,14}$/.test(phone)) return phone;
+  throw new Error('Nhập email hợp lệ hoặc số điện thoại, ví dụ 0908 123 456.');
+}
+
+async function submitMovaOtp() {
+  authLoading.value = true;
+  authError.value = '';
+  try {
+    if (!otpSent.value) {
+      normalizedAuthContact.value = normalizedContact(authContact.value);
+      await requestOtp(normalizedAuthContact.value);
+      otpSent.value = true;
+      return;
+    }
+    const user = await verifyOtp(normalizedAuthContact.value, otp.value.trim());
+    store.setAuthUser(user);
+    const demoLoginError = store.loginWithContact(authContact.value);
+    if (!demoLoginError) return;
+    store.toast('Đăng nhập MOVA thành công.');
+    store.closeModal();
+  } catch (cause) {
+    authError.value = cause instanceof Error ? cause.message : 'Không thể xác thực mã OTP.';
+  } finally {
+    authLoading.value = false;
+  }
+}
+
+function resetOtp() {
+  otpSent.value = false;
+  otp.value = '';
+  normalizedAuthContact.value = '';
+  authError.value = '';
+}
+
+async function logoutMova() {
+  if (!supabase) return;
+  try {
+    const { error: signOutError } = await supabase.auth.signOut();
+    if (signOutError) throw signOutError;
+    store.setAuthUser(null);
+    store.toast('Đã đăng xuất MOVA.');
+  } catch (cause) {
+    authError.value = cause instanceof Error ? cause.message : 'Không thể đăng xuất MOVA.';
+  }
+}
 </script>
 
 <style scoped>
@@ -105,6 +232,8 @@ function logout() {
 .samples { margin-top: 20px; display: grid; gap: 10px; }
 .samples h3 { font-size: 16px; font-weight: 700; color: var(--muted); }
 .sample { width: 100%; }
+.web-auth { margin-top: 20px; padding-top: 4px; border-top: 1px solid var(--line); }
+.web-auth-status { margin: 8px 0 12px; font-size: 14px; color: var(--green-d); }
 
 .social-fast-actions {
   display: grid;

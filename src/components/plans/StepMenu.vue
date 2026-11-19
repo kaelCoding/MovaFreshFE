@@ -1,75 +1,181 @@
 <template>
-  <div v-if="plan" class="menu">
+  <div class="menu">
     <header class="m-head">
-      <h1 class="pl-h1">Thực đơn tuần 1 của bạn</h1>
+      <h1 class="pl-h1">Bếp trưởng lên thực đơn trước</h1>
       <p class="pl-lead">
-        Đầu bếp MOVA đã tuyển chọn {{ plan.meals_per_week }} bữa cho {{ plan.household_size }} người. Bạn xem và đổi món trước, hài lòng rồi mới trả tiền.
+        Đồng ý gửi câu trả lời khảo sát để Bếp trưởng chọn món trong danh mục MOVA. Nếu AI chưa sẵn sàng hoặc thiếu món, MOVA vẫn có thực đơn gợi ý theo khảo sát.
       </p>
     </header>
 
-    <div class="m-grid">
-      <section class="pl-card people" style="grid-area: people">
-        <div class="people-in">
-          <div>
-            <b class="p-t">Số người ăn</b>
-            <p class="pl-note">
-              {{ plan.household_size === 1 ? 'Suất nấu 1 chảo, 10–15 phút.' : 'Mâm cơm Việt: đạm, rau, canh, tinh bột, trái cây.' }}
-            </p>
-          </div>
-          <PeopleStepper :model-value="plan.household_size" @update:model-value="(v) => store.configure({ household_size: v })" />
-        </div>
-      </section>
+    <AiAgentsPanel
+      ref="assistant"
+      :has-applied-menu="menuReady"
+      @behavior-consent-change="behaviorTrackingEnabled = $event"
+      @meal-plan-generated="applyChefMenu"
+      @meal-plan-unavailable="useSuggestedMenu"
+    />
 
-      <aside class="side" style="grid-area: side">
-        <PriceBlock :quote="plan.quote" :household-size="plan.household_size" />
-        <ValueQuestions :questions="plan.value_questions" @answer="(id, v) => store.answerUpsell(id, v)" />
-      </aside>
+    <p v-if="fallbackNotice" class="menu-fallback" role="status">{{ fallbackNotice }}</p>
+    <p v-if="store.error" class="pl-error" role="alert">{{ store.error }}</p>
+    <p v-if="!menuReady && !store.error" class="menu-gate" role="status">
+      Menu món ăn và giá đang ẩn. Hãy nhờ Bếp trưởng tạo thực đơn trước khi tiếp tục.
+    </p>
 
-      <section class="meals" style="grid-area: meals" aria-label="Các bữa trong tuần 1">
-        <MealCard
-          v-for="m in plan.meals"
-          :key="m.meal_index"
-          :meal="m"
-          :plan-id="plan.plan_id"
-          :household-size="plan.household_size"
-          editable
-          @swap="(i, kind, id) => store.swap(i, kind, id)"
-        />
-        <p v-if="staples" class="staples">
-          <b>Gạo và trái cây tính theo tuần:</b>
-          {{ staples }}
+    <template v-if="menuReady && plan">
+      <header class="m-head">
+        <h2 class="pl-h1">Thực đơn tuần 1 của bạn</h2>
+        <p class="pl-lead">
+          {{ fallbackNotice ? 'MOVA gợi ý' : 'Bếp trưởng đã chọn' }} {{ plan.meals_per_week }} bữa cho {{ plan.household_size }} người từ danh mục MOVA. Bạn có thể đổi món trước khi thanh toán.
         </p>
-        <p v-if="store.error" class="pl-error" role="alert">{{ store.error }}</p>
-      </section>
-    </div>
+      </header>
 
-    <div class="cta">
-      <div class="cta-sum">
-        <small>Gói {{ plan.quote.weeks }} tuần trị giá {{ fmt(plan.quote.package_value_vnd) }}</small>
-        <b class="num">
-          ~{{ fmt(Math.round(plan.quote.per_meal_list_vnd / (plan.household_size || 1))) }}
-          <span class="pl-unit">/ suất</span>
-          <span class="pl-sub-unit"> ({{ fmt(plan.quote.per_meal_list_vnd) }}/bữa)</span>
-        </b>
+      <div class="m-grid">
+        <section class="pl-card people" style="grid-area: people">
+          <div class="people-in">
+            <div>
+              <b class="p-t">Số người ăn</b>
+              <p class="pl-note">
+                {{ plan.household_size === 1 ? 'Suất nấu 1 chảo, 10–15 phút.' : 'Mâm cơm Việt: đạm, rau, canh, tinh bột, trái cây.' }}
+              </p>
+            </div>
+            <PeopleStepper :model-value="plan.household_size" @update:model-value="(v) => store.configure({ household_size: v })" />
+          </div>
+        </section>
+
+        <aside class="side" style="grid-area: side">
+          <PriceBlock :quote="plan.quote" :household-size="plan.household_size" />
+          <ValueQuestions :questions="plan.value_questions" @answer="(id, v) => store.answerUpsell(id, v)" />
+        </aside>
+
+        <section class="meals" style="grid-area: meals" aria-label="Các bữa trong tuần 1">
+          <MealCard
+            v-for="m in plan.meals"
+            :key="m.meal_index"
+            :meal="m"
+            :plan-id="plan.plan_id"
+            :household-size="plan.household_size"
+            editable
+            @swap="onSwap"
+            @view="onDishView"
+          />
+          <p v-if="staples" class="staples">
+            <b>Gạo và trái cây tính theo tuần:</b>
+            {{ staples }}
+          </p>
+        </section>
       </div>
-      <button class="pl-btn primary" type="button" @click="$emit('next')">Tiếp tục: giao hàng và thanh toán</button>
-    </div>
+
+      <div class="cta">
+        <div class="cta-sum">
+          <small>Gói {{ plan.quote.weeks }} tuần trị giá {{ fmt(plan.quote.package_value_vnd) }}</small>
+          <b class="num">
+            ~{{ fmt(Math.round(plan.quote.per_meal_list_vnd / (plan.household_size || 1))) }}
+            <span class="pl-unit">/ suất</span>
+            <span class="pl-sub-unit"> ({{ fmt(plan.quote.per_meal_list_vnd) }}/bữa)</span>
+          </b>
+        </div>
+        <button class="pl-btn primary" type="button" @click="$emit('next')">Tiếp tục: giao hàng và thanh toán</button>
+      </div>
+    </template>
+    <div v-else-if="!plan" class="pl-card">Đang tải hồ sơ khảo sát...</div>
   </div>
-  <div v-else class="pl-card">Đang dựng thực đơn của bạn...</div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import MealCard from './MealCard.vue';
 import PriceBlock from './PriceBlock.vue';
 import ValueQuestions from './ValueQuestions.vue';
 import PeopleStepper from './PeopleStepper.vue';
+import AiAgentsPanel from '../store/AiAgentsPanel.vue';
 import { usePlanFlowStore } from '../../stores/usePlanFlowStore';
+import { useMovaStore } from '../../stores/useMovaStore';
+import { trackAiEvents } from '../../services/aiApi';
 import { fmt } from '../../shared/utils/formatters';
 
 defineEmits(['next']);
 const store = usePlanFlowStore();
+const accountStore = useMovaStore();
 const plan = computed(() => store.plan);
+const assistant = ref(null);
+const hasAiConfig = Boolean(import.meta.env.VITE_API_BASE_URL);
+const menuReady = ref(store.chefMenuApplied || !hasAiConfig);
+const fallbackNotice = ref(!store.chefMenuApplied && !hasAiConfig
+  ? 'Trợ lý Bếp trưởng chưa được cấu hình; đang dùng thực đơn MOVA gợi ý theo khảo sát.'
+  : '');
+const behaviorTrackingEnabled = ref(false);
+const trackedSwapCount = ref(0);
+
+function useSuggestedMenu(reason = 'Bếp trưởng chưa tạo được thực đơn đầy đủ; đang dùng thực đơn MOVA gợi ý theo khảo sát.') {
+  if (!store.useSuggestedMenu()) return;
+  menuReady.value = true;
+  fallbackNotice.value = reason;
+}
+
+function applyChefMenu(chefPlan) {
+  store.error = '';
+  menuReady.value = false;
+  store.setChefMenuApplied(false);
+
+  if (!plan.value || !Array.isArray(chefPlan?.meals) || chefPlan.meals.length !== plan.value.meals.length) {
+    useSuggestedMenu('Bếp trưởng chưa tạo đủ số bữa an toàn; đang dùng thực đơn MOVA gợi ý theo khảo sát.');
+    return;
+  }
+  if (!chefPlan.meals.every((meal, index) => meal?.meal_index === plan.value.meals[index].meal_index)) {
+    useSuggestedMenu('Kết quả Bếp trưởng chưa khớp với thực đơn MOVA; đang dùng thực đơn gợi ý theo khảo sát.');
+    return;
+  }
+
+  const meals = chefPlan.meals.map((meal) => ({
+    meal_index: meal.meal_index,
+    western: meal.western,
+    dishes: {
+      protein: meal.meal_structure?.protein_dish?.dish_id,
+      soup: meal.meal_structure?.soup_dish?.dish_id,
+      veg: meal.meal_structure?.veggie_dish?.dish_id,
+      carb: meal.meal_structure?.carb_dish?.dish_id,
+      dessert: meal.meal_structure?.dessert?.dish_id
+    }
+  }));
+  if (!store.applyChefMenu(meals)) {
+    const reason = store.error || 'Món Bếp trưởng chọn chưa khớp danh mục MOVA.';
+    useSuggestedMenu(`${reason} Đang dùng thực đơn MOVA gợi ý theo khảo sát.`);
+    return;
+  }
+  fallbackNotice.value = '';
+  menuReady.value = true;
+}
+
+async function onSwap(mealIndex, kind, dishId) {
+  const meal = plan.value?.meals.find((item) => item.meal_index === mealIndex);
+  const partName = { protein: 'protein_dish', veg: 'veggie_dish', soup: 'soup_dish', carb: 'carb_dish' }[kind];
+  const previousDishId = partName ? meal?.meal_structure?.[partName]?.dish_id : null;
+  const changed = store.swap(mealIndex, kind, dishId);
+  if (!changed || !behaviorTrackingEnabled.value || !previousDishId || previousDishId === dishId) return;
+
+  try {
+    await trackAiEvents([
+      { dish_id: previousDishId, event_type: 'swap_out' },
+      { dish_id: dishId, event_type: 'swap_in' }
+    ]);
+    trackedSwapCount.value += 1;
+    if (trackedSwapCount.value >= 3) {
+      trackedSwapCount.value = 0;
+      await assistant.value?.refreshGu();
+    }
+  } catch (cause) {
+    accountStore.toast(cause instanceof Error ? cause.message : 'Không thể lưu lựa chọn món cho Gu.');
+  }
+}
+
+async function onDishView(dishId) {
+  if (!behaviorTrackingEnabled.value) return;
+  try {
+    await trackAiEvents([{ dish_id: dishId, event_type: 'view_detail' }]);
+  } catch (cause) {
+    accountStore.toast(cause instanceof Error ? cause.message : 'Không thể lưu lượt xem món cho Gu.');
+  }
+}
 
 const staples = computed(() => {
   const s = plan.value && plan.value.weekly_staples;
@@ -82,6 +188,8 @@ const staples = computed(() => {
 
 <style scoped>
 .m-head { margin-bottom: 14px; }
+.menu-gate { margin: 18px 0 0; padding: 14px 18px; border-radius: 12px; background: var(--green-soft); color: var(--green-d); }
+.menu-fallback { margin: 18px 0 0; padding: 14px 18px; border-radius: 12px; background: var(--green-soft); color: var(--green-d); }
 .m-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);

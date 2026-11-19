@@ -87,7 +87,18 @@ export function createCustomerApi(server, cfg = BUSINESS) {
     };
     const withUpsells = (answers) => applyUpsells(base, answers, { ...ctx, rand: rng(hash(`${plan.id}-west`)) });
     const swaps = plan.swaps || {};
-    const post = (meals) => applySwaps(meals, swaps, profile.restrictions);
+    const applyChefStyle = (meals) => {
+      if (!Array.isArray(plan.chefWestern)) return meals;
+      return meals.map((meal) => {
+        const western = plan.chefWestern[meal.index - 1];
+        if (typeof western !== 'boolean') return meal;
+        const next = { ...meal, dishes: { ...meal.dishes } };
+        if (western) next.western = true;
+        else delete next.western;
+        return next;
+      });
+    };
+    const post = (meals) => applySwaps(applyChefStyle(meals), swaps, profile.restrictions);
     return { base, meals: post(withUpsells(plan.upsells || {})), post, ctx };
   }
 
@@ -426,6 +437,63 @@ export function createCustomerApi(server, cfg = BUSINESS) {
       return server.read((db) => {
         const { plan, profile } = loadPlan(db, planId);
         if (!plan) return fail('PLAN_NOT_FOUND', 'Không tìm thấy thực đơn');
+        return ok(planView(profile, plan));
+      });
+    },
+
+    /** Áp toàn bộ menu Bếp trưởng theo các mã món có sẵn trong catalog frontend. */
+    applyChefMenu(req = {}) {
+      return server.write((db, now) => {
+        const { plan, profile } = loadPlan(db, req.plan_id);
+        if (!plan || !profile) return fail('PLAN_NOT_FOUND', 'Không tìm thấy hồ sơ hoặc thực đơn');
+        if (!Array.isArray(req.meals)) return fail('CHEF_MENU_INVALID', 'Thực đơn Bếp trưởng chưa đúng định dạng');
+
+        const { base } = mealsOf(profile, { ...plan, upsells: {}, swaps: {}, chefWestern: undefined });
+        if (req.meals.length !== base.length) {
+          return fail('CHEF_MENU_INCOMPLETE', 'Bếp trưởng chưa tạo đủ số bữa');
+        }
+
+        const kinds = ['protein', 'soup', 'veg', 'carb', 'dessert'];
+        const selectedSwaps = {};
+        const chefWestern = [];
+        for (let i = 0; i < base.length; i++) {
+          const selection = req.meals[i];
+          const meal = { ...base[i], dishes: { ...base[i].dishes } };
+          if (selection?.meal_index !== meal.index || typeof selection.western !== 'boolean' || !selection.dishes) {
+            return fail('CHEF_MENU_INVALID', 'Thứ tự hoặc cấu trúc bữa của Bếp trưởng không hợp lệ');
+          }
+
+          if (selection.western) meal.western = true;
+          else delete meal.western;
+          chefWestern.push(selection.western);
+
+          const selectedProtein = selection.dishes.protein;
+          if (Boolean(DISHES[selectedProtein]?.western) !== selection.western) {
+            return fail('CHEF_MENU_INVALID', 'Phong cách món đạm không khớp thực đơn');
+          }
+
+          const swaps = {};
+          for (const kind of kinds) {
+            const dishId = selection.dishes[kind];
+            if (Boolean(dishId) !== Boolean(meal.dishes[kind])) {
+              return fail('CHEF_MENU_INCOMPLETE', 'Thực đơn Bếp trưởng thiếu thành phần');
+            }
+            if (!dishId) continue;
+
+            const dish = DISHES[dishId];
+            if (!dish || dish.kind !== kind || !swapOptionsFor(meal, kind, profile.restrictions).some((option) => option.id === dishId)) {
+              return fail('DISH_NOT_ALLOWED', 'Một món Bếp trưởng chọn không có trong danh mục MOVA hoặc không phù hợp khảo sát');
+            }
+            meal.dishes[kind] = dishId;
+            swaps[kind] = dishId;
+          }
+          selectedSwaps[meal.index] = swaps;
+        }
+
+        plan.swaps = selectedSwaps;
+        plan.chefWestern = chefWestern;
+        plan.upsells = {};
+        savePlanMeals(profile, plan, now);
         return ok(planView(profile, plan));
       });
     },

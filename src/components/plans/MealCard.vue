@@ -185,7 +185,7 @@ const props = defineProps({
   showPrice: { type: Boolean, default: true },
   householdSize: { type: Number, default: 2 }
 });
-const emit = defineEmits(['swap']);
+const emit = defineEmits(['swap', 'view']);
 
 const open = ref('');
 const options = ref([]);
@@ -298,6 +298,7 @@ function openDishDetail(dishId) {
   const d = DISHES[dishId];
   if (d) {
     detailDish.value = d;
+    emit('view', dishId);
   }
 }
 

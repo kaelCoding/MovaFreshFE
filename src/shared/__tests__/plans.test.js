@@ -177,6 +177,85 @@ describe('thực đơn tuần 1', () => {
     expect(bad.error.code).toBe('DISH_NOT_ALLOWED');
   });
 
+  it('áp dụng được trái cây do Bếp trưởng chọn và cập nhật giá theo catalog frontend', () => {
+    const { api } = setup();
+    const { plan } = start(api, { household_size: 2 });
+    const id = plan.data.plan_id;
+    const meal = plan.data.meals[0];
+    const options = api.customer.swapOptions({ plan_id: id, meal_index: meal.meal_index, kind: 'dessert' });
+    const target = options.data.options.find((option) => !option.current);
+
+    expect(target).toBeDefined();
+    const updated = api.customer.configurePlan({
+      plan_id: id,
+      swap: { meal_index: meal.meal_index, kind: 'dessert', dish_id: target.dish_id }
+    });
+
+    expect(updated.status).toBe('success');
+    expect(updated.data.meals[0].meal_structure.dessert.dish_id).toBe(target.dish_id);
+    expect(updated.data.week_value_vnd).not.toBe(plan.data.week_value_vnd);
+  });
+
+  it('cho phép áp dụng rau và trái cây trong bữa Tây do Bếp trưởng chọn', () => {
+    const { api } = setup();
+    const { plan } = start(api, { household_size: 2 });
+    const id = plan.data.plan_id;
+    const westernPlan = api.customer.configurePlan({ plan_id: id, upsells: { western_meal: true } });
+    const meal = westernPlan.data.meals.find((item) => item.western);
+
+    expect(api.customer.swapOptions({ plan_id: id, meal_index: meal.meal_index, kind: 'veg' }).data.options.length).toBeGreaterThan(0);
+    expect(api.customer.swapOptions({ plan_id: id, meal_index: meal.meal_index, kind: 'dessert' }).data.options.length).toBeGreaterThan(0);
+  });
+
+  it('áp dụng menu Bếp trưởng theo catalog frontend, kể cả bữa Tây, và tính lại giá', () => {
+    const { api } = setup();
+    const { plan } = start(api, { household_size: 2 });
+    const id = plan.data.plan_id;
+    const meals = plan.data.meals.map((meal) => ({
+      meal_index: meal.meal_index,
+      western: false,
+      dishes: {
+        protein: meal.meal_structure.protein_dish.dish_id,
+        soup: meal.meal_structure.soup_dish.dish_id,
+        veg: meal.meal_structure.veggie_dish.dish_id,
+        carb: meal.meal_structure.carb_dish.dish_id,
+        dessert: meal.meal_structure.dessert.dish_id
+      }
+    }));
+    meals[0].western = true;
+    meals[0].dishes.protein = 'D-WST-002';
+
+    const applied = api.customer.applyChefMenu({ plan_id: id, meals });
+
+    expect(applied.status).toBe('success');
+    expect(applied.data.meals[0].western).toBe(true);
+    expect(applied.data.meals[0].meal_structure.protein_dish.dish_id).toBe('D-WST-002');
+    expect(applied.data.week_value_vnd).not.toBe(plan.data.week_value_vnd);
+  });
+
+  it('tạo lại thực đơn MOVA gợi ý sẽ bỏ lựa chọn Bếp trưởng trước đó', () => {
+    const { api } = setup();
+    const { profile, plan } = start(api, { household_size: 2 });
+    const aiMeals = plan.data.meals.map((meal) => ({
+      meal_index: meal.meal_index,
+      western: true,
+      dishes: {
+        protein: 'D-WST-002',
+        soup: meal.meal_structure.soup_dish.dish_id,
+        veg: meal.meal_structure.veggie_dish.dish_id,
+        carb: meal.meal_structure.carb_dish.dish_id,
+        dessert: meal.meal_structure.dessert.dish_id
+      }
+    }));
+    expect(api.customer.applyChefMenu({ plan_id: plan.data.plan_id, meals: aiMeals }).status).toBe('success');
+
+    const suggested = api.customer.generateMealPlan({ profile_id: profile.data.profile_id, week_number: 1 });
+
+    expect(suggested.status).toBe('success');
+    expect(suggested.data.meals[0].meal_structure.protein_dish.dish_id)
+      .toBe(plan.data.meals[0].meal_structure.protein_dish.dish_id);
+  });
+
   it('chi tiêu đi chợ chỉ là trần mềm: thực đơn rẻ hơn nhưng vẫn đủ bữa', () => {
     const { api } = setup();
     const free = start(api, { household_size: 2 }).plan;
