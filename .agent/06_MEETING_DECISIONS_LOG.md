@@ -38,7 +38,7 @@
    - Cạnh ô nhập SĐT có nút **`Xác thực SĐT (OTP)`** mở modal xác thực OTP (mô phỏng demo mã `1234`), thành công hiển thị huy hiệu xanh `✓ Đã xác thực OTP`. Bắt buộc xác thực SĐT trước khi bấm thanh toán.
 7. **Đổi tiêu đề & Hộp Voucher giảm giá:**
    - Đổi tên phần 3 thành **"3. Thanh toán"** (thay vì "Cách trả trước"), mô tả rõ ràng chu kỳ tự động trừ thẻ trước 72 giờ.
-   - Thêm hộp nhập Voucher hỗ trợ các mã: `THEQUATANG` (thẻ quà tặng HelloFresh), `MOVA20` (giảm 20.000đ), `FREESHIP` (miễn phí ship 25.000đ) trừ trực tiếp vào số tiền thanh toán hôm nay.
+   - Thêm hộp nhập Voucher hỗ trợ các mã: `THEQUATANG` (thẻ quà tặng MOVA Fresh), `MOVA20` (giảm 20.000đ), `FREESHIP` (miễn phí ship 25.000đ) trừ trực tiếp vào số tiền thanh toán hôm nay.
 8. **Quy chuẩn pháp lý Checkbox:**
    - Checkbox 1 (Bắt buộc): Đồng ý cho phép MOVA xử lý thông tin cá nhân và địa chỉ phục vụ đơn hàng.
    - Checkbox 2 (Tùy chọn): Đăng ký nhận bản tin công thức nấu ăn Đầu bếp MOVA tặng ngay **+15.000đ Fresh Credit** vào tài khoản.
@@ -47,6 +47,32 @@
    - Giá vốn trực tiếp (COGS) tối đa: **55%** (nguyên liệu, sơ chế, bao bì thùng cách nhiệt 14.000đ + ship nội thành 25.000đ = 39.000đ / 6 bữa = 6.500đ/bữa).
    - Chi phí vận hành & Marketing (OPEX & MKT): **15%**.
    - **Lợi nhuận ròng mục tiêu (Net Margin): ~30%** (Gross Margin 20% – 30%).
+
+---
+
+## BIÊN BẢN CÁC QUYẾT ĐỊNH TINH CHỈNH V2.2.1 (BỔ SUNG SAU HỌP 17/11/2026)
+
+- **Thời gian:** 19/11/2026
+- **Thành phần thống nhất:** Hà My Trần (Founder), Trung Quốc Phạm (Co-founder), Nguyễn Công Khôi (Tech Lead), Hiếu (AI & Data Lead).
+
+### CÁC QUYẾT ĐỊNH BỔ SUNG V2.2.1
+
+1. **Quy chuẩn Copywriting & Hook thương hiệu:**
+   - **Cấm tuyệt đối tên đối thủ "HelloFresh"** xuất hiện trên giao diện khách hàng, copywriting, thông báo hay marketing (thay thế bằng `MOVA Fresh`, `Gói 4 tuần của bạn`, `Thẻ quà tặng MOVA Fresh`).
+   - Chuẩn hóa tên gói xốt: Khai tử hoàn toàn cụm từ "Gói xốt công thức", đổi thành **`Gói xốt MOVA đặc biệt`** (hoặc `Gói xốt đặc biệt đi kèm`).
+   - **Bảo vệ Hook 15 phút:** Giữ nguyên cam kết hook **"15 phút"** (Mâm cơm 5 món chuẩn ngon trong 15 phút — 1 chảo) trên Landing Page và Video Hero để tối đa hóa tỷ lệ chuyển đổi, tuyệt đối không nới lỏng thành 15–30 phút.
+2. **Quy tắc Hiển thị Giá & Khuyến mãi Giới thiệu:**
+   - **Hiển thị giá song song theo suất và bữa:** Tại bước chọn thực đơn (`StepMenu.vue`, `PriceBlock.vue`) và thanh toán (`StepCheckout.vue`), luôn hiển thị song song đơn giá chính theo bữa và đơn giá quy đổi theo suất: **`~...đ/suất • ...đ/bữa`** (1 người ăn = 1 suất, nhân theo số thành viên hộ) giúp khách hàng thấy rõ mức giá hợp lý và tính kinh tế của giải pháp.
+   - **Cơ chế Mời bạn bè (Referral Dual-Benefit 100.000đ):**
+     + Người được mời: Được **khấu trừ trực tiếp `100.000đ`** vào đơn đầu tiên khi đăng ký qua link mời hoặc nhập mã `MOVA-XXXX` (áp dụng cho cả 3 phương thức thanh toán: `fresh_credit`, `bank_transfer_4w`, `card`, đảm bảo tuân thủ trần ưu đãi chu kỳ đầu $\le 30\%$).
+     + Người giới thiệu: Nhận ngay **`+100.000đ` vào ngăn `promo` của ví Fresh Credit** ngay sau khi đơn đầu tiên của người được mời thanh toán thành công.
+     + **Bảng ví Fresh Credit đa năng:** Hiển thị số dư tiền thật + tiền khuyến mãi ngay trên đầu tab Mời bạn bè, kèm ghi chú giải thích rõ: Dù chọn thanh toán định kỳ bằng VietQR hay Thẻ tín dụng, ví Fresh Credit vẫn luôn hoạt động để tích lũy thưởng và tự động khấu trừ giảm tiền cho các chu kỳ tiếp theo hoặc khi đổi món.
+3. **Bổ sung các trường mới trong Onboarding & Metadata món ăn:**
+   - **Khảo sát khẩu vị đa chọn (`cuisine_preferences[]`):** Hỗ trợ chọn nhiều trong 3 nhóm (`Thuần Việt`, `Đồ Tây`, `Đồ Á`), thêm nút nhanh "Chọn tất cả (Đa dạng Việt – Á – Tây)" và cho phép tiếp tục khi không chọn gì (mặc định đa dạng cả 3).
+   - **Ngân sách đi chợ (`weekly_grocery_budget_vnd`):** Thêm lựa chọn "Khác (tự nhập mức chi tiêu cụ thể)" với nút `− / +` bước nhảy 100.000đ và ô nhập VNĐ tùy chỉnh (200.000đ – 20.000.000đ), chỉ làm trần mềm cho Đầu bếp MOVA gợi ý món.
+   - **Xác thực OTP SĐT (`phone_verified`):** Bắt buộc xác thực OTP tại bước giao hàng/thanh toán.
+   - **Đăng ký nhận bản tin (`newsletter_opt_in`):** Checkbox tùy chọn nhận bản tin công thức nấu ăn Đầu bếp MOVA tặng ngay `+15.000đ` promo credit.
+   - **Metadata món ăn đầy đủ:** `terroir_region`, `terroir_story`, `chef_note`, `portion_specs`, `nutrition_per_serving`, `cooking_steps`.
 
 ---
 
@@ -60,7 +86,7 @@
 1. **Bản chất mô hình là FinTech dòng tiền:** Bác bỏ hoàn toàn tư duy sàn bán lẻ TMĐT. Tiền khách hàng vào trước 100%, trả nhà máy và NCC sau theo công nợ gối đầu 15–30 ngày. Vốn lưu động luôn dương.
 2. **Khai tử hoàn toàn COD (Zero COD):** 100% thanh toán trước qua Fresh Credit, thẻ tín dụng hoặc chuyển khoản định kỳ.
 3. **Tuân thủ Nghị định 52/2024/NĐ-CP:** Không bao giờ dùng từ "ví điện tử". Chỉ dùng thuật ngữ **Fresh Credit** hoặc **Điểm bữa ăn trả trước**.
-4. **Subscription tối thiểu 4 tuần:** Không bán lẻ từng tuần rời rạc. Áp dụng cơ chế voucher trải đều theo tuần (học HelloFresh) để đạt Retention $\ge 50\%$.
+4. **Subscription tối thiểu 4 tuần:** Không bán lẻ từng tuần rời rạc. Áp dụng cơ chế voucher trải đều theo tuần (mô hình chuẩn MOVA Fresh) để đạt Retention $\ge 50\%$.
 5. **Cấu trúc mâm cơm Á Đông:** Bữa ăn gia đình gồm 5 cấu phần: Đạm + Rau + Canh + Tinh bột + Trái cây.
 6. **Loại bỏ gia vị bếp cơ bản & Dán sticker nhiệt độ:** Không đóng gói mắm, muối, đường, dầu ăn. Nhà máy dán trực tiếp Sticker Xanh (Mát) và Xanh Dương (Đông) lên khay nguyên liệu, không hiển thị rối trên web.
 7. **Hạn đổi món:** Khóa đổi món lúc **giờ chốt sổ nhà máy của chuyến giao (mặc định 08:00 sáng ngày D-2)**. Giao diện luôn hiện ngày giờ cụ thể, không ghi "8 tiếng trước giờ giao".

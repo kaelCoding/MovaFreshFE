@@ -1,7 +1,7 @@
 # MOVA FRESH — AGENT RUNTIME & SYSTEM DIRECTIVES
 
 > **TÀI LIỆU KHỞI ĐỘNG BẮT BUỘC CHO MỌI AI AGENT TRƯỚC KHI THỰC THI BẤT KỲ TÁC VỤ NÀO.**
-> Cập nhật lần cuối: 18/11/2026 | Phiên bản kiến trúc: V2.2 (Meeting 17/11 & Market Pricing Sync)
+> Cập nhật lần cuối: 19/11/2026 | Phiên bản kiến trúc: V2.2.1 (Meeting 17/11 Fine-Tuning Sync)
 > Repository chính thức: `github.com/movafresh-vn/movafresh-web` | Nhánh: `feat/v2-customer-and-ops-apps`
 > Production URL: `https://movafresh-web.netlify.app`
 
@@ -36,7 +36,7 @@ Mọi AI Agent (Gemini, Claude, GPT, Cursor, Roo, v.v.) khi được kích hoạ
 
 ## 3. DANH SÁCH CẤM TUYỆT ĐỐI (STRICT ANTI-PATTERNS)
 
-Mọi dòng code, UI component, API logic hoặc kịch bản trải nghiệm vi phạm một trong 8 điều cấm sau đây sẽ bị **REJECT NGAY LẬP TỨC**:
+Mọi dòng code, UI component, API logic hoặc kịch bản trải nghiệm vi phạm một trong 9 điều cấm sau đây sẽ bị **REJECT NGAY LẬP TỨC**:
 
 | # | Điều cấm | Lý do chiến lược & Quy chuẩn bắt buộc |
 |---|---|---|
@@ -46,13 +46,19 @@ Mọi dòng code, UI component, API logic hoặc kịch bản trải nghiệm vi
 | ❌ 4 | **CẤM DÙNG TỪ "VÍ ĐIỆN TỬ"** | Tuân thủ tuyệt đối **Nghị định 52/2024/NĐ-CP** về thanh toán không dùng tiền mặt. Hệ thống không giữ giấy phép ví điện tử trung gian thanh toán. Thuật ngữ duy nhất được phép hiển thị trên UI và code: **Fresh Credit** hoặc **Điểm bữa ăn trả trước**. |
 | ❌ 5 | **CẤM ĐỊNH VỊ "GIÁ RẺ" ĐUA XUỐNG ĐÁY VỚI SIÊU THỊ** | MOVA không cạnh tranh giá với Bách Hóa Xanh hay WinMart. Mọi mức giá phải phản ánh giá trị: sơ chế sẵn 100%, định lượng chuẩn xác theo thể trạng, công thức chuẩn ngon, tiết kiệm 2 tiếng đi chợ - nấu nướng mỗi ngày. Ràng buộc: Tổng Nguyên liệu + Vận chuyển $\le 50\%$ giá bán, Gross Margin duy trì **20% – 30%**, Net Margin mục tiêu **~30%**. |
 | ❌ 6 | **CẤM HIỂN THỊ HƯỚNG DẪN BẢO QUẢN NGĂN MÁT / ĐÔNG TRÊN WEB KHÁCH** | Không làm rối giao diện người dùng bằng các badge hoặc text hướng dẫn bảo quản phức tạp. Quy trình sản xuất tại nhà máy Đắk Lắk đã chuẩn hóa: dán nhãn sticker màu phân loại Ngăn mát / Ngăn đông trực tiếp lên khay nguyên liệu. |
-| ❌ 7 | **CẤM ĐƯA GIA VỊ BẾP CƠ BẢN VÀO GÓI NGUYÊN LIỆU** | Không đóng gói nước mắm, muối, đường, hạt nêm, dầu ăn thông thường vào meal-kit (gây lãng phí bao bì, rách vỡ, đội chi phí đóng gói). Nhà máy chỉ cung cấp: Thịt, Cá, Rau củ sơ chế, Tinh bột, Trái cây và **Gói xốt công thức độc quyền**. Mọi căn bếp Việt đều có sẵn gia vị cơ bản. |
+| ❌ 7 | **CẤM ĐƯA GIA VỊ BẾP CƠ BẢN VÀO GÓI NGUYÊN LIỆU** | Không đóng gói nước mắm, muối, đường, hạt nêm, dầu ăn thông thường vào meal-kit (gây lãng phí bao bì, rách vỡ, đội chi phí đóng gói). Nhà máy chỉ cung cấp: Thịt, Cá, Rau củ sơ chế, Tinh bột, Trái cây và **Gói xốt MOVA đặc biệt**. Mọi căn bếp Việt đều có sẵn gia vị cơ bản. |
 | ❌ 8 | **CẤM DÙNG TỪ KHÓA "AI" TRÊN GIAO DIỆN NGƯỜI DÙNG CUỐI** | Toàn bộ copywriting hướng tới khách hàng (Landing, `/plans`, `/account`) phải dùng **"Đầu bếp" (Chef)**: *"Thực đơn Đầu bếp thiết kế riêng"*, *"Đầu bếp MOVA tuyển chọn"*. (Thư mục kỹ thuật backend trên platform vẫn là `ai-engine/`, nhưng mặt hiển thị khách tuyệt đối không gọi là AI). |
+| ❌ 9 | **CẤM DÙNG TÊN ĐỐI THỦ "HELLOFRESH" TRÊN GIAO DIỆN NGƯỜI DÙNG** | Tuyệt đối không để lộ từ khóa "HelloFresh" trên giao diện khách hàng, copywriting hay marketing. Phải dùng tên thương hiệu chính thức: **MOVA Fresh**, **Gói 4 tuần của bạn**, **Thẻ quà tặng MOVA Fresh**. |
 
 ---
 
 ## 4. TÓM TẮT BỘ CHỈ SỐ VẬN HÀNH (NORTH STAR METRICS)
 
+- **Hook chuyển đổi cốt lõi:** Giữ nguyên cam kết **"15 phút"** (Mâm cơm 5 món trong 15 phút — 1 chảo) trên Landing Page và Video Hero để tối đa hóa tỷ lệ chuyển đổi (không nới lỏng thành 15–30 phút).
+- **Quy tắc hiển thị giá song song:** Luôn hiển thị song song đơn giá theo **bữa** (cả hộ gia đình) và quy đổi theo **suất** (1 người ăn: `~...đ/suất • ...đ/bữa`) trên toàn bộ phễu `/plans`.
+- **Cơ chế thưởng giới thiệu 100k (Referral Dual-Benefit):**
+  + Người được mời: Giảm trực tiếp **`100.000đ`** vào đơn đầu tiên (áp dụng trên cả 3 phương thức: Fresh Credit, Chuyển khoản VietQR, Thẻ tín dụng; tuân thủ trần ưu đãi chu kỳ đầu).
+  + Người giới thiệu: Nhận ngay **`+100.000đ` vào ngăn `promo` ví Fresh Credit** sau khi đơn đầu tiên của bạn bè thanh toán thành công.
 - **Subscription Length:** Tối thiểu 4 tuần.
 - **Auto-debit / Charge cutoff:** Trước giờ giao 72 tiếng.
 - **Dish customization cutoff:** Giờ chốt sổ nhà máy của chuyến giao (mặc định **08:00 ngày D-2**, cấu hình được). Giao diện luôn hiện ngày giờ cụ thể, **tuyệt đối không ghi "8 tiếng trước giờ giao"**.

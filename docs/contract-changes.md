@@ -2,7 +2,7 @@
 
 > Repo web KHÔNG sửa `movafresh-platform/docs/api-contract.json`. Theo `movafresh-platform/AGENTS.md`, mọi thay đổi phải có cả Khôi và Hiếu đồng thuận và giữ tương thích ngược. File này ghi lại những chỗ lớp mock `src/shared/api/` đang khác contract hiện tại hoặc cần thêm, để đưa sang bên platform.
 
-Cập nhật: 16/11/2026 (P0, P1A, P1B, P2A, P2B, P2C, P2D)
+Cập nhật: 19/11/2026 (P0, P1A, P1B, P2A, P2B, P2C, P2D, V2.2.1 Sync)
 
 ## 1. Đã khớp contract (không cần đổi)
 
@@ -485,7 +485,41 @@ Hàm: `finance.journal(ctx, { from?, to?, groups? })` (xem), `finance.journalCsv
 
 `cashflow-ledger` nên có: các loại bút Fresh Credit ở bảng trên (kể cả `adjustment` có người duyệt), phân loại tiền thật / khuyến mãi, webhook đối soát VietQR theo mã trong nội dung chuyển khoản (quy tắc khớp ở trên), và ghi nhận doanh thu khi `DELIVERED` theo phần tiền thật. Điểm cần kế toán chọn: chế độ hạch toán khuyến mãi (`net` hay `gross`), thời điểm xuất hóa đơn (`topup` hay `delivery`), thuế suất từng nhóm, mã tài khoản theo TT 99/2025.
 
-## 4. Câu hỏi mở cho Khôi và Hiếu
+## 4. Bổ sung trường Contract V2.2.1 sang Platform (Phễu `/plans` & Metadata món ăn)
+
+Cập nhật ngày 19/11/2026 sau buổi họp chiến lược và tinh chỉnh trải nghiệm khách hàng:
+
+### 4.1 Trường mới trong phễu Onboarding & Đăng ký gói (`/plans`)
+
+| Endpoint / Hàm | Trường | Kiểu dữ liệu | Mô tả & Ý nghĩa nghiệp vụ |
+|---|---|---|---|
+| `POST /api/v2/onboarding/profile` | `survey_answers.cuisine_preferences[]` | `string[]` | Danh sách phong cách ẩm thực được chọn (hỗ trợ đa chọn): `['viet', 'western', 'asian']`. Khách có thể chọn 1, 2 hoặc cả 3 nhóm (kèm nút "Chọn tất cả"). Nếu mảng rỗng, mặc định đa dạng cả 3. |
+| `POST /api/v2/onboarding/profile` | `survey_answers.weekly_grocery_budget_vnd` | `number \| null` | Mức chi tiêu đi chợ hàng tuần của gia đình. Ngoài 4 mốc sẵn có (500k, 1M, 1.5M, 2.5M), bổ sung tùy chọn "Khác" cho phép nhập số tùy chỉnh (200.000đ – 20.000.000đ). Giá trị này chỉ đóng vai trò trần mềm cho Đầu bếp MOVA gợi ý món, không hiển thị như tiêu đề "theo ngân sách". |
+| `POST /api/v2/subscription/create-or-renew` | `phone_verified` | `boolean` | Trạng thái xác thực số điện thoại qua OTP (mô phỏng demo mã `1234`) tại bước giao hàng/thanh toán. Bắt buộc `true` để kích hoạt đơn. |
+| `POST /api/v2/subscription/create-or-renew` | `voucher_code` | `string \| null` | Mã ưu đãi voucher nhập tại bước thanh toán: `THEQUATANG` (thẻ quà tặng MOVA Fresh trải đều 4 tuần), `MOVA20` (-20.000đ), `FREESHIP` (-25.000đ chặng cuối). |
+| `POST /api/v2/subscription/create-or-renew` | `referral_code` | `string \| null` | Mã giới thiệu từ bạn bè (định dạng `MOVA-XXXX`). Khi có mã này: người được mời được **khấu trừ trực tiếp 100.000đ** vào số tiền phải thanh toán đợt đầu (áp dụng trên cả 3 phương thức `fresh_credit`, `bank_transfer_4w`, `card`, tuân thủ trần ưu đãi chu kỳ đầu $\le 30\%$); người giới thiệu được hệ thống cộng ngay **`+100.000đ` vào ngăn `promo` của ví Fresh Credit** ngay sau khi đơn đầu tiên thanh toán thành công. |
+| `POST /api/v2/subscription/create-or-renew` | `newsletter_opt_in` | `boolean` | Checkbox tùy chọn đồng ý nhận bản tin công thức nấu ăn Đầu bếp MOVA qua email. Khi `true`, hệ thống tự động thưởng ngay **+15.000đ Fresh Credit** (vào ngăn `promo`, ghi nhận bút toán `reward` trên sổ cái). |
+
+### 4.2 Quy tắc hiển thị đơn giá quy đổi (Pricing Presentation)
+- **Hiển thị song song đơn giá theo `bữa` và `suất`:**
+  - Tại bước duyệt thực đơn (`StepMenu.vue`, `PriceBlock.vue`) và bước thanh toán (`StepCheckout.vue`), giao diện luôn hiển thị song song đơn giá theo bữa ăn gia đình và đơn giá quy đổi theo suất ăn 1 người:
+    $$\text{Đơn giá / suất} = \frac{\text{Đơn giá / bữa}}{\text{Số người ăn}}$$
+  - Định dạng hiển thị chuẩn: **`~...đ/suất • ...đ/bữa`**. Giúp khách hàng nhận thức rõ giá trị tiết kiệm và tính kinh tế so với tự đi chợ nấu nướng hoặc ăn ngoài.
+
+### 4.3 Metadata ẩm thực chi tiết của món ăn (`catalog.js` & `recipes.js`)
+
+Để phục vụ modal chi tiết món và tối ưu hóa tính minh bạch (lấy cảm hứng từ Grand Frais và Pizza 4P's), mỗi món ăn trong catalog và công thức nấu đều được bổ sung các trường dữ liệu chuyên sâu:
+
+| Trường | Kiểu dữ liệu | Ví dụ / Quy cách | Mô tả |
+|---|---|---|---|
+| `terroir_region` | `string` | `"Đắk Lắk"`, `"Chư Sê • Gia Lai"`, `"Đà Lạt"`, `"Biển Vũng Tàu"`, `"Sóc Trăng"` | Huy hiệu vùng thổ nhưỡng / nguyên liệu đặc sản ngắn gọn, hiển thị ngay trên thẻ món. |
+| `terroir_story` | `string` | *"Heo thả đồi Ea Kar ăn cám bắp và thảo mộc Tây Nguyên, thịt săn chắc ngọt tự nhiên kết hợp củ sen tươi hồ Lắk giòn bùi."* | Câu chuyện vùng miền 2–3 câu giàu cảm xúc về khí hậu, thổ nhưỡng và nghệ thuật phối xốt bản địa. |
+| `chef_note` | `string` | *"Đảo thịt xém cạnh trước khi đổ xốt vào rim lửa nhỏ 8 phút để xốt ngấm sâu và lên màu cánh gián óng ả."* | Mẹo nấu ngon chuẩn vị từ Đầu bếp MOVA (tuyệt đối không dùng từ "AI"). |
+| `portion_specs` | `object` | `{ net_weight_grams: 110, size_detail: "Ba rọi heo cắt con chì 2x3cm hút chân không" }` | Định lượng chuẩn cho 1 người ăn (tự động nhân theo số lượng thành viên hộ gia đình trên UI), quy cách kích cỡ sơ chế chi tiết. |
+| `nutrition_per_serving` | `object` | `{ calories: 420, protein_g: 28, carbs_g: 12, fat_g: 18 }` | Bảng 4 chỉ số dinh dưỡng chuẩn xác trên 1 khẩu phần ăn. |
+| `cooking_steps` | `string[]` | `["Bước 1: Cho ba rọi vào chảo nóng áp chảo 3 phút...", "Bước 2: Cho củ sen và rưới trọn gói xốt...", "Bước 3: Rim nhỏ lửa 8 phút..."]` | 3 bước nấu nhanh gọn 1 chảo hoàn tất trong 15 phút. |
+
+## 5. Câu hỏi mở cho Khôi và Hiếu
 
 1. Giờ chốt sổ mặc định 08:00 ngày D-2 có khớp lịch xe lạnh Đắk Lắk → TP.HCM không?
 2. `bom_raw_summary` trong contract đang dùng khóa kiểu `pork_belly_g`; mock dùng mã SKU (`NL-HEO-02`) để khớp `factory-requests`. Chọn một kiểu.
