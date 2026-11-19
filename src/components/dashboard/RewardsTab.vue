@@ -1,10 +1,10 @@
 <template>
   <div v-if="data" class="rewards">
-    <!-- Bảng số dư ví Fresh Credit đa năng -->
+    <!-- Bảng số dư Fresh Credit đa năng -->
     <section v-if="creditSum" class="pl-card fc-card">
       <div class="fc-head">
         <div>
-          <span class="wallet-badge">VÍ BỮA ĂN TRẢ TRƯỚC</span>
+          <span class="wallet-badge">TÀI KHOẢN SUẤT ĂN TRẢ TRƯỚC</span>
           <h2 class="pl-h2">Số dư Fresh Credit của bạn</h2>
         </div>
         <p class="total-amt num">{{ fmt(creditSum.balance.total_vnd) }}</p>
@@ -12,20 +12,20 @@
 
       <div class="fc-split">
         <div class="fc-part">
-          <small>Tiền thật nạp vào</small>
+          <small>Tiền mua gói trả trước</small>
           <b class="num">{{ fmt(creditSum.balance.real_vnd) }}</b>
-          <span>Tiền nạp trực tiếp, được hoàn lại 100% khi dừng gói.</span>
+          <span>Tiền mua gói suất ăn trực tiếp, được hoàn lại 100% các bữa chưa giao khi dừng gói (trong 7 ngày làm việc).</span>
         </div>
         <div class="fc-part promo">
-          <small>Điểm thưởng khuyến mãi</small>
+          <small>Điểm ưu đãi bữa ăn tặng kèm</small>
           <b class="num">{{ fmt(creditSum.balance.promo_vnd) }}</b>
-          <span>Thưởng mời bạn (100k), thưởng bản tin (15k), thưởng chia sẻ (20k).</span>
+          <span>Ưu đãi gói trả trước, mời bạn bè (100k), bản tin (15k), chia sẻ (20k).</span>
         </div>
       </div>
 
       <div class="fc-note">
         <p>
-          💡 <b>Cơ chế hoạt động linh hoạt:</b> Dù bạn chọn thanh toán định kỳ bằng <b>VietQR</b> hay <b>Thẻ tín dụng tự động</b>, ví <b>Fresh Credit</b> vẫn luôn hoạt động để tích lũy điểm thưởng giới thiệu, thưởng thành viên và tự động khấu trừ làm giảm số tiền khi đổi món hoặc gia hạn chu kỳ tiếp theo.
+          💡 <b>Cơ chế hoạt động linh hoạt:</b> Dù bạn chọn thanh toán định kỳ bằng <b>VietQR</b> hay <b>Thẻ tín dụng / Ví đối tác (MoMo, ZaloPay, VNPAY)</b>, tài khoản <b>Fresh Credit</b> vẫn luôn hoạt động để tích lũy điểm ưu đãi giới thiệu, quà thành viên và tự động khấu trừ làm giảm số tiền khi đổi món hoặc gia hạn chu kỳ tiếp theo.
         </p>
       </div>
     </section>
@@ -33,7 +33,7 @@
     <section class="pl-card">
       <h2 class="pl-h2">Mời bạn bè</h2>
       <p class="pl-lead">
-        Bạn của bạn đăng ký qua link mời được giảm ngay <b class="num">{{ fmt(r.referral.referee_vnd) }} Fresh Credit</b> vào đơn đầu tiên; sau khi bạn của bạn thanh toán gói đầu, bạn nhận ngay <b class="num">+{{ fmt(r.referral.referrer_vnd) }} Fresh Credit</b> vào ví.
+        Bạn của bạn đăng ký qua link mời được giảm ngay <b class="num">{{ fmt(r.referral.referee_vnd) }} Fresh Credit</b> vào đơn đầu tiên; sau khi bạn của bạn thanh toán gói đầu, bạn nhận ngay <b class="num">+{{ fmt(r.referral.referrer_vnd) }} Fresh Credit</b> vào tài khoản.
       </p>
       <label class="pl-label" for="invite-link">Link mời riêng của bạn</label>
       <input id="invite-link" class="pl-input link" type="text" readonly :value="inviteUrl" @focus="$event.target.select()" />

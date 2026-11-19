@@ -22,8 +22,9 @@
 
 ```
 [Khách hàng Trả Tiền Trước 100%]
-   ├── Nạp trước gói Fresh Credit (thưởng nạp ~10%)
-   └── Subscription 4 tuần (Auto-debit trước 72 giờ)
+   ├── Mua Gói Suất ăn trả trước (Fresh Credit - ưu đãi chiết khấu ~10%)
+   ├── Chuyển khoản VietQR trọn gói 4 tuần
+   └── Trừ tiền định kỳ qua Thẻ / Ví đối tác (Auto-debit trước 72 giờ, Hủy 1 chạm)
               │
               ▼
    [MOVA FRESH - DÒNG TIỀN VẬN HÀNH LUÔN DƯƠNG]
@@ -35,18 +36,49 @@
 ### Chi tiết 2 đầu dòng tiền:
 
 ### A. Đầu vào (Thu tiền của Khách hàng trước 100%)
-- **Gói nạp Fresh Credit trả trước:**
-  - Khách nạp tiền để nhận điểm bữa ăn kèm thưởng nạp thường xuyên khoảng 10%. Ưu đãi lớn hơn chỉ áp ở chu kỳ đầu, có trần tổng `maxFirstCycleDiscountPct`.
-  - Thu tiền mặt ngay lập tức, khách hàng tự nguyện tích lũy điểm bữa ăn vào hệ sinh thái MOVA.
+- **Gói Suất ăn trả trước (Fresh Credit):**
+  - Khách hàng mua theo gói suất ăn cố định (Gói 4 tuần / Gói 13 tuần, hiển thị rõ số bữa & suất ăn quy đổi) nhận ưu đãi chiết khấu khoảng 10% điểm bữa ăn tặng kèm. Ưu đãi chu kỳ đầu có trần tổng `maxFirstCycleDiscountPct`.
+  - Tắt hoàn toàn tính năng nạp số tiền lẻ tự do (`minTopUpVnd`) trên giao diện người dùng để tuyệt đối tuân thủ Nghị định 52/2024/NĐ-CP (tránh bản chất ví điện tử tự phát).
+  - Hạch toán kế toán theo Thông tư 99/2025/TT-BTC: Nợ 112 / Có 131. Khi giao hàng từng lần: Nợ 131 / Có 511, Có 33311.
 - **Mô hình Subscription 4 tuần:**
   - Bắt buộc chu kỳ đăng ký tối thiểu **4 tuần** (triệt tiêu tình trạng mua 1 tuần rồi nghỉ).
-  - Cơ chế tự động trừ tiền qua thẻ tín dụng hoặc cấn trừ Fresh Credit trước giờ giao hàng **72 tiếng** (Auto-debit cutoff).
+  - Cơ chế tự động trừ tiền qua thẻ tín dụng / ví đối tác trước giờ giao hàng **72 tiếng** (Auto-debit cutoff) kèm cam kết minh bạch hủy 1 chạm bất kỳ lúc nào.
   - Đảm bảo đơn hàng đã thanh toán đầy đủ trước khi lệnh sản xuất được chuyển giao về xưởng.
 
 ### B. Đầu ra (Thanh toán cho Nhà máy & Đối tác cung ứng sau)
 - Đàm phán chính sách công nợ trả chậm (**Net 15 hoặc Net 30 ngày**) với nhà máy Đắk Lắk, nhà xe lạnh, đầu mối hải sản Vũng Tàu và xưởng bao bì.
 - MOVA cầm tiền mặt của người tiêu dùng trước 15–30 ngày so với hạn phải thanh toán tiền hàng cho nhà cung ứng.
 - **Kết quả:** Vốn lưu động luôn dương, không chịu áp lực tồn kho nông sản hư hao hay lãi vay dự trữ hàng.
+
+---
+
+## 2.1. BẢNG PHÂN LOẠI PHÁP LÝ ĐỎ / VÀNG / XANH & KIẾN TRÚC DÒNG TIỀN 4 TẦNG (MEETING 19/11/2026)
+
+### 1. Bảng phân loại Pháp lý Đỏ / Vàng / Xanh:
+
+| Nhóm | Phân loại & Ràng buộc | Căn cứ pháp lý | Giải pháp & Quy chuẩn tại MOVA Fresh |
+|---|---|---|---|
+| 🔴 **ĐỎ** (Cấm tuyệt đối) | **Cấm ví điện tử tự phát** | **Nghị định 52/2024/NĐ-CP** (Thanh toán không dùng tiền mặt) | MOVA không giữ giấy phép ví trung gian thanh toán. Xóa bỏ hoàn toàn chữ "Ví" trên UI khách; cấm nạp/rút/chuyển tiền tự do. |
+| 🔴 **ĐỎ** (Cấm tuyệt đối) | **Cấm huy động vốn & Trả lãi trên số dư chờ** | **Luật Các TCTD 32/2024/QH15** (Tổ chức tín dụng) | Cấm ghi "lãi", cấm "thưởng nạp kiểu ngân quỹ". Chỉ ghi: *"Ưu đãi chiết khấu khi mua Gói Suất ăn trả trước"*. Tắt ô nhập nạp tiền lẻ tự do. |
+| 🔴 **ĐỎ** (Cấm tuyệt đối) | **Cấm bẫy gia hạn âm thầm & Giữ cọc không cho rút** | **Luật BVQLNTD 19/2023/QH15** (Bảo vệ người tiêu dùng) | Cấm âm thầm auto-renew gói lớn. Thông báo trước **7 ngày làm việc** trước khi hết gói. Cam kết **dừng gói 1 chạm** và **hoàn tiền trong 7 ngày làm việc** cho các bữa chưa giao. |
+| 🟡 **VÀNG** (Điều kiện) | **Lập hóa đơn GTGT từng lần giao hàng** | **Nghị định 254/2026/NĐ-CP** Điều 9 khoản 1, 3 | Suất ăn là hàng hóa thực phẩm giao định kỳ, xuất hóa đơn điện tử cho từng lần giao hàng thực tế. Cấu hình hệ thống `invoicing.issueOn = 'delivery'`. |
+| 🟡 **VÀNG** (Điều kiện) | **Tài khoản trả trước đóng kín nội bộ** | **Nghị định 52/2024/NĐ-CP** | Điểm Fresh Credit chỉ được dùng để đổi bữa ăn tại MOVA Fresh, không chuyển nhượng sang tài khoản khác. |
+| 🟢 **XANH** (Chuẩn hóa) | **Gói Suất ăn trả trước (Pre-paid meal voucher)** | **Thông tư 99/2025/TT-BTC** (Chế độ kế toán DN 2026) | Hạch toán khách trả trước: Nợ 112 / Có 131; Giao từng lần: Nợ 131 / Có 511, Có 33311. Tiền nhàn rỗi là vốn lưu động hợp pháp. |
+| 🟢 **XANH** (Chuẩn hóa) | **Phí hội viên năm MOVA Club (Membership)** | **Thông tư 99/2025/TT-BTC** | Hạch toán doanh thu chưa thực hiện: Nợ 112 / Có 3387; phân bổ hàng tháng vào 511. |
+| 🟢 **XANH** (Chuẩn hóa) | **Trừ tiền định kỳ qua cổng thẻ / ví đối tác** | **Nghị định 52/2024/NĐ-CP** | Tận dụng hạ tầng ví đối tác đã cấp phép (MoMo, ZaloPay, VNPAY, Cổng thẻ quốc tế) kèm cam kết khách hủy 1 chạm bất kỳ lúc nào. |
+
+### 2. Kiến trúc dòng tiền 4 tầng (4-Layer Cash Flow Architecture):
+
+- **Tầng `D` — Nền tảng bắt buộc (Foundational Mandatory):**
+  + Trừ tiền thẻ định kỳ hoặc ủy nhiệm thu ví đối tác (MoMo, ZaloPay, VNPAY) trước giờ giao 72 tiếng.
+  + Đây là tầng có **Zero rủi ro pháp lý theo NĐ 52/2024**, đáp ứng khách hàng muốn trải nghiệm linh hoạt nhưng vẫn đảm bảo nguyên tắc tiền vào trước khi nhà máy xẻ thịt thái rau.
+- **Tầng `A` — Dòng tiền trả trước (Pre-paid Meal Float):**
+  + Bán Gói Suất ăn trả trước 4 tuần hoặc 13 tuần cố định (hạch toán TK 131), tặng ưu đãi chiết khấu suất ăn.
+  + Cam kết hoàn tiền 100% tiền thật các bữa chưa giao trong vòng **7 ngày làm việc** khi dừng gói giữa chừng.
+- **Tầng `C` — Đường ống thu hộ (Collection Pipelines):**
+  + VietQR tĩnh và động kết nối trực tiếp với cổng thanh toán đối tác, tiền về thẳng tài khoản ngân hàng Vietcombank của Công ty MOVA Fresh.
+- **Tầng `B` — Giá trị gia tăng tùy chọn (Optional Addons):**
+  + Thẻ hội viên VIP năm (MOVA Club - TK 3387 phân bổ đều 12 tháng), thẻ quà tặng sinh nhật, voucher B2B cho doanh nghiệp chăm lo đời sống nhân viên.
 
 ---
 

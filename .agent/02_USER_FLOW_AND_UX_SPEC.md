@@ -32,15 +32,17 @@
   - Khung giờ xanh (06:00 – 08:00): Tặng ngay -15.000đ Freeship né tắc đường
   - Tần suất 1 lần/tuần có badge khuyên dùng (tối ưu phí thùng 39.000đ/lần)
   - Xác thực SĐT qua mã OTP (demo mã 1234, phone_verified: true)
-  - 3 Hình thức: Nạp Fresh Credit (~10% thưởng), Chuyển khoản VietQR 4 tuần, Thẻ tín dụng (tự trừ trước 72h)
+  - 3 Hình thức: Gói Suất ăn trả trước (Fresh Credit - chiết khấu 10%), Chuyển khoản VietQR 4 tuần, Trừ tiền định kỳ qua Thẻ / Ví đối tác (MoMo, ZaloPay, VNPAY, Thẻ quốc tế - tự trừ trước 72h)
+  - Cam kết minh bạch: Hủy liên kết thẻ/ví đối tác 1 chạm bất kỳ lúc nào
   - Hộp nhập Voucher (`THEQUATANG`, `MOVA20`, `FREESHIP` hoặc mã mời `MOVA-XXXX`)
   - Cơ chế mã mời (referral_code): Giảm trực tiếp 100.000đ vào thanh toán đơn đầu tiên
+  - Điều khoản giao dịch từ xa & Bảo vệ người tiêu dùng: Dừng gói 1 chạm, cam kết hoàn tiền 7 ngày cho các bữa chưa giao, báo trước 7 ngày làm việc trước khi hết chu kỳ
   - Checkbox pháp lý thông tin cá nhân & Newsletter nhận bản tin (+15.000đ Fresh Credit)
           │
           ▼
 [GIAI ĐOẠN 4: Product-Led Growth & Viral Loops]
   - Hoàn thiện profile (+10k/20k), Chia sẻ mâm cơm (+20k), Mời bạn bè (+100k Fresh Credit)
-  - Bảng số dư ví Fresh Credit đa năng (tiền thật + promo credit) giải tỏa tâm lý cho khách VietQR/Card
+  - Bảng số dư tài khoản Fresh Credit đa năng (tiền thật + promo credit) giải tỏa tâm lý cho khách VietQR/Card
 ```
 
 ---
@@ -124,9 +126,12 @@ Khác biệt cốt lõi: **Không hiển thị danh sách hàng chục món lẻ
 - **Xác thực SĐT (OTP):** Bắt buộc bấm xác thực OTP (mô phỏng demo mã `1234`, `phone_verified: true`) để đảm bảo shipper liên hệ chính xác khi giao hàng.
 - **Tiêu đề phần 3:** Chuẩn hóa thành **"3. Thanh toán"**.
 - **3 Hình thức thanh toán trả trước (Zero COD):**
-  1. **Nạp Fresh Credit (Khuyên dùng):** Nạp gói trả trước kèm thưởng nạp ~10% (Gói Tiêu chuẩn, Gia đình, Dinh dưỡng hoặc Gói đủ 4 tuần).
-  2. **Chuyển khoản VietQR:** Thanh toán trọn gói cho cả 4 tuần qua mã QR động.
-  3. **Liên kết thẻ tín dụng:** Tự động trừ tiền trước giờ giao **72 tiếng** (Auto-debit cutoff).
+  1. **Gói Suất ăn trả trước — Fresh Credit (Khuyên dùng):** Mua theo Gói 4 tuần hoặc 13 tuần cố định (hiển thị rõ số bữa & suất ăn quy đổi), nhận ưu đãi chiết khấu khoảng 10% điểm bữa ăn tặng kèm. Tắt tính năng nạp số tiền lẻ tùy ý (`minTopUpVnd`) trên giao diện người dùng để đảm bảo tuân thủ NĐ 52/2024.
+  2. **Chuyển khoản VietQR:** Thanh toán trọn gói cho cả 4 tuần qua mã QR động (khớp tự động theo mã đối soát).
+  3. **Trừ tiền định kỳ qua Thẻ / Ví đối tác (MoMo, ZaloPay, VNPAY, Cổng thẻ):** Tự động trừ tiền trước giờ giao **72 tiếng** (Auto-debit cutoff). Hiển thị minh bạch lịch trừ tiền từng tuần kèm cam kết nổi bật: *"Bạn có thể hủy liên kết thẻ/ví đối tác bất kỳ lúc nào chỉ với 1 chạm"*.
+- **Điều khoản giao dịch từ xa & Bảo vệ người tiêu dùng (Luật BVQLNTD 19/2023):**
+  + Khối thông tin xếp gọn/mở rộng giải thích minh bạch: Dừng gói 1 chạm bất kỳ lúc nào; **Cam kết hoàn tiền trong 7 ngày làm việc** cho các bữa ăn chưa giao theo đúng giá trị tiền thật đã thanh toán (tất toán lại ưu đãi chu kỳ dài hạn nếu dừng trước hạn); Thông báo trước **7 ngày làm việc** trước khi hết chu kỳ gói (tuyệt đối không âm thầm tự động gia hạn gói lớn).
+  + Hóa đơn GTGT điện tử được xuất tại mỗi lần giao hàng theo đúng quy định tại Điều 9 Nghị định 254/2026/NĐ-CP.
 - **Quy chuẩn Copywriting & Cấm tên đối thủ:** Tuyệt đối không hiển thị tên `HelloFresh` trên giao diện người dùng. Dùng **`MOVA Fresh`**, **`Gói 4 tuần của bạn`**, **`Thẻ quà tặng MOVA Fresh`**.
 - **Hộp Voucher & Mã giới thiệu:**
   + `THEQUATANG`: Thẻ quà tặng MOVA Fresh trải đều 4 tuần.
@@ -134,20 +139,20 @@ Khác biệt cốt lõi: **Không hiển thị danh sách hàng chục món lẻ
   + `FREESHIP`: Miễn phí giao hàng chặng cuối (giảm 25.000đ).
   + `MOVA-XXXX` (Mã mời bạn bè): **Khấu trừ trực tiếp 100.000đ** vào tổng tiền thanh toán hôm nay cho mọi phương thức (VietQR, Thẻ, Fresh Credit).
 - **2 Checkbox chuẩn pháp lý:**
-  + [x] Bắt buộc: Đồng ý cho MOVA Fresh sử dụng thông tin liên hệ và địa chỉ để xử lý đơn hàng.
+  + [x] Bắt buộc: Đồng ý với Điều khoản giao dịch từ xa, chính sách hoàn tiền 7 ngày và quy chế bảo vệ người tiêu dùng của MOVA Fresh.
   + [ ] Tùy chọn: Đăng ký nhận bản tin công thức nấu ăn Đầu bếp MOVA qua Email (`newsletter_opt_in`) $\rightarrow$ Tặng ngay **+15.000đ Fresh Credit**.
 
 ---
 
 ### GIAI ĐOẠN 4: PRODUCT-LED GROWTH (PLG) & VIRAL LOOPS
 
-1. **Thẻ số dư ví Fresh Credit đa năng (RewardsTab.vue):**
+1. **Bảng số dư tài khoản Fresh Credit đa năng (RewardsTab.vue):**
    - Đặt trên cùng tab Mời bạn bè, hiển thị trực quan:
-     + **Tiền thật nạp vào:** Hoàn lại 100% khi dừng gói.
-     + **Điểm thưởng khuyến mãi:** Tích lũy thưởng mời bạn (100k), thưởng bản tin (15k), thưởng chia sẻ (20k).
-   - **Chú thích giải tỏa tâm lý:** Dù chọn thanh toán định kỳ bằng **VietQR** hay **Thẻ tín dụng tự động**, ví **Fresh Credit** vẫn luôn hoạt động để tích lũy điểm thưởng và tự động khấu trừ làm giảm số tiền khi đổi món hoặc gia hạn chu kỳ tiếp theo.
+     + **Tiền mua gói trả trước:** Hoàn lại 100% cho các bữa chưa giao khi dừng gói (trong 7 ngày làm việc).
+     + **Điểm ưu đãi bữa ăn tặng kèm:** Tích lũy ưu đãi mời bạn (100k), bản tin (15k), chia sẻ (20k).
+   - **Chú thích giải tỏa tâm lý:** Dù chọn thanh toán định kỳ bằng **VietQR** hay **Thẻ tín dụng / Ví đối tác (MoMo, ZaloPay, VNPAY)**, tài khoản **Fresh Credit** vẫn luôn hoạt động để tích lũy điểm ưu đãi và tự động khấu trừ làm giảm số tiền khi đổi món hoặc gia hạn chu kỳ tiếp theo.
 2. **Hoàn thiện hồ sơ:** Nhận `+10.000đ – +20.000đ Fresh Credit` khi cập nhật đầy đủ chỉ số khẩu vị các thành viên.
 3. **Cook & Share:** Đăng ảnh mâm cơm đã nấu kèm hashtag `#MovaFresh #ComNha15Phut` $\rightarrow$ Nhận `+20.000đ Fresh Credit`.
 4. **Mời bạn bè (Referral Dual-Benefit 100k):**
    - **Người được mời:** Khấu trừ trực tiếp **`100.000đ`** vào đơn đầu tiên khi đăng ký qua link mời hoặc nhập mã `MOVA-XXXX` (áp dụng cho cả 3 phương thức thanh toán, tuân thủ trần ưu đãi chu kỳ đầu).
-   - **Người giới thiệu:** Nhận ngay **`+100.000đ` vào ngăn `promo` ví Fresh Credit** ngay sau khi đơn đầu tiên của bạn bè thanh toán thành công.
+   - **Người giới thiệu:** Nhận ngay **`+100.000đ` vào ngăn `promo` tài khoản Fresh Credit** ngay sau khi đơn đầu tiên của bạn bè thanh toán thành công.

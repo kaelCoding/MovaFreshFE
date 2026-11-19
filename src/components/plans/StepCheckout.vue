@@ -122,26 +122,26 @@
         <div class="method" :class="{ on: c.method === 'fresh_credit' }">
           <button type="button" role="radio" :aria-checked="c.method === 'fresh_credit'" class="m-head" @click="setMethod('fresh_credit')">
             <span class="radio" :class="{ on: c.method === 'fresh_credit' }"></span>
-            <span class="m-title">Nạp Fresh Credit <span class="pl-pill">Khuyên dùng</span></span>
+            <span class="m-title">Gói Suất ăn trả trước (Fresh Credit) <span class="pl-pill">Ưu đãi chiết khấu 10%</span></span>
           </button>
           <div v-if="c.method === 'fresh_credit'" class="m-body">
-            <div class="offers" role="radiogroup" aria-label="Gói nạp">
+            <div class="offers" role="radiogroup" aria-label="Gói suất ăn trả trước">
               <button type="button" role="radio" :aria-checked="c.packId === 'exact'" class="offer" :class="{ on: c.packId === 'exact' }" @click="setPack('exact')">
-                <span class="offer-n">Gói đủ {{ preview.cycle_weeks.length }} tuần</span>
+                <span class="offer-n">Gói 4 tuần chuẩn ({{ (mealsCount || 5) * 4 }} bữa ~ {{ (mealsCount || 5) * 4 * (householdSize || 2) }} suất)</span>
                 <span class="offer-get num">Nhận {{ fmt(fc.credit_received_vnd) }}</span>
                 <span class="offer-pay num">Trả {{ fmt(fc.pay_vnd) }}</span>
               </button>
               <button v-for="p in fc.packs" :key="p.pack_id" type="button" role="radio" :aria-checked="c.packId === p.pack_id" class="offer" :class="{ on: c.packId === p.pack_id }" @click="setPack(p.pack_id)">
-                <span class="offer-n">{{ p.label }}, nạp dư cho chu kỳ sau</span>
+                <span class="offer-n">{{ p.label }}</span>
                 <span class="offer-get num">Nhận {{ fmt(p.credit_received_vnd) }}</span>
                 <span class="offer-pay num">Trả {{ fmt(p.pay_vnd) }}</span>
               </button>
             </div>
             <p class="pl-note">
-              Fresh Credit là điểm bữa ăn trả trước, chỉ dùng để đổi bữa ăn tại MOVA; không rút ra được và không chuyển cho người khác.
+              Fresh Credit là điểm bữa ăn trả trước, chỉ dùng để đổi suất ăn tại MOVA Fresh; không rút tiền mặt trực tiếp và không chuyển nhượng.
               Tuần 1 trừ ngay, các tuần sau tự trừ trước giờ giao {{ chargeHours }} giờ (72 tiếng).
             </p>
-            <p v-if="fc.capped" class="pl-note">Thưởng nạp chu kỳ đầu đã được điều chỉnh theo mức ưu đãi tối đa của chương trình.</p>
+            <p v-if="fc.capped" class="pl-note">Ưu đãi chiết khấu chu kỳ đầu đã được điều chỉnh theo mức ưu đãi tối đa của chương trình.</p>
           </div>
         </div>
 
@@ -165,16 +165,22 @@
         <div class="method" :class="{ on: c.method === 'card' }">
           <button type="button" role="radio" :aria-checked="c.method === 'card'" class="m-head" @click="setMethod('card')">
             <span class="radio" :class="{ on: c.method === 'card' }"></span>
-            <span class="m-title">Liên kết thẻ, tự trừ từng tuần</span>
+            <span class="m-title">Trừ tiền định kỳ qua Thẻ / Ví đối tác (MoMo, ZaloPay, VNPAY, Thẻ quốc tế)</span>
           </button>
           <div v-if="c.method === 'card'" class="m-body">
+            <div class="unlink-commitment">
+              <span class="c-shield">🛡️</span>
+              <div>
+                <b>Cam kết minh bạch:</b> Bạn có thể hủy liên kết thẻ/ví đối tác bất kỳ lúc nào chỉ với 1 chạm tại trang quản lý gói.
+              </div>
+            </div>
             <ul class="charges">
               <li v-for="(ch, i) in preview.card.charges" :key="i">
                 <span>{{ ch.now ? 'Hôm nay' : fmtDeadline(new Date(ch.charge_at)) }}<small class="muted"> · tuần {{ ch.week_index + 1 }}</small></span>
                 <b class="num">{{ fmt(ch.amount_vnd) }}</b>
               </li>
             </ul>
-            <p class="pl-note">Tuần 2 trở đi tự trừ trước giờ giao {{ chargeHours }} giờ (72 tiếng). Thẻ không trừ được thì MOVA báo ngay để bạn cập nhật trước hạn đổi món.</p>
+            <p class="pl-note">Tuần 2 trở đi tự động trừ trước giờ giao {{ chargeHours }} giờ (72 tiếng). Thẻ/ví không trừ được thì MOVA báo ngay để bạn cập nhật trước hạn đổi món.</p>
           </div>
         </div>
       </div>
@@ -219,15 +225,33 @@
       </p>
     </section>
 
-    <!-- 4. Cam kết -->
+    <!-- 4. Cam kết & Điều khoản giao dịch từ xa -->
     <section v-if="preview" class="pl-card sec terms">
-      <h2 class="pl-h2">Trước khi trả tiền, bạn nhớ giúp</h2>
-      <ul class="rules">
-        <li>Gói cam kết <b>{{ preview.cycle_weeks.length }} tuần</b> liên tục.</li>
+      <div class="terms-toggle-bar" @click="showTerms = !showTerms">
+        <h2 class="pl-h2" style="margin: 0;">Điều khoản giao dịch từ xa &amp; Chính sách đổi trả</h2>
+        <button type="button" class="terms-toggle-btn" :aria-expanded="showTerms">
+          {{ showTerms ? '▲ Thu gọn' : '▼ Chi tiết chính sách bảo vệ' }}
+        </button>
+      </div>
+
+      <div v-show="showTerms" class="terms-collapsible">
+        <div class="legal-badge">
+          ⚖️ Tuân thủ Luật Bảo vệ quyền lợi người tiêu dùng 19/2023/QH15 &amp; Nghị định 52/2024/NĐ-CP
+        </div>
+        <ul class="rules legal-list">
+          <li><b>Cam kết dừng gói 1 chạm bất kỳ lúc nào:</b> Bạn có thể chủ động bấm Dừng gói hoặc Hủy liên kết thẻ/ví đối tác ngay tại trang tài khoản mà không cần gọi tổng đài hay chờ duyệt phức tạp.</li>
+          <li><b>Cam kết hoàn tiền trong vòng 7 ngày làm việc:</b> Khi dừng gói giữa chừng, MOVA hoàn trả 100% tiền thật tương ứng với các bữa ăn chưa giao về đúng phương thức/tài khoản nguồn (tất toán lại phần ưu đãi chiết khấu chu kỳ dài nếu dừng trước hạn theo đúng giá trị bữa ăn thực tế).</li>
+          <li><b>Báo trước 7 ngày làm việc trước khi hết chu kỳ gói:</b> Hệ thống thông báo thực đơn và số tiền dự kiến trước 7 ngày làm việc để bạn chủ động quyết định tiếp tục hoặc tạm dừng; tuyệt đối KHÔNG âm thầm tự động gia hạn gói lớn.</li>
+          <li><b>Linh hoạt tạm hoãn:</b> Được tạm hoãn tối đa {{ maxSkip }} tuần trong mỗi chu kỳ 4 tuần (chỉ cần báo trước giờ chốt sổ D-2) mà không mất ưu đãi hay bị phạt.</li>
+          <li><b>Minh bạch hóa đơn điện tử:</b> Xuất hóa đơn điện tử GTGT hợp lệ tại mỗi lần giao hàng theo đúng quy định tại Điều 9 Nghị định 254/2026/NĐ-CP.</li>
+        </ul>
+      </div>
+
+      <ul class="rules" style="margin-top: 14px;">
+        <li>Gói cam kết <b>{{ preview.cycle_weeks.length }} tuần</b> liên tục để nhà máy lên kế hoạch thu mua nông sản tận vườn.</li>
         <li>Bạn được <b>tạm hoãn tối đa {{ maxSkip }} tuần</b> trong chu kỳ, báo trước hạn đổi món của tuần đó.</li>
-        <li>Dừng giữa chừng thì <b>mất ưu đãi của các tuần còn lại</b>.</li>
         <li>
-          Hạn đổi món của từng tuần:
+          Hạn đổi món của từng tuần (trước giờ chốt sổ nhà máy):
           <ul class="deadlines">
             <li v-for="w in preview.cycle_weeks" :key="w.week_index">
               <span>Tuần {{ w.week_index + 1 }}</span>
@@ -239,7 +263,7 @@
       <div class="checkbox-stack">
         <label class="agree">
           <input v-model="c.agree" type="checkbox" @change="save" />
-          <span>Tôi đồng ý cho phép MOVA Fresh sử dụng thông tin liên hệ và địa chỉ giao hàng để xử lý đơn hàng và hỗ trợ khách hàng.</span>
+          <span>Tôi đã đọc và đồng ý với Điều khoản giao dịch từ xa, chính sách hoàn tiền 7 ngày và quy chế bảo vệ người tiêu dùng của MOVA Fresh.</span>
         </label>
         <label class="agree newsletter">
           <input v-model="c.newsletterOptin" type="checkbox" @change="save" />
@@ -320,6 +344,7 @@ const showOtpModal = ref(false);
 const otpInput = ref('');
 const otpError = ref('');
 const phoneErr = ref('');
+const showTerms = ref(false);
 
 const voucherInput = ref('');
 const voucherMsg = ref('');
@@ -379,8 +404,8 @@ const servingPayToday = computed(() => {
 const payLabel = computed(() => {
   if (!preview.value) return 'Chọn ngày giao để tiếp tục';
   if (c.method === 'bank_transfer_4w') return `Tôi đã chuyển khoản ${fmt(payToday.value)}`;
-  if (c.method === 'card') return `Liên kết thẻ, trả ${fmt(payToday.value)} hôm nay`;
-  return `Nạp ${fmt(payToday.value)} và đăng ký gói`;
+  if (c.method === 'card') return `Liên kết thẻ/ví, trả ${fmt(payToday.value)} hôm nay`;
+  return `Thanh toán ${fmt(payToday.value)} và kích hoạt gói`;
 });
 
 const problems = computed(() => {
@@ -607,6 +632,19 @@ watch(() => c.packId, save);
 .charges { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
 .charges li { display: flex; justify-content: space-between; gap: 10px; min-height: 44px; align-items: center; border-bottom: 1px dashed var(--line); font-size: 16px; }
 
+.unlink-commitment {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--green-soft);
+  color: var(--green-d);
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+.c-shield { font-size: 20px; flex-shrink: 0; }
+
 .voucher-card { padding: 16px; }
 .voucher-box { display: flex; gap: 8px; align-items: center; }
 .voucher-input { flex: 1; }
@@ -614,6 +652,47 @@ watch(() => c.packId, save);
 .v-amt { font-size: 16px; }
 .v-success { color: var(--green-d); font-weight: 600; }
 .rate-note { font-size: 13px; font-weight: 600; color: var(--green-d); margin-left: 4px; }
+
+.terms-toggle-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding-bottom: 8px;
+}
+.terms-toggle-btn {
+  background: none;
+  border: none;
+  color: var(--green-d);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.terms-collapsible {
+  margin-top: 8px;
+  padding: 14px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.legal-badge {
+  display: inline-block;
+  background: var(--green-soft);
+  color: var(--green-d);
+  font-size: 12px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+}
+.legal-list {
+  display: grid;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+}
 
 .rules { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: 16px; }
 .deadlines { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 4px; }

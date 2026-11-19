@@ -12,18 +12,18 @@
         <div class="part promo">
           <small>Khuyến mãi</small>
           <b class="num">{{ fmt(sum.balance.promo_vnd) }}</b>
-          <span>Thưởng nạp, thưởng mời bạn. Không hoàn khi dừng gói.</span>
+          <span>Ưu đãi gói trả trước, thưởng mời bạn. Không hoàn khi dừng gói.</span>
         </div>
       </div>
       <p class="pl-note">Khi trừ tiền, MOVA dùng phần tiền thật trước, rồi tới khuyến mãi.</p>
-      <button class="pl-btn primary" type="button" @click="store.openModal('topup')">Nạp thêm Fresh Credit</button>
+      <button class="pl-btn primary" type="button" @click="store.openModal('topup')">Mua Gói Suất ăn trả trước</button>
     </section>
 
     <section v-if="sum.alert" class="pl-panel warn" role="alert">
       <b>Chưa đủ cho tuần {{ sum.alert.week_index + 1 }}</b>
       <p class="num">Tuần này cần {{ fmt(sum.alert.amount_vnd) }}, còn thiếu {{ fmt(sum.alert.shortfall_vnd) }}. MOVA trừ tiền lúc <b>{{ sum.alert.charge_label }}</b>.</p>
       <button v-if="sum.alert.suggested_topup" class="pl-btn orange sm" type="button" @click="store.openModal('topup')">
-        Nạp vừa đủ {{ fmt(sum.alert.suggested_topup.pay_vnd) }}
+        Thanh toán bổ sung {{ fmt(sum.alert.suggested_topup.pay_vnd) }}
       </button>
     </section>
 

@@ -65,14 +65,50 @@
    - **Hiển thị giá song song theo suất và bữa:** Tại bước chọn thực đơn (`StepMenu.vue`, `PriceBlock.vue`) và thanh toán (`StepCheckout.vue`), luôn hiển thị song song đơn giá chính theo bữa và đơn giá quy đổi theo suất: **`~...đ/suất • ...đ/bữa`** (1 người ăn = 1 suất, nhân theo số thành viên hộ) giúp khách hàng thấy rõ mức giá hợp lý và tính kinh tế của giải pháp.
    - **Cơ chế Mời bạn bè (Referral Dual-Benefit 100.000đ):**
      + Người được mời: Được **khấu trừ trực tiếp `100.000đ`** vào đơn đầu tiên khi đăng ký qua link mời hoặc nhập mã `MOVA-XXXX` (áp dụng cho cả 3 phương thức thanh toán: `fresh_credit`, `bank_transfer_4w`, `card`, đảm bảo tuân thủ trần ưu đãi chu kỳ đầu $\le 30\%$).
-     + Người giới thiệu: Nhận ngay **`+100.000đ` vào ngăn `promo` của ví Fresh Credit** ngay sau khi đơn đầu tiên của người được mời thanh toán thành công.
-     + **Bảng ví Fresh Credit đa năng:** Hiển thị số dư tiền thật + tiền khuyến mãi ngay trên đầu tab Mời bạn bè, kèm ghi chú giải thích rõ: Dù chọn thanh toán định kỳ bằng VietQR hay Thẻ tín dụng, ví Fresh Credit vẫn luôn hoạt động để tích lũy thưởng và tự động khấu trừ giảm tiền cho các chu kỳ tiếp theo hoặc khi đổi món.
+     + Người giới thiệu: Nhận ngay **`+100.000đ` vào ngăn `promo` của tài khoản Fresh Credit** ngay sau khi đơn đầu tiên của người được mời thanh toán thành công.
+     + **Bảng tài khoản Fresh Credit đa năng:** Hiển thị số dư tiền thật + tiền khuyến mãi ngay trên đầu tab Mời bạn bè, kèm ghi chú giải thích rõ: Dù chọn thanh toán định kỳ bằng VietQR hay Thẻ tín dụng, tài khoản Fresh Credit vẫn luôn hoạt động để tích lũy thưởng và tự động khấu trừ giảm tiền cho các chu kỳ tiếp theo hoặc khi đổi món.
 3. **Bổ sung các trường mới trong Onboarding & Metadata món ăn:**
    - **Khảo sát khẩu vị đa chọn (`cuisine_preferences[]`):** Hỗ trợ chọn nhiều trong 3 nhóm (`Thuần Việt`, `Đồ Tây`, `Đồ Á`), thêm nút nhanh "Chọn tất cả (Đa dạng Việt – Á – Tây)" và cho phép tiếp tục khi không chọn gì (mặc định đa dạng cả 3).
    - **Ngân sách đi chợ (`weekly_grocery_budget_vnd`):** Thêm lựa chọn "Khác (tự nhập mức chi tiêu cụ thể)" với nút `− / +` bước nhảy 100.000đ và ô nhập VNĐ tùy chỉnh (200.000đ – 20.000.000đ), chỉ làm trần mềm cho Đầu bếp MOVA gợi ý món.
    - **Xác thực OTP SĐT (`phone_verified`):** Bắt buộc xác thực OTP tại bước giao hàng/thanh toán.
    - **Đăng ký nhận bản tin (`newsletter_opt_in`):** Checkbox tùy chọn nhận bản tin công thức nấu ăn Đầu bếp MOVA tặng ngay `+15.000đ` promo credit.
    - **Metadata món ăn đầy đủ:** `terroir_region`, `terroir_story`, `chef_note`, `portion_specs`, `nutrition_per_serving`, `cooking_steps`.
+
+---
+
+---
+
+## BIÊN BẢN PHÁP LÝ & KẾ TOÁN XANH NGÀY 19/11/2026 (LEGAL COMPLIANCE & GREEN ACCOUNTING SYNC)
+
+- **Thời gian:** 19/11/2026
+- **Thành phần thống nhất:** Hà My Trần (Founder), Trung Quốc Phạm (Co-founder), Nguyễn Công Khôi (Tech Lead), Hiếu (AI & Data Lead).
+
+### CÁC QUYẾT ĐỊNH PHÁP LÝ & HẠCH TOÁN KẾ TOÁN CHỐT NGÀY 19/11/2026
+
+1. **Bảng phân loại Pháp lý Đỏ / Vàng / Xanh:**
+   - **ĐỎ (Cấm tuyệt đối):**
+     + Cấm Ví điện tử tự phát (NĐ 52/2024/NĐ-CP): Không giữ giấy phép ví trung gian thanh toán, xóa bỏ hoàn toàn chữ "Ví" trên UI khách; cấm nạp/rút/chuyển tiền tự do như ví điện tử.
+     + Cấm Huy động vốn & Trả lãi trên số dư chờ (Luật Các TCTD 32/2024/QH15): Cấm dùng từ "lãi", cấm "thưởng nạp kiểu ngân quỹ"; chỉ dùng *"Ưu đãi chiết khấu khi mua Gói Suất ăn trả trước"*. Tắt hoàn toàn ô nhập nạp tiền lẻ tự do minTopUpVnd trên UI.
+     + Cấm Bẫy tự động gia hạn âm thầm & Giữ cọc không cho rút (Luật BVQLNTD 19/2023/QH15): Cấm âm thầm auto-renew gói lớn, cấm phạt mất trắng tiền thật khi dừng gói.
+   - **VÀNG (Tuân thủ có điều kiện):**
+     + Hóa đơn GTGT từng lần giao hàng (NĐ 254/2026 Điều 9 khoản 1, 3): Bữa ăn là hàng hóa thực phẩm giao định kỳ, xuất hóa đơn điện tử cho từng lần giao hàng thực tế. Cấu hình hệ thống `invoicing.issueOn = 'delivery'`.
+     + Tài khoản trả trước đóng kín nội bộ: Điểm Fresh Credit chỉ được dùng để đổi bữa ăn tại MOVA Fresh, không chuyển nhượng sang tài khoản khác.
+   - **XANH (Khuyến khích & Chuẩn hóa):**
+     + Gói Suất ăn trả trước (Pre-paid meal package): Hạch toán Nợ 112 / Có 131; khi giao hàng hạch toán Nợ 131 / Có 511, Có 33311 (Thông tư 99/2025/TT-BTC).
+     + Phí thành viên hội viên MOVA Club năm: Hạch toán Nợ 112 / Có 3387, 33311; phân bổ hàng tháng vào 511.
+     + Trừ tiền định kỳ qua liên kết thẻ/ví đối tác (MoMo, ZaloPay, VNPAY, Cổng thẻ): Tiền trừ trước giờ giao 72h, khách có quyền HỦY 1 CHẠM bất kỳ lúc nào.
+     + Cam kết hoàn tiền trong 7 ngày làm việc: Hoàn trả 100% tiền thật các bữa chưa giao về tài khoản nguồn. Báo trước 7 ngày làm việc trước khi hết chu kỳ gói.
+
+2. **Kiến trúc dòng tiền 4 tầng (4-Layer Cash Flow Architecture):**
+   - **Tầng `D` — Nền tảng bắt buộc (Foundational Mandatory):** Trừ thẻ định kỳ trước giờ giao 72h / Liên kết ví đối tác (MoMo, ZaloPay, VNPAY) — Zero rủi ro pháp lý theo NĐ 52/2024.
+   - **Tầng `A` — Dòng tiền trả trước (Pre-paid Meal Float):** Gói suất ăn trả trước 4 tuần / 13 tuần, hạch toán TK 131, ưu đãi chiết khấu tặng bữa, hoàn tiền bữa chưa giao trong 7 ngày.
+   - **Tầng `C` — Đường ống thu hộ (Collection Pipelines):** VietQR tĩnh / động qua ngân hàng/cổng thanh toán, tiền chuyển thẳng vào tài khoản ngân hàng của MOVA Fresh.
+   - **Tầng `B` — Giá trị gia tăng tùy chọn (Optional Addons):** Phí hội viên MOVA Club năm (TK 3387), quà tặng doanh nghiệp B2B.
+
+3. **Cấu hình hệ thống & Trải nghiệm người dùng:**
+   - Điền sẵn bộ mã tài khoản kế toán chuẩn Thông tư 99/2025 vào `BUSINESS.finance.accountMap`: `cash_bank: '112'`, `cash_hand: '111'`, `customer_prepaid: '131'`, `revenue: '511'`, `vat_output: '33311'`, `membership_deferred: '3387'`.
+   - Tại trang `/account`: Đưa nút **"Dừng gói 1 chạm"** và **"Hủy liên kết thẻ/ví đối tác"** ra vị trí nổi bật, dễ thấy, không giấu sâu trong cài đặt. Modal dừng gói hiển thị minh bạch bảng tính: số bữa chưa nhận, số tiền hoàn lại thực tế và cam kết hoàn tiền trong 7 ngày làm việc.
+   - Tại màn hình `/plans` (`StepCheckout.vue`): Hiển thị khối **"Điều khoản giao dịch từ xa & Chính sách đổi trả"** (Luật BVQLNTD) và cam kết hủy liên kết thẻ/ví 1 chạm bất kỳ lúc nào.
 
 ---
 

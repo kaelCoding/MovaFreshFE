@@ -537,8 +537,10 @@ export function createAccountApi(server, cfg = BUSINESS) {
         const orders = ordersOf(db, sub);
         const plan = buildCancelPlan(db, customer, orders, now, cfg);
         const skipWeek = weeksOf(sub, orders, now).find((w) => w.skip.allowed);
+        const mealsPerWeek = sub.mealsPerWeek || 5;
         return ok({
           weeks_cancelled: plan.weeksCancelled,
+          undelivered_meals: plan.weeksCancelled * mealsPerWeek,
           refund_vnd: plan.refundVnd,
           reversed_vnd: plan.reversedVnd,
           forfeited_promo_vnd: plan.forfeitedPromoVnd,
@@ -546,6 +548,7 @@ export function createAccountApi(server, cfg = BUSINESS) {
           lost_incentives_vnd: plan.lostIncentivesVnd,
           balance_before: balanceOut(customer.credit),
           kept_orders: plan.keptOrders.length,
+          refund_days_commitment: 7,
           skip_instead: skipWeek ? { week_index: skipWeek.week_index, number: skipWeek.number, deadline_label: skipWeek.deadline_label } : null
         });
       });
@@ -586,7 +589,33 @@ export function createAccountApi(server, cfg = BUSINESS) {
           at: nowIso,
           meta: { refundVnd: plan.refundVnd, forfeitedPromoVnd: plan.forfeitedPromoVnd }
         });
-        return ok({ refund_vnd: plan.refundVnd, forfeited_promo_vnd: plan.forfeitedPromoVnd, gift_lost_vnd: plan.giftLostVnd, weeks_cancelled: plan.weeksCancelled, kept_orders: plan.keptOrders.length });
+        return ok({ refund_vnd: plan.refundVnd, forfeited_promo_vnd: plan.forfeitedPromoVnd, gift_lost_vnd: plan.giftLostVnd, weeks_cancelled: plan.weeksCancelled, kept_orders: plan.keptOrders.length, refund_days_commitment: 7 });
+      });
+    },
+
+    /** Hủy liên kết thẻ / ví đối tác (1 chạm bảo vệ người tiêu dùng - Luật BVQLNTD). */
+    unlinkCard(req = {}) {
+      return server.write((db, now) => {
+        const customer = customerOf(db, req.customer_id);
+        if (!customer) return NOT_FOUND();
+        const sub = subOf(db, customer.id);
+        if (!sub) return fail('SUB_INACTIVE', 'Bạn chưa có gói đang chạy');
+        sub.paymentMethod = 'fresh_credit';
+        sub.cardUnlinkedAt = now.toISOString();
+        const orders = ordersOf(db, sub);
+        for (const o of orders) {
+          if (o.status === 'scheduled' && o.paymentMethod === 'card') {
+            o.paymentMethod = 'fresh_credit';
+          }
+        }
+        notify(db, {
+          customerId: customer.id,
+          type: 'card_unlinked',
+          title: 'Đã hủy liên kết thẻ/ví đối tác',
+          body: 'Bạn đã hủy liên kết thẻ/ví thành công. MOVA sẽ không tự động trừ tiền các tuần tiếp theo.',
+          at: now.toISOString()
+        });
+        return ok({ unlinked: true });
       });
     },
 

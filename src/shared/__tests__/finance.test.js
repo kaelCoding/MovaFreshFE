@@ -265,9 +265,10 @@ describe('CSV bút toán cân Nợ = Có', () => {
     const per = {};
     for (const r of rows) { per[r[1]] = (per[r[1]] || 0) + Number(r[6]) - Number(r[7]); }
     expect(Object.values(per).every((v) => v === 0)).toBe(true);
-    // Chưa ánh xạ tài khoản: cột mã ghi ?khóa, không có số tài khoản viết cứng
-    expect(file.unmapped).toContain('revenue');
-    expect(rows.some((r) => r[4] === '?revenue')).toBe(true);
+    // Tài khoản chuẩn hóa TT 99/2025: revenue có mã 511; tài khoản chưa ánh xạ: cột mã ghi ?khóa
+    expect(rows.some((r) => r[4] === '511')).toBe(true);
+    expect(file.unmapped).toContain('cogs_materials');
+    expect(rows.some((r) => r[4] === '?cogs_materials')).toBe(true);
   });
 
   it('gộp theo ngày / nhóm bút toán; cách xử lý khuyến mãi "gross" tách một bút toán riêng và vẫn cân', () => {

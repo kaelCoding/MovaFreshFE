@@ -32,10 +32,35 @@
 
       <WeekCard v-if="current" :key="current.week_index" :week="current" @change="(t) => (changing = { week: current, target: t })" @skip="(w) => (skipping = w)" />
 
-      <div v-if="data.subscription.status === 'active'" class="stop">
-        <button class="stop-btn" type="button" @click="stopping = true">Dừng gói</button>
-        <p class="pl-note">Muốn nghỉ một tuần? Hãy tạm hoãn tuần đó, bạn không mất ưu đãi nào.</p>
-      </div>
+      <!-- Quyền lợi khách hàng & Quản lý thanh toán 1 chạm (Luật BVQLNTD 19/2023) -->
+      <section v-if="data.subscription.status === 'active'" class="pl-card plan-actions-card">
+        <div class="actions-header">
+          <span class="shield-badge">🛡️ BẢO VỆ NGƯỜI TIÊU DÙNG</span>
+          <h3 class="actions-h3">Quản lý gói &amp; Hủy 1 chạm bất kỳ lúc nào</h3>
+          <p class="actions-sub">Không cam kết trói buộc · Hoàn tiền trong 7 ngày làm việc cho các bữa chưa giao · Thông báo trước 7 ngày làm việc khi kết thúc chu kỳ.</p>
+        </div>
+        <div class="actions-btns">
+          <button class="pl-btn outline danger-btn" type="button" @click="stopping = true">
+            🛑 Dừng gói 1 chạm (Hoàn tiền 7 ngày)
+          </button>
+          <button
+            v-if="data.subscription.payment_method === 'card'"
+            class="pl-btn outline"
+            type="button"
+            @click="unlinkCardAction"
+          >
+            💳 Hủy liên kết thẻ/ví đối tác
+          </button>
+          <button
+            v-if="current && current.skip && current.skip.allowed"
+            class="pl-btn ghost"
+            type="button"
+            @click="skipping = current"
+          >
+            ⏸️ Tạm hoãn tuần này (Không mất ưu đãi)
+          </button>
+        </div>
+      </section>
     </template>
 
     <MealChangeSheet v-if="changing" :week="changing.week" :target="changing.target" @close="changing = null" @done="changing = null" />
@@ -99,6 +124,18 @@ function afterSkip() {
   load();
 }
 
+function unlinkCardAction() {
+  if (window.confirm('Bạn có chắc chắn muốn hủy liên kết thẻ/ví đối tác? Sau khi hủy, MOVA sẽ không tự động trừ tiền các tuần tiếp theo.')) {
+    const res = api.customer.unlinkCard({ customer_id: store.customerId });
+    if (res.status === 'success') {
+      store.toast('✓ Đã hủy liên kết thẻ/ví đối tác thành công');
+      load();
+    } else {
+      store.toast(res.error?.message || 'Không thể hủy liên kết lúc này');
+    }
+  }
+}
+
 function skipFromStop(weekIndex) {
   stopping.value = false;
   const w = data.value.weeks.find((x) => x.week_index === weekIndex);
@@ -144,6 +181,50 @@ onMounted(async () => {
 .pill.postponed, .pill.cancelled { background: var(--line-2); }
 .pill.postponed .s, .pill.cancelled .s { color: var(--muted); }
 
+.plan-actions-card {
+  margin-top: 12px;
+  background: var(--bg);
+  border: 1px dashed var(--line);
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: grid;
+  gap: 12px;
+}
+.shield-badge {
+  display: inline-block;
+  background: var(--green-soft);
+  color: var(--green-d);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+.actions-h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  color: var(--ink);
+}
+.actions-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 4px 0 0;
+  line-height: 1.4;
+}
+.actions-btns {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.danger-btn {
+  color: var(--red);
+  border-color: #f7c3c0;
+}
+.danger-btn:hover {
+  background: #fdf0ef;
+}
 .stop { display: grid; gap: 6px; justify-items: start; margin-top: 8px; }
 .stop-btn {
   min-height: 44px; background: none; border: 0; color: var(--red); font-weight: 700; font-size: 16px;

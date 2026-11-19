@@ -65,11 +65,11 @@ export const BUSINESS = {
     maxFirstCycleDiscountPct: 0.3,
     // Mã thẻ quà tặng phễu /plans gửi kèm khi đăng ký (bản thật do chiến dịch quảng cáo cấp)
     giftCardCode: 'THEQUATANG',
-    // Thưởng nạp thường xuyên khoảng 10% (chị My, 31:36)
+    // Ưu đãi chiết khấu khi mua Gói Suất ăn trả trước khoảng 10%
     topUpPacks: [
-      { id: 'standard', label: 'Gói Tiêu chuẩn', payVnd: 1500000, bonusPct: 0.1 },
-      { id: 'family', label: 'Gói Gia đình', payVnd: 2800000, bonusPct: 0.1 },
-      { id: 'premium', label: 'Gói Dinh dưỡng', payVnd: 5000000, bonusPct: 0.1 }
+      { id: 'standard', label: 'Gói 4 tuần Tiêu chuẩn (20 bữa ~ 40 suất)', payVnd: 1500000, bonusPct: 0.1, weeks: 4, meals: 20, portions: 40 },
+      { id: 'family', label: 'Gói 4 tuần Gia đình (24 bữa ~ 72 suất)', payVnd: 2800000, bonusPct: 0.1, weeks: 4, meals: 24, portions: 72 },
+      { id: 'premium', label: 'Gói 13 tuần Dinh dưỡng (65 bữa ~ 195 suất)', payVnd: 5000000, bonusPct: 0.1, weeks: 13, meals: 65, portions: 195 }
     ],
     rewards: {
       profileComplete: 20000,
@@ -320,12 +320,13 @@ export const BUSINESS = {
   },
 
   invoicing: {
-    // 'topup' = xuất hóa đơn khi khách nạp; 'delivery' = xuất khi giao hàng. Quy định chưa thống nhất.
+    // Chốt mặc định: xuất hóa đơn khi giao hàng.
+    // Viện dẫn pháp lý: NĐ 254/2026 Điều 9 khoản 1, 3: lập hóa đơn GTGT tại mỗi lần giao hàng.
     issueOn: 'delivery'
   },
 
   // Tài chính & kế toán (P2D). MOVA KHÔNG tự viết phần mềm kế toán: chỉ giữ sổ phụ nghiệp vụ và xuất bút toán (CSV)
-  // qua bảng ánh xạ tài khoản do kế toán cấu hình. Mọi số dưới đây là giả định chờ kế toán xác nhận.
+  // qua bảng ánh xạ tài khoản do kế toán cấu hình.
   finance: {
     // Số dư tiền (ngân hàng + quỹ) tại thời điểm bắt đầu theo dõi. Kế toán nhập số thật ở Cài đặt.
     openingCashVnd: 0,
@@ -373,15 +374,18 @@ export const BUSINESS = {
       warnBelow: 80,
       weightTolerancePct: 0.03
     },
-    // Bảng ánh xạ tài khoản: KHÔNG viết cứng số tài khoản (chế độ kế toán đổi từ 2026: TT 99/2025 thay TT 200).
-    // Kế toán nhập mã tài khoản của phần mềm kế toán ở Cài đặt. Chưa nhập thì CSV dùng mã nội bộ (key) và báo "chưa ánh xạ".
+    // Bảng ánh xạ tài khoản: Thiết lập bộ mã chuẩn Thông tư 99/2025/TT-BTC (áp dụng từ 2026 thay thế TT 200).
+    // Hạch toán chuẩn:
+    //   - Nạp gói suất ăn trả trước: Nợ 112 / Có 131
+    //   - Giao từng lần: Nợ 131 / Có 511, Có 33311
+    //   - Phí thành viên năm (nếu có): Nợ 112 / Có 3387, Có 33311; phân bổ hàng tháng Nợ 3387 / Có 511
     accountMap: {
-      cash_bank: { label: 'Tiền gửi ngân hàng', code: '' },
-      cash_hand: { label: 'Tiền mặt', code: '' },
-      customer_prepaid: { label: 'Khách hàng trả trước (Fresh Credit tiền thật)', code: '' },
-      revenue: { label: 'Doanh thu bán hàng', code: '' },
+      cash_bank: { label: 'Tiền gửi ngân hàng', code: '112' },
+      cash_hand: { label: 'Tiền mặt', code: '111' },
+      customer_prepaid: { label: 'Khách hàng trả trước (Gói suất ăn / Fresh Credit tiền thật: Nợ 112 / Có 131)', code: '131' },
+      revenue: { label: 'Doanh thu bán hàng', code: '511' },
       revenue_promo: { label: 'Doanh thu từ khuyến mãi (MOVA tài trợ)', code: '' },
-      vat_output: { label: 'Thuế GTGT đầu ra', code: '' },
+      vat_output: { label: 'Thuế GTGT đầu ra', code: '33311' },
       vat_input: { label: 'Thuế GTGT đầu vào', code: '' },
       cogs_materials: { label: 'Giá vốn nguyên liệu, bao bì', code: '' },
       cogs_logistics: { label: 'Giá vốn logistics', code: '' },
@@ -390,7 +394,8 @@ export const BUSINESS = {
       payable_logistics: { label: 'Phải trả logistics (tạm tính)', code: '' },
       promo_expense: { label: 'Chi phí khuyến mãi', code: '' },
       card_fee: { label: 'Phí cổng thanh toán', code: '' },
-      other_expense: { label: 'Chi phí khác (điều chỉnh)', code: '' }
+      other_expense: { label: 'Chi phí khác (điều chỉnh)', code: '' },
+      membership_deferred: { label: 'Doanh thu chưa thực hiện — Phí thành viên năm: Nợ 112 / Có 3387, 33311; phân bổ vào 511', code: '3387' }
     }
   },
 
